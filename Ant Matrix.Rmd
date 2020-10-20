@@ -1,0 +1,271 @@
+---
+title: "Ant Transition Matrix"
+author: "Ali Campbell"
+date: "9/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lme4)
+library(nnet)
+library(fixest)
+library(mlogit)
+library(dfidx)
+library(effects)
+```
+
+```{r}
+#import the data
+cactus <- read.csv("/Users/alicampbell/Desktop/cholla.csv", header = TRUE)
+#str(cactus)
+```
+
+##Data Filtering
+```{r}
+## function for the volume of a cone
+
+volume <- function(h, w, p){
+  (1/3)*pi*h*(((w + p)/2)/2)^2
+}
+invlogit <- function(x){exp(x)/(1+exp(x))}
+
+#Create volume columns
+cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
+cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
+
+#hist(log(cactus$volume_t))
+```
+
+```{r}
+##Year T
+cactus <- data.frame(lapply(cactus,      # Convert data with toupper function
+                              function(variables) {
+                                if (is.character(variables)) {
+                                  return(toupper(variables))
+                                } else {
+                                  return(variables)
+                                }
+                              }),
+                       stringsAsFactors = FALSE)
+cactus_new <- as.data.frame(gsub("LIOM", "L",cactus$Antsp_t))
+cactus_new <- as.data.frame(gsub("CREM", "C",cactus$Antsp_t))
+cactus_new <- as.data.frame(gsub("FOR", "F",cactus$Antsp_t))
+
+##Year T1
+cactus <- data.frame(lapply(cactus,      # Convert data with toupper function
+                              function(variables) {
+                                if (is.character(variables)) {
+                                  return(toupper(variables))
+                                } else {
+                                  return(variables)
+                                }
+                              }),
+                       stringsAsFactors = FALSE)
+cactus_new <- as.data.frame(gsub("LIOM", "L",cactus$Antsp_t1))
+cactus_new <- as.data.frame(gsub("CREM", "C",cactus$Antsp_t1))
+cactus_new <- as.data.frame(gsub("FOR", "F",cactus$Antsp_t1))
+
+#unique(cactus$Antsp_t)
+```
+
+```{r}
+#Bin all ant species in year t to a value 1 - 5 without taking away the species denotation
+cactus$bin1 <- 0 #blank column 
+for(i in seq_len(nrow(cactus))){
+  if(cactus$Antsp_t[i] == "LIOM"){cactus$bin1[i] <- 1}
+  else if(cactus$Antsp_t[i] == "L"){cactus$bin1[i] <- 1}
+  else if(cactus$Antsp_t[i] == "LIOM "){cactus$bin1[i] <- 1}
+  else if(cactus$Antsp_t[i] == "CREM"){cactus$bin1[i] <- 2}
+  else if(cactus$Antsp_t[i] == "C"){cactus$bin1[i] <- 2}
+  else if(cactus$Antsp_t[i] == "FOR"){cactus$bin1[i] <- 3}
+  else if(cactus$Antsp_t[i] == "F"){cactus$bin1[i] <- 3}
+  else if(cactus$Antsp_t[i] == "VACANT"){cactus$bin1[i] <- 4}
+  else if(cactus$Antsp_t[i] == ""){cactus$bin1[i] <- 4}
+  else{cactus$bin1[i] <- 5}
+}
+#Bin all ant species in yeay t1 to a value 1 - 5 without taking away species denotation
+cactus$bin2 <- 0 #blank column 
+for(i in seq_len(nrow(cactus))){
+  if(cactus$Antsp_t1[i] == "LIOM"){cactus$bin2[i] <- 1}
+  else if(cactus$Antsp_t1[i] == "L"){cactus$bin2[i] <- 1}
+  else if(cactus$Antsp_t1[i] == "LIOM "){cactus$bin2[i] <- 1}
+  else if(cactus$Antsp_t1[i] == "CREM"){cactus$bin2[i] <- 2}
+  else if(cactus$Antsp_t1[i] == "C"){cactus$bin2[i] <- 2}
+  else if(cactus$Antsp_t1[i] == "FOR"){cactus$bin2[i] <- 3}
+  else if(cactus$Antsp_t1[i] == "F"){cactus$bin2[i] <- 3}
+  else if(cactus$Antsp_t1[i] == "VACANT"){cactus$bin2[i] <- 4}
+  else if(cactus$Antsp_t1[i] == ""){cactus$bin2[i] <- 4}
+  else{cactus$bin2[i] <- 5}
+}
+```
+
+##Ant Transition Matrix
+#### Hard-Coded Matrix
+```{r}
+transMat <- as.data.frame(prop.table(with(cactus, table(cactus$bin1, cactus$bin2)), 2))
+
+Transitions <- matrix(c(0.66064710	, 0.04138450	, 0.01504891	, 0.27012792	, 0.01279157 ,	0.14760148	, 0.29889299	, 0.01660517	, 0.50553506	, 0.03136531	, 0.27131783	, 0.09302326	, 0.06201550	, 0.50387597	, 0.06976744	, 0.21302405	, 0.06086401	, 0.01532241	, 0.69035965	, 0.02042988	, 0.27950311	, 0.21118012	, 0.03105590	, 0.43478261	, 0.04347826),ncol = 5, nrow = 5, byrow = FALSE)
+#Transitions
+#colSums(Transitions)
+```
+
+#### Not Hard-Coded matrix
+```{r}
+# If you have for example a matrix like this
+m <- matrix(c(1:25), ncol=5, nrow=5)
+
+for(i in 1:5){
+  for(j in 1:5){
+    m[i,j] <- transMat[i,3]
+  }
+}
+```
+
+
+##Plot Survival by Volume probability Data
+```{r}
+plot(log(cactus$volume_t),cactus$Survival_t1)
+
+survival_plot <- cactus %>% 
+  mutate(size_bin = cut_interval(log(volume_t),10)) %>%
+  group_by(size_bin) %>%
+  summarise(mean_size = mean(log(volume_t),na.rm=T),
+    surv = mean(Survival_t1,na.rm=T))
+
+years <- unique(cactus$Year_t)
+n_years <- length(years)
+points(survival_plot$mean_size,survival_plot$surv,pch=16,cex=2,col="red")
+
+```
+
+## Vital Rate Plots
+#### Survival Rate
+
+Three models were considered here. First A simple survival vs log(volume) model. This had an AIC value of 2380.825.  The second included a second explanatory variable of the ant species (as an independent variable). This had an AIC vaue of 2474.975/ The third included the ant species variable as an interaction term with the volume. This had an AIC value of 2378.601, which is a difference greater than 2, and therefore is a satistically supported improvement. 
+```{r}
+surv_model <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus)
+surv_model_ant <- glm(Survival_t1 ~ 0 + log(volume_t) + as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+surv_model_ant_interact <- glm(Survival_t1 ~ 0 + log(volume_t) * as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+```
+
+```{r}
+#plot the basic surv_model with plot
+plot(log(cactus$volume_t),cactus$Survival_t1)
+size_dummy <- seq(min(log(cactus$volume_t),na.rm=T),max(log(cactus$volume_t),na.rm=T),0.01)
+lines(size_dummy,invlogit(coef(surv_model)[1] + coef(surv_model)[2]*size_dummy), lwd=3, col="red")
+#now with ggplot
+ggplot(cactus, aes(y=cactus$Survival_t1, x=log(cactus$volume_t))) +  geom_point() +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+This includes an ant interaction term
+```{r}
+surv_model_ant_interact <- glm(Survival_t1 ~ 0 + 0 + log(volume_t) * as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+
+#anova(surv_model_ant_interact, test = "Chisq")
+#summary(surv_model_ant_interact)
+```
+
+```{r}
+ggplot(cactus, aes(y=Survival_t1, x=log(volume_t), col=as.factor(bin1))) +  geom_point(alpha = 0.1) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+#### Flowering Model
+```{r}
+flo_model <- glm(Goodbuds_t > 0 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus)
+
+cactus$Flow <- cactus$Goodbuds_t > 0 #blank column 
+for(i in 1:8189){
+  if(cactus$TotFlowerbuds_t[i] == NA){
+    cactus$Flow[i] <- sum(cactus$ABFlowerbuds_t[i]+cactus$Goodbuds_t[i])
+  }
+  else if(cactus$TotFlowerbuds_t[i] == 0){
+    cactus$Flow[i] <- 0
+  }
+  else if(cactus$TotFlowerbuds_t[i] >0){
+    cactus$Flow[i] <- 1
+  }
+}
+
+cactus$Flow
+ggplot(cactus, aes(y=Flow, x=log(volume_t))) +  geom_point() +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+
+plot(log(cactus$volume_t),cactus$Flow)
+```
+
+#### Growth Model
+```{r}
+gro_model_ant_interact <- glm(log(volume_t1) ~ 0 + log(volume_t) * as.factor(bin1),
+                  data=cactus)
+
+ggplot(cactus, aes(y=log(volume_t1), x=log(volume_t), col=as.factor(bin1))) +  geom_point(alpha = 0) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', se = FALSE) 
+```
+## Ant Transition Model
+```{r}
+ant_trans_model <- glm(as.factor(bin2) ~ 0 + as.factor(bin1),family = binomial,data=cactus)
+ggplot(cactus, aes(y=as.factor(bin2), x=as.factor(bin1), col=as.factor(bin1))) +  geom_point(alpha = 0.9) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+```{r}
+ant_trans_size_model <- glm(as.factor(bin2) ~ 0 + as.factor(bin1) + log(volume_t),family = binomial,data=cactus)
+ant_trans_size_model2 <- glm(as.factor(bin2) ~ 0 + as.factor(bin1) * log(volume_t),family = binomial,data=cactus)
+#AIC(ant_trans_model)
+#AIC(ant_trans_size_model)
+#AIC(ant_trans_size_model2)
+##Therefore we can see that the interaction transition model is the best. And that Size is an important factor.
+summary(ant_trans_size_model2)
+ggplot(cactus, aes(y=as.factor(bin2), x=as.factor(bin1)*log(volume_t), col=as.factor(bin1))) +  geom_point(alpha = 0.9) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+#model.matrix(ant_trans_size_model2)
+```
+
+
+
+## Multinomial Models
+
+```{r}
+#Will be ant vs size
+x1 <- factor(as.factor(cactus$bin1), levels = c("5","1","2","3","4"))
+m1 <- multinom(as.factor(cactus$bin1) ~ 0+ 1, data = cactus)
+m2 <- multinom(x1 ~ 1, data = cactus)
+z1<- summary(m1)$coefficients/summary(m1)$standard.errors
+z2<- summary(m2)$coefficients/summary(m2)$standard.errors
+summary(m1)
+summary(m2)
+#coef(m1)
+#coef(m2)
+p1 <- (1 - pnorm(abs(z1), 0, 1)) * 2
+p2 <- (1 - pnorm(abs(z2), 0, 1)) * 2
+ggplot(cactus, aes(x = cactus$bin2, y = cactus$bin1, colour = cactus$bin1)) + geom_line() 
+#model.matrix(m1)s
+```
+
+
+```{r}
+#Will be ant vs ant
+m2 <- multinom(as.factor(bin1) ~ 0+as.factor(bin2), data = cactus)
+z<- summary(m2)$coefficients/summary(m2)$standard.errors
+#summary(m2)
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
+ggplot(cactus, aes(x = bin2, y = bin1, colour = bin1)) + geom_line()
+#model.matrix(m2)
+```
+
+
+

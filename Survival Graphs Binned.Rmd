@@ -1,0 +1,276 @@
+---
+title: "Survival Graphs Binned"
+author: "Ali Campbell"
+date: "9/22/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#load packages
+library(tidyverse)
+library(lme4)
+library(nnet)
+library(fixest)
+library(mlogit)
+library(dfidx)
+```
+
+```{r}
+#import the data
+cactus <- read.csv("/Users/alicampbell/Desktop/cholla.csv", header = TRUE)
+#str(cactus)
+```
+
+##Filter Ant Species to standardized
+```{r}
+cactus <- data.frame(lapply(cactus,      # Convert data with toupper function
+                              function(variables) {
+                                if (is.character(variables)) {
+                                  return(toupper(variables))
+                                } else {
+                                  return(variables)
+                                }
+                              }),
+                       stringsAsFactors = FALSE)
+
+##for loop to change them
+#Bin all ant species in year t to a value 1 - 5 without taking away the species denotation
+cactus$bin1 <- 0 #blank column 
+for(i in seq_len(nrow(cactus))){
+  if(cactus$Antsp_t[i] == "LIOM"){cactus$bin1[i] <- 1}
+  else if(cactus$Antsp_t[i] == "L"){cactus$bin1[i] <- 1}
+  else if(cactus$Antsp_t[i] == "LIOM "){cactus$bin1[i] <- 1}
+  else if(cactus$Antsp_t[i] == "CREM"){cactus$bin1[i] <- 2}
+  else if(cactus$Antsp_t[i] == "C"){cactus$bin1[i] <- 2}
+  else if(cactus$Antsp_t[i] == "FOR"){cactus$bin1[i] <- 3}
+  else if(cactus$Antsp_t[i] == "F"){cactus$bin1[i] <- 3}
+  else if(cactus$Antsp_t[i] == "VACANT"){cactus$bin1[i] <- 4}
+  else if(cactus$Antsp_t[i] == ""){cactus$bin1[i] <- 4}
+  else{cactus$bin1[i] <- 5}
+}
+#Bin all ant species in yeay t1 to a value 1 - 5 without taking away species denotation
+cactus$bin2 <- 0 #blank column 
+for(i in seq_len(nrow(cactus))){
+  if(cactus$Antsp_t1[i] == "LIOM"){cactus$bin2[i] <- 1}
+  else if(cactus$Antsp_t1[i] == "L"){cactus$bin2[i] <- 1}
+  else if(cactus$Antsp_t1[i] == "LIOM "){cactus$bin2[i] <- 1}
+  else if(cactus$Antsp_t1[i] == "CREM"){cactus$bin2[i] <- 2}
+  else if(cactus$Antsp_t1[i] == "C"){cactus$bin2[i] <- 2}
+  else if(cactus$Antsp_t1[i] == "FOR"){cactus$bin2[i] <- 3}
+  else if(cactus$Antsp_t1[i] == "F"){cactus$bin2[i] <- 3}
+  else if(cactus$Antsp_t1[i] == "VACANT"){cactus$bin2[i] <- 4}
+  else if(cactus$Antsp_t1[i] == ""){cactus$bin2[i] <- 4}
+  else{cactus$bin2[i] <- 5}
+}
+```
+
+##Create Volume
+```{r}
+## function for the volume of a cone
+
+volume <- function(h, w, p){
+  (1/3)*pi*h*(((w + p)/2)/2)^2
+}
+invlogit <- function(x){exp(x)/(1+exp(x))}
+
+#Create volume columns
+cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
+cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
+
+hist(log(cactus$volume_t))
+```
+
+##Plot Survival by Volume probability
+```{r}
+plot(log(cactus$volume_t),cactus$Survival_t1)
+
+survival_plot <- cactus %>% 
+  mutate(size_bin = cut_interval(log(volume_t),10)) %>%
+  group_by(size_bin) %>%
+  summarise(mean_size = mean(log(volume_t),na.rm=T),
+    surv = mean(Survival_t1,na.rm=T))
+
+years <- unique(cactus$Year_t)
+n_years <- length(years)
+points(survival_plot$mean_size,survival_plot$surv,pch=16,cex=2,col="red")
+
+```
+
+##Fit statistical Binom Model Tier 1
+```{r}
+#This is the simplest possible model
+##The simplest possible model for size dep model
+surv_model <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus)
+surv_model_ant <- glm(Survival_t1 ~ 0 + log(volume_t) + as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+surv_model_ant_interact <- glm(Survival_t1 ~ 0 + log(volume_t) * as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+plot(log(cactus$volume_t),cactus$Survival_t1)
+size_dummy <- seq(min(log(cactus$volume_t),na.rm=T),max(log(cactus$volume_t),na.rm=T),0.01)
+lines(size_dummy,invlogit(coef(surv_model)[1] + coef(surv_model)[2]*size_dummy), lwd=3, col="red")
+AIC(surv_model_ant)
+AIC(surv_model)
+AIC(surv_model_ant_interact)
+#Lower is better for AIC, providing statistical support for the ant model
+#AIC suggests that there is a size ant interaction
+#AIC difference of 2 is a statistically supported improvement
+```
+
+```{r}
+summary(surv_model_ant_interact)
+b0 <- coef(surv_model_ant_interact)[1]
+b1 <- coef(surv_model_ant_interact)[2]
+b2 <- coef(surv_model_ant_interact)[3]
+b3 <- coef(surv_model_ant_interact)[4]
+b4 <- coef(surv_model_ant_interact)[5]
+b5 <- coef(surv_model_ant_interact)[6]
+b6 <- coef(surv_model_ant_interact)[7]
+b7 <- coef(surv_model_ant_interact)[8]
+b8 <- coef(surv_model_ant_interact)[9]
+b9 <- coef(surv_model_ant_interact)[10]
+
+```
+
+```{r}
+vol_range <- seq(from=min(log(na.omit(cactus$volume_t))), to=max(log(na.omit(cactus$volume_t))), by=.01)
+mean
+1logits <- 0 + b0*vol_range + 
+```
+
+```{r}
+#plot(surv_model)
+plot(log(cactus$volume_t),cactus$Survival_t1)
+curve(exp(b0+b1*x)/(1+exp(b0+b1*x)),add=T)
+
+ggplot(cactus, aes(y=cactus$Survival_t1, x=log(cactus$volume_t))) +  geom_point() +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+```{r}
+flo_model <- glm(TotFlowerbuds_t > 0 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus)
+flo_model_ant <- glm(TotFlowerbuds_t > 0 ~ 0 + log(volume_t) + as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+flo_model_ant_interact <- glm(TotFlowerbuds_t > 0 ~ 0 + log(volume_t) * as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+
+AIC(flo_model)
+AIC(flo_model_ant)
+AIC(flo_model_ant_interact)
+
+##In this case the ant models are not better by AIC
+```
+
+```{r}
+summary(flo_model)
+b0=coef(flo_model)[1]
+b1=coef(flo_model)[2]
+plot(log(cactus$volume_t1),cactus$TotFlowerbuds_t)
+curve(exp(b0+b1*x)/(1+exp(b0+b1*x)),add=T)
+```
+
+
+```{r}
+gro_model <- glm(log(volume_t1) ~ log(volume_t),
+                  data=cactus)
+gro_model_ant <- glm(log(volume_t1) ~ 0 + log(volume_t) + as.factor(bin1),
+                  data=cactus)
+gro_model_ant_interact <- glm(log(volume_t1) ~ 0 + log(volume_t) * as.factor(bin1),
+                  data=cactus)
+
+AIC(gro_model)
+AIC(gro_model_ant)
+AIC(gro_model_ant_interact)
+##The ant interaction model proves the best again
+```
+
+```{r}
+ggplot(cactus, aes(y=Survival_t1, x=log(volume_t), col=as.factor(bin1))) +  geom_point(alpha = 0.1) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+#Plot survival probability by volume, grouped by ant species (the bins)
+```{r}
+survival_plot <- cactus %>% 
+  mutate(size_bin = cut_interval(log(volume_t),10)) %>% 
+  group_by(size_bin, cactus$bin1) %>% 
+  summarise(mean_size = mean(log(volume_t),na.rm=T),
+    surv = mean(Survival_t1,na.rm=T))
+
+
+plot(log(cactus$volume_t),cactus$Survival_t1)
+points(survival_plot$mean_size,survival_plot$surv,pch=16,cex=1, col=1:length(cactus$bin1))
+legend(12,1,unique(cactus$bin1),col=1:length(cactus$bin1),pch=1)
+```
+
+
+##Fit Statistical Binom Model Tier 2
+####Independent
+```{r}
+surv_model_2 <- glmer(Survival_t1 ~ log(volume_t) + (1|Year_t) + (1|Plot),
+                  family="binomial",
+                  data=cactus)
+plot(log(cactus$volume_t),cactus$Survival_t1)
+size_dummy_2 <- seq(min(log(cactus$volume_t),na.rm=T),max(log(cactus$volume_t),na.rm=T),0.01)
+lines(size_dummy_2,invlogit(fixef(surv_model_2)[1] + fixef(surv_model_2)[2]*size_dummy_2), lwd=3, col="red")
+lines(size_dummy,invlogit(coef(surv_model)[1] + coef(surv_model)[2]*size_dummy), lwd=3, col="blue")
+```
+
+####Interaction
+```{r}
+surv_model_2 <- glmer(Survival_t1 ~ log(volume_t) + ((log(volume_t)|Year_t) + (log(volume_t)|Plot)),
+                  family="binomial",
+                  data=cactus)
+plot(log(cactus$volume_t),cactus$Survival_t1)
+size_dummy_2 <- seq(min(log(cactus$volume_t),na.rm=T),max(log(cactus$volume_t),na.rm=T),0.01)
+lines(size_dummy_2,invlogit(fixef(surv_model_2)[1] + fixef(surv_model_2)[2]*size_dummy_2), lwd=3, col="red")
+lines(size_dummy,invlogit(coef(surv_model)[1] + coef(surv_model)[2]*size_dummy), lwd=3, col="blue")
+```
+
+
+
+
+```{r}
+cactus_split <- split(cactus,cactus$bin1)
+surv_model_bin1 <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus_split$`1`)
+size_dummy <- seq(min(log(cactus_split$`1`$volume_t),na.rm=T),max(log(cactus_split$`1`$volume_t),na.rm=T),0.01)
+surv_model_bin2 <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus_split$`2`)
+plot(log(cactus_split$`2`$volume_t),cactus_split$`2`$Survival_t1, xlab = "log(Volume)", ylab = "Survival")
+surv_model_bin3 <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus_split$`3`)
+surv_model_bin4 <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus_split$`4`)
+surv_model_bin5 <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus_split$`5`)
+
+
+
+size_dummy <- seq(min(log(cactus_split$`2`$volume_t),na.rm=T),max(log(cactus_split$`2`$volume_t),na.rm=T),0.01)
+lines(size_dummy,invlogit(coef(surv_model_bin1)[1] + coef(surv_model_bin1)[2]*size_dummy), lwd=3, col="red")
+lines(size_dummy,invlogit(coef(surv_model_bin2)[1] + coef(surv_model_bin2)[2]*size_dummy), lwd=3, col="blue")
+lines(size_dummy,invlogit(coef(surv_model_bin3)[1] + coef(surv_model_bin3)[2]*size_dummy), lwd=3, col="green")
+lines(size_dummy,invlogit(coef(surv_model_bin4)[1] + coef(surv_model_bin4)[2]*size_dummy), lwd=3, col="yellow")
+lines(size_dummy,invlogit(coef(surv_model_bin5)[1] + coef(surv_model_bin5)[2]*size_dummy), lwd=3, col="orange")
+legend(11.5,.4,legend = c("Liom","Crem","For","Vacant","Other"),col = c("red","blue","green","yellow","orange"),lty = 1,cex = .8)
+```
+
+```{r}
+AIC(surv_model_bin1)
+AIC(surv_model_bin2)
+```
+
