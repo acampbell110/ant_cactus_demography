@@ -1,0 +1,308 @@
+---
+title: "Ant Transition Matrix"
+author: "Ali Campbell"
+date: "9/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lme4)
+library(nnet)
+library(fixest)
+library(mlogit)
+library(dfidx)
+library(effects)
+```
+
+```{r read_data}
+#import the data
+cactus <- read.csv("cholla_demography_20042019.csv", header = TRUE)
+#str(cactus) ##<- problem: antcount is a factor
+#levels(cactus$Antcount_t);levels(cactus$Antcount_t1)
+## drop the offending rows -- this is a 2019 data entry problem
+cactus <- cactus[-c(which(cactus$Antcount_t=="2-Jan"),which(cactus$Antcount_t1=="2-Jan")),]
+cactus$antcount_t <- as.numeric(as.character(cactus$Antcount_t))
+cactus$antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
+```
+
+##Data Filtering
+```{r volume}
+## function for the volume of a cone
+
+volume <- function(h, w, p){
+  (1/3)*pi*h*(((w + p)/2)/2)^2
+}
+invlogit <- function(x){exp(x)/(1+exp(x))}
+
+#Create volume columns
+cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
+cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
+
+#hist(log(cactus$volume_t))
+```
+
+```{r year_t_ants}
+## assign ant counts of zero as vacant
+cactus$Antsp_t[cactus$antcount_t==0] <- "vacant"
+# here are the ordered levels of the current variable
+Antsp_t_levels <- levels(cactus$Antsp_t)
+# here is how I would like to collapse these into fewer bins -- most will be "other"
+ant_t_levels <- rep("other",times=length(Antsp_t_levels))
+## crem levels - elements 5,8,9
+ant_t_levels[c(5,8,9)] <- "crem"
+## liom levels - elements 15,18,19,20,21
+ant_t_levels[c(15,18,19,20,21)] <- "liom"
+## forelius levels - 12,13
+ant_t_levels[c(12,13)] <- "for"
+## vacant - 31
+ant_t_levels[31] <- "vacant"
+## create new variable merging levels as above
+cactus$ant_t <- factor(cactus$Antsp_t,levels=Antsp_t_levels,labels=ant_t_levels)
+summary(cactus$ant_t) ## there are too many "others". check these out.
+filter(cactus,ant_t=="other")
+## first, there are no ant data from 2007:
+cactus$Antcount_t[cactus$Year_t==2007]
+#so give these observations NA for ant status:
+cactus$ant_t[cactus$Year_t==2007] <- NA
+# also, if a plant was new in year t+1 it's year t ant status should be NA
+cactus$ant_t[cactus$Newplant==1] <- NA
+# plots 7 and 8 were added in 2011, so their year_t==2010 ant status should be NA
+cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==7] <- NA
+cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==8] <- NA
+# check to see how many others this leaves -- still a lot
+summary(cactus$ant_t)
+## another 2019 data entry problem: new plants were not given Newplant==1 and their Survival is 0 (should be NA)
+## for now here is my workaround: year t ==2018, height_t ==NA, height_t1 !=NA
+cactus$ant_t[cactus$Year_t==2018 & is.na(cactus$Height_t) & !is.na(cactus$Height_t1)] <- NA
+## finally there are these plants with Antsp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
+cactus$ant_t[cactus$Antsp_t==""]<-NA
+## inspect the "others" visually
+cactus %>% filter(ant_t=="other") %>% select(Antsp_t,ant_t)
+## I am satisfied that everything assigned other is correctly assigned
+
+```
+
+```{r ant_time_series}
+## plot a time series of ant frequency by year
+ant_freq_ts <- cactus %>% 
+  select(Year_t,ant_t) %>% 
+  drop_na() %>% 
+  group_by(Year_t,ant_t) %>% 
+  summarise(n = n()) %>% 
+  mutate(freq = n / sum(n))
+
+plot(ant_freq_ts$Year_t[ant_freq_ts$ant_t=="vacant"],ant_freq_ts$freq[ant_freq_ts$ant_t=="vacant"],type="b",ylim=c(0,1),pch=16,cex=1.5,
+     xlab="Year",ylab="Frequency")
+legend("topleft",legend=c("Vacant","Liom.","Crem.","For.","Other"),pch=16,col=c("black","blue","red","green","pink"))
+points(ant_freq_ts$Year_t[ant_freq_ts$ant_t=="liom"],ant_freq_ts$freq[ant_freq_ts$ant_t=="liom"],type="b",pch=16,cex=1.5,col="blue")
+points(ant_freq_ts$Year_t[ant_freq_ts$ant_t=="crem"],ant_freq_ts$freq[ant_freq_ts$ant_t=="crem"],type="b",pch=16,cex=1.5,col="red")
+points(ant_freq_ts$Year_t[ant_freq_ts$ant_t=="for"],ant_freq_ts$freq[ant_freq_ts$ant_t=="for"],type="b",pch=16,cex=1.5,col="green")
+points(ant_freq_ts$Year_t[ant_freq_ts$ant_t=="other"],ant_freq_ts$freq[ant_freq_ts$ant_t=="other"],type="b",pch=16,cex=1.5,col="pink")
+
+```
+
+
+```{r year_t1_ants}
+## assign ant counts of zero as vacant
+cactus$Antsp_t1[cactus$antcount_t1==0] <- "vacant"
+## repeat for t1 -- these indices are different
+Antsp_t1_levels <- levels(cactus$Antsp_t1)
+# here is how I would like to collapse these into fewer bins -- most will be "other"
+ant_t1_levels <- rep("other",times=length(Antsp_t1_levels))
+## crem levels 
+ant_t1_levels[c(8,9,10)] <- "crem"
+## liom levels 
+ant_t1_levels[c(19,20,21,22)] <- "liom"
+## forelius levels 
+ant_t1_levels[c(13,14,15)] <- "for"
+## vacant 
+ant_t1_levels[32] <- "vacant"
+## create new variable merging levels as above
+cactus$ant_t1 <- factor(cactus$Antsp_t1,levels=Antsp_t1_levels,labels=ant_t1_levels)
+summary(cactus$ant_t1) ## there are too many "others" -- same deal as above
+## first, there are no ant data from 2007 so give these observations NA for ant status:
+cactus$ant_t1[cactus$Year_t1==2007] <- NA
+# check to see how many others this leaves -- still a lot
+summary(cactus$ant_t1)
+## another 2019 data entry problem: new plants were not given Newplant==1 and their Survival is 0 (should be NA)
+## for now here is my workaround: year t ==2018, height_t ==NA, height_t1 !=NA
+cactus$ant_t[cactus$Year_t==2018 & is.na(cactus$Height_t) & !is.na(cactus$Height_t1)] <- NA
+## finally there are these plants with Antsp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
+cactus$ant_t[cactus$Antsp_t==""]<-NA
+## inspect the "others" visually
+cactus %>% filter(ant_t=="other") %>% select(Antsp_t,ant_t)
+## I am satisfied that everything assigned other is correctly assigned
+
+```
+
+
+##Ant Transition Matrix
+#### Hard-Coded Matrix
+```{r}
+transMat <- as.data.frame(prop.table(with(cactus, table(cactus$bin1, cactus$bin2)), 2))
+
+Transitions <- matrix(c(0.66064710	, 0.04138450	, 0.01504891	, 0.27012792	, 0.01279157 ,	0.14760148	, 0.29889299	, 0.01660517	, 0.50553506	, 0.03136531	, 0.27131783	, 0.09302326	, 0.06201550	, 0.50387597	, 0.06976744	, 0.21302405	, 0.06086401	, 0.01532241	, 0.69035965	, 0.02042988	, 0.27950311	, 0.21118012	, 0.03105590	, 0.43478261	, 0.04347826),ncol = 5, nrow = 5, byrow = FALSE)
+#Transitions
+#colSums(Transitions)
+```
+
+#### Not Hard-Coded matrix
+```{r}
+# If you have for example a matrix like this
+m <- matrix(c(1:25), ncol=5, nrow=5)
+
+for(i in 1:5){
+  for(j in 1:5){
+    m[i,j] <- transMat[i,3]
+  }
+}
+```
+
+
+##Plot Survival by Volume probability Data
+```{r}
+plot(log(cactus$volume_t),cactus$Survival_t1)
+
+survival_plot <- cactus %>% 
+  mutate(size_bin = cut_interval(log(volume_t),10)) %>%
+  group_by(size_bin) %>%
+  summarise(mean_size = mean(log(volume_t),na.rm=T),
+    surv = mean(Survival_t1,na.rm=T))
+
+years <- unique(cactus$Year_t)
+n_years <- length(years)
+points(survival_plot$mean_size,survival_plot$surv,pch=16,cex=2,col="red")
+
+```
+
+## Vital Rate Plots
+#### Survival Rate
+
+Three models were considered here. First A simple survival vs log(volume) model. This had an AIC value of 2380.825.  The second included a second explanatory variable of the ant species (as an independent variable). This had an AIC vaue of 2474.975/ The third included the ant species variable as an interaction term with the volume. This had an AIC value of 2378.601, which is a difference greater than 2, and therefore is a satistically supported improvement. 
+```{r}
+surv_model <- glm(Survival_t1 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus)
+surv_model_ant <- glm(Survival_t1 ~ 0 + log(volume_t) + as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+surv_model_ant_interact <- glm(Survival_t1 ~ 0 + log(volume_t) * as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+```
+
+```{r}
+#plot the basic surv_model with plot
+plot(log(cactus$volume_t),cactus$Survival_t1)
+size_dummy <- seq(min(log(cactus$volume_t),na.rm=T),max(log(cactus$volume_t),na.rm=T),0.01)
+lines(size_dummy,invlogit(coef(surv_model)[1] + coef(surv_model)[2]*size_dummy), lwd=3, col="red")
+#now with ggplot
+ggplot(cactus, aes(y=cactus$Survival_t1, x=log(cactus$volume_t))) +  geom_point() +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+This includes an ant interaction term
+```{r}
+surv_model_ant_interact <- glm(Survival_t1 ~ 0 + 0 + log(volume_t) * as.factor(bin1),
+                  family="binomial",
+                  data=cactus)
+
+#anova(surv_model_ant_interact, test = "Chisq")
+#summary(surv_model_ant_interact)
+```
+
+```{r}
+ggplot(cactus, aes(y=Survival_t1, x=log(volume_t), col=as.factor(bin1))) +  geom_point(alpha = 0.1) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+#### Flowering Model
+```{r}
+flo_model <- glm(Goodbuds_t > 0 ~ log(volume_t),
+                  family="binomial",
+                  data=cactus)
+
+cactus$Flow <- cactus$Goodbuds_t > 0 #blank column 
+for(i in 1:8189){
+  if(cactus$TotFlowerbuds_t[i] == NA){
+    cactus$Flow[i] <- sum(cactus$ABFlowerbuds_t[i]+cactus$Goodbuds_t[i])
+  }
+  else if(cactus$TotFlowerbuds_t[i] == 0){
+    cactus$Flow[i] <- 0
+  }
+  else if(cactus$TotFlowerbuds_t[i] >0){
+    cactus$Flow[i] <- 1
+  }
+}
+
+cactus$Flow
+ggplot(cactus, aes(y=Flow, x=log(volume_t))) +  geom_point() +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+
+plot(log(cactus$volume_t),cactus$Flow)
+```
+
+#### Growth Model
+```{r}
+gro_model_ant_interact <- glm(log(volume_t1) ~ 0 + log(volume_t) * as.factor(bin1),
+                  data=cactus)
+
+ggplot(cactus, aes(y=log(volume_t1), x=log(volume_t), col=as.factor(bin1))) +  geom_point(alpha = 0) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', se = FALSE) 
+```
+## Ant Transition Model
+```{r}
+ant_trans_model <- glm(as.factor(bin2) ~ 0 + as.factor(bin1),family = binomial,data=cactus)
+ggplot(cactus, aes(y=as.factor(bin2), x=as.factor(bin1), col=as.factor(bin1))) +  geom_point(alpha = 0.9) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+```
+
+```{r}
+ant_trans_size_model <- glm(as.factor(bin2) ~ 0 + as.factor(bin1) + log(volume_t),family = binomial,data=cactus)
+ant_trans_size_model2 <- glm(as.factor(bin2) ~ 0 + as.factor(bin1) * log(volume_t),family = binomial,data=cactus)
+#AIC(ant_trans_model)
+#AIC(ant_trans_size_model)
+#AIC(ant_trans_size_model2)
+##Therefore we can see that the interaction transition model is the best. And that Size is an important factor.
+summary(ant_trans_size_model2)
+ggplot(cactus, aes(y=as.factor(bin2), x=as.factor(bin1)*log(volume_t), col=as.factor(bin1))) +  geom_point(alpha = 0.9) +
+  geom_smooth(data=cactus, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
+#model.matrix(ant_trans_size_model2)
+```
+
+
+
+## Multinomial Models
+
+```{r}
+#Will be ant vs size
+x1 <- factor(as.factor(cactus$bin1), levels = c("5","1","2","3","4"))
+m1 <- multinom(as.factor(cactus$bin1) ~ 0+ 1, data = cactus)
+m2 <- multinom(x1 ~ 1, data = cactus)
+z1<- summary(m1)$coefficients/summary(m1)$standard.errors
+z2<- summary(m2)$coefficients/summary(m2)$standard.errors
+summary(m1)
+summary(m2)
+#coef(m1)
+#coef(m2)
+p1 <- (1 - pnorm(abs(z1), 0, 1)) * 2
+p2 <- (1 - pnorm(abs(z2), 0, 1)) * 2
+ggplot(cactus, aes(x = cactus$bin2, y = cactus$bin1, colour = cactus$bin1)) + geom_line() 
+#model.matrix(m1)s
+```
+
+
+```{r}
+#Will be ant vs ant
+m2 <- multinom(as.factor(bin1) ~ 0+as.factor(bin2), data = cactus)
+z<- summary(m2)$coefficients/summary(m2)$standard.errors
+#summary(m2)
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
+ggplot(cactus, aes(x = bin2, y = bin1, colour = bin1)) + geom_line()
+#model.matrix(m2)
+```
+
+
+
