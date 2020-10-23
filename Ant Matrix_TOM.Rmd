@@ -246,4 +246,29 @@ summary(ant_transition_models[[5]])
 
 ```
 
+```{r ant_size_distributions}
+plot(density(log(cactus$volume_t[cactus$ant_t=="vacant"]),na.rm=T),type="l",lwd=2,ylim=c(0,0.3))
+lines(density(log(cactus$volume_t[cactus$ant_t=="liom"]),na.rm=T),type="l",lwd=2,col="blue")
+lines(density(log(cactus$volume_t[cactus$ant_t=="crem"]),na.rm=T),type="l",lwd=2,col="red")
+lines(density(log(cactus$volume_t[cactus$ant_t=="for"]),na.rm=T),type="l",lwd=2,col="green")
+lines(density(log(cactus$volume_t[cactus$ant_t=="other"]),na.rm=T),type="l",lwd=2,col="pink")
+
+
+par(mfrow=c(2,3))
+plot(density(log(cactus$volume_t[cactus$ant_t=="vacant"]),na.rm=T))
+points(log(cactus$volume_t[cactus$ant_t=="vacant"]),
+       rep(0,times=length(log(cactus$volume_t[cactus$ant_t=="vacant"]))),pch="|")
+plot(density(log(cactus$volume_t[cactus$ant_t=="liom"]),na.rm=T))
+points(log(cactus$volume_t[cactus$ant_t=="liom"]),
+       rep(0,times=length(log(cactus$volume_t[cactus$ant_t=="liom"]))),pch="|")
+plot(density(log(cactus$volume_t[cactus$ant_t=="crem"]),na.rm=T))
+points(log(cactus$volume_t[cactus$ant_t=="crem"]),
+       rep(0,times=length(log(cactus$volume_t[cactus$ant_t=="crem"]))),pch="|")
+plot(density(log(cactus$volume_t[cactus$ant_t=="for"]),na.rm=T))
+points(log(cactus$volume_t[cactus$ant_t=="for"]),
+       rep(0,times=length(log(cactus$volume_t[cactus$ant_t=="for"]))),pch="|")
+plot(density(log(cactus$volume_t[cactus$ant_t=="other"]),na.rm=T))
+points(log(cactus$volume_t[cactus$ant_t=="other"]),
+       rep(0,times=length(log(cactus$volume_t[cactus$ant_t=="other"]))),pch="|")
+```
 
