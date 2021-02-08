@@ -1,0 +1,192 @@
+---
+title: "Mixed Models Stan"
+author: "Ali Campbell"
+date: "2/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(rstanarm)
+library(brms)  # for models
+library(tidyverse)
+library(rstan)
+library(StanHeaders)
+library(shinystan)
+library(bayesplot)
+library(devtools)
+library(tidyr)
+library(lattice)
+library(lme4)
+library(dplyr)
+library(tidyverse)
+library(nnet)
+library(fixest)
+library(mlogit)
+library(dfidx)
+library(effects)
+library(bbmle)
+library(magrittr)
+library(Gmisc)
+library(RColorBrewer)
+library(ggeffects)
+library(heplots)
+library("posterior")
+#library(sjPlot)
+knitr::opts_chunk$set(echo = TRUE)
+options(mc.cores = parallel::detectCores())
+setwd("/Users/alicampbell/Box Sync/Grad/Cactus/Shared Code/ant_cactus_demography/Stan")
+```
+
+#### Data
+
+```{r}
+data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1")]
+data <- na.omit(data)
+data$ant <- as.integer(data$ant_t)
+## add columns for each ant classification so they can be binary
+data$crem <- 0 ##2
+data$liom <- 0 ##3
+data$other <- 0 ##1
+data$vacant <- 0 ##4
+for(i in 1:nrow(data)){
+  if(data$ant[i] == 1){data$other[i] <- 1}
+  if(data$ant[i] == 2){data$crem[i] <- 1}
+  if(data$ant[i] == 3){data$liom[i] <- 1}
+  if(data$ant[i] == 4){data$vacant[i] <- 1}
+}
+```
+
+
+#### Mixed models
+```{r growth}
+## Write in Data
+vol <- log(data$volume_t)
+vol1 <- log(data$volume_t1)
+ant <- as.numeric(data$ant_t)
+plot <- as.factor(data$Plot)
+year <- data$Year_t
+y <- log(data$Survival_t1)
+N <- length(data$volume_t)
+K <- unique(data$ant_t)
+J <- unique(data$Plot)
+L <- unique(data$Year_t)
+## Now make it a dataframe
+stan_data <- list(N = N, vol = vol, vol1 = vol1, y = y, ant = ant, K = K, J = J, L = L)
+write("// Stan model for simple linear regression
+
+data {
+  int <lower = 0> N; // number of observations
+  int <lower = 0> K; // number of ant species
+  real < lower = 0 > vol[N]; // volume t
+  real < lower = 0 > vol1[N]; // volume t1
+  int < lower = 0 > ant[K]; // ants
+  int <lower=0,upper=1> y[N]; // outcome vector
+  real rt[N];
+  int<lower=1> J; //number of plots
+  int<lower=1> L; //number of years
+  int<lower=1, upper=J> plot[N]; // plot
+  int<lower=1, upper=L> year[N]; // year
+}
+
+parameters {
+  real alpha; // intercept
+  vector[K] beta; // coefficients for ants
+  vector[J] u; //subject intercepts
+  vector[L] w; //item intercepts
+  real < lower = 0 > sigma; // Error SD
+  real < lower = 0 > sigma_u; // plot SD
+  real < lower = 0 > sigma_w; // year SD
+}
+
+transformed parameters {
+  real mu;
+}
+
+model {
+  // Priors
+  alpha ~ normal(0,100);
+  beta ~ normal(0,100); 
+  u ~ normal(0, sigma_u); // plot random effects
+  w ~ normal(0, sigma_w); // year random effects
+  //sigma ~ exponential(0,0);
+  // The Model
+  for (i in 1:N){
+    mu = beta[1] + u[plot[i]] + w[year[i]] //+ beta[2] * vol[i] + beta[3]*ant[i];
+    rt[i] ~ lognormal(mu, sigma_e);
+  }
+}",
+
+"grow_mixed1.stan")
+
+
+stan_model1 <- "grow_mixed1.stan"
+## Now we fit the model
+fit <- stan(file = stan_model1, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 2, thin = 1)
+fit
+```
+
+```{r}
+## Write in Data
+vol <- log(data$volume_t)
+vol1 <- log(data$volume_t1)
+ant <- as.numeric(data$ant_t)
+plot <- as.factor(data$Plot)
+year <- data$Year_t
+y <- log(data$Survival_t1)
+N <- length(data$volume_t)
+K <- as.factor(unique(data$ant_t))
+J <- unique(as.factor(data$Plot))
+L <- unique(data$Year_t)
+## Now make it a dataframe
+stan_data <- list(N = N, vol = vol, vol1 = vol1, y = y, ant = ant, K = K, J = J, L = L)
+write("// Stan model for simple mixed model growth regression
+
+data {
+  int <lower = 1> N; // number of observations
+  int <lower = 1> K; // number of ant species
+  real < lower = log(0) > vol[N]; // volume t
+  int < lower = 1 > ant[K]; // ants
+  real rt[N]; // response variable
+  int < lower=1 > J; //number of plots
+  int < lower=1 > L; //number of years
+  int < lower=1, upper=J > plot[N]; // plot
+  int < lower=1, upper=L > year[N]; // year
+}
+
+parameters {
+  real alpha; // intercept
+  vector[N] beta; // coefficients for ants
+  vector[J] u; //subject intercepts
+  vector[L] w; //item intercepts
+  real < lower = 0 > sigma; // Error SD
+  real < lower = 0 > sigma_u; // plot SD
+  real < lower = 0 > sigma_w; // year SD
+}
+
+transformed parameters {
+  real mu[N];
+  for (i in 1:N)
+    mu[i] = beta[1] + u[plot[i]] + w[year[i]]+ beta[2] * vol[i] + beta[3]*ant[i];
+}
+
+model {
+  // Priors
+  alpha ~ normal(0,100);
+  beta ~ normal(0,100); 
+  u ~ normal(0, sigma_u); // plot random effects
+  w ~ normal(0, sigma_w); // year random effects
+  //sigma ~ exponential(0,0);
+  // The Model
+  for(i in 1:N)
+    rt[i] ~ lognormal(mu[i], sigma);
+}",
+
+"grow_mixed1.stan")
+
+
+stan_model1 <- "grow_mixed1.stan"
+## Now we fit the model
+fit <- stan(file = stan_model1, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 2, thin = 1)
+fit
+```
+
