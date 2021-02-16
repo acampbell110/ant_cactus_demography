@@ -40,7 +40,7 @@ setwd("/Users/alicampbell/Box Sync/Grad/Cactus/Shared Code/ant_cactus_demography
 #### Data
 
 ```{r}
-data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1")]
+data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","repro_state_t1")]
 data <- na.omit(data)
 data$ant <- as.integer(data$ant_t)
 ## add columns for each ant classification so they can be binary
@@ -54,139 +54,560 @@ for(i in 1:nrow(data)){
   if(data$ant[i] == 3){data$liom[i] <- 1}
   if(data$ant[i] == 4){data$vacant[i] <- 1}
 }
+data$Year_t <- as.factor(data$Year_t)
+data$year <- as.integer(data$Year_t)
+data$Plot <- as.factor(data$Plot)
+data$plot <- as.integer(data$Plot)
+
+flower <- cactus[ , c("TotFlowerbuds_t","ABFlowerbuds_t","Goodbuds_t","ant_t", "repro_state_t1","volume_t","volume_t1", "Year_t", "Plot")]
+flower <- na.omit(flower)
+flower$ant <- as.integer(flower$ant_t)
+flower$Year_t <- as.factor(flower$Year_t)
+flower$year <- as.integer(flower$Year_t)
+flower$Plot <- as.factor(flower$Plot)
+flower$plot <- as.integer(flower$Plot)
 ```
 
 
-#### Mixed models
-```{r growth}
-## Write in Data
-vol <- log(data$volume_t)
-vol1 <- log(data$volume_t1)
-ant <- as.numeric(data$ant_t)
-plot <- as.factor(data$Plot)
-year <- data$Year_t
-y <- log(data$Survival_t1)
-N <- length(data$volume_t)
-K <- unique(data$ant_t)
-J <- unique(data$Plot)
-L <- unique(data$Year_t)
-## Now make it a dataframe
-stan_data <- list(N = N, vol = vol, vol1 = vol1, y = y, ant = ant, K = K, J = J, L = L)
-write("// Stan model for simple linear regression
-
-data {
-  int <lower = 0> N; // number of observations
-  int <lower = 0> K; // number of ant species
-  real < lower = 0 > vol[N]; // volume t
-  real < lower = 0 > vol1[N]; // volume t1
-  int < lower = 0 > ant[K]; // ants
-  int <lower=0,upper=1> y[N]; // outcome vector
-  real rt[N];
-  int<lower=1> J; //number of plots
-  int<lower=1> L; //number of years
-  int<lower=1, upper=J> plot[N]; // plot
-  int<lower=1, upper=L> year[N]; // year
-}
-
-parameters {
-  real alpha; // intercept
-  vector[K] beta; // coefficients for ants
-  vector[J] u; //subject intercepts
-  vector[L] w; //item intercepts
-  real < lower = 0 > sigma; // Error SD
-  real < lower = 0 > sigma_u; // plot SD
-  real < lower = 0 > sigma_w; // year SD
-}
-
-transformed parameters {
-  real mu;
-}
-
-model {
-  // Priors
-  alpha ~ normal(0,100);
-  beta ~ normal(0,100); 
-  u ~ normal(0, sigma_u); // plot random effects
-  w ~ normal(0, sigma_w); // year random effects
-  //sigma ~ exponential(0,0);
-  // The Model
-  for (i in 1:N){
-    mu = beta[1] + u[plot[i]] + w[year[i]] //+ beta[2] * vol[i] + beta[3]*ant[i];
-    rt[i] ~ lognormal(mu, sigma_e);
-  }
-}",
-
-"grow_mixed1.stan")
-
-
-stan_model1 <- "grow_mixed1.stan"
-## Now we fit the model
-fit <- stan(file = stan_model1, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 2, thin = 1)
-fit
-```
-
-```{r}
-## Write in Data
-vol <- log(data$volume_t)
-vol1 <- log(data$volume_t1)
-ant <- as.numeric(data$ant_t)
-plot <- as.factor(data$Plot)
-year <- data$Year_t
-y <- log(data$Survival_t1)
-N <- length(data$volume_t)
-K <- as.factor(unique(data$ant_t))
-J <- unique(as.factor(data$Plot))
-L <- unique(data$Year_t)
-## Now make it a dataframe
-stan_data <- list(N = N, vol = vol, vol1 = vol1, y = y, ant = ant, K = K, J = J, L = L)
-write("// Stan model for simple mixed model growth regression
+#### Growth
+```{r Growth Model}
+vol = data$volume_t
+y = data$volume_t1
+N = nrow(data)
+N_ant = 4
+ant = data$ant
+N_Year <- max(data$year)
+N_Plot <- max(data$plot)
+plot <- data$plot
+year <- data$year
+stan_data <- list(N = N, ## number of observations
+                  vol = vol, ## predictors volume
+                  y = y, ## response volume next year
+                  ant = ant,## predictors ants
+                  N_ant = N_ant, ## number of ant states
+                  N_Year = N_Year, ## number of years
+                  N_Plot = N_Plot, ## number of plots
+                  plot = plot, ## predictor plots
+                  year = year ## predictor years
+                  ) 
+## Write the model in stan
+#note that we are using flat priors here which are non restrictive
+write("// Stan model for simple growth regression
 
 data {
   int <lower = 1> N; // number of observations
-  int <lower = 1> K; // number of ant species
-  real < lower = log(0) > vol[N]; // volume t
-  int < lower = 1 > ant[K]; // ants
-  real rt[N]; // response variable
-  int < lower=1 > J; //number of plots
-  int < lower=1 > L; //number of years
-  int < lower=1, upper=J > plot[N]; // plot
-  int < lower=1, upper=L > year[N]; // year
+  int <lower = 1> N_ant; // number of ant states
+  int <lower = 1, upper = N_ant> ant[N]; // the list of ant species 
+  vector[N] vol;	//size_t
+  vector[N] y; // size_t1
+  int<lower=1> N_Year; //number of plots
+  int<lower=1> N_Plot; //number of years
+  int<lower=1, upper=N_Plot> plot[N]; // plot
+  int<lower=1, upper=N_Year> year[N]; // year
 }
-
 parameters {
-  real alpha; // intercept
-  vector[N] beta; // coefficients for ants
-  vector[J] u; //subject intercepts
-  vector[L] w; //item intercepts
+  vector[N_ant] beta0; //intercept, unique to ant sp
+  vector[N_ant] beta1; //slope, unique to ant sp
+  vector[N_Plot] u; //subject intercepts
+  vector[N_Year] w; //item intercepts
   real < lower = 0 > sigma; // Error SD
   real < lower = 0 > sigma_u; // plot SD
   real < lower = 0 > sigma_w; // year SD
 }
 
-transformed parameters {
-  real mu[N];
-  for (i in 1:N)
-    mu[i] = beta[1] + u[plot[i]] + w[year[i]]+ beta[2] * vol[i] + beta[3]*ant[i];
+transformed parameters{
+  vector[N] mu; //linear predictor for the mean
+  for(i in 1:N){
+    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[year[i]];
+  }
 }
 
 model {
-  // Priors
-  alpha ~ normal(0,100);
-  beta ~ normal(0,100); 
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
-  //sigma ~ exponential(0,0);
-  // The Model
-  for(i in 1:N)
-    rt[i] ~ lognormal(mu[i], sigma);
+  beta0 ~ normal(0,100); // intercept distribution
+  beta1 ~ normal(0,100); // slope distribution
+  for(i in 1:N){
+    y[i] ~ lognormal(mu[i], sigma);
+  }
 }",
 
-"grow_mixed1.stan")
-
-
-stan_model1 <- "grow_mixed1.stan"
+"grow_ant_mix_lm1.stan")
+## Check that you wrote a file
+stanc("grow_ant_mix_lm1.stan")
+## Save the file path
+#stanny <- "grow_ant_mix_lm1.stan"
 ## Now we fit the model
-fit <- stan(file = stan_model1, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 2, thin = 1)
-fit
+fit_grow_mix_ant <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
+fit_grow_mix_ant
+#class(fit)
+posterior_grow_mix_ant <- as.data.frame(fit_grow_mix_ant)
+print(colnames(posterior_grow_mix_ant))
+lm_alpha_other <- summary(grow_model_ant_interact)$coeff[1]  # the intercept
+lm_alpha_crem <- summary(grow_model_ant_interact)$coeff[3]
+lm_alpha_liom <- summary(grow_model_ant_interact)$coeff[4]
+lm_alpha_vacant <- summary(grow_model_ant_interact)$coeff[5]
+lm_beta_other <- summary(grow_model_ant_interact)$coeff[2]  # the slope
+lm_beta_crem <- summary(grow_model_ant_interact)$coeff[6]
+lm_beta_liom <- summary(grow_model_ant_interact)$coeff[7]
+lm_beta_vacant <- summary(grow_model_ant_interact)$coeff[8]
+lm_sigma <- sigma(grow_model_ant_interact)  # the residual error
+
+par(mfrow = c(2,4))
+#Plot Intercepts
+plot(density(posterior_grow_mix_ant$`beta0[1]`), main = "Intercept Other")
+abline(v = lm_alpha_other, col = 4, lty = 2)
+plot(density(posterior_grow_mix_ant$`beta0[2]`), main = "Intercept Crem")
+abline(v = lm_alpha_crem, col = 4, lty = 2)
+plot(density(posterior_grow_mix_ant$`beta0[3]`), main = "Intercept Liom")
+abline(v = lm_alpha_liom, col = 4, lty = 2)
+plot(density(posterior_grow_mix_ant$`beta0[4]`), main = "Intercept Vacant")
+abline(v = lm_alpha_vacant, col = 4, lty = 2)
+#Plot Slopes
+plot(density(posterior_grow_mix_ant$`beta1[1]`), main = "Intercept Other")
+abline(v = lm_beta_other, col = 4, lty = 2)
+plot(density(posterior_grow_mix_ant$`beta1[2]`), main = "Intercept Crem")
+abline(v = lm_beta_crem, col = 4, lty = 2)
+plot(density(posterior_grow_mix_ant$`beta1[3]`), main = "Intercept Liom")
+abline(v = lm_beta_liom, col = 4, lty = 2)
+plot(density(posterior_grow_mix_ant$`beta1[4]`), main = "Intercept Vacant")
+abline(v = lm_beta_vacant, col = 4, lty = 2)
+#Sigma
+plot(density(posterior_grow_mix_ant$sigma), main = "Sigma")
+abline(v = lm_sigma, col = 4, lty = 2)
 ```
 
+####Survival
+```{r survival}
+vol = data$volume_t
+y = data$Survival_t1
+N = nrow(data)
+N_ant = 4
+ant = data$ant
+N_Year <- max(data$year)
+N_Plot <- max(data$plot)
+plot <- data$plot
+year <- data$year
+stan_data <- list(N = N, ## number of observations
+                  vol = vol, ## predictors volume
+                  y = y, ## response volume next year
+                  ant = ant,## predictors ants
+                  N_ant = N_ant, ## number of ant states
+                  N_Year = N_Year, ## number of years
+                  N_Plot = N_Plot, ## number of plots
+                  plot = plot, ## predictor plots
+                  year = year ## predictor years
+                  ) 
+
+write("// Stan model for simple ant survival regression
+
+data {
+  int <lower = 1> N; // number of observations
+  int <lower = 1> N_ant; // number of ant states
+  int <lower = 1, upper = N_ant> ant[N]; // the list of ant species 
+  vector[N] vol;	//size_t
+  int <lower = 0, upper = 1> y[N]; // survival in year t1
+  int<lower=1> N_Year; //number of plots
+  int<lower=1> N_Plot; //number of years
+  int<lower=1, upper=N_Plot> plot[N]; // plot
+  int<lower=1, upper=N_Year> year[N]; // year
+}
+
+parameters {
+  vector[N_ant] beta0; //intercept, unique to ant sp
+  vector[N_ant] beta1; //slope, unique to ant sp
+  vector[N_Plot] u; //subject intercepts
+  vector[N_Year] w; //item intercepts
+  real < lower = 0 > sigma; // Error SD
+  real < lower = 0 > sigma_u; // plot SD
+  real < lower = 0 > sigma_w; // year SD
+}
+
+transformed parameters{
+  vector[N] mu; //linear predictor for the mean
+  for(i in 1:N){
+    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[year[i]];
+  }
+}
+
+model {
+//Priors
+ u ~ normal(0, sigma_u); // plot random effects
+ w ~ normal(0, sigma_w); // year random effects
+ beta0 ~ normal(0,100); // intercept distribution
+ beta1 ~ normal(0,100); // slope distribution
+ //Model
+ for(i in 1:N){
+ y[i] ~ bernoulli_logit(mu[i]);
+ }
+}
+",
+
+"surv_ant_mix_lm1.stan")
+## Check that you wrote a file
+stanc("surv_ant_mix_lm1.stan")
+## Save the file path
+stanny <- "surv_ant_mix_lm1.stan"
+## Now we fit the model
+fit_surv_mix_ant <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
+fit_surv_mix_ant
+
+#class(fit)
+posterior_surv_mix_ant <- as.data.frame(fit_surv_mix_ant)
+print(colnames(posterior_surv_mix_ant))
+lm_alpha_other <- summary(surv_model_ant_interact)$coeff[1]  # the intercept
+lm_alpha_crem <- summary(surv_model_ant_interact)$coeff[3]
+lm_alpha_liom <- summary(surv_model_ant_interact)$coeff[4]
+lm_alpha_vacant <- summary(surv_model_ant_interact)$coeff[5]
+lm_beta_other <- summary(surv_model_ant_interact)$coeff[2]  # the slope
+lm_beta_crem <- summary(surv_model_ant_interact)$coeff[6]
+lm_beta_liom <- summary(surv_model_ant_interact)$coeff[7]
+lm_beta_vacant <- summary(surv_model_ant_interact)$coeff[8]
+lm_sigma <- sigma(surv_model_ant_interact)  # the residual error
+
+par(mfrow = c(2,4))
+#Plot Intercepts
+plot(density(posterior_surv_mix_ant$`beta0[1]`), main = "Intercept Other")
+abline(v = lm_alpha_other, col = 4, lty = 2)
+plot(density(posterior_surv_mix_ant$`beta0[2]`), main = "Intercept Crem")
+abline(v = lm_alpha_crem, col = 4, lty = 2)
+plot(density(posterior_surv_mix_ant$`beta0[3]`), main = "Intercept Liom")
+abline(v = lm_alpha_liom, col = 4, lty = 2)
+plot(density(posterior_surv_mix_ant$`beta0[4]`), main = "Intercept Vacant")
+abline(v = lm_alpha_vacant, col = 4, lty = 2)
+#Plot Slopes
+plot(density(posterior_surv_mix_ant$`beta1[1]`), main = "Intercept Other")
+abline(v = lm_beta_other, col = 4, lty = 2)
+plot(density(posterior_surv_mix_ant$`beta1[2]`), main = "Intercept Crem")
+abline(v = lm_beta_crem, col = 4, lty = 2)
+plot(density(posterior_surv_mix_ant$`beta1[3]`), main = "Intercept Liom")
+abline(v = lm_beta_liom, col = 4, lty = 2)
+plot(density(posterior_surv_mix_ant$`beta1[4]`), main = "Intercept Vacant")
+abline(v = lm_beta_vacant, col = 4, lty = 2)
+#Sigma
+plot(density(posterior_surv_mix_ant$sigma), main = "Sigma")
+abline(v = lm_sigma, col = 4, lty = 2)
+```
+
+####Total Flowers
+
+```{r total flowers}
+y <- flower$TotFlowerbuds_t
+vol = flower$volume_t
+N = nrow(flower)
+N_ant = 4
+ant = flower$ant
+N_Year <- max(flower$year)
+N_Plot <- max(flower$plot)
+plot <- flower$plot
+year <- flower$year
+stan_data <- list(N = N, ## number of observations
+                  vol = vol, ## predictors volume
+                  y = y, ## response volume next year
+                  ant = ant,## predictors ants
+                  N_ant = N_ant, ## number of ant states
+                  N_Year = N_Year, ## number of years
+                  N_Plot = N_Plot, ## number of plots
+                  plot = plot, ## predictor plots
+                  year = year ## predictor years
+                  ) 
+
+write("// Stan model for simple total flowers regression
+
+data {
+ int <lower = 1> N; // number of observations
+  int <lower = 1> N_ant; // number of ant states
+  int <lower = 1, upper = N_ant> ant[N]; // the list of ant species 
+  vector[N] vol;	//size_t
+  int <lower = 0> y[N]; // survival in year t1
+  int<lower=1> N_Year; //number of plots
+  int<lower=1> N_Plot; //number of years
+  int<lower=1, upper=N_Plot> plot[N]; // plot
+  int<lower=1, upper=N_Year> year[N]; // year
+}
+
+parameters {
+  vector[N_ant] beta0; //intercept, unique to ant sp
+  vector[N_ant] beta1; //slope, unique to ant sp
+  vector[N_Plot] u; //subject intercepts
+  vector[N_Year] w; //item intercepts
+  real < lower = 0 > sigma; // Error SD
+  real < lower = 0 > sigma_u; // plot SD
+  real < lower = 0 > sigma_w; // year SD
+}
+
+transformed parameters{
+  vector[N] mu; //linear predictor for the mean
+  for(i in 1:N){
+    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[year[i]];
+  }
+}
+model {
+ // Model
+  u ~ normal(0, sigma_u); // plot random effects
+  w ~ normal(0, sigma_w); // year random effects
+  beta0 ~ normal(0,100); // intercept distribution
+  beta1 ~ normal(0,100); // slope distribution
+  for(i in 1:N){
+    y[i] ~ poisson(mu[i]);
+  }
+}
+",
+
+"flower_ant_mix_lm1.stan")
+## Check that you wrote a file
+stanc("flower_ant_mix_lm1.stan")
+## Save the file path
+stanny <- "flower_ant_mix_lm1.stan"
+## Now we fit the model
+fit_flow_mix_ant <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
+fit_flow_mix_ant
+
+posterior_flow_ant <- as.data.frame(fit_flow_mix_ant)
+print(colnames(posterior_flow_mix_ant))
+
+lm_alpha_other <- summary(flower_model_ant)$coeff[1]  # the intercept
+lm_alpha_crem <- summary(flower_model_ant)$coeff[3]
+lm_alpha_liom <- summary(flower_model_ant)$coeff[4]
+lm_alpha_vacant <- summary(flower_model_ant)$coeff[5]
+lm_beta_other <- summary(flower_model_ant)$coeff[2]  # the slope
+lm_beta_crem <- summary(flower_model_ant)$coeff[6]
+lm_beta_liom <- summary(flower_model_ant)$coeff[7]
+lm_beta_vacant <- summary(flower_model_ant)$coeff[8]
+
+par(mfrow = c(2,4))
+#Plot Intercepts
+plot(density(posterior_flow_mix_ant$`beta0[1]`), main = "Intercept Other")
+abline(v = lm_alpha_other, col = 4, lty = 2)
+plot(density(posterior_flow_mix_ant$`beta0[2]`), main = "Intercept Crem")
+abline(v = lm_alpha_crem, col = 4, lty = 2)
+plot(density(posterior_flow_mix_ant$`beta0[3]`), main = "Intercept Liom")
+abline(v = lm_alpha_liom, col = 4, lty = 2)
+plot(density(posterior_flow_mix_ant$`beta0[4]`), main = "Intercept Vacant")
+abline(v = lm_alpha_vacant, col = 4, lty = 2)
+#Plot Slopes
+plot(density(posterior_flow_mix_ant$`beta1[1]`), main = "Intercept Other")
+abline(v = lm_beta_other, col = 4, lty = 2)
+plot(density(posterior_flow_mix_ant$`beta1[2]`), main = "Intercept Crem")
+abline(v = lm_beta_crem, col = 4, lty = 2)
+plot(density(posterior_flow_mix_ant$`beta1[3]`), main = "Intercept Liom")
+abline(v = lm_beta_liom, col = 4, lty = 2)
+plot(density(posterior_flow_mix_ant$`beta1[4]`), main = "Intercept Vacant")
+abline(v = lm_beta_vacant, col = 4, lty = 2)
+```
+
+
+####Abortion Model
+
+```{r abortion model}
+y <- cbind(flower$Goodbuds_t, flower$ABFlowerbuds_t)
+vol = flower$volume_t
+N = nrow(flower)
+N_ant = 4
+ant = flower$ant
+N_Year <- max(flower$year)
+N_Plot <- max(flower$plot)
+plot <- flower$plot
+year <- flower$year
+stan_data <- list(N = N, ## number of observations
+                  vol = vol, ## predictors volume
+                  y = y, ## response volume next year
+                  ant = ant,## predictors ants
+                  N_ant = N_ant, ## number of ant states
+                  N_Year = N_Year, ## number of years
+                  N_Plot = N_Plot, ## number of plots
+                  plot = plot, ## predictor plots
+                  year = year ## predictor years
+                  ) 
+
+write("// Stan model for simple total flowers regression
+
+data {
+  int <lower = 1> N; // number of observations
+  int <lower = 1> N_ant; // number of ant states
+  int <lower = 1, upper = N_ant> ant[N]; // the list of ant species 
+  vector[N] vol;	//size_t
+  int <lower = 0, upper = 1> y[N]; // survival in year t1
+  int<lower=1> N_Year; //number of plots
+  int<lower=1> N_Plot; //number of years
+  int<lower=1, upper=N_Plot> plot[N]; // plot
+  int<lower=1, upper=N_Year> year[N]; // year
+}
+parameters {
+  vector[N_ant] beta0; //intercept, unique to ant sp
+  vector[N_ant] beta1; //slope, unique to ant sp
+  vector[N_Plot] u; //subject intercepts
+  vector[N_Year] w; //item intercepts
+  real < lower = 0 > sigma; // Error SD
+  real < lower = 0 > sigma_u; // plot SD
+  real < lower = 0 > sigma_w; // year SD
+}
+transformed parameters{
+  vector[N] mu; //linear predictor for the mean
+  for(i in 1:N){
+    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[year[i]];
+  }
+}
+model {
+ // Priors
+  u ~ normal(0, sigma_u); // plot random effects
+  w ~ normal(0, sigma_w); // year random effects
+  beta0 ~ normal(0,100); // intercept distribution
+  beta1 ~ normal(0,100); // slope distribution
+ // Model
+ for(i in 1:N){
+  y[i] ~ bernoulli_logit(mu[i]);
+ }
+}
+",
+
+"abort_ant_mix_lm1.stan")
+## Check that you wrote a file
+stanc("abort_ant_mix_lm1.stan")
+## Save the file path
+stanny <- "abort_ant_mix_lm1.stan"
+## Now we fit the model
+fit_abort_mix_ant <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
+fit_abort_mix_ant
+
+posterior_abort_mix_ant <- as.data.frame(fit_abort_mix_ant)
+print(colnames(posterior_abort_mix_ant))
+
+lm_alpha_other <- summary(abort_model_ant)$coeff[1]  # the intercept
+lm_alpha_crem <- summary(abort_model_ant)$coeff[3]
+lm_alpha_liom <- summary(abort_model_ant)$coeff[4]
+lm_alpha_vacant <- summary(abort_model_ant)$coeff[5]
+lm_beta_other <- summary(abort_model_ant)$coeff[2]  # the slope
+lm_beta_crem <- summary(abort_model_ant)$coeff[6]
+lm_beta_liom <- summary(abort_model_ant)$coeff[7]
+lm_beta_vacant <- summary(abort_model_ant)$coeff[8]
+
+par(mfrow = c(2,4))
+#Plot Intercepts
+plot(density(posterior_abort_mix_ant$`beta0[1]`), main = "Intercept Other")
+abline(v = lm_alpha_other, col = 4, lty = 2)
+plot(density(posterior_abort_mix_ant$`beta0[2]`), main = "Intercept Crem")
+abline(v = lm_alpha_crem, col = 4, lty = 2)
+plot(density(posterior_abort_mix_ant$`beta0[3]`), main = "Intercept Liom")
+abline(v = lm_alpha_liom, col = 4, lty = 2)
+plot(density(posterior_abort_mix_ant$`beta0[4]`), main = "Intercept Vacant")
+abline(v = lm_alpha_vacant, col = 4, lty = 2)
+#Plot Slopes
+plot(density(posterior_abort_mix_ant$`beta1[1]`), main = "Intercept Other")
+abline(v = lm_beta_other, col = 4, lty = 2)
+plot(density(posterior_abort_mix_ant$`beta1[2]`), main = "Intercept Crem")
+abline(v = lm_beta_crem, col = 4, lty = 2)
+plot(density(posterior_abort_mix_ant$`beta1[3]`), main = "Intercept Liom")
+abline(v = lm_beta_liom, col = 4, lty = 2)
+plot(density(posterior_abort_mix_ant$`beta1[4]`), main = "Intercept Vacant")
+abline(v = lm_beta_vacant, col = 4, lty = 2)
+```
+
+####Repro Model
+```{r}
+vol1 <- flower$volume_t1
+y = flower$repro_state_t1
+N = nrow(flower)
+N_ant = 4
+ant = flower$ant
+N_Year <- max(flower$year)
+N_Plot <- max(flower$plot)
+plot <- flower$plot
+year <- flower$year
+stan_data <- list(N = N, ## number of observations
+                  vol1 = vol1, ## predictors volume
+                  y = y, ## response volume next year
+                  ant = ant,## predictors ants
+                  N_ant = N_ant, ## number of ant states
+                  N_Year = N_Year, ## number of years
+                  N_Plot = N_Plot, ## number of plots
+                  plot = plot, ## predictor plots
+                  year = year ## predictor years
+                  ) 
+
+
+write("// Stan model for simple total flowers regression
+
+data {
+  int <lower = 1> N; // number of observations
+  int <lower = 1> N_ant; // number of ant states
+  int <lower = 1, upper = N_ant> ant[N]; // the list of ant species 
+  vector[N] vol1;	//size_t
+  int <lower = 0, upper = 1> y[N]; // survival in year t1
+  int<lower=1> N_Year; //number of plots
+  int<lower=1> N_Plot; //number of years
+  int<lower=1, upper=N_Plot> plot[N]; // plot
+  int<lower=1, upper=N_Year> year[N]; // year
+}
+
+parameters {
+  vector[N_ant] beta0; //intercept, unique to ant sp
+  vector[N_ant] beta1; //slope, unique to ant sp
+  vector[N_Plot] u; //subject intercepts
+  vector[N_Year] w; //item intercepts
+  real < lower = 0 > sigma; // Error SD
+  real < lower = 0 > sigma_u; // plot SD
+  real < lower = 0 > sigma_w; // year SD
+}
+
+transformed parameters{
+  vector[N] mu; //linear predictor for the mean
+  for(i in 1:N){
+    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol1[i] + u[plot[i]] + w[year[i]];
+  }
+}
+model {
+ // Priors
+ `u ~ normal(0, sigma_u); // plot random effects
+  w ~ normal(0, sigma_w); // year random effects
+  beta0 ~ normal(0,100); // intercept distribution
+  beta1 ~ normal(0,100); // slope distribution
+ // Model
+ for(i in 1:N){
+  y[i] ~ bernoulli_logit(mu[i]);
+ }
+}
+",
+
+"repro_lm1.stan")
+
+## Check that you wrote a file
+stanc("repro_ant_mix_lm1.stan")
+## Save the file path
+stanny <- "repro_ant_mix_lm1.stan"
+## Now we fit the model
+fit_repro_mix_ant <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
+fit_repro_mix_ant
+
+posterior_repro_mix_ant <- as.data.frame(fit_repro_mix_ant)
+print(colnames(posterior_repro_mix_ant))
+
+lm_alpha_other <- summary(model3)$coeff[1]  # the intercept
+lm_alpha_crem <- summary(model3)$coeff[3]
+lm_alpha_liom <- summary(model3)$coeff[4]
+lm_alpha_vacant <- summary(model3)$coeff[5]
+lm_beta_other <- summary(model3)$coeff[2]  # the slope
+lm_beta_crem <- summary(model3)$coeff[6]
+lm_beta_liom <- summary(model3)$coeff[7]
+lm_beta_vacant <- summary(model3)$coeff[8]
+
+par(mfrow = c(2,4))
+#Plot Intercepts
+plot(density(posterior_repro_mix_ant$`beta0[1]`), main = "Intercept Other")
+abline(v = lm_alpha_other, col = 4, lty = 2)
+plot(density(posterior_repro_mix_ant$`beta0[2]`), main = "Intercept Crem")
+abline(v = lm_alpha_crem, col = 4, lty = 2)
+plot(density(posterior_repro_mix_ant$`beta0[3]`), main = "Intercept Liom")
+abline(v = lm_alpha_liom, col = 4, lty = 2)
+plot(density(posterior_repro_mix_ant$`beta0[4]`), main = "Intercept Vacant")
+abline(v = lm_alpha_vacant, col = 4, lty = 2)
+#Plot Slopes
+plot(density(posterior_repro_mix_ant$`beta1[1]`), main = "Intercept Other")
+abline(v = lm_beta_other, col = 4, lty = 2)
+plot(density(posterior_repro_mix_ant$`beta1[2]`), main = "Intercept Crem")
+abline(v = lm_beta_crem, col = 4, lty = 2)
+plot(density(posterior_repro_mix_ant$`beta1[3]`), main = "Intercept Liom")
+abline(v = lm_beta_liom, col = 4, lty = 2)
+plot(density(posterior_repro_mix_ant$`beta1[4]`), main = "Intercept Vacant")
+abline(v = lm_beta_vacant, col = 4, lty = 2)
+```
