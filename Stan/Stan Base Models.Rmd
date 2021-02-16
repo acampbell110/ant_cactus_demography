@@ -54,6 +54,10 @@ for(i in 1:nrow(data)){
   if(data$ant[i] == 3){data$liom[i] <- 1}
   if(data$ant[i] == 4){data$vacant[i] <- 1}
 }
+data$Year_t <- as.factor(data$Year_t)
+data$year <- as.integer(data$Year_t)
+data$Plot <- as.factor(data$Plot)
+data$plot <- as.integer(data$Plot)
 
 flower <- cactus[ , c("TotFlowerbuds_t","ABFlowerbuds_t","Goodbuds_t","ant_t", "repro_state_t1","volume_t","volume_t1")]
 flower <- na.omit(flower)
