@@ -12,7 +12,7 @@ library(tidyverse)
 library(rstan)
 library(StanHeaders)
 library(shinystan)
-library(bayesplot)
+#library(bayesplot)
 library(devtools)
 library(tidyr)
 library(lattice)
@@ -172,13 +172,17 @@ print(colnames(posterior_flow))
 plot(density(posterior_flow$lambda), main = "Lambda")
 abline(v = lm_lambda, col = 4, lty = 2)
 ```
-####Abort
-```{r abort model}
-y <- cbind(flower$Goodbuds_t, flower$ABFlowerbuds_t)
-vol = flower$volume_t
+####Viability
+```{r Viability model}
+y_good <- flower$Goodbuds_t
+y_abort <- flower$AbABFlowerbuds_t
+y_tot <- flower$TTotFlowerbuds_t
+vol = log(flower$volume_t)
 N = nrow(flower)
-stan_data <- list(N = N, ## number of observations
-                  y = y, ## response survival next year
+stan_data <- list(N = N, ## number of observations = trials
+                  y_good = y_good, ## good buds = successes
+                  y_abort = y_abort, ## aborted buds data
+                  y_tot = y_tot, ## number of trials
                   vol = vol
                   ) 
 
@@ -186,34 +190,42 @@ write("// Stan model for simple total flowers regression
 
 data {
  int < lower = 1 > N; // Sample size
- int <lower = 0, upper = 1> y[N]; // Outcome
+ int <lower = 0> y_good[N]; // Number of viable seeds
+ int<lower=0> y_tot[N]; // number of trials
  vector[N] vol;	//size_t
 }
 parameters {
   real beta0; //intercept, unique to ant sp
   real beta1; //slope, unique to ant sp
   real<lower = 0> sigma;
+  real<lower=0,upper=1> v0;
+  real<lower=0> a_v;
+}
+transformed parameters{
+  real<lower=0,upper=1> predV[n_v];
+  for(i in 1:N){
+    predV[i] = v0 * (1 - pow(SR_v[i],a_v) ) + 0.00001;
+  }
 }
 model {
  // Priors
  beta0 ~ normal(0,100);
  beta1 ~ normal(0,100); 
  // Model
- y ~ bernoulli_logit(beta0 + beta1 * vol);
+ y ~ binomial_logit(beta0 + beta1 * vol);
 }
 ",
 
-"abort_lm1.stan")
+"viab_lm1.stan")
 ## Check that you wrote a file
-stanc("abort_lm1.stan")
+stanc("vian_lm1.stan")
 ## Save the file path
-stanny <- "abort_lm1.stan"
+stanny <- "viab_lm1.stan"
 ## Now we fit the model
-fit_abort <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
-fit_abort
+fit_viab <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
 
-posterior_abort <- as.data.frame(fit_abort)
-print(colnames(posterior_abort))
+
+posterior_viab <- as.data.frame(fit_viab)
 ```
 
 
@@ -362,16 +374,16 @@ model {
 }",
 
 "grow_ant_lm1.stan")
+
 ## Check that you wrote a file
 stanc("grow_ant_lm1.stan")
 ## Save the file path
-#stanny <- "grow_ant_lm1.stan"
+stanny <- "grow_ant_lm1.stan"
 ## Now we fit the model
-fit_grow_ant <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
+fit_grow_ant <- stan(file = stanny, data = stan_data, warmup = 50, iter = 100, chains = 1, cores = 2, thin = 1)
 fit_grow_ant
 #class(fit)
 posterior_grow_ant <- as.data.frame(fit_grow_ant)
-print(colnames(posterior_grow_ant))
 lm_alpha_other <- summary(grow_model_ant_interact)$coeff[1]  # the intercept
 lm_alpha_crem <- summary(grow_model_ant_interact)$coeff[3]
 lm_alpha_liom <- summary(grow_model_ant_interact)$coeff[4]
@@ -585,90 +597,85 @@ abline(v = lm_beta_vacant, col = 4, lty = 2)
 ```
 
 
-####Abortion Model
-
-```{r abortion model}
-y <- cbind(flower$Goodbuds_t, flower$ABFlowerbuds_t)
-vol = flower$volume_t
+####Viability Model
+```{r Viability model}
+good <- flower$Goodbuds_t
+abort <- flower$ABFlowerbuds_t
+tot <- flower$TotFlowerbuds_t
+vol = log(flower$volume_t)
 N = nrow(flower)
 N_ant = 4
 ant = flower$ant
-stan_data <- list(N = N, ## number of observations
-                  y = y, ## response survival next year
-                  vol = vol,
+stan_data <- list(N = N, ## number of observations = trials
                   N_ant = N_ant,
-                  ant = ant
+                  ant = ant,
+                  good = good, ## good buds = successes
+                  abort = abort, ## aborted buds data
+                  tot = tot, ## number of trials
+                  vol = vol
 ) 
 
 write("// Stan model for simple total flowers regression
-
 data {
-  int <lower = 1> N; // number of observations
-  int <lower = 1> N_ant; // number of ant states
-  int <lower = 1, upper = N_ant> ant[N]; // the list of ant species 
-  vector[N] vol;	//size_t
-  int <lower = 0, upper = 1> y[N]; // survival in year t1
+ int < lower = 1 > N; // Sample size
+ int <lower = 0> good[N]; // Number of viable seeds
+ int <lower = 1> N_ant; // number of ant states
+ int <lower = 1, upper = N_ant> ant[N]; // the list of ant species 
+ int<lower=0> tot[N]; // number of trials
+ int<lower=0> abort[N];
+ vector[N] vol;	//size_t
 }
 parameters {
-  vector[N_ant] beta0; //intercept, unique to ant sp
-  vector[N_ant] beta1; //slope, unique to ant sp
-  real<lower = 0> sigma;
+  real <lower = 0, upper = 1> theta[N]; // probability of viability for each bud
+  //
+  real<lower=0,upper=1> v0;
+  real<lower=0> a_v;
 }
 transformed parameters{
-  vector[N] mu; //linear predictor for the mean
+  real<lower=0,upper=1> predV[N]; // proportion viable for each plant?
+  // Prediction for seed viability
   for(i in 1:N){
-    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i];
+    predV[i] = v0 * pow(theta[ant[i]],good[i]) * (1-theta[ant[i]])^abort[i] ;
   }
 }
 model {
  // Priors
- beta0 ~ normal(0,100);
- beta1 ~ normal(0,100); 
- // Model
- y ~ bernoulli_logit(mu);
+ v0  ~ beta(10,1);  // intercept viability model
+  a_v ~ gamma(1,1);  // decay in viability with SR
+  
+  good ~ binomial(tot, predV);
 }
-",
-
-"abort_ant_lm1.stan")
+", "viab_ant.stan")
 ## Check that you wrote a file
-stanc("abort_ant_lm1.stan")
+stanc("viab_ant.stan")
 ## Save the file path
-stanny <- "abort_ant_lm1.stan"
+stanny <- "viab_ant.stan"
 ## Now we fit the model
-fit_abort_ant <- stan(file = stanny, data = stan_data, warmup = 500, iter = 1000, chains = 1, cores = 2, thin = 1)
-fit_abort_ant
+fit_viab <- stan(file = stanny, data = stan_data, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
 
-posterior_abort_ant <- as.data.frame(fit_abort_ant)
-print(colnames(posterior_abort_ant))
 
-lm_alpha_other <- summary(abort_model_ant)$coeff[1]  # the intercept
-lm_alpha_crem <- summary(abort_model_ant)$coeff[3]
-lm_alpha_liom <- summary(abort_model_ant)$coeff[4]
-lm_alpha_vacant <- summary(abort_model_ant)$coeff[5]
-lm_beta_other <- summary(abort_model_ant)$coeff[2]  # the slope
-lm_beta_crem <- summary(abort_model_ant)$coeff[6]
-lm_beta_liom <- summary(abort_model_ant)$coeff[7]
-lm_beta_vacant <- summary(abort_model_ant)$coeff[8]
+posterior_viab_ant <- as.data.frame(fit_viab)
 
-par(mfrow = c(2,4))
-#Plot Intercepts
-plot(density(posterior_abort_ant$`beta0[1]`), main = "Intercept Other")
-abline(v = lm_alpha_other, col = 4, lty = 2)
-plot(density(posterior_abort_ant$`beta0[2]`), main = "Intercept Crem")
-abline(v = lm_alpha_crem, col = 4, lty = 2)
-plot(density(posterior_abort_ant$`beta0[3]`), main = "Intercept Liom")
-abline(v = lm_alpha_liom, col = 4, lty = 2)
-plot(density(posterior_abort_ant$`beta0[4]`), main = "Intercept Vacant")
-abline(v = lm_alpha_vacant, col = 4, lty = 2)
+lm_alpha_other <- summary(viab_model_ant_interact)$coeff[1]  # the intercept
+lm_alpha_crem <- summary(viab_model_ant_interact)$coeff[3]
+lm_alpha_liom <- summary(viab_model_ant_interact)$coeff[4]
+lm_alpha_vacant <- summary(viab_model_ant_interact)$coeff[5]
+lm_beta_other <- summary(viab_model_ant_interact)$coeff[2]  # the slope
+lm_beta_crem <- summary(viab_model_ant_interact)$coeff[6]
+lm_beta_liom <- summary(viab_model_ant_interact)$coeff[7]
+lm_beta_vacant <- summary(viab_model_ant_interact)$coeff[8]
+
+par(mfrow = c(1,2))
 #Plot Slopes
-plot(density(posterior_abort_ant$`beta1[1]`), main = "Intercept Other")
-abline(v = lm_beta_other, col = 4, lty = 2)
-plot(density(posterior_abort_ant$`beta1[2]`), main = "Intercept Crem")
-abline(v = lm_beta_crem, col = 4, lty = 2)
-plot(density(posterior_abort_ant$`beta1[3]`), main = "Intercept Liom")
-abline(v = lm_beta_liom, col = 4, lty = 2)
-plot(density(posterior_abort_ant$`beta1[4]`), main = "Intercept Vacant")
-abline(v = lm_beta_vacant, col = 4, lty = 2)
+plot(density(posterior_viab_ant$`theta[1]`), main = "Viability Slope Distributions", col = "black", lwd = 2, xlim = c(-1,3), ylim =  c(0,2))
+abline(v = lm_alpha_other, col = "black", lty = 2)
+lines(density(posterior_viab_ant$`theta[2]`),  col = "red")
+abline(v = lm_alpha_crem, col = "red", lty = 2)
+lines(density(posterior_viab_ant$`theta[3]`),col = "blue", lwd = 2)
+abline(v = lm_alpha_liom, col = "blue", lty = 2)
+lines(density(posterior_viab_ant$`theta[4]`), col = "pink", lwd = 2)
+abline(v = lm_alpha_vacant, col = "pink", lty = 2)
+legend("topleft", legend = c("other","Crem.", "Liom.","Vac"), col = c("black","red","blue","pink"), lty = 1)
 ```
 
 ####Repro Model
