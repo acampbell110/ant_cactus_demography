@@ -727,16 +727,11 @@ data {
     int<lower=1, upper=N_Plot> plot[N]; // plot
     int<lower=1, upper=N_Year> year[N]; // year
 }
-transformed data {
-  real<lower = 0> mean_y = mean(to_vector(y));
-  real<lower = 0> sd_y = sd(to_vector(y));
-}
+
 parameters {
   vector[N_ant] beta0; //intercept, unique to ant sp
-  vector[N_ant] beta1; //slope, unique to ant sp
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
-  real < lower = 0 > sigma; // Error SD
   real < lower = 0 > sigma_u; // plot SD
   real < lower = 0 > sigma_w; // year SD
 
@@ -755,9 +750,7 @@ model {
     y ~ categorical_logit(mu);
 }
 generated quantities {
-  int<lower = 0> y_rep[N] = multinomail_rng(mu);
-  real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
-  real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
+  int<lower = 0> y_rep[N] = multinomial_rng(mu);
 }
 ",
 "multinomial1.stan")
