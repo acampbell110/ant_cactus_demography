@@ -73,7 +73,8 @@ stan_data_grow <- list(N_data = N_data, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/grow_mix_ant.stan")
 fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
-
+posterior_grow_mix_ant <- as.data.frame(fit_grow_mix_ant)
+extract_grow <- extract(fit_grow_mix_ant)
 
 #### Survival Model
 ## Create Stan Data
@@ -91,7 +92,7 @@ stan_data_surv <- list(N_data = N_data, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/surv_mix_ant.stan")
 fit_surv_mix_ant <- stan(file = "STAN Models/surv_mix_ant.stan", data = stan_data_surv, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
-
+posterior_surv_mix_ant <- as.data.frame(fit_surv_mix_ant)
 
 #### Flowering Model
 ## Create Stan Data
@@ -109,7 +110,7 @@ stan_data_flow <- list(N_flower = N_flower, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/flower_mix_ant.stan")
 fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 5000, iter = 10000, chains = 1, cores = 2, thin = 1)
-
+posterior_flow_mix_ant <- as.data.frame(fit_flow_mix_ant)
 
 #### Viability Model
 ## Create Stan Data
@@ -129,7 +130,7 @@ stan_data_viab <- list(N_flower = N_flower, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/viab_mix_ant.stan")
 fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant.stan", data = stan_data_viab, warmup = 5000, iter = 10000, chains = 1, cores = 2, thin = 1)
-
+posterior_viab_mix_ant <- as.data.frame(fit_viab_mix_ant)
 
 #### Reproductive State Model
 ## Create Stan Data
@@ -147,7 +148,7 @@ stan_data_repro <- list(N_flower = N_flower, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/repro_mix_ant.stan")
 fit_repro_mix_ant <- stan(file = "STAN Models/repro_mix_ant.stan", data = stan_data_repro, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
-
+posterior_repro_mix_ant <- as.data.frame(fit_repro_mix_ant)
 
 #### Multinomial Model 1
 ## Create Stan Data
@@ -165,7 +166,7 @@ stan_data_multi1 <- list(N_data = N_data, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/multinomial1.stan")
 fit_multi1_mix_ant <- stan(file = "STAN Models/multinomial1.stan", data = stan_data_multi1, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
-
+posterior_multi1 <- as.data.frame(fit_multi1_mix_ant)
 
 #### Multinomial Model 2
 ## Create Stan Data
@@ -183,7 +184,7 @@ stan_data_multi2 <- list(N_data = N_data, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/multinomial2.stan")
 fit_multi2_mix_ant <- stan(file = "STAN Models/multinomial2.stan", data = stan_data_multi2, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
-
+posterior_multi2 <- as.data.frame(fit_multi2_mix_ant)
 
 #### Multinomail Model 3
 ## Create Stan Data
@@ -201,6 +202,6 @@ stan_data_multi3 <- list(N_data = N_data, ## number of observations
 #Check if the model is written to the right place
 #stanc("STAN Models/multinomial3.stan")
 fit_multi3_mix_ant <- stan(file = "STAN Models/multinomial3.stan", data = stan_data_multi3, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
-
+posterior_multi3 <- as.data.frame(fit_multi3_mix_ant)
 
 
