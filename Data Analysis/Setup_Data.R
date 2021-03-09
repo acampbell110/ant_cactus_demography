@@ -28,7 +28,7 @@ options(mc.cores = parallel::detectCores())
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 
 #import the data
-cactus_uncleaned <- read.csv("/Users/alicampbell/Box Sync/Grad/Cactus/Shared Code/cholla_demography_20042019.csv", header = TRUE,stringsAsFactors=T)
+cactus_uncleaned <- read.csv("cholla_demography_20042019.csv", header = TRUE,stringsAsFactors=T)
 #str(cactus) ##<- problem: antcount is a factor
 #levels(cactus$Antcount_t);levels(cactus$Antcount_t1)
 ## drop the offending rows -- this is a 2019 data entry problem
