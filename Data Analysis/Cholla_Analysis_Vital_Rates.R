@@ -74,7 +74,7 @@ stan_data_grow <- list(N_data = N_data, ## number of observations
 #stanc("STAN Models/grow_mix_ant.stan")
 fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
 posterior_grow_mix_ant <- as.data.frame(fit_grow_mix_ant)
-extract_grow <- extract(fit_grow_mix_ant)
+extract_grow <- rstan::extract(fit_grow_mix_ant)
 
 #### Survival Model
 ## Create Stan Data
