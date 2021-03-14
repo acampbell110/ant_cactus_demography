@@ -1,13 +1,19 @@
-
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #### Growth Visuals
 ## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Growth Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = extract_grow$mean_y_rep,
-                            yrep = predict(extract_grow$y_rep, draws = 5)) + plot_title
-predict(fit_grow_mix_ant@stanmodel,draws = 5)
+y <- y_grow
+yrep1 <- rstan::extract(fit_grow_mix_ant, pars = "y_rep")[["y_rep"]]
+samp100 <- sample(nrow(yrep1), 500)
+png(file = "grow_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep1[samp100,])
+dev.off()
 ## Convergence Plots
+pdf("grow_conv2.pdf")
+ggtitle("Growth Model Parameter Convergence")
 bayesplot::mcmc_trace(As.mcmc.list(fit_grow_mix_ant, pars=c("beta0", "beta1")))
+title()dev.off()
 ## Panels
+png(file = "grow_ant1")
 par(mfrow = c(2,3))
 ##classic plot
 # Other panel
@@ -43,44 +49,59 @@ abline(posterior_grow_mix_ant$`beta0[2]`,posterior_grow_mix_ant$`beta1[2]`,col="
 abline(0,1, lty = 2, col = "grey")
 #legend("bottomright",legend = c("other","crem","liom","vacant","Growth Line"), col = c("pink","red","blue","black","grey"),lty = c(1,1,1,1,2), lwd = 2)
 box()
-
+dev.off()
 
 #### Survival Visuals
 ## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Survival Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = fit_surv_mix_ant@mean_y_rep,
-                            yrep = posterior_predict(fit_surv_mix_ant@y_rep, draws = 5)) + plot_title
+y <- y_surv
+yrep1 <- rstan::extract(fit_surv_mix_ant, pars = "y_rep")[["y_rep"]]
+samp100 <- sample(nrow(yrep1), 500)
+png(file = "surv_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep1[samp100,])
+dev.off()
 ## Convergence Plots
+png(file = "surv_conv1.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_surv_mix_ant, pars=c("beta0", "beta1")))
-##Pamels
-##Facetwrap binomials
-quietgg(stan_trace(fit_surv_mix_ant))
-plot(fit_surv_mix_ant, show_density = TRUE, ci_level = 0.5, fill_color = "purple")
-
+dev.off()
 
 #### Flowering Visuals
 ## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Flowering Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = fit_flow_mix_ant@mean_y_rep,
-                            yrep = posterior_predict(fit_flow_mix_ant@y_rep, draws = 5)) + plot_title
+y <- y_flow
+yrep1 <- rstan::extract(fit_flow_mix_ant, pars = "y_rep")[["y_rep"]]
+samp100 <- sample(nrow(yrep1), 500)
+png(file = "flow_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep1[samp100,])
+dev.off()
 ## Convergence Plots
+png(file = "flow_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_flow_mix_ant, pars=c("beta0", "beta1")))
+dev.off()
 
 #### Reproductive Visuals
 ## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Reproductive Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = fit_repro_mix_ant@mean_y_rep,
-                            yrep = posterior_predict(fit_repro_mix_ant@y_rep, draws = 5)) + plot_title
+y <- y_repro
+yrep1 <- rstan::extract(fit_repro_mix_ant, pars = "y_rep")[["y_rep"]]
+samp100 <- sample(nrow(yrep1), 500)
+png(file = "repro_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep1[samp100,])
+dev.off()
 ## Convergence Plots
+png(file = "repro_conv1.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_repro_mix_ant, pars=c("beta0", "beta1")))
+dev.off()
 
 #### Viability Visuals
 ## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Viability Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = fit_viab_mix_ant@mean_y_rep,
-                            yrep = posterior_predict(fit_viab_mix_ant@y_rep, draws = 5)) + plot_title
+y <- good
+yrep1 <- rstan::extract(fit_viab_mix_ant, pars = "y_rep")[["y_rep"]]
+samp100 <- sample(nrow(yrep1), 500)
+png(file = "viab_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep1[samp100,])
+dev.off()
 ## Convergence Plots
+png(file = "grow_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_viab_mix_ant, pars=c("beta0", "beta1")))
+dev.off()
 
 #### Multinomial 1
 ## Overlay Plots
