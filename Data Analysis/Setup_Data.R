@@ -1,4 +1,4 @@
-library(rstanarm)
+
 library(brms)  # for models
 library(tidyverse)
 library(rstan)

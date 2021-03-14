@@ -9,17 +9,6 @@ data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","vo
 data <- na.omit(data)
 data$ant <- as.integer(data$ant_t)
 data$ant1 <- as.integer(data$ant_t1_relevel)
-## add columns for each ant classification so they can be binary
-data$crem <- 0 ##2
-data$liom <- 0 ##3
-data$other <- 0 ##1
-data$vacant <- 0 ##4
-for(i in 1:nrow(data)){
-  if(data$ant[i] == 1){data$other[i] <- 1}
-  if(data$ant[i] == 2){data$crem[i] <- 1}
-  if(data$ant[i] == 3){data$liom[i] <- 1}
-  if(data$ant[i] == 4){data$vacant[i] <- 1}
-}
 data$Year_t <- as.factor(data$Year_t)
 data$year <- as.integer(data$Year_t)
 data$Plot <- as.factor(data$Plot)
@@ -32,30 +21,45 @@ flower$Year_t <- as.factor(flower$Year_t)
 flower$year <- as.integer(flower$Year_t)
 flower$Plot <- as.factor(flower$Plot)
 flower$plot <- as.integer(flower$Plot)
+## Survival Data Set
+survival_data <- cactus[ , c("Plot","Year_t","Survival_t1","ant_t","volume_t")]
+survival_data <- na.omit(survival_data)
+survival_data$ant <- as.integer(survival_data$ant_t)
+survival_data$Year_t <- as.factor(survival_data$Year_t)
+survival_data$year <- as.integer(survival_data$Year_t)
+survival_data$Plot <- as.factor(survival_data$Plot)
+survival_data$plot <- as.integer(survival_data$Plot)
 
 ## Name local data variables to input to Stan Data
 vol_data = log(data$volume_t)
 vol_flower = log(flower$volume_t)
+vol_surv = log(survival_data$volume_t)
 vol1_flower <- flower$volume_t1
 good <- flower$Goodbuds_t
 abort <- flower$ABFlowerbuds_t
 tot <- flower$TotFlowerbuds_t
 y_repro = flower$repro_state_t1
 y_grow = log(data$volume_t1)
-y_surv = data$Survival_t1
+y_surv = survival_data$Survival_t1
 y_flow <- flower$TotFlowerbuds_t
 N_data = nrow(data)
 N_flower = nrow(flower)
+N_surv = nrow(survival_data)
 N_ant = 4
 ant_data = data$ant
 ant_flower = flower$ant
+ant_surv = survival_data$ant
 ant1_data = data$ant1
 N_Year <- max(data$year)
 N_Plot <- max(data$plot)
+N_Year_Surv <- max(survival_data$year)
+N_Plot_Surv <- max(survival_data$plot)
 plot_data <- data$plot
 year_data <- data$year
 plot_flower = flower$plot
 year_flower = flower$year
+plot_surv = survival_data$plot
+year_surv = survival_data$year
 
 #### Groth Model
 ## Create Stan Data
@@ -74,25 +78,26 @@ stan_data_grow <- list(N_data = N_data, ## number of observations
 #stanc("STAN Models/grow_mix_ant.stan")
 fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
 posterior_grow_mix_ant <- as.data.frame(fit_grow_mix_ant)
-extract_grow <- rstan::extract(fit_grow_mix_ant)
+fitty <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
 
 #### Survival Model
 ## Create Stan Data
-stan_data_surv <- list(N_data = N_data, ## number of observations
-                  vol_data = vol_data, ## predictors volume
+stan_data_surv <- list(N_surv = N_surv, ## number of observations
+                  vol_surv = vol_surv, ## predictors volume
                   y_surv = y_surv, ## response volume next year
-                  ant_data = ant_data,## predictors ants
+                  ant_surv = ant_surv,## predictors ants
                   N_ant = N_ant, ## number of ant states
-                  N_Year = N_Year, ## number of years
-                  N_Plot = N_Plot, ## number of plots
-                  plot_data = plot_data, ## predictor plots
-                  year_data = year_data ## predictor years
+                  N_Year_Surv = N_Year_Surv, ## number of years
+                  N_Plot_Surv = N_Plot_Surv, ## number of plots
+                  plot_surv = plot_surv, ## predictor plots
+                  year_surv = year_surv ## predictor years
 ) 
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/surv_mix_ant.stan")
-fit_surv_mix_ant <- stan(file = "STAN Models/surv_mix_ant.stan", data = stan_data_surv, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
+fit_surv_mix_ant <- stan(file = "STAN Models/surv_mix_ant.stan", data = stan_data_surv, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
 posterior_surv_mix_ant <- as.data.frame(fit_surv_mix_ant)
+stanc("STAN Models/surv_mix_ant.stan")
 
 #### Flowering Model
 ## Create Stan Data
@@ -109,7 +114,7 @@ stan_data_flow <- list(N_flower = N_flower, ## number of observations
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/flower_mix_ant.stan")
-fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 5000, iter = 10000, chains = 1, cores = 2, thin = 1)
+fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
 posterior_flow_mix_ant <- as.data.frame(fit_flow_mix_ant)
 
 #### Viability Model
