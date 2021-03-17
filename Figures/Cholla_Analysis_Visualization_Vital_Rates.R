@@ -15,11 +15,6 @@ pdf("grow_conv2.pdf")
 ggtitle("Growth Model Parameter Convergence")
 bayesplot::mcmc_trace(As.mcmc.list(fit_grow_mix_ant, pars=c("beta0", "beta1")))
 title()dev.off()
-## Interval Plots
-samp10 <- sample(nrow(yrep_grow), 1)
-png("grow_intervals.png")
-bayesplot::ppc_intervals_grouped(y = y_grow, yrep = yrep_grow[samp10,], x = vol_data, group = ant_data)
-dev.off()
 ## Panels
 png(file = "grow_param_dist.png")
 par(mfrow = c(2,3))
@@ -42,15 +37,58 @@ stan_plot(fit_grow_mix_ant, pars = c("beta1[1]", "beta1[2]","beta1[3]","beta1[4]
 dev.off()
 ## Ribbons
 bayesplot::ppc_ribbon_grouped(y, yrep_grow, group = ant_data, prob = 0.5, prob_outer = 0.95)
-## ggplots
-rstanarm::posterior_traj(fit_grow_mix_ant, interpolate = TRUE, extrapolate = TRUE)
-a <- as.data.frame(get_posterior_mean(fit_grow_mix_ant, pars = c("y_rep")))
-mean(a$`mean-all chains`)
-data$a <- a$`mean-all chains`
-ggplot(data = data, aes(x = volume_t, y = a)) + 
-  geom_point() +
-  geom_smooth( )
-
+## Panel Plots
+extract_grow <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1","mu"))
+beta0 <- as.data.frame(extract_grow$beta0)
+beta1 <- as.data.frame(extract_grow$beta1)
+grow_extract <- cbind(beta0,beta1)
+colnames(grow_extract) <- c("Beta0_1","Beta0_2","Beta0_3","Beta0_4", "Beta1_1","Beta1_2","Beta1_3","Beta1_4")
+for(i in 1:15000){
+  grow_extract$pred_1 <- grow_extract$Beta0_1 + grow_extract$Beta1_1
+  grow_extract$pred_2 <- grow_extract$Beta0_2 + grow_extract$Beta1_2
+  grow_extract$pred_3 <- grow_extract$Beta0_3 + grow_extract$Beta1_3
+  grow_extract$pred_4 <- grow_extract$Beta0_4 + grow_extract$Beta1_4
+}
+#Intercepts
+grow_beta0_1_mean <- mean(grow_extract$Beta0_1)
+grow_beta0_2_mean <- mean(grow_extract$Beta0_2)
+grow_beta0_3_mean <- mean(grow_extract$Beta0_3)
+grow_beta0_4_mean <- mean(grow_extract$Beta0_4)
+#Slopes
+grow_beta1_1_mean <- mean(grow_extract$Beta0_1)
+grow_beta1_2_mean <- mean(grow_extract$Beta0_2)
+grow_beta1_3_mean <- mean(grow_extract$Beta0_3)
+grow_beta1_4_mean <- mean(grow_extract$Beta0_4)
+summary(grow_extract)
+png("Figures/grow_panel.png")
+par(mfrow = c(2,3))
+# Other
+plot(x = log(data$volume_t)  ,y = grow_beta0_1_mean + log(data$volume_t) * grow_beta1_1_mean, type = "l", col = "black")
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_1,0.75) + log(data$volume_t) * quantile(grow_extract$Beta1_1,0.75), type = "l", col = "darkgrey", lty = 2)
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_1,0.25) + log(data$volume_t) * quantile(grow_extract$Beta1_1,0.25), type = "l", col = "darkgrey", lty = 2)
+# Crem
+plot(x = log(data$volume_t)  ,y = grow_beta0_2_mean + log(data$volume_t) * grow_beta1_2_mean, type = "l", col  = "red")
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_2,0.75) + log(data$volume_t) * quantile(grow_extract$Beta1_2,0.75), type = "l", col = "darkgrey", lty = 2)
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_2,0.25) + log(data$volume_t) * quantile(grow_extract$Beta1_2,0.25), type = "l", col = "darkgrey", lty = 2)
+# Liom
+plot(x = log(data$volume_t)  ,y = grow_beta0_3_mean + log(data$volume_t) * grow_beta1_3_mean, type = "l", col = "blue")
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_3,0.75) + log(data$volume_t) * quantile(grow_extract$Beta1_3,0.75), type = "l", col = "darkgrey", lty = 2)
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_3,0.25) + log(data$volume_t) * quantile(grow_extract$Beta1_3,0.25), type = "l", col = "darkgrey", lty = 2)
+# Vacant
+plot(x = log(data$volume_t)  ,y = grow_beta0_4_mean + log(data$volume_t) * grow_beta1_4_mean, type = "l", col = "pink")
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_4,0.75) + log(data$volume_t) * quantile(grow_extract$Beta1_4,0.75), type = "l", col = "darkgrey", lty = 2)
+lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_4,0.25) + log(data$volume_t) * quantile(grow_extract$Beta1_4,0.25), type = "l", col = "darkgrey", lty = 2)
+# All together
+plot(x = log(data$volume_t)  ,y = grow_beta0_1_mean + log(data$volume_t) * grow_beta1_1_mean, type = "l")
+lines(x = log(data$volume_t), y = grow_beta0_2_mean + log(data$volume_t) * grow_beta1_2_mean, type = "l", col = "red")
+lines(x = log(data$volume_t), y = grow_beta0_3_mean + log(data$volume_t) * grow_beta1_3_mean, type = "l", col = "blue")
+lines(x = log(data$volume_t), y = grow_beta0_4_mean + log(data$volume_t) * grow_beta1_4_mean, type = "l", col = "pink")
+dev.off()
+## Interval Plots
+samp10 <- sample(nrow(yrep_grow), 1)
+png("Figures/grow_intervals.png")
+bayesplot::ppc_intervals_grouped(y = y_grow, yrep = yrep_grow[samp10,], x = vol_data, group = ant_data)
+dev.off()
 
 plot(data)
 
@@ -75,6 +113,13 @@ samp1 <- sample(nrow(yrep1), 2)
 png("surv_intervals.png")
 bayesplot::ppc_intervals_grouped(y = y_surv, yrep = yrep_surv[samp1,], x = vol_surv, group = ant_surv)
 dev.off()
+## GGplots
+surv_a <- as.data.frame(get_posterior_mean(fit_surv_mix_ant, pars = c("y_rep")))
+mean(surv_a$`mean-all chains`)
+data$surv_a <- surv_a$`mean-all chains`[1:5231]
+ggplot(data = data, aes(x = volume_t, y = surv_a)) + 
+  geom_point() +
+  geom_smooth()
 
 #### Flowering Visuals
 ## Overlay Plots
@@ -96,6 +141,13 @@ samp1 <- sample(nrow(yrep_flow), 2)
 png("flow_intervals.png")
 bayesplot::ppc_intervals_grouped(y = y_flow, yrep = yrep_flow[samp1,], x = vol_flower, group = ant_flower)
 dev.off()
+## GGplots
+flow_a <- as.data.frame(get_posterior_mean(fit_flow_mix_ant, pars = c("y_rep")))
+mean(flow_a$`mean-all chains`)
+flower$flow_a <- flow_a$`mean-all chains`
+ggplot(data = flower, aes(x = volume_t, y = flow_a)) + 
+  geom_point() +
+  geom_smooth()
 
 #### Reproductive Visuals
 ## Overlay Plots
@@ -117,6 +169,13 @@ samp1 <- sample(nrow(yrep_repro), 2)
 png("repro_intervals.png")
 bayesplot::ppc_intervals_grouped(y = y_repro, yrep = yrep_repro[samp1,], x = vol_flower, group = ant_flower)
 dev.off()
+## GGplots
+repro_a <- as.data.frame(get_posterior_mean(fit_repro_mix_ant, pars = c("y_rep")))
+mean(repro_a$`mean-all chains`)
+flower$repro_a <- repro_a$`mean-all chains`
+ggplot(data = flower, aes(x = volume_t, y = repro_a)) + 
+  geom_point() +
+  geom_smooth()
 
 #### Viability Visuals
 ## Overlay Plots
