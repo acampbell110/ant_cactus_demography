@@ -21,6 +21,7 @@ flower$Year_t <- as.factor(flower$Year_t)
 flower$year <- as.integer(flower$Year_t)
 flower$Plot <- as.factor(flower$Plot)
 flower$plot <- as.integer(flower$Plot)
+flower$prop <- flower$Goodbuds_t/flower$TotFlowerbuds_t
 ## Survival Data Set
 survival_data <- cactus[ , c("Plot","Year_t","Survival_t1","ant_t","volume_t")]
 survival_data <- na.omit(survival_data)
@@ -60,6 +61,7 @@ plot_flower = flower$plot
 year_flower = flower$year
 plot_surv = survival_data$plot
 year_surv = survival_data$year
+prop_flower = flower$prop
 
 #### Groth Model
 ## Create Stan Data
@@ -129,12 +131,14 @@ stan_data_viab <- list(N_flower = N_flower, ## number of observations
                        N_Year = N_Year, ## number of years
                        N_Plot = N_Plot, ## number of plots
                        plot_flower = plot_flower, ## predictor plots
-                       year_flower = year_flower ## predictor years
+                       year_flower = year_flower, ## predictor years
+                       prop_flower = prop_flower
 ) 
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/viab_mix_ant.stan")
-fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant.stan", data = stan_data_viab, warmup = 5000, iter = 10000, chains = 1, cores = 2, thin = 1)
+fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant.stan", data = stan_data_viab, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
+fitty <- stan(file = "STAN Models/viab_mix_ant2.stan", data = stan_data_viab, warmup = 5, iter = 10, chains = 3, cores = 2, thin = 1)
 posterior_viab_mix_ant <- as.data.frame(fit_viab_mix_ant)
 
 #### Reproductive State Model
