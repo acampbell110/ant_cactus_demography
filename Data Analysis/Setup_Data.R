@@ -1,6 +1,6 @@
-
 library(brms)  # for models
 library(tidyverse)
+library(boot)
 library(rstan)
 library(StanHeaders)
 library(shinystan)
@@ -22,6 +22,8 @@ library(RColorBrewer)
 library(ggeffects)
 library(heplots)
 library("posterior")
+library(Rlab)
+library(extraDistr)
 #library(sjPlot)
 knitr::opts_chunk$set(echo = TRUE)
 options(mc.cores = parallel::detectCores())

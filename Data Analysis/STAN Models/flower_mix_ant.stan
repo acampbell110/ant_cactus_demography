@@ -12,9 +12,9 @@ data {
   int<lower=1, upper=N_Year> year_flower[N_flower]; // year
 }
 parameters {
-  real<lower=0> phi; // neg. binomial dispersion parameter
-  vector[N_ant] beta0; //intercept, unique to ant sp
-  vector[N_ant] beta1; //slope, unique to ant sp
+	real < lower = 0> phi;
+  real beta0; //intercept, unique to ant sp
+  real beta1; //slope, unique to ant sp
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
   real < lower = 0 > sigma; // Error SD
@@ -24,12 +24,12 @@ parameters {
 transformed parameters{
   vector[N_flower] mu; //linear predictor for the mean
   for(i in 1:N_flower){
-    mu[i] = beta0[ant_flower[i]] + beta1[ant_flower[i]] * vol_flower[i] + u[plot_flower[i]] + w[year_flower[i]];
+    mu[i] = beta0 + beta1 * vol_flower[i] + u[plot_flower[i]] + w[year_flower[i]];
   }
 }
 model {
+	phi ~ cauchy(0,3);
  // Model
-  phi ~ cauchy(0, 3);
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
   beta0 ~ normal(0,100); // intercept distribution

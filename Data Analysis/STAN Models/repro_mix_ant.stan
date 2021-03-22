@@ -2,8 +2,6 @@
 
 data {
   int <lower = 1> N_flower; // number of observations
-  int <lower = 1> N_ant; // number of ant states
-  int <lower = 1, upper = N_ant> ant_flower[N_flower]; // the list of ant species 
   vector[N_flower] vol1_flower;	//size_t
   int <lower = 0, upper = 1> y_repro[N_flower]; // survival in year t1
   int<lower=1> N_Year; //number of plots
@@ -12,8 +10,8 @@ data {
   int<lower=1, upper=N_Year> year_flower[N_flower]; // year
 }
 parameters {
-  vector[N_ant] beta0; //intercept, unique to ant sp
-  vector[N_ant] beta1; //slope, unique to ant sp
+  real beta0; //intercept, unique to ant sp
+  real beta1; //slope, unique to ant sp
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
   real < lower = 0 > sigma; // Error SD
@@ -23,7 +21,7 @@ parameters {
 transformed parameters{
   vector[N_flower] mu; //linear predictor for the mean
   for(i in 1:N_flower){
-    mu[i] = beta0[ant_flower[i]] + beta1[ant_flower[i]] * vol1_flower[i] + u[plot_flower[i]] + w[year_flower[i]];
+    mu[i] = beta0 + beta1 * vol1_flower[i] + u[plot_flower[i]] + w[year_flower[i]];
   }
 }
 model {

@@ -2,7 +2,6 @@
 data {
     int<lower=2> N_ant; // of alternatives/outcomes
     int<lower=1> N_data; // of observations
-    int <lower=0,upper=N_ant> y_multi[N_data];
     int <lower = 1, upper = N_ant> ant_data[N_data]; // the list of ant species 
     int <lower = 1, upper = N_ant> ant1_data[N_data]; // the list of ant species 
     vector[N_data] vol_data;
@@ -22,7 +21,7 @@ parameters {
 transformed parameters{
   vector[N_data] mu; //linear predictor for the mean
   for(i in 1:N_data){
-    mu[i] = ant_data[i];
+    mu[i] = beta0[ant_data[i]];
   }
 }
 model {
@@ -30,9 +29,8 @@ model {
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
   beta0 ~ normal(0,100); // intercept distribution
-  ant1_data ~ categorical_logit(mu);
-}
-generated quantities {
-  vector<lower = 0,upper = N_ant>[N_data] y_rep = categorical_logit_rng(mu);
+  for(i in 1:N_data){
+  	ant1_data ~ categorical_logit(mu);
+  }
 }
 
