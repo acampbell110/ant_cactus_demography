@@ -14,6 +14,8 @@ data {
 }
 parameters {
   real <lower = 0, upper = 1> beta0[N_ant]; // probability of viability for each bud
+  real <lower = 0, upper = 1> beta1[N_ant]; // probability of viability for each bud
+
   //
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
@@ -22,23 +24,24 @@ parameters {
   real < lower = 0 > sigma_w; // year SD
 }
 transformed parameters{
-  real<lower=0> predV[N_flower]; // proportion viable for each plant?
+  real<lower=0> mu[N_flower]; // proportion viable for each plant?
   // Prediction for seed viability
   for(i in 1:N_flower){
-    predV[i] = beta0[ant_flower[i]];
+    mu[i] = beta0[ant_flower[i]]; //+ beta1[ant_flower[i]] * vol_flower[i];
   }
 }
 model {
  // Priors
   beta0 ~ normal(0,100); // intercept distribution
+  beta1 ~ normal(0,100); // intercept distribution
   //Model Statements
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
   
-  good ~ binomial(tot, predV);
+  good ~ binomial(tot, mu);
 }
 generated quantities {
-  int<lower = 0> y_rep[N_flower] = binomial_rng(tot,predV);
+  int<lower = 0> y_rep[N_flower] = binomial_rng(tot,mu);
   real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
 }

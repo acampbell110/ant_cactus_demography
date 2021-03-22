@@ -80,9 +80,6 @@ stan_data_grow <- list(N_data = N_data, ## number of observations
 #stanc("STAN Models/grow_mix_ant.stan")
 fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
 
-fitty <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 50, iter = 100, chains = 3, cores = 2, thin = 1)
-
-
 #### Survival Model
 ## Create Stan Data
 stan_data_surv <- list(N_surv = N_surv, ## number of observations

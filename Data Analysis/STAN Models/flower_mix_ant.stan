@@ -13,8 +13,8 @@ data {
 }
 parameters {
 	real < lower = 0> phi;
-  real beta0; //intercept, unique to ant sp
-  real beta1; //slope, unique to ant sp
+  real beta0; //intercept
+  real beta1; //slope
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
   real < lower = 0 > sigma; // Error SD

@@ -14,5 +14,5 @@ model {
   to_vector(beta) ~ normal(0, 2);
   
   for (n in 1:N)
-    y[n] ~ categorical_logit(x_beta[n]);
+    y[n] ~ categorical_logit(x_beta[n,]);
 }
