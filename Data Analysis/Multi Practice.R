@@ -1,4 +1,129 @@
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+
+##############################################################################################################
+##http://eleafeit.com/post/mnl_identification_stan/
+generate_mnl_data <- function(N=1000, K=1, J=4 ,beta=c(1), alpha=c(1,0,-1, 0)){
+  if(length(beta) != K) stop ("incorrect number of parameters")
+  Y <- rep(NA, N)
+  X <- list(NULL) 
+  Fac <- list(NULL)
+  Mat <- list(NULL)
+  for (i in 1:N) {
+    X[[i]] <- matrix(rnorm(J*K), ncol=K)
+    Fac[[i]] <- matrix(sample(1:4,4), ncol = 1)
+    Mat[[i]] <- cbind(X[[i]],Fac[[i]])
+    Y[i] <- sample(x=J, size=1, prob=exp(alpha+X[[i]]%*%beta))
+  }
+  list(N=N, J=J, K=K, Y=Y, X=X, beta=beta, alpha=alpha, Mat = Mat, Fac = Fac)
+}
+d0 <- generate_mnl_data()
+## The attributes are presence of ant state 1,2,3,4, alternates are the volume of the cacti
+## The attributes are ant state and volume, the alternates for ant state are 1,2,3,4, the attributes for volume are inf
+write("
+data {
+    int<lower=2> J; // of alternatives/outcomes (ant state) -- 4
+    //int<lower=2> G; // of alternatives/outcomes (volume) -- inf
+    int<lower=1> N; // of observations utilities (number of data points)
+    int<lower=1> K; // of covariates (volume & ant state)
+    int<lower=0,upper=J> Y[N];
+    matrix[J,K] X[N];
+    int<lower = 0, upper = J> Mat[N];
+}
+
+parameters {
+    vector[J-1] alpha_raw; // unconstrained UPC intercepts
+    vector[J] beta1;
+}
+
+transformed parameters{
+  vector[J] alpha; 
+  alpha = append_row(-sum(alpha_raw), alpha_raw); // sum to zero constraint
+}
+
+model {
+    for (i in 1:N)
+        Y[i] ~ categorical_logit(alpha + X[i]*beta1);
+}
+generated quantities{
+  int Y_rep[N];
+  for (i in 1:N)
+         Y_rep[i]= categorical_logit_rng(alpha + X[i]*beta1);
+}","Data Analysis/STAN Models/multi_1.stan")
+
+d2 <- generate_mnl_data(N=1000, K=2, J=4 ,beta=c(1, -2), alpha=c(1,0,-1, 0))
+p6 <- stan("Data Analysis/STAN Models/multi_1.stan", data=d2, iter=1000, chains=2, seed=19730715)
+shifted_alpha = d2$alpha - (1/d2$J)*sum(d2$alpha)
+bayesplot::mcmc_recover_hist(As.mcmc.list(p6, pars="alpha"), true=shifted_alpha)
+bayesplot::mcmc_recover_hist(As.mcmc.list(p6, pars="beta"), true=d2$beta)
+bayesplot::mcmc_trace(As.mcmc.list(p6, pars="alpha"))
+bayesplot::mcmc_trace(As.mcmc.list(p6, pars="beta"))
+
+y <- d0$Y
+yrep_multi <- rstan::extract(p6, pars = "Y_rep")[["Y_rep"]]
+samp100 <- sample(nrow(yrep_multi), 500)
+
+bayesplot::ppc_dens_overlay_grouped(y, yrep_multi[samp100,], x = d0$X, group = d0$beta)
+png("Figures/multi_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep_multi[samp100,])
+dev.off()
+
+
+generate_mnl_data <- function(N=1000, K=2, J=4 ,beta=c(1,0), alpha=c(1,0,-1, 0)){
+  if(length(beta) != K) stop ("incorrect number of parameters")
+  Y <- rep(NA, N)
+  X <- list(NULL) 
+  for (i in 1:N) {
+    X[[i]] <- matrix(rnorm(J*K), ncol=K)
+    Y[i] <- sample(x=J, size=1, prob=exp(alpha+X[[i]]%*%beta))
+  }
+  list(N=N, J=J, K=K, Y=Y, X=X, beta=beta, alpha=alpha)
+}
+d0 <- generate_mnl_data()
+## The attributes are ant state and volume, the alternates for ant state are 1,2,3,4, the attributes for volume are inf
+write("
+data {
+    int<lower=2> J; // of alternatives/outcomes (ant state) -- 4
+    //int<lower=2> G; // of alternatives/outcomes (volume) -- inf
+    int<lower=1> N; // of observations utilities (number of data points)
+    int<lower=1> K; // of covariates (volume & ant state)
+    int<lower=0,upper=J> Y[N];
+    real cont[N];
+    matrix[J,K] X[N];
+}
+
+parameters {
+    vector[J-1] alpha_raw; // unconstrained UPC intercepts
+    vector[K] beta;
+}
+
+transformed parameters{
+  vector[J] alpha; 
+  alpha = append_row(-sum(alpha_raw), alpha_raw); // sum to zero constraint
+}
+
+model {
+    for (i in 1:N)
+        Y[i] ~ categorical_logit(alpha + X[i]*beta);
+}","Data Analysis/STAN Models/multi_1.stan")
+
+d2 <- generate_mnl_data(N=1000, K=4, J=1 ,beta=c(1,2,3,4), alpha=c(1,0,-1, 0))
+p6 <- stan("STAN Models/multi_1.stan", data=d2, iter=10, chains=2, seed=19730715)
+shifted_alpha = d2$alpha - (1/d2$J)*sum(d2$alpha)
+bayesplot::mcmc_recover_hist(As.mcmc.list(p6, pars="alpha"), true=shifted_alpha)
+bayesplot::mcmc_recover_hist(As.mcmc.list(p6, pars="beta"), true=d2$beta)
+bayesplot::mcmc_trace(As.mcmc.list(p6, pars="alpha"))
+bayesplot::mcmc_trace(As.mcmc.list(p6, pars="beta"))
+
+
+
+
+
+
+
+
+
+
+
 
 #############################################################################
 ## https://vasishth.github.io/bayescogsci/book/modeling-multiple-categorical-responses.html
@@ -19,7 +144,7 @@ generated quantities{
   for(n in 1:N_data)
     pred_w_ans[n] = categorical_rng(theta);
 }",
-"STAN Models/multi_prac2.stan")
+"Data Analysis/STAN Models/multi_prac2.stan")
 
 N_data <- 100 
 ans_cat <-rcat(N_data, prob = as.matrix(true_theta))
@@ -85,7 +210,7 @@ model{
 generated quantities {
   real y_rep[N] = normal_rng(m_new_type + u_type[type] +  b_vol * vol,sigma);
 }
-","STAN Models/multi_prac3.stan")
+","Data Analysis/STAN Models/multi_prac3.stan")
 
 dat <- list( N = N_data,
              Ntype = length(unique(data$ant)),
@@ -132,7 +257,7 @@ model {
 fitted <- stan(file = "STAN Models/multi_prac4.stan", 
                 data = data_cat, warmup = 50, iter = 100, chains = 3, cores = 2, thin = 1)
 
-stanc("STAN Models/multi_prac4.stan"
+stanc("Data Analysis/STAN Models/multi_prac4.stan"
 )
 
 compiled_model <- stan_model("categorical_model.stan")
@@ -185,7 +310,7 @@ generated quantities {
     y_sim[i] = categorical_rng(softmax(theta));
   }
 }",
-"STAN Models/multi_prac5.stan")
+"Data Analysis/STAN Models/multi_prac5.stan")
 dat <- list(N = N_data,
             P = 4,
             y = data$ant1,
