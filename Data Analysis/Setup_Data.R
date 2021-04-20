@@ -25,6 +25,9 @@ library("posterior")
 library(Rlab)
 library(extraDistr)
 library(gridExtra)
+library(grid)
+library(gbm)
+library(dismo)
 #library(sjPlot)
 knitr::opts_chunk$set(echo = TRUE)
 options(mc.cores = parallel::detectCores())
@@ -32,11 +35,11 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 
 #import the data
 cactus_uncleaned <- read.csv("cholla_demography_20042019.csv", header = TRUE,stringsAsFactors=T)
-#str(cactus) ##<- problem: antcount is a factor
+str(cactus) ##<- problem: antcount is a factor
 #levels(cactus$Antcount_t);levels(cactus$Antcount_t1)
 ## drop the offending rows -- this is a 2019 data entry problem
 cactus <- cactus_uncleaned[-c(which(cactus_uncleaned$Antcount_t=="2-Jan"),which(cactus_uncleaned$Antcount_t1=="2-Jan")),]
-cactus$antcount_t <- as.numeric(as.character(cactus_uncleaned$Antcount_t))
+cactus$antcount_t <- as.numeric(as.character(cactus$Antcount_t))
 cactus$antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
 ## function for the volume of a cone
 volume <- function(h, w, p){
@@ -46,6 +49,7 @@ invlogit <- function(x){exp(x)/(1+exp(x))}
 #Create volume columns
 cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
 cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
+
 ## assign ant counts of zero as vacant
 cactus$Antsp_t[cactus$antcount_t==0] <- "vacant"
 # here are the ordered levels of the current variable
@@ -108,28 +112,77 @@ cactus$ant_t1[cactus$Antsp_t1==""] <- NA
 ## inspect the "others" visually
 cactus %>% filter(ant_t1=="other") %>% select(Antsp_t1,ant_t1)
 ## I am satisfied that everything assigned other in t1 is correctly assigned
-## Create a variable repro_state_t which tells you if the plant is reproducing in year t
-cactus$repro_state_t <- NA
+
+## Fill in as many of the goodbuds, abortedbuds and total buds as possible
 for(i in 1:8187){
-  if(is.na(cactus$TotFlowerbuds_t[i]) == FALSE & cactus$TotFlowerbuds_t[i] > 0) {
-    cactus$repro_state_t[i] <- 1
+  # if good buds and Aborted buds not NA set total = Sum
+  if(is.na(cactus$TotFlowerbuds_t1[i]) == TRUE & is.na(cactus$Goodbuds_t1[i]) == FALSE & is.na(cactus$ABFlowerbuds_t1[i]) == FALSE){
+    cactus$TotFlowerbuds_t1[i] <- cactus$Goodbuds_t1[i] + cactus$ABFlowerbuds_t1[i]
   }
-  if(is.na(cactus$Goodbuds_t[i]) == FALSE & cactus$Goodbuds_t[i] > 0){
-    cactus$repro_state_t[i] <- 1
+  # if aborted buds and total buds is not NA, set good = total - aborted
+  if(is.na(cactus$ABFlowerbuds_t1[i]) == FALSE & is.na(cactus$TotFlowerbuds_t1[i]) == FALSE & is.na(cactus$Goodbuds_t1[i]) == TRUE){
+    cactus$Goodbuds_t1[i] <- cactus$TotFlowerbuds_t1[i] - cactus$ABFlowerbuds_t1[i]
   }
-  if(is.na(cactus$Goodbuds_t[i]) == FALSE & is.na(cactus$TotFlowerbuds_t[i]) == FALSE & cactus$Goodbuds_t[i] < 1 & cactus$TotFlowerbuds_t[i] < 1){
-    cactus$repro_state_t[i] <- 0
-  }
-  if(is.na(cactus$TotFlowerbuds_t1[i]) == FALSE & cactus$TotFlowerbuds_t1[i] > 0) {
-    cactus$repro_state_t1[i] <- 1
-  }
-  if(is.na(cactus$Goodbuds_t1[i]) == FALSE & cactus$Goodbuds_t1[i] > 0){
-    cactus$repro_state_t1[i] <- 1
-  }
-  if(is.na(cactus$Goodbuds_t1[i]) == FALSE & is.na(cactus$TotFlowerbuds_t1[i]) == FALSE & cactus$Goodbuds_t1[i] < 1 & cactus$TotFlowerbuds_t1[i] < 1){
-    cactus$repro_state_t1[i] <- 0
+  # if total and good not NA, set aborted = total - good
+  if(is.na(cactus$TotFlowerbuds_t1[i]) == FALSE & is.na(cactus$Goodbuds_t1[i]) == FALSE & is.na(cactus$ABFlowerbuds_t1[i]) == TRUE){
+    cactus$ABFlowerbuds_t1[i] <- cactus$TotFlowerbuds_t1[i] - cactus$Goodbuds_t1[i]
   }
 }
 
+cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
+
 ## Export cactus to a csv
 write.csv(cactus, "cholla_demography_20042019_cleaned.csv")
+
+#import the data
+fruit_uncleaned <- read.csv("JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
+## PEAA = Ant Access
+## PAAA = Ant Access
+## PEAE = Ant Exclusion
+## PAAE = Ant Exclusion
+
+fruit1 <- subset(fruit_uncleaned, treatment == "PEAE" | treatment == "PEAA")
+fruit2 <- subset(fruit_uncleaned, treatment == "PAAA" | treatment == "PAAE")
+
+#make the column for the ant state of the part of the plant producing seeds
+for(i in 1:nrow(fruit1)){
+  #If there is no ant access then vacant
+  if(fruit1$ant.access[i] == "n" & is.na(fruit1$ant.access[i]) == FALSE){
+    fruit1$ant_state[i] <- "Vacant"
+  }
+  #If there is ant access but it is still vacant then vacant
+  if(fruit1$ant.access[i] == "y" & is.na(fruit1$ant.access[i]) == FALSE & fruit1$vacant[i] == "y" & is.na(fruit1$vacant[i]) == FALSE){
+    fruit1$ant_state[i] <- "Vacant"
+  }
+  #if there is ant access and it is not vacant and the ant is crem then crem
+  if(fruit1$ant.access[i] == "y" & is.na(fruit1$ant.access[i]) == FALSE & fruit1$vacant[i] == "n" & fruit1$species[i] == "c"){
+    fruit1$ant_state[i] <- "Crem"
+  }
+  #if there is ant access and it is not vacant and the ant is liom then liom
+  if(fruit1$ant.access[i] == "y" & is.na(fruit1$ant.access[i]) == FALSE & fruit1$vacant[i] == "n" & fruit1$species[i] == "l"){
+    fruit1$ant_state[i] <- "Liom"
+  }
+}
+#make the column for the ant state of the part of the plant producing seeds
+for(i in 1:nrow(fruit2)){
+  #If there is no ant access then vacant
+  if(fruit2$ant.access[i] == "n" & is.na(fruit2$ant.access[i]) == FALSE){
+    fruit2$ant_state[i] <- "Vacant"
+  }
+  #If there is ant access but it is still vacant then vacant
+  if(fruit2$ant.access[i] == "y" & is.na(fruit2$ant.access[i]) == FALSE & fruit2$vacant[i] == "y"){
+    fruit2$ant_state[i] <- "Vacant"
+  }
+  #if there is ant access and it is not vacant and the ant is crem then crem
+  if(fruit2$ant.access[i] == "y" & is.na(fruit2$ant.access[i]) == FALSE & fruit2$vacant[i] == "n" & fruit2$species[i] == "c"){
+    fruit2$ant_state[i] <- "Crem"
+  }
+  #if there is ant access and it is not vacant and the ant is liom then liom
+  if(fruit2$ant.access[i] == "y" & is.na(fruit2$ant.access[i]) == FALSE & fruit2$vacant[i] == "n" & fruit2$species[i] == "l"){
+    fruit2$ant_state[i] <- "Liom"
+  }
+}
+
+
+
+
