@@ -11,7 +11,7 @@ data {
 }
 parameters {
 real < lower = 0> phi;
-  real beta0; //intercept
+  real <lower = 0> beta0; //intercept
   real beta1; //slope
   vector[N_Plot_flower] u; //subject intercepts
   vector[N_Year_flower] w; //item intercepts
@@ -22,7 +22,7 @@ real < lower = 0> phi;
 transformed parameters{
   vector[N_flower] mu; //linear predictor for the mean
   for(i in 1:N_flower){
-   	mu[i] = beta0 + beta1 * vol_flower[i] + u[plot_flower[i]] + w[year_flower[i]];
+    mu[i] = beta0 + beta1 * vol_flower[i] + u[plot_flower[i]] + w[year_flower[i]];
   }
 }
 model {
@@ -33,11 +33,11 @@ model {
   beta0 ~ normal(0,100); // intercept distribution
   beta1 ~ normal(0,100); // slope distribution
   for(i in 1:N_flower){
-    y_flow[i] ~ neg_binomial_2(inv_logit(mu[i]), phi);
+    y_flow[i] ~ neg_binomial_2(mu[i], phi);
   }
 }
 generated quantities {
-  int<lower = 0> y_rep[N_flower] = neg_binomial_2_rng(inv_logit(mu), phi);
+  int<lower = 0> y_rep[N_flower] = neg_binomial_2_rng(mu, phi);
   real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
 } 

@@ -6,16 +6,16 @@ data {
   int <lower = 1, upper = N_ant> ant_surv[N_surv]; // the list of ant species 
   vector[N_surv] vol_surv;	//size_t
   int <lower = 0, upper = 1> y_surv[N_surv]; // survival in year t1
-  int<lower=1> N_Year_Surv; //number of plots
-  int<lower=1> N_Plot_Surv; //number of years
-  int<lower=1, upper=N_Plot_Surv> plot_surv[N_surv]; // plot
-  int<lower=1, upper=N_Year_Surv> year_surv[N_surv]; // year
+  int<lower=1> N_Year_surv; //number of plots
+  int<lower=1> N_Plot_surv; //number of years
+  int<lower=1, upper=N_Plot_surv> plot_surv[N_surv]; // plot
+  int<lower=1, upper=N_Year_surv> year_surv[N_surv]; // year
 }
 parameters {
   vector[N_ant] beta0; //intercept, unique to ant sp
   vector[N_ant] beta1; //slope, unique to ant sp
-  vector[N_Plot_Surv] u; //subject intercepts
-  vector[N_Year_Surv] w; //item intercepts
+  vector[N_Plot_surv] u; //subject intercepts
+  vector[N_Year_surv] w; //item intercepts
   real < lower = 0 > sigma; // Error SD
   real < lower = 0 > sigma_u; // plot SD
   real < lower = 0 > sigma_w; // year SD
