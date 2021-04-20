@@ -1,20 +1,54 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-#### Growth Visuals
-## Overlay Plots
+
+size_dummy <- seq(min(log(data$volume_t), na.rm = TRUE), max(log(data$volume_t), na.rm = TRUE), by = 0.1)
+#### Growth Visuals #####################################################################################################
+## Extract & Format Data
+#For overlay plots
 y <- y_grow
 yrep_grow <- rstan::extract(fit_grow_mix_ant, pars = "y_rep")[["y_rep"]]
 samp100 <- sample(nrow(yrep_grow), 500)
+#extract from STAN models
+extract_grow <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1"))
+beta0 <- as.data.frame(extract_grow$beta0)
+beta1 <- as.data.frame(extract_grow$beta1)
+grow_extract <- cbind(beta0,beta1)
+colnames(grow_extract) <- c("Beta0_1","Beta0_2","Beta0_3","Beta0_4", "Beta1_1","Beta1_2","Beta1_3","Beta1_4")
+#format for yrep gg plots
+grow_a <- as.data.frame(get_posterior_mean(fit_grow_mix_ant, pars = c("y_rep")))
+mean(grow_a$`mean-all chains`)
+data$grow_a <- grow_a$`mean-all chains`
+#extract from original data
+y_subset <- data[,c("volume_t1","ant", "volume_t")]
+## Formulas
+y_other_mean_grow <- quantile(grow_extract$Beta0_3,0.5) + size_dummy * quantile(grow_extract$Beta1_3,0.5)
+y_other_low_grow <- quantile(grow_extract$Beta0_3,0.05) + size_dummy * quantile(grow_extract$Beta1_3,0.05)
+y_other_high_grow <- quantile(grow_extract$Beta0_3,0.95) + size_dummy * quantile(grow_extract$Beta1_3,0.95)
+y_other_subset_grow <- subset(y_subset, ant == 3)
+y_crem_mean_grow <- quantile(grow_extract$Beta0_1,0.5) + size_dummy * quantile(grow_extract$Beta1_1,0.5)
+y_crem_low_grow <- quantile(grow_extract$Beta0_1,0.05) + size_dummy * quantile(grow_extract$Beta1_1,0.05)
+y_crem_high_grow <- quantile(grow_extract$Beta0_1,0.95) + size_dummy * quantile(grow_extract$Beta1_1,0.95)
+y_crem_subset_grow <- subset(y_subset, ant == 1)
+y_liom_mean_grow <- quantile(grow_extract$Beta0_2,0.5) + size_dummy * quantile(grow_extract$Beta1_2,0.5)
+y_liom_low_grow <- quantile(grow_extract$Beta0_2,0.05) + size_dummy * quantile(grow_extract$Beta1_2,0.05)
+y_liom_high_grow <- quantile(grow_extract$Beta0_2,0.95) + size_dummy * quantile(grow_extract$Beta1_2,0.95)
+y_liom_subset_grow <- subset(y_subset, ant == 2)
+y_vac_mean_grow <- quantile(grow_extract$Beta0_4,0.5) + size_dummy * quantile(grow_extract$Beta1_4,0.5)
+y_vac_low_grow <- quantile(grow_extract$Beta0_4,0.05) + size_dummy * quantile(grow_extract$Beta1_4,0.05)
+y_vac_high_grow <- quantile(grow_extract$Beta0_4,0.95) + size_dummy * quantile(grow_extract$Beta1_4,0.95)
+y_vac_subset_grow <- subset(y_subset, ant == 4)
+## Overlay Plots
 png(file = "grow_post1.png")
 bayesplot::ppc_dens_overlay(y, yrep_grow[samp100,])
 dev.off()
 png(file = "grow_ant_post1.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_grow[samp100,], x = vol_data, group = ant_data)
+bayesplot::ppc_dens_overlay_grouped(y, yrep_grow[samp100,], group = ant_grow)
 dev.off()
 ## Convergence Plots
-pdf("grow_conv2.pdf")
+png("grow_conv2.png")
 ggtitle("Growth Model Parameter Convergence")
 bayesplot::mcmc_trace(As.mcmc.list(fit_grow_mix_ant, pars=c("beta0", "beta1")))
-title()dev.off()
+title()
+dev.off()
 ## Parameter Spreads
 png(file = "grow_param_dist.png")
 par(mfrow = c(2,3))
@@ -36,116 +70,122 @@ stan_plot(fit_grow_mix_ant, pars = c("beta1[1]", "beta1[2]","beta1[3]","beta1[4]
           fill_color = c("darkgrey","red","blue","pink"))
 dev.off()
 ## Panel Plots
-extract_grow <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1"))
-beta0 <- as.data.frame(extract_grow$beta0)
-beta1 <- as.data.frame(extract_grow$beta1)
-mu <- as.data.frame(extract_grow$mu)
-grow_extract <- cbind(beta0,beta1)
-colnames(grow_extract) <- c("Beta0_1","Beta0_2","Beta0_3","Beta0_4", "Beta1_1","Beta1_2","Beta1_3","Beta1_4")
 png("grow_panel.png")
-par(mfrow = c(2,3))
-# Other
-plot(x = log(data$volume_t)  ,y = (quantile(grow_extract$Beta0_1,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_1,0.5)), type = "l", col = "black")
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_1,0.95) + log(data$volume_t) * quantile(grow_extract$Beta1_1,0.95), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_1,0.05) + log(data$volume_t) * quantile(grow_extract$Beta1_1,0.05), type = "l", col = "darkgrey", lty = 2)
-# Crem
-plot(x = log(data$volume_t)  ,y = quantile(grow_extract$Beta0_2,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_2,0.5), type = "l", col = "red")
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_2,0.95) + log(data$volume_t) * quantile(grow_extract$Beta1_2,0.95), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_2,0.05) + log(data$volume_t) * quantile(grow_extract$Beta1_2,0.05), type = "l", col = "darkgrey", lty = 2)
-# Liom
-plot(x = log(data$volume_t)  ,y = quantile(grow_extract$Beta0_3,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_3,0.5), type = "l", col = "blue")
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_3,0.95) + log(data$volume_t) * quantile(grow_extract$Beta1_3,0.95), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_3,0.05) + log(data$volume_t) * quantile(grow_extract$Beta1_3,0.05), type = "l", col = "darkgrey", lty = 2)
-# Vacant
-plot(x = log(data$volume_t)  ,y = quantile(grow_extract$Beta0_4,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_4,0.5), type = "l", col = "pink")
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_4,0.95) + log(data$volume_t) * quantile(grow_extract$Beta1_4,0.95), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_4,0.05) + log(data$volume_t) * quantile(grow_extract$Beta1_4,0.05), type = "l", col = "darkgrey", lty = 2)
+par(mar=c(2,2,2,2))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
+plot.new()
+text(0.5,0.5,"Growth Rates of Cacti by Ant State",cex=2,font=2)
+# Other (3)
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = "black", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") + 
+#lines(x = size_dummy, y = y_other_high_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+#lines(x = size_dummy, y = y_other_low_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+points(x = log(y_other_subset_grow$volume_t), y = log(y_other_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+polygon(c(size_dummy,rev(size_dummy)),c(y_other_high_grow, rev(y_other_low_grow)),
+          col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3), border = NA)
+# Crem (1)
+plot(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = "red", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") + 
+#lines(x = size_dummy, y = y_crem_high_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+#lines(x = size_dummy, y = y_crem_low_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+points(x = log(y_crem_subset_grow$volume_t), y = log(y_crem_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+  polygon(c(size_dummy,rev(size_dummy)),c(y_crem_high_grow, rev(y_crem_low_grow)),
+          col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3), border = NA)
+# Liom (2)
+plot(x = size_dummy  ,y = y_liom_mean_grow, type = "l", col = "blue", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") + 
+#lines(x = size_dummy, y = y_liom_high_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+#lines(x = size_dummy, y = y_liom_low_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+  points(x = log(y_liom_subset_grow$volume_t), y = log(y_liom_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+  polygon(c(size_dummy,rev(size_dummy)),c(y_liom_high_grow, rev(y_liom_low_grow)),
+          col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3), border = NA)
+# Vacant (4)s
+plot(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = "pink", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") + 
+#lines(x = size_dummy, y = y_vac_high_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+#lines(x = size_dummy, y = y_vac_low_grow, type = "l", col = "darkgrey", lty = 2, lwd = 2) + 
+  points(x = log(y_vac_subset_grow$volume_t), y = log(y_vac_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+  polygon(c(size_dummy,rev(size_dummy)),c(y_vac_high_grow, rev(y_vac_low_grow)),
+          col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3), border = NA)
 # All together
-plot(x = log(data$volume_t)  ,y = quantile(grow_extract$Beta0_1,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_1,0.5), type = "l")
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_2,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_2,0.5), type = "l", col = "red")
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_3,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_3,0.5), type = "l", col = "blue")
-lines(x = log(data$volume_t), y = quantile(grow_extract$Beta0_4,0.5) + log(data$volume_t) * quantile(grow_extract$Beta1_4,0.5), type = "l", col = "pink")
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l",lwd = 2,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1",
+     ylim = c(8.8,9.5), xlim = c(8.8,9.2)) + 
+lines(x = size_dummy, y = y_crem_mean_grow, type = "l", col = "red", lwd = 2) + 
+lines(x = size_dummy, y = y_liom_mean_grow, type = "l", col = "blue",lwd = 2) + 
+lines(x = size_dummy, y = y_vac_mean_grow, type = "l", col = "pink", lwd = 2) + 
+  abline(a = 1, b = 1, col = "darkgrey", lty = 2)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
 dev.off()
-##GGplots
-par(mfrow = c(2,2))
-ggplot(data = data, aes(x = log(volume_t), y = quantile(grow_extract$Beta0_1,0.5) + log(volume_t) * quantile(grow_extract$Beta1_1,0.5), col = "other"))+
-  geom_smooth(col = "black") 
-ggplot(data = data, aes(x = log(volume_t), y = quantile(grow_extract$Beta0_2,0.5) + log(volume_t) * quantile(grow_extract$Beta1_2,0.5), col = "crem"))+
-  geom_smooth(col = "red") 
-ggplot(data = data, aes(x = log(volume_t), y = quantile(grow_extract$Beta0_3,0.5) + log(volume_t) * quantile(grow_extract$Beta1_3,0.5), col = "liom"))+
-  geom_smooth(col = "blue") 
-ggplot(data = data, aes(x = log(volume_t), y = quantile(grow_extract$Beta0_4,0.5) + log(volume_t) * quantile(grow_extract$Beta1_4,0.5), col = "vacant"))+
-  geom_smooth(col = "pink") 
-## GG Plots
-grow_a <- as.data.frame(get_posterior_mean(fit_grow_mix_ant, pars = c("y_rep")))
-mean(grow_a$`mean-all chains`)
-data$grow_a <- grow_a$`mean-all chains`
-png("grow_panel1.png")
-ggplot(data = data, aes(x = log(volume_t), y = grow_a)) + 
-  geom_point() +
-  geom_smooth() + 
-  facet_wrap(data$ant)
+## Panels 2
+png("grow_panel2.png")
+par(mar=c(5,5,0,1))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
+plot.new()
+text(0.5,0.5,"Growth Rates of Cacti by Ant State",cex=2,font=2)
+# Other (3)
+samp <- sample(nrow(grow_extract), 500)
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = "black", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") 
+for(i in 1:samp){
+  lines(x = size_dummy, y = (grow_extract$Beta0_3[i] + size_dummy * grow_extract$Beta1_3[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = "black", lwd = 4)
+points(x = log(y_other_subset_grow$volume_t), y = log(y_other_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Crem (1)
+plot(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = "red", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") 
+for(i in 1:samp){
+  lines(x = size_dummy, y = (grow_extract$Beta0_1[i] + size_dummy * grow_extract$Beta1_1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = "red", lwd = 4)
+points(x = log(y_crem_subset_grow$volume_t), y = log(y_crem_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Liom (2)
+plot(x = size_dummy  ,y = y_liom_mean_grow, type = "l", col = "blue", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1")
+for(i in 1:samp){
+  lines(x = size_dummy, y = (grow_extract$Beta0_2[i] + size_dummy * grow_extract$Beta1_2[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = y_liom_mean_grow, type = "l", col = "blue", lwd = 4)
+points(x = log(y_liom_subset_grow$volume_t), y = log(y_liom_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3))
+# Vacant (4)s
+plot(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = "pink", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") 
+for(i in 1:samp){
+  lines(x = size_dummy, y = (grow_extract$Beta0_4[i] + size_dummy * grow_extract$Beta1_4[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = "pink", lwd = 4)
+points(x = log(y_vac_subset_grow$volume_t), y = log(y_vac_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+  polygon(c(size_dummy,rev(size_dummy)),c(y_vac_high_grow, rev(y_vac_low_grow)),
+          col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3), border = NA)
+# All together
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l",lwd = 2,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1",
+     ylim = c(8.8,9.5), xlim = c(8.8,9.2)) + 
+  lines(x = size_dummy, y = y_crem_mean_grow, type = "l", col = "red", lwd = 2) + 
+  lines(x = size_dummy, y = y_liom_mean_grow, type = "l", col = "blue",lwd = 2) + 
+  lines(x = size_dummy, y = y_vac_mean_grow, type = "l", col = "pink", lwd = 2) + 
+  abline(a = 1, b = 1, col = "darkgrey", lty = 2)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
 dev.off()
 
 
-#### Survival Visuals
-## Overlay Plots
+
+#### Survival Visuals #####################################################################################################
+## Extract & Format Data
+#overlay plot data
 y <- y_surv
 yrep_surv <- rstan::extract(fit_surv_mix_ant, pars = "y_rep")[["y_rep"]]
 samp100 <- sample(nrow(yrep_surv), 500)
-png(file = "surv_post1.png")
-bayesplot::ppc_dens_overlay(y, yrep_surv[samp100,])
-dev.off()
-png(file = "surv_ant_post1.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_surv[samp100,],group = ant_surv)
-dev.off()
-## Convergence Plots
-png(file = "surv_conv1.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_surv_mix_ant, pars=c("beta0", "beta1")))
-dev.off()
-## Panel Plots
+#extract from STAN Models
 extract_surv <- rstan::extract(fit_surv_mix_ant, pars = c("beta0","beta1"))
 beta0 <- as.data.frame(extract_surv$beta0)
 beta1 <- as.data.frame(extract_surv$beta1)
 surv_extract <- cbind(beta0,beta1)
 colnames(surv_extract) <- c("Beta0_1","Beta0_2","Beta0_3","Beta0_4", "Beta1_1","Beta1_2","Beta1_3","Beta1_4")
-png("surv_panels1.png")
-par(mfrow = c(2,3))
-# Other
-size_dummy <- seq(min(log(data$volume_t), na.rm = TRUE), max(log(data$volume_t), na.rm = TRUE), by = 0.1)
-y_other = quantile(surv_extract$Beta0_1,0.5) + size_dummy * quantile(surv_extract$Beta1_1,0.5)
-y_other_low = quantile(surv_extract$Beta0_1,0.05) + size_dummy * quantile(surv_extract$Beta1_1,0.05)
-y_other_high = quantile(surv_extract$Beta0_1,0.95) + size_dummy * quantile(surv_extract$Beta1_1,0.95)
-plot(x = size_dummy  ,y = invlogit(y_other), type = "l", col = "black")
-points(x = size_dummy, y = invlogit(y_other))
-lines(x = size_dummy, y = invlogit(y_other_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = size_dummy, y = invlogit(y_other_high), type = "l", col = "darkgrey", lty = 2)
-# Crem
-y_crem = quantile(surv_extract$Beta0_2,0.5) + size_dummy * quantile(surv_extract$Beta1_2,0.5)
-y_crem_low = quantile(surv_extract$Beta0_2,0.05) + size_dummy * quantile(surv_extract$Beta1_2,0.05)
-y_crem_high = quantile(surv_extract$Beta0_2,0.95) + size_dummy * quantile(surv_extract$Beta1_2,0.95)
-plot(x = size_dummy  ,y = invlogit(y_crem), type = "l", col = "red")
-points(x = size_dummy, y = invlogit(y_crem))
-lines(x = size_dummy, y = invlogit(y_crem_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = size_dummy, y = invlogit(y_crem_high), type = "l", col = "darkgrey", lty = 2)
-# Liom
-y_liom = quantile(surv_extract$Beta0_3,0.5) + log(data$volume_t) * quantile(surv_extract$Beta1_3,0.5)
-y_liom_low = quantile(surv_extract$Beta0_3,0.05) + log(data$volume_t) * quantile(surv_extract$Beta1_3,0.05)
-y_liom_high = quantile(surv_extract$Beta0_3,0.95) + log(data$volume_t) * quantile(surv_extract$Beta1_3,0.95)
-plot(x = log(data$volume_t)  ,y = invlogit(y_liom), type = "l", col = "blue")
-points(x = log(data$volume_t), y = invlogit(y_liom))
-lines(x = log(data$volume_t), y = invlogit(y_liom_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(data$volume_t), y = invlogit(y_liom_high), type = "l", col = "darkgrey", lty = 2)# Vacant
-# All together
-y_vac = quantile(surv_extract$Beta0_4,0.5) + log(data$volume_t) * quantile(surv_extract$Beta1_4,0.5)
-y_vac_low = quantile(surv_extract$Beta0_4,0.05) + log(data$volume_t) * quantile(surv_extract$Beta1_4,0.05)
-y_vac_high = quantile(surv_extract$Beta0_4,0.95) + log(data$volume_t) * quantile(surv_extract$Beta1_4,0.95)
-plot(x = log(data$volume_t)  ,y = invlogit(y_vac), type = "l", col = "pink")
-points(x = log(data$volume_t), y = invlogit(y_vac))
-lines(x = log(data$volume_t), y = invlogit(y_vac_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(data$volume_t), y = invlogit(y_vac_high), type = "l", col = "darkgrey", lty = 2)# Vacant
-dev.off()
-## GG Plots
+#format for gg plots y rep
 mean_surv01 <- mean(surv_extract$Beta0_1)
 mean_surv02 <- mean(surv_extract$Beta0_2)
 mean_surv03 <- mean(surv_extract$Beta0_3)
@@ -160,6 +200,79 @@ surv_gg$ant_2 <- mean_surv12*log(data$volume_t) + mean_surv02
 surv_gg$ant_3 <- mean_surv13*log(data$volume_t) + mean_surv03
 surv_gg$ant_4 <- mean_surv14*log(data$volume_t) + mean_surv04
 surv_gg$vol <- data$volume_t
+#extract from original ddata
+y_subset <- survival_data[,c("Survival_t1","ant", "volume_t")]
+## Formulas
+y_other_surv = quantile(surv_extract$Beta0_3,0.5) + size_dummy * quantile(surv_extract$Beta1_3,0.5)
+y_other_low_surv = quantile(surv_extract$Beta0_3,0.05) + size_dummy * quantile(surv_extract$Beta1_3,0.05)
+y_other_high_surv = quantile(surv_extract$Beta0_3,0.95) + size_dummy * quantile(surv_extract$Beta1_3,0.95)
+y_other_subset_surv <- subset(y_subset, ant == 3)
+y_crem_surv = quantile(surv_extract$Beta0_1,0.5) + size_dummy * quantile(surv_extract$Beta1_1,0.5)
+y_crem_low_surv = quantile(surv_extract$Beta0_1,0.05) + size_dummy * quantile(surv_extract$Beta1_1,0.05)
+y_crem_high_surv = quantile(surv_extract$Beta0_1,0.95) + size_dummy * quantile(surv_extract$Beta1_1,0.95)
+y_crem_subset_surv <- subset(y_subset, ant == 1)
+y_liom_surv = quantile(surv_extract$Beta0_2,0.5) + size_dummy * quantile(surv_extract$Beta1_2,0.5)
+y_liom_low_surv = quantile(surv_extract$Beta0_2,0.05) + size_dummy * quantile(surv_extract$Beta1_2,0.05)
+y_liom_high_surv = quantile(surv_extract$Beta0_2,0.95) + size_dummy * quantile(surv_extract$Beta1_2,0.95)
+y_liom_subset_surv <- subset(y_subset, ant == 2)
+y_vac_surv = quantile(surv_extract$Beta0_4,0.5) + size_dummy * quantile(surv_extract$Beta1_4,0.5)
+y_vac_low_surv = quantile(surv_extract$Beta0_4,0.05) + size_dummy * quantile(surv_extract$Beta1_4,0.05)
+y_vac_high_surv = quantile(surv_extract$Beta0_4,0.95) + size_dummy * quantile(surv_extract$Beta1_4,0.95)
+y_vac_subset_surv <- subset(y_subset, ant == 4)
+## Overlay Plots
+png(file = "surv_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep_surv[samp100,])
+dev.off()
+png(file = "surv_ant_post1.png")
+bayesplot::ppc_dens_overlay_grouped(y, yrep_surv[samp100,],group = ant_surv)
+dev.off()
+## Convergence Plots
+png(file = "surv_conv1.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_surv_mix_ant, pars=c("beta0", "beta1")))
+dev.off()
+## Panel Plots
+png("surv_panels1.png")
+par(mar=c(2,2,2,2))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(1,2,2), widths = c(4,4,4))
+plot.new()
+text(0.5,0.1,"Survival Rates of Cacti by Ant State",cex=2,font=2)
+# Other (3)
+plot(x = size_dummy  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4, ylim = c(0,1))
+points(x = log(y_other_subset_surv$volume_t), y = y_other_subset_surv$Survival_t1, col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_other_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_other_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_other_high_surv), rev(invlogit(y_other_low_surv))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+# Crem (1)
+plot(x = size_dummy  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4, ylim = c(0,1))
+points(x = log(y_crem_subset_surv$volume_t), y = y_crem_subset_surv$Survival_t1, col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_crem_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_crem_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_crem_high_surv), rev(invlogit(y_crem_low_surv))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+# Liom (2)
+plot(x = size_dummy  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4, ylim = c(0,1))
+points(x = log(y_liom_subset_surv$volume_t), y = y_liom_subset_surv$Survival_t1, col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_liom_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_liom_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)# Vacant
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_liom_high_surv), rev(invlogit(y_liom_low_surv))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+# vacant (4)
+plot(x = size_dummy  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4, ylim = c(0,1))
+points(x = log(y_vac_subset_surv$volume_t), y = y_vac_subset_surv$Survival_t1, col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_vac_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_vac_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_vac_high_surv), rev(invlogit(y_vac_low_surv))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+# All Together
+plot(x = size_dummy, y = invlogit(y_other_surv), type = "l", col = "black", lwd = 2, ylim = c(0,1))
+lines(x = size_dummy, y = invlogit(y_crem_surv), col = "red",lwd = 2)
+lines(x = size_dummy, y = invlogit(y_liom_surv), col = "blue", lwd = 2)
+lines(x = size_dummy, y = invlogit(y_vac_surv), col = "pink", lwd = 2)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
+dev.off()
+## GG Plots
 png("surv_panel2.png")
 ant1 <- ggplot(data = surv_gg, aes(y= invlogit(ant_1), x=log(vol))) +  
   geom_point(alpha = 0.1) +
@@ -175,71 +288,124 @@ ant4 <- ggplot(data = surv_gg, aes(y= invlogit(ant_4), x=log(vol))) +
   geom_smooth(data=surv_gg, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
 grid.arrange(ant1,ant2,ant3,ant4)
 dev.off()
-## GG Plots
-surv_a <- as.data.frame(get_posterior_mean(fit_surv_mix_ant, pars = c("y_rep")))
-mean(surv_a$`mean-all chains`)
-survival_data$surv_a <- surv_a$`mean-all chains`
-png("surv_panel1.png")
-ggplot(data = survival_data, aes(x = log(volume_t), y = surv_a)) + 
-  geom_point() +
-  geom_smooth() + 
-  facet_wrap(survival_data$ant)
+## Panels 2
+png("surv_panel2.png")
+par(mar=c(5,5,0,1))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
+plot.new()
+text(0.5,0.5,"Survival Rates of Cacti by Ant State",cex=2,font=2)
+# Other (3)
+samp <- sample(nrow(surv_extract), 50)
+plot(x = size_dummy  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4, ylim = c(0,1))
+for(i in 1:50){
+  lines(x = size_dummy, y = invlogit(surv_extract$Beta0_3[i] + size_dummy * surv_extract$Beta1_3[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4)
+points(x = log(y_other_subset_surv$volume_t), y = (y_other_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Crem (1)
+plot(x = size_dummy  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4, ylim = c(0,1),
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") 
+for(i in 1:50){
+  lines(x = size_dummy, y = invlogit(surv_extract$Beta0_1[i] + size_dummy * surv_extract$Beta1_1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4)
+points(x = log(y_crem_subset_surv$volume_t), y = (y_crem_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Liom (2)
+plot(x = size_dummy  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4, ylim = c(0,1),
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1")
+for(i in 1:50){
+  lines(x = size_dummy, y = invlogit(surv_extract$Beta0_2[i] + size_dummy * surv_extract$Beta1_2[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4)
+points(x = log(y_liom_subset_surv$volume_t), y = (y_liom_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3))
+# Vacant (4)s
+plot(x = size_dummy  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4, ylim = c(0,1),
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") 
+for(i in 1:50){
+  lines(x = size_dummy, y = invlogit(surv_extract$Beta0_4[i] + size_dummy * surv_extract$Beta1_4[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4)
+points(x = log(y_vac_subset_surv$volume_t), y = (y_vac_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+# All together
+plot(x = size_dummy  ,y = invlogit(y_other_surv), type = "l",lwd = 2,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1")
+  lines(x = size_dummy, y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 2)
+  lines(x = size_dummy, y = invlogit(y_liom_surv), type = "l", col = "blue",lwd = 2) 
+  lines(x = size_dummy, y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 2)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
 dev.off()
 
-#### Flowering Visuals
+
+#### Flowering Visuals #####################################################################################################
+## Extract & Format Data
+#extract from StAN models
 extract_flow <- rstan::extract(fit_flow_mix_ant, pars = c("beta0","beta1"))
 beta0 <- as.data.frame(extract_flow$beta0)
 beta1 <- as.data.frame(extract_flow$beta1)
 flow_extract <- cbind(beta0,beta1)
 colnames(flow_extract) <- c("Beta0","Beta1")
-## Overlay Plots
+#format for overlay plots
 y <- y_flow
 yrep_flow <- rstan::extract(fit_flow_mix_ant, pars = "y_rep")[["y_rep"]]
 samp100 <- sample(nrow(yrep_flow), 500)
+## Formulas
+y_flow = quantile(flow_extract$Beta0,0.5) + size_dummy * quantile(flow_extract$Beta1,0.5)
+y_low_flow = quantile(flow_extract$Beta0,0.05) + size_dummy * quantile(flow_extract$Beta1,0.05)
+y_high_flow = quantile(flow_extract$Beta0,0.95) + size_dummy * quantile(flow_extract$Beta1,0.95)
+## Overlay Plots
 png(file = "flow_post1.png")
 bayesplot::ppc_dens_overlay(y, yrep_flow[samp100,])
-dev.off()
-png("flow_panels1.png")
-par(mfrow = c(1,1))
-y = quantile(flow_extract$Beta0,0.5) + log(flower$volume_t) * quantile(flow_extract$Beta1,0.5)
-y_low = quantile(flow_extract$Beta0,0.05) + log(flower$volume_t) * quantile(flow_extract$Beta1,0.05)
-y_high = quantile(flow_extract$Beta0,0.95) + log(flower$volume_t) * quantile(flow_extract$Beta1,0.95)
-plot(x = log(flower$volume_t)  ,y = exp(y), type = "l", col = "black")
-points(x = log(flower$volume_t), y = exp(y))
-lines(x = log(flower$volume_t), y = exp(y_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(flower$volume_t), y = exp(y_high), type = "l", col = "darkgrey", lty = 2)
 dev.off()
 ## Convergence Plots
 png(file = "flow_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_flow_mix_ant, pars=c("beta0", "beta1")))
 dev.off()
-## GGplots
-flow_a <- as.data.frame(get_posterior_mean(fit_flow_mix_ant, pars = c("y_rep")))
-mean(flow_a$`mean-all chains`)
-flower$flow_a <- flow_a$`mean-all chains`
-png("flow_panel2.png")
-ggplot(data = flower, aes(x = log(volume_t), y = flow_a)) + 
-  geom_point() +
-  geom_smooth() 
+##Panel Plot
+png("flow_panels1.png")
+par(mar=c(5,5,0,1))
+layout(matrix(c(1,2),
+              ncol = 1, byrow = TRUE), heights = c(1.2,2))
+plot.new()
+text(0.5,0.1,"Total Number of Flowers Produced",cex=2,font=2)
+plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,60), xlim = c(-5,15))
+points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+lines(x = size_dummy, y = exp(y_low_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy, y = exp(y_high_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(exp(y_high_flow), rev(exp(y_low_flow))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 dev.off()
-## GG Plots
-mean_flow0 <- mean(flow_extract$Beta0)
-mean_flow1 <- mean(flow_extract$Beta1)
-flow_gg <- as.data.frame(mean_flow1*log(flower$volume_t) + mean_flow0)
-colnames(flow_gg) <- c("ant")
-flow_gg$vol <- flower$volume_t
-png("flow_panel2.png")
-ggplot(data = flow_gg, aes(y= ant, x=log(vol))) +  
-  geom_point(alpha = 0.1) +
-  geom_smooth(data=flow_gg, method = "glm", formula='y~x', method.args = list(family = "poisson"), se = FALSE) 
+png("flow_panels2.png")
+par(mar=c(2,2,2,2))
+layout(matrix(c(1,2),
+              ncol = 1, byrow = TRUE), heights = c(1,2))
+plot.new()
+text(0.5,0.1,"Total Number of Flowers Produced",cex=2,font=2)
+plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, xlim = c(-5,15), ylim = c(0,100))
+for(i in 1:1500){
+  lines(x = size_dummy, y = exp(flow_extract$Beta0[i] + size_dummy * flow_extract$Beta1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4)
+points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
 dev.off()
 
-
-#### Reproductive Visuals
+#### Reproductive Visuals #####################################################################################################
+## Extract & Format Data
+#format for overlay plots
+#extract from STAN models
+extract_repro <- rstan::extract(fit_repro_mix_ant, pars = c("beta0","beta1"))
+beta0 <- as.data.frame(extract_repro$beta0)
+beta1 <- as.data.frame(extract_repro$beta1)
+repro_extract <- cbind(beta0,beta1)
+colnames(repro_extract) <- c("Beta0","Beta1")
+#extract from original data
+y_subset <- repro_data[,c("flower1_YN","ant", "volume_t")]
+## Formulas
+size_dummy2 <- seq(min(log(repro_data$volume_t)),max(log(repro_data$volume_t)), by = 0.1)
+y_repro = quantile(repro_extract$Beta0,0.5) + size_dummy2 * quantile(repro_extract$Beta1,0.5)
+y_low_repro = quantile(repro_extract$Beta0,0.05) + size_dummy2 * quantile(repro_extract$Beta1,0.05)
+y_high_repro = quantile(repro_extract$Beta0,0.95) + size_dummy2 * quantile(repro_extract$Beta1,0.95)
 ## Overlay Plots
-y <- y_repro
-yrep_repro <- rstan::extract(fit_repro_mix_ant, pars = "y_rep")[["y_rep"]]
-samp100 <- sample(nrow(yrep_repro), 500)
 png(file = "repro_post1.png")
 bayesplot::ppc_dens_overlay(y, yrep_repro[samp100,])
 dev.off()
@@ -247,146 +413,242 @@ dev.off()
 png(file = "repro_conv1.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_repro_mix_ant, pars=c("beta0", "beta1")))
 dev.off()
-## GGplots
-repro_a <- as.data.frame(get_posterior_mean(fit_repro_mix_ant, pars = c("y_rep")))
-mean(repro_a$`mean-all chains`)
-flower$repro_a <- repro_a$`mean-all chains`
-png("repro_panel2.png")
-ggplot(data = flower, aes(x = log(volume_t), y = repro_a)) + 
-  geom_point() +
-  geom_smooth() 
-dev.off()
-##GG Plots
-extract_repro <- rstan::extract(fit_repro_mix_ant, pars = c("beta0","beta1"))
-beta0 <- as.data.frame(extract_repro$beta0)
-beta1 <- as.data.frame(extract_repro$beta1)
-repro_extract <- cbind(beta0,beta1)
-colnames(repro_extract) <- c("Beta0","Beta1")
-mean_repro0 <- mean(repro_extract$Beta0)
-mean_repro1 <- mean(repro_extract$Beta1)
-repro_gg <- as.data.frame(mean_repro1*log(flower$volume_t) + mean_repro0)
-colnames(repro_gg) <- c("ant")
-repro_gg$vol <- flower$volume_t
-png("repro_panel2.png")
-ggplot(data = repro_gg, aes(y= invlogit(ant), x=(vol))) +  
-  geom_point(alpha = 0.1) +
-  geom_smooth(data=repro_gg, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
-dev.off()
 ## Panel Plots
 png("repro_panel1.png")
-par(mfrow = c(1,1))
-y = quantile(repro_extract$Beta0,0.5) + log(flower$volume_t) * quantile(repro_extract$Beta1,0.5)
-y_low = quantile(repro_extract$Beta0,0.05) + log(flower$volume_t) * quantile(repro_extract$Beta1,0.05)
-y_high = quantile(repro_extract$Beta0,0.95) + log(flower$volume_t) * quantile(repro_extract$Beta1,0.95)
-plot(x = log(flower$volume_t)  ,y = invlogit(y), type = "l", col = "red")
-points(x = log(flower$volume_t), y = invlogit(y))
-lines(x = log(flower$volume_t), y = invlogit(y_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(flower$volume_t), y = invlogit(y_high), type = "l", col = "darkgrey", lty = 2)
+par(mar=c(5,5,0,1))
+layout(matrix(c(1,2),
+              ncol = 1, byrow = TRUE), heights = c(1.2,2))
+plot.new()
+text(0.5,0.1,"Probability of Reproducing",cex=2,font=2)
+plot(x = (size_dummy2)  ,y = invlogit(y_repro), type = "l", col = "chartreuse4",  lwd = 4, ylim = c(0,1))
+points(x = log(repro_data$volume_t), y =(repro_data$flower1_YN))
+lines(x = (size_dummy2), y = invlogit(y_low_repro), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = (size_dummy2), y = invlogit(y_high_repro), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c((size_dummy2),rev((size_dummy2))),c(invlogit(y_high_repro), rev(invlogit(y_low_repro))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 dev.off()
-plot(x = size_dummy, y = invlogit(-5+5*size_dummy))
-#### Viability Visuals
-## Overlay Plots
-y <- good
+png("repro_panel2.png")
+par(mar=c(5,5,0,1))
+layout(matrix(c(1,2),
+              ncol = 1, byrow = TRUE), heights = c(1.2,2))
+plot.new()
+text(0.5,0.1,"Probability of Reproducing",cex=2,font=2)
+plot(x = (size_dummy2)  ,y = invlogit(y_repro), type = "l", col = "chartreuse4", ylim = c(0,1), lwd = 4, xlab = "log of volume at year t", ylab = "probability of producing flowers")
+points(x = log(y_subset$volume_t), y = (y_subset$flower1_YN))
+for(i in 200:1000){
+  lines(x = (size_dummy2), y = invlogit(repro_extract$Beta0[i] + size_dummy2 * repro_extract$Beta1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = (size_dummy2), y = invlogit(y_repro), type = "l", col = "chartreuse4", lwd = 4)
+dev.off()
+
+## Stan Plots
+png("repro_stan_dist.png")
+stan_plot(fit_repro_mix_ant, pars = c("beta0","beta1"), 
+          point_est = "mean", show_density = TRUE)
+dev.off()
+
+
+
+#### Viability Visuals #####################################################################################################
+## Extract & Format Data
+#format for overlay plots
+y_good <- good
 yrep_viab <- rstan::extract(fit_viab_mix_ant, pars = "y_rep")[["y_rep"]]
 samp100 <- sample(nrow(yrep_viab), 500)
+#extract from STAN models
+extract_viab <- rstan::extract(fit_viab_mix_ant, pars = c("beta0","beta1"))
+beta0 <- as.data.frame(extract_viab$beta0)
+beta1 <- as.data.frame(extract_viab$beta1)
+viab_extract <- cbind(beta0,beta1)
+colnames(viab_extract) <- c("Beta0_1","Beta0_2","Beta0_3","Beta0_4","Beta1_1","Beta1_2","Beta1_3","Beta1_4")
+#extract from original data
+y_subset_good <- viability_data[,c("Goodbuds_t1","ant", "volume_t")]
+## Formulas
+y_other_viab = quantile(viab_extract$Beta0_3,0.5) + size_dummy * quantile(viab_extract$Beta1_3,0.5)
+y_other_low_viab = quantile(viab_extract$Beta0_3,0.05) + size_dummy * quantile(viab_extract$Beta1_3,0.05)
+y_other_high_viab = quantile(viab_extract$Beta0_3,0.95) + size_dummy * quantile(viab_extract$Beta1_3,0.95)
+y_other_subset_viab = subset(y_subset, ant == 3)
+y_crem_viab = quantile(viab_extract$Beta0_1,0.5) + size_dummy * quantile(viab_extract$Beta1_1,0.5)
+y_crem_low_viab = quantile(viab_extract$Beta0_1,0.05) + size_dummy * quantile(viab_extract$Beta1_1,0.05)
+y_crem_high_viab = quantile(viab_extract$Beta0_1,0.95) + size_dummy * quantile(viab_extract$Beta1_1,0.95)
+y_crem_subset_viab = subset(y_subset, ant == 1)
+y_liom_viab = quantile(viab_extract$Beta0_2,0.5) + size_dummy * quantile(viab_extract$Beta1_2,0.5)
+y_liom_low_viab = quantile(viab_extract$Beta0_2,0.05) + size_dummy * quantile(viab_extract$Beta1_2,0.05)
+y_liom_high_viab = quantile(viab_extract$Beta0_2,0.95) + size_dummy * quantile(viab_extract$Beta1_2,0.95)
+y_liom_subset_viab = subset(y_subset, ant == 2)
+y_vac_viab = quantile(viab_extract$Beta0_4,0.5) + size_dummy * quantile(viab_extract$Beta1_4,0.5)
+y_vac_low_viab = quantile(viab_extract$Beta0_4,0.05) + size_dummy * quantile(viab_extract$Beta1_4,0.05)
+y_vac_high_viab = quantile(viab_extract$Beta0_4,0.95) + size_dummy * quantile(viab_extract$Beta1_4,0.95)
+y_vac_subset_viab = subset(y_subset, ant == 4)
+#total flowers info
+extract_flow <- rstan::extract(fit_flow_mix_ant, pars = c("beta0","beta1"))
+beta0 <- as.data.frame(extract_flow$beta0)
+beta1 <- as.data.frame(extract_flow$beta1)
+flow_extract <- cbind(beta0,beta1)
+colnames(flow_extract) <- c("Beta0","Beta1")
+#format for overlay plots
+y_tot <- y_flow
+yrep_flow <- rstan::extract(fit_flow_mix_ant, pars = "y_rep")[["y_rep"]]
+samp100 <- sample(nrow(yrep_flow), 500)
+## Formulas
+y_flow = quantile(flow_extract$Beta0,0.5) + size_dummy * quantile(flow_extract$Beta1,0.5)
+y_low_flow = quantile(flow_extract$Beta0,0.05) + size_dummy * quantile(flow_extract$Beta1,0.05)
+y_high_flow = quantile(flow_extract$Beta0,0.95) + size_dummy * quantile(flow_extract$Beta1,0.95)
+## Subsets
+subset <- cactus[,c("volume_t","TotFlowerbuds_t1","Goodbuds_t1","ant_t")]
+other_subset <- subset(subset, ant_t == "other")
+crem_subset <- subset(subset, ant == "crem")
+liom_subset <- subset(subset, ant == "liom")
+vac_subset <- subset(subset, ant == "vacant")
+## Overlay Plots
 png(file = "viab_post1.png")
 bayesplot::ppc_dens_overlay(y, yrep_viab[samp100,])
-dev.off()
-png(file = "viab_ant_post1.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_viab[samp100,],group = ant_flower)
 dev.off()
 ## Convergence Plots
 png(file = "viab_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_viab_mix_ant, pars=c("beta0")))
 dev.off()
-## Interval Plots
-samp1 <- sample(nrow(yrep_viab), 2)
-png("viab_intervals.png")
-bayesplot::ppc_intervals_grouped(y = good, yrep = yrep_viab[samp1,], x = vol_flower, group = ant_flower)
-dev.off()
 ## Convergence Plots
 png(file = "viab_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fitty, pars=c("beta0")))
 dev.off()
-##GG Plots
-viab_a <- as.data.frame(get_posterior_mean(fit_viab_mix_ant, pars = c("y_rep")))
-mean(viab_a$`mean-all chains`)
-flower$viab_a <- viab_a$`mean-all chains`
-png("flow_panel1.png")
-ggplot(data = flower, aes(x = log(volume_t), y = viab_a)) + 
-  geom_point() +
-  geom_smooth() + 
-  facet_wrap(flower$ant)
-dev.off()
-## GG Plots
-extract_viab <- rstan::extract(fit_viab_mix_ant, pars = c("beta0"))
-beta0 <- as.data.frame(extract_viab$beta0)
-viab_extract <- beta0
-colnames(viab_extract) <- c("Beta0_1","Beta0_2","Beta0_3","Beta0_4")
-mean_viab01 <- mean(viab_extract$Beta0_1)
-mean_viab02 <- mean(viab_extract$Beta0_2)
-mean_viab03 <- mean(viab_extract$Beta0_3)
-mean_viab04 <- mean(viab_extract$Beta0_4)
-viab_gg <- as.data.frame( mean_viab01)
-colnames(viab_gg) <- c("ant_1")
-viab_gg$ant_2 <-  mean_viab02
-viab_gg$ant_3 <-  mean_viab03
-viab_gg$ant_4 <-  mean_viab04
-viab_gg$vol <- flower$volume_t
-png("viab_panel2.png")
-ant1 <- ggplot(data = viab_gg, aes(y= ant_1, x=log(flower$volume_t))) +  
-  geom_point(alpha = 0.1) +
-  geom_smooth(data=viab_gg, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
-ant2 <- ggplot(data = viab_gg, aes(y= ant_2, x=log(flower$volume_t))) +  
-  geom_point(alpha = 0.1) +
-  geom_smooth(data=viab_gg, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
-ant3 <- ggplot(data = viab_gg, aes(y= ant_3, x=log(flower$volume_t))) +  
-  geom_point(alpha = 0.1) +
-  geom_smooth(data=viab_gg, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
-ant4 <- ggplot(data = viab_gg, aes(y= ant_4, x=log(flower$volume_t))) +  
-  geom_point(alpha = 0.1) +
-  geom_smooth(data=viab_gg, method = "glm", formula='y~x', method.args = list(family = "binomial"), se = FALSE) 
-grid.arrange(ant1,ant2,ant3,ant4)
-dev.off()
-## Panel Plots
-png("repro_panels1.png")
-par(mfrow = c(2,2))
+## Panel Plots (proportion of viable buds)
+plot(x = log(cactus$volume_t),y = cactus$Goodbuds_t1/cactus$TotFlowerbuds_t1)
+png("viab_panels1.png")
+par(mar=c(2,2,2,2))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
+plot.new()
+text(0.5,0.5,"Proportion of Viable Buds by Ant State",cex=2,font=2)
 # Other
-y_other = quantile(viab_extract$Beta0_1,0.5) + log(flower$volume_t) * quantile(viab_extract$Beta1_1,0.5)
-y_other_low = quantile(viab_extract$Beta0_1,0.05) + log(flower$volume_t) * quantile(viab_extract$Beta1_1,0.05)
-y_other_high = quantile(viab_extract$Beta0_1,0.95) + log(flower$volume_t) * quantile(viab_extract$Beta1_1,0.95)
-plot(x = log(flower$volume_t)  ,y = invlogit(y_other), type = "l", col = "black", ylim = c(0,100))
-points(x = log(flower$volume_t), y = invlogit(y_other))
-lines(x = log(flower$volume_t), y = invlogit(y_other_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(flower$volume_t), y = invlogit(y_other_high), type = "l", col = "darkgrey", lty = 2)
+plot(x = size_dummy  ,y = invlogit((y_other_viab)/(y_flow)), type = "l", col = "black", lwd = 4)
+#points(x = log(subset$volume_t), y = invlogit(other_subset$Goodbuds_t1/subset$TotFlowerbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_other_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_other_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_other_high_viab/y_flow), rev(invlogit(y_other_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Crem
-y_crem = quantile(repro_extract$Beta0_2,0.5) + log(flower$volume_t) * quantile(repro_extract$Beta1_2,0.5)
-y_crem_low = quantile(repro_extract$Beta0_2,0.05) + log(flower$volume_t) * quantile(repro_extract$Beta1_2,0.05)
-y_crem_high = quantile(repro_extract$Beta0_2,0.95) + log(flower$volume_t) * quantile(repro_extract$Beta1_2,0.95)
-plot(x = log(flower$volume_t)  ,y = invlogit(y_crem), type = "l", col = "red")
-points(x = log(flower$volume_t), y = invlogit(y_crem))
-lines(x = log(flower$volume_t), y = invlogit(y_crem_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(flower$volume_t), y = invlogit(y_crem_high), type = "l", col = "darkgrey", lty = 2)
+plot(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 4, ylim = c(0,1))
+#points(x = log(y_crem_subset_viab$volume_t), y = invlogit(y_crem_subset_viab$Goodbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_crem_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_crem_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_crem_high_viab/y_flow), rev(invlogit(y_crem_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Liom
-y_liom = quantile(repro_extract$Beta0_3,0.5) + log(flower$volume_t) * quantile(repro_extract$Beta1_3,0.5)
-y_liom_low = quantile(repro_extract$Beta0_3,0.05) + log(flower$volume_t) * quantile(repro_extract$Beta1_3,0.05)
-y_liom_high = quantile(repro_extract$Beta0_3,0.95) + log(flower$volume_t) * quantile(repro_extract$Beta1_3,0.95)
-plot(x = log(flower$volume_t)  ,y = (invlogit(y_liom)), type = "l", col = "blue")
-points(x = log(flower$volume_t), y = (invlogit(y_liom)))
-lines(x = log(flower$volume_t), y = invlogit(y_liom_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(flower$volume_t), y = invlogit(y_liom_high), type = "l", col = "darkgrey", lty = 2)# Vacant
-# All together
-y_vac = quantile(repro_extract$Beta0_4,0.5) + log(flower$volume_t) * quantile(repro_extract$Beta1_4,0.5)
-y_vac_low = quantile(repro_extract$Beta0_4,0.05) + log(flower$volume_t) * quantile(repro_extract$Beta1_4,0.05)
-y_vac_high = quantile(repro_extract$Beta0_4,0.95) + log(flower$volume_t) * quantile(repro_extract$Beta1_4,0.95)
-plot(x = log(flower$volume_t)  ,y = (invlogit(y_vac)), type = "l", col = "pink")
-points(x = log(flower$volume_t), y = (invlogit(y_vac)))
-lines(x = log(flower$volume_t), y = invlogit(y_vac_low), type = "l", col = "darkgrey", lty = 2)
-lines(x = log(flower$volume_t), y = invlogit(y_vac_high), type = "l", col = "darkgrey", lty = 2)# Vacant
+plot(x = size_dummy  ,y = (invlogit(y_liom_viab/y_flow)), type = "l", col = "blue", lwd = 4, ylim = c(0,1))
+#points(x = log(y_liom_subset_viab$volume_t), y = invlogit(y_liom_subset_viab$Goodbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_liom_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_liom_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_liom_high_viab/y_flow), rev(invlogit(y_liom_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+# Vacant
+plot(x = size_dummy  ,y = (invlogit(y_vac_viab/y_flow)), type = "l", col = "pink", lwd = 4, ylim = c(0,1), xlim = c(0,15))
+#points(x = log(y_vac_subset_viab$volume_t), y = invlogit(y_vac_subset_viab$Goodbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_vac_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_vac_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_vac_high_viab/y_flow), rev(invlogit(y_vac_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+#All Together
+plot(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l", col = "black", lwd = 2, ylim = c(0,1))
+lines(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 2)
+lines(x = size_dummy  ,y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue", lwd = 2)
+lines(x = size_dummy  ,y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 2)
+dev.off()
+## Panels 2
+png("viab_panel2.png")
+par(mar=c(2,2,2,2))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
+plot.new()
+text(0.5,0.5,"Viability of Flowerbuds by Ant State",cex=2,font=2)
+# Other (3)
+samp <- sample(nrow(viab_extract), 150)
+plot(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l", col = "black", lwd = 4, ylim = c(0,1))
+for(i in 1:1500){
+  lines(x = size_dummy, y = invlogit((viab_extract$Beta0_3[samp[i]] + size_dummy * viab_extract$Beta1_3[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l", col = "black", lwd = 4)
+#points(x = log(y_other_subset_viab$volume_t), y = invlogit(y_other_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Crem (1)
+plot(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 4,
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1", ylim = c(0,1)) 
+for(i in 1:1500){
+  lines(x = size_dummy, y = invlogit((viab_extract$Beta0_1[samp[i]] + size_dummy * viab_extract$Beta1_1[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy, y = invlogit((mean(viab_extract$Beta0_1) + size_dummy * mean(viab_extract$Beta1_1))/y_flow),col = "lightgrey", alpha = 0.1)
+lines(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 4)
+#points(x = log(y_crem_subset_viab$volume_t), y = invlogit(y_crem_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Liom (2)
+plot(x = size_dummy  ,y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue", lwd = 4, ylim = c(0,1),
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1")
+for(i in 1:1500){
+  lines(x = size_dummy, y = invlogit((viab_extract$Beta0_2[samp[i]] + size_dummy * viab_extract$Beta1_2[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue", lwd = 4)
+#points(x = log(y_liom_subset_viab$volume_t), y = invlogit(y_liom_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3))
+# Vacant (4)s
+plot(x = size_dummy  ,y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 4, ylim = c(0,1),
+     xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") 
+for(i in 1:1500){
+  lines(x = size_dummy, y = invlogit((viab_extract$Beta0_4[samp[i]] + size_dummy * viab_extract$Beta1_4[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 4)
+#points(x = log(y_vac_subset_viab$volume_t), y = invlogit(y_vac_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+  # All together
+  plot(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l",lwd = 2, ylim = c(0,1),
+       xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1")
+lines(x = size_dummy, y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 2)
+lines(x = size_dummy, y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue",lwd = 2) 
+lines(x = size_dummy, y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 2)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
 dev.off()
 
 
-#### Multinomial 1
+
+
+#### Viability and Total together #####################################################################################################
+
+par(mar=c(2,2,2,2))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
+plot.new()
+text(0.5,0.1,"Viable and Total Flowerbuds",cex=2,font=2)
+#other
+plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,60), xlim = c(-5,15))
+points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+lines(x = size_dummy, y = exp(y_low_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy, y = exp(y_high_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy  ,y = exp(y_other_viab), type = "l", col = "black", lwd = 4)
+polygon(c(size_dummy,rev(size_dummy)),c(exp(y_high_flow), rev(exp(y_low_flow))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+#crem
+plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,60), xlim = c(-5,15))
+points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+lines(x = size_dummy, y = exp(y_low_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy, y = exp(y_high_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy  ,y = exp(y_crem_viab), type = "l", col = "red", lwd = 4)
+polygon(c(size_dummy,rev(size_dummy)),c(exp(y_high_flow), rev(exp(y_low_flow))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+#liom
+plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,60), xlim = c(-5,15))
+points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+lines(x = size_dummy, y = exp(y_low_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy, y = exp(y_high_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy  ,y = exp(y_liom_viab), type = "l", col = "blue", lwd = 4)
+polygon(c(size_dummy,rev(size_dummy)),c(exp(y_high_flow), rev(exp(y_low_flow))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+#vacant
+plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,60), xlim = c(-5,15))
+points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+lines(x = size_dummy, y = exp(y_low_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy, y = exp(y_high_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy  ,y = exp(y_vac_viab), type = "l", col = "pink", lwd = 4)
+polygon(c(size_dummy,rev(size_dummy)),c(exp(y_high_flow), rev(exp(y_low_flow))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+#all
+plot(x = size_dummy  ,y = exp(y_other_viab), type = "l", col = "black", lwd = 2, ylim = c(0,60))
+lines(x = size_dummy  ,y = exp(y_crem_viab), type = "l", col = "red", lwd = 2)
+lines(x = size_dummy  ,y = exp(y_liom_viab), type = "l", col = "blue", lwd = 2)
+lines(x = size_dummy  ,y = exp(y_vac_viab), type = "l", col = "pink", lwd = 2)
+lines(x = size_dummy, y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 2)
+
+#### Multinomial 1 #####################################################################################################
 ## Overlay Plots
 plot_title <- ggtitle("Mixed Ant Effects Multinomial1 Model Simulated Data")
 bayesplot::ppc_dens_overlay(y = fit_multi1_mix_ant@mean_y_rep,
