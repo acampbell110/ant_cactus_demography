@@ -1,6 +1,6 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
-size_dummy <- seq(min(log(data$volume_t), na.rm = TRUE), max(log(data$volume_t), na.rm = TRUE), by = 0.1)
+size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t1), na.rm = TRUE), by = 0.1)
 #### Growth Visuals #####################################################################################################
 ## Extract & Format Data
 #For overlay plots
@@ -340,19 +340,15 @@ dev.off()
 #### Flowering Visuals #####################################################################################################
 ## Extract & Format Data
 #extract from StAN models
-extract_flow <- rstan::extract(fit_flow_mix_ant, pars = c("beta0","beta1"))
-beta0 <- as.data.frame(extract_flow$beta0)
-beta1 <- as.data.frame(extract_flow$beta1)
-flow_extract <- cbind(beta0,beta1)
-colnames(flow_extract) <- c("Beta0","Beta1")
+flow_data <- read.csv("/Users/alicampbell/Cactus Dropbox/Ant-Demography-Project/Model Outputs/flow_outputs.csv", header = TRUE,stringsAsFactors=T)
 #format for overlay plots
 y <- y_flow
-yrep_flow <- rstan::extract(fit_flow_mix_ant, pars = "y_rep")[["y_rep"]]
+yrep_flow <- subset(flow_data, select = -c(1:3))
 samp100 <- sample(nrow(yrep_flow), 500)
 ## Formulas
-y_flow = quantile(flow_extract$Beta0,0.5) + size_dummy * quantile(flow_extract$Beta1,0.5)
-y_low_flow = quantile(flow_extract$Beta0,0.05) + size_dummy * quantile(flow_extract$Beta1,0.05)
-y_high_flow = quantile(flow_extract$Beta0,0.95) + size_dummy * quantile(flow_extract$Beta1,0.95)
+y_flow = quantile(flow_data$beta0,0.5) + size_dummy * quantile(flow_data$beta1,0.5)
+y_low_flow = quantile(flow_data$beta0,0.05) + size_dummy * quantile(flow_data$beta1,0.05)
+y_high_flow = quantile(flow_data$beta0,0.95) + size_dummy * quantile(flow_data$beta1,0.95)
 ## Overlay Plots
 png(file = "flow_post1.png")
 bayesplot::ppc_dens_overlay(y, yrep_flow[samp100,])
@@ -367,9 +363,9 @@ par(mar=c(5,5,0,1))
 layout(matrix(c(1,2),
               ncol = 1, byrow = TRUE), heights = c(1.2,2))
 plot.new()
-text(0.5,0.1,"Total Number of Flowers Produced",cex=2,font=2)
+text(0.5,0.1,"Number of Flowers Produced",cex=2,font=2)
 plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,60), xlim = c(-5,15))
-points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+points(x = log(flower_data$volume_t), y = (flower_data$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
 lines(x = size_dummy, y = exp(y_low_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 lines(x = size_dummy, y = exp(y_high_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c(size_dummy,rev(size_dummy)),c(exp(y_high_flow), rev(exp(y_low_flow))),
@@ -383,10 +379,10 @@ plot.new()
 text(0.5,0.1,"Total Number of Flowers Produced",cex=2,font=2)
 plot(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4, xlim = c(-5,15), ylim = c(0,100))
 for(i in 1:1500){
-  lines(x = size_dummy, y = exp(flow_extract$Beta0[i] + size_dummy * flow_extract$Beta1[i]),col = "lightgrey", alpha = 0.1)
+  lines(x = size_dummy, y = exp(flow_data$beta0[i] + size_dummy * flow_data$beta1[i]),col = "lightgrey", alpha = 0.1)
 }
 lines(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4)
-points(x = log(flower$volume_t), y = (flower$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+points(x = log(flower_data$volume_t), y = (flower_data$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
 dev.off()
 
 #### Reproductive Visuals #####################################################################################################
@@ -398,6 +394,14 @@ beta0 <- as.data.frame(extract_repro$beta0)
 beta1 <- as.data.frame(extract_repro$beta1)
 repro_extract <- cbind(beta0,beta1)
 colnames(repro_extract) <- c("Beta0","Beta1")
+
+repro_data <- read.csv("/Users/alicampbell/Cactus Dropbox/Ant-Demography-Project/Model Outputs/repro_outputs.csv", header = TRUE,stringsAsFactors=T)
+#format for overlay plots
+y <- y_repro
+yrep_repro <- subset(repro_data, select = -c(1:3))
+samp100 <- sample(nrow(yrep_repro), 500)
+
+
 #extract from original data
 y_subset <- repro_data[,c("flower1_YN","ant", "volume_t")]
 ## Formulas
