@@ -38,10 +38,10 @@ model {
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
   
-  good_viab ~ binomial(tot_viab, logit(mu));
+  good_viab ~ binomial_logit(tot_viab, mu);
 }
 generated quantities {
-  int<lower = 0> y_rep[N_viab] = binomial_rng(tot_viab , logit(mu));
+  int<lower = 0> y_rep[N_viab] = binomial_rng(tot_viab , inv_logit(mu));
   real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
 }
