@@ -386,7 +386,7 @@ dev.off()
 ## Extract & Format Data
 viab_data <- read.csv("/Users/alicampbell/Cactus Dropbox/Ant-Demography-Project/Model Outputs/viab_outputs.csv", header = TRUE,stringsAsFactors=T)
 #format for overlay plots
-y_good <- good
+y_good <- good_viab
 yrep_viab <- subset(viab_data, select = -c(1:3))
 samp100 <- sample(nrow(yrep_viab), 500)
 #extract from original data
@@ -395,25 +395,25 @@ y_subset_good <- viability_data[,c("Goodbuds_t1","ant", "volume_t")]
 y_other_viab = quantile(viab_data$beta0.3,0.5) + size_dummy * quantile(viab_data$beta1.3,0.5)
 y_other_low_viab = quantile(viab_data$beta0.3,0.05) + size_dummy * quantile(viab_data$beta1.3,0.05)
 y_other_high_viab = quantile(viab_data$beta0.3,0.95) + size_dummy * quantile(viab_data$beta1.3,0.95)
-y_other_subset_viab = subset(y_subset, ant == 3)
+y_other_subset_viab = subset(y_subset_good, ant == 3)
 y_crem_viab = quantile(viab_data$beta0.1,0.5) + size_dummy * quantile(viab_data$beta1.1,0.5)
 y_crem_low_viab = quantile(viab_data$beta0.1,0.05) + size_dummy * quantile(viab_data$beta1.1,0.05)
 y_crem_high_viab = quantile(viab_data$beta0.1,0.95) + size_dummy * quantile(viab_data$beta1.1,0.95)
-y_crem_subset_viab = subset(y_subset, ant == 1)
+y_crem_subset_viab = subset(y_subset_good, ant == 1)
 y_liom_viab = quantile(viab_data$beta0.2,0.5) + size_dummy * quantile(viab_data$beta1.2,0.5)
 y_liom_low_viab = quantile(viab_data$beta0.2,0.05) + size_dummy * quantile(viab_data$beta1.2,0.05)
 y_liom_high_viab = quantile(viab_data$beta0.2,0.95) + size_dummy * quantile(viab_data$beta1.2,0.95)
-y_liom_subset_viab = subset(y_subset, ant == 2)
+y_liom_subset_viab = subset(y_subset_good, ant == 2)
 y_vac_viab = quantile(viab_data$beta0.4,0.5) + size_dummy * quantile(viab_data$beta1.4,0.5)
 y_vac_low_viab = quantile(viab_data$beta0.4,0.05) + size_dummy * quantile(viab_data$beta1.4,0.05)
 y_vac_high_viab = quantile(viab_data$beta0.4,0.95) + size_dummy * quantile(viab_data$beta1.4,0.95)
-y_vac_subset_viab = subset(y_subset, ant == 4)
+y_vac_subset_viab = subset(y_subset_good, ant == 4)
 ## Subsets
 subset <- cactus[,c("volume_t","TotFlowerbuds_t1","Goodbuds_t1","ant_t")]
 other_subset <- subset(subset, ant_t == "other")
-crem_subset <- subset(subset, ant == "crem")
-liom_subset <- subset(subset, ant == "liom")
-vac_subset <- subset(subset, ant == "vacant")
+crem_subset <- subset(subset, ant_t == "crem")
+liom_subset <- subset(subset, ant_t == "liom")
+vac_subset <- subset(subset, ant_t == "vacant")
 ## Overlay Plots
 png(file = "viab_post1.png")
 bayesplot::ppc_dens_overlay(y, yrep_viab[samp100,])
@@ -427,7 +427,7 @@ png(file = "viab_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fitty, pars=c("beta0")))
 dev.off()
 ## Panel Plots (proportion of viable buds)
-plot(x = log(cactus$volume_t),y = cactus$Goodbuds_t1/cactus$TotFlowerbuds_t1)
+plot(x = log(other_subset$volume_t),y = other_subset$Goodbuds_t1/other_subset$TotFlowerbuds_t1)
 png("viab_panels1.png")
 par(mar=c(2,2,2,2))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
@@ -435,34 +435,34 @@ layout(matrix(c(1,1,1,2,3,4,5,6,6),
 plot.new()
 text(0.5,0.5,"Proportion of Viable Buds by Ant State",cex=2,font=2)
 # Other
-plot(x = size_dummy  ,y = invlogit((y_other_viab)/(y_flow)), type = "l", col = "black", lwd = 4)
-#points(x = log(subset$volume_t), y = invlogit(other_subset$Goodbuds_t1/subset$TotFlowerbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+plot(x = size_dummy  ,y = invlogit(y_other_viab), type = "l", col = "black", lwd = 4)
+points(x = log(other_subset$volume_t), y = (other_subset$Goodbuds_t1/other_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
 #lines(x = size_dummy, y = invlogit(y_other_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_other_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
-polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_other_high_viab/y_flow), rev(invlogit(y_other_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_other_high_viab), rev(invlogit(y_other_low_viab))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Crem
-plot(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 4, ylim = c(0,1))
-#points(x = log(y_crem_subset_viab$volume_t), y = invlogit(y_crem_subset_viab$Goodbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+plot(x = size_dummy  ,y = invlogit(y_crem_viab), type = "l", col = "red", lwd = 4, ylim = c(0,1))
+points(x = log(crem_subset$volume_t), y = (crem_subset$Goodbuds_t/crem_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
 #lines(x = size_dummy, y = invlogit(y_crem_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_crem_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
-polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_crem_high_viab/y_flow), rev(invlogit(y_crem_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_crem_high_viab), rev(invlogit(y_crem_low_viab))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Liom
-plot(x = size_dummy  ,y = (invlogit(y_liom_viab/y_flow)), type = "l", col = "blue", lwd = 4, ylim = c(0,1))
-#points(x = log(y_liom_subset_viab$volume_t), y = invlogit(y_liom_subset_viab$Goodbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+plot(x = size_dummy  ,y = (invlogit(y_liom_viab)), type = "l", col = "blue", lwd = 4, ylim = c(0,1))
+points(x = log(liom_subset$volume_t), y = (liom_subset$Goodbuds_t/liom_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
 #lines(x = size_dummy, y = invlogit(y_liom_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_liom_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
-polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_liom_high_viab/y_flow), rev(invlogit(y_liom_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_liom_high_viab), rev(invlogit(y_liom_low_viab))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Vacant
-plot(x = size_dummy  ,y = (invlogit(y_vac_viab/y_flow)), type = "l", col = "pink", lwd = 4, ylim = c(0,1), xlim = c(0,15))
-#points(x = log(y_vac_subset_viab$volume_t), y = invlogit(y_vac_subset_viab$Goodbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+plot(x = size_dummy  ,y = (invlogit(y_vac_viab)), type = "l", col = "pink", lwd = 4, ylim = c(0,1), xlim = c(0,15))
+points(x = log(vac_subset$volume_t), y = (vac_subset$Goodbuds_t/vac_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
 #lines(x = size_dummy, y = invlogit(y_vac_low_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_vac_high_viab), type = "l", col = "darkgrey", lty = 2, lwd = 2)
-polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_vac_high_viab/y_flow), rev(invlogit(y_vac_low_viab/y_flow))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_vac_high_viab), rev(invlogit(y_vac_low_viab))),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 #All Together
-plot(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l", col = "black", lwd = 2, ylim = c(0,1))
-lines(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 2)
-lines(x = size_dummy  ,y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue", lwd = 2)
-lines(x = size_dummy  ,y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 2)
+plot(x = size_dummy  ,y = invlogit(y_other_viab), type = "l", col = "black", lwd = 2, ylim = c(0,1))
+lines(x = size_dummy  ,y = invlogit(y_crem_viab), type = "l", col = "red", lwd = 2)
+lines(x = size_dummy  ,y = invlogit(y_liom_viab), type = "l", col = "blue", lwd = 2)
+lines(x = size_dummy  ,y = invlogit(y_vac_viab), type = "l", col = "pink", lwd = 2)
 dev.off()
 ## Panels 2
 png("viab_panel2.png")
@@ -472,48 +472,55 @@ layout(matrix(c(1,1,1,2,3,4,5,6,6),
 plot.new()
 text(0.5,0.5,"Viability of Flowerbuds by Ant State",cex=2,font=2)
 # Other (3)
-samp <- sample(nrow(viab_extract), 150)
-plot(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l", col = "black", lwd = 4, ylim = c(0,1))
+samp <- sample(nrow(viab_data), 150)
+plot(x = size_dummy  ,y = invlogit(y_other_viab), type = "l", col = "black", lwd = 4, ylim = c(0,1))
 for(i in 1:1500){
-  lines(x = size_dummy, y = invlogit((viab_data$beta0.3[samp[i]] + size_dummy * viab_data$beta1.3[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+  lines(x = size_dummy, y = invlogit((viab_data$beta0.3[samp[i]] + size_dummy * viab_data$beta1.3[samp[i]])),col = "lightgrey", alpha = 0.1)
 }
-lines(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l", col = "black", lwd = 4)
-#points(x = log(y_other_subset_viab$volume_t), y = invlogit(y_other_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+lines(x = size_dummy  ,y = invlogit(y_other_viab), type = "l", col = "black", lwd = 4, ylim = c(0,1))
+points(x = log(other_subset$volume_t), y = (other_subset$Goodbuds_t1/other_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
 # Crem (1)
-plot(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 4,
+plot(x = size_dummy  ,y = invlogit(y_crem_viab), type = "l", col = "red", lwd = 4,
      xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1", ylim = c(0,1)) 
 for(i in 1:1500){
-  lines(x = size_dummy, y = invlogit((viab_data$beta0.1[samp[i]] + size_dummy * viab_data$beta1.1[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+  lines(x = size_dummy, y = invlogit((viab_data$beta0.1[samp[i]] + size_dummy * viab_data$beta1.1[samp[i]])),col = "lightgrey", alpha = 0.1)
 }
-lines(x = size_dummy, y = invlogit((mean(viab_data$beta0.1) + size_dummy * mean(viab_data$beta1.1))/y_flow),col = "lightgrey", alpha = 0.1)
-lines(x = size_dummy  ,y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 4)
-#points(x = log(y_crem_subset_viab$volume_t), y = invlogit(y_crem_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+lines(x = size_dummy  ,y = invlogit(y_crem_viab), type = "l", col = "red", lwd = 4, ylim = c(0,1)) 
+
+points(x = log(crem_subset$volume_t), y = (crem_subset$Goodbuds_t/crem_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
 # Liom (2)
-plot(x = size_dummy  ,y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue", lwd = 4, ylim = c(0,1),
+plot(x = size_dummy  ,y = invlogit(y_liom_viab), type = "l", col = "blue", lwd = 4, ylim = c(0,1),
      xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1")
 for(i in 1:1500){
-  lines(x = size_dummy, y = invlogit((viab_data$beta0.2[samp[i]] + size_dummy * viab_data$beta1.2[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+  lines(x = size_dummy, y = invlogit((viab_data$beta0.2[samp[i]] + size_dummy * viab_data$beta1.2[samp[i]])),col = "lightgrey", alpha = 0.1)
 }
-lines(x = size_dummy  ,y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue", lwd = 4)
-#points(x = log(y_liom_subset_viab$volume_t), y = invlogit(y_liom_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3))
+lines(x = size_dummy  ,y = invlogit(y_liom_viab), type = "l", col = "blue", lwd = 4, ylim = c(0,1))
+points(x = log(liom_subset$volume_t), y = (liom_subset$Goodbuds_t/liom_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
 # Vacant (4)s
-plot(x = size_dummy  ,y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 4, ylim = c(0,1),
+plot(x = size_dummy  ,y = invlogit(y_vac_viab), type = "l", col = "pink", lwd = 4, ylim = c(0,1),
      xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1") 
 for(i in 1:1500){
-  lines(x = size_dummy, y = invlogit((viab_data$beta0.4[samp[i]] + size_dummy * viab_data$beta1.4[samp[i]])/y_flow),col = "lightgrey", alpha = 0.1)
+  lines(x = size_dummy, y = invlogit((viab_data$beta0.4[samp[i]] + size_dummy * viab_data$beta1.4[samp[i]])),col = "lightgrey", alpha = 0.1)
 }
-lines(x = size_dummy  ,y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 4)
-#points(x = log(y_vac_subset_viab$volume_t), y = invlogit(y_vac_subset_viab$Goodbuds_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
-  # All together
-  plot(x = size_dummy  ,y = invlogit(y_other_viab/y_flow), type = "l",lwd = 2, ylim = c(0,1),
+lines(x = size_dummy  ,y = invlogit(y_vac_viab), type = "l", col = "pink", lwd = 4, ylim = c(0,1)) 
+points(x = log(vac_subset$volume_t), y = (vac_subset$Goodbuds_t/vac_subset$TotFlowerbuds_t), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+# All together
+  plot(x = size_dummy  ,y = invlogit(y_other_viab), type = "l",lwd = 2, ylim = c(0,1),
        xlab = "Log of the Volume of Cacti year t", ylab = "Log of the Volume of Cacti Year t+1")
-lines(x = size_dummy, y = invlogit(y_crem_viab/y_flow), type = "l", col = "red", lwd = 2)
-lines(x = size_dummy, y = invlogit(y_liom_viab/y_flow), type = "l", col = "blue",lwd = 2) 
-lines(x = size_dummy, y = invlogit(y_vac_viab/y_flow), type = "l", col = "pink", lwd = 2)
+lines(x = size_dummy, y = invlogit(y_crem_viab), type = "l", col = "red", lwd = 2)
+lines(x = size_dummy, y = invlogit(y_liom_viab), type = "l", col = "blue",lwd = 2) 
+lines(x = size_dummy, y = invlogit(y_vac_viab), type = "l", col = "pink", lwd = 2)
 legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
 dev.off()
 
 
+## Validation of outputs from goodbuds
+tester <- viab_data
+tester$mu1 <- viab_data$beta0.1 + viab_data$beta1.1 * mean(size_dummy)
+hist(invlogit(y_other_viab))
+hist(invlogit(y_crem_viab))
+hist(invlogit(y_liom_viab))
+hist(invlogit(y_vac_viab))
 
 
 #### Multinomial 1 #####################################################################################################
