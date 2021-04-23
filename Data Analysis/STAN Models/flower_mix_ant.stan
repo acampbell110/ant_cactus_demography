@@ -26,8 +26,7 @@ transformed parameters{
   }
 }
 model {
-	phi ~ cauchy(0,3);
- // Model
+  // Model
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
   beta0 ~ normal(0,100); // intercept distribution
