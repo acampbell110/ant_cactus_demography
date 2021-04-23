@@ -1,48 +1,46 @@
-// Stan model for simple total flowers regression
 data {
- int < lower = 1 > N_flower; // Sample size
- int <lower = 0> good[N_flower]; // Number of viable seeds
- int <lower = 1> N_ant; // number of ant states
- int <lower = 1, upper = N_ant> ant_flower[N_flower]; // the list of ant species 
- int<lower=0> tot[N_flower]; // number of trials
- int<lower=0> abort[N_flower];
- vector[N_flower] vol_flower;	//size_t
- int<lower=1> N_Year; //number of plots
-  int<lower=1> N_Plot; //number of years
-  int<lower=1, upper=N_Plot> plot_flower[N_flower]; // plot
-  int<lower=1, upper=N_Year> year_flower[N_flower]; // year
-  real <lower = 0, upper = 1> prop_flower[N_flower];
+  int < lower = 1 > N_viab; // Sample size
+  int <lower = 0> good_viab[N_viab]; // Number of viable seeds
+  int <lower = 1> N_ant; // number of ant states
+  int <lower = 1, upper = N_ant> ant_viab[N_viab]; // the list of ant species 
+  int<lower=0> tot_viab[N_viab]; // number of trials
+  int<lower=0> abort_viab[N_viab];
+  vector[N_viab] vol_viab;	//size_t
+  int<lower=1> N_Year_viab; //number of plots
+  int<lower=1> N_Plot_viab; //number of years
+  int<lower=1, upper=N_Plot_viab> plot_viab[N_viab]; // plot
+  int<lower=1, upper=N_Year_viab> year_viab[N_viab]; // year
 }
 parameters {
-  real <lower = 0, upper = 1> beta0[N_ant]; // probability of viability for each bud
+  real beta0[N_ant]; // intercept of probability of viability for each bud
+  real beta1[N_ant]; // slope of probability of viability for each bud
+  
   //
-  vector[N_Plot] u; //subject intercepts
-  vector[N_Year] w; //item intercepts
+    vector[N_Plot_viab] u; //subject intercepts
+  vector[N_Year_viab] w; //item intercepts
   real < lower = 0 > sigma; // Error SD
   real < lower = 0 > sigma_u; // plot SD
   real < lower = 0 > sigma_w; // year SD
 }
 transformed parameters{
-  real<lower=0> predV[N_flower]; // Number of goodbuds?
-  real <lower = 0, upper = 1> a[N_flower];
-  // Prediction for seed viability
-  for(i in 1:N_flower){
-    predV[i] = beta0[ant_flower[i]];
-    a[i] = predV[i]/tot[i];
+  real mu[N_viab]; // proportion viable for each plant?
+    // Prediction for seed viability
+  for(i in 1:N_viab){
+    mu[i] = beta0[ant_viab[i]] + beta1[ant_viab[i]] * vol_viab[i] + u[plot_viab[i]] + w[year_viab[i]];
   }
 }
 model {
- // Priors
+  // Priors
   beta0 ~ normal(0,100); // intercept distribution
+  beta1 ~ normal(0,100); // intercept distribution
   //Model Statements
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
   
-  good ~ binomial(tot, a);
+  good_viab ~ bernoulli_logit(mu);
 }
 generated quantities {
-  int<lower = 0> y_rep[N_flower] = binomial_rng(tot,a);
+  int<lower = 0> y_rep[N_viab] = bernoulli_logit_rng(tot_viab , inv_logit(mu));
   real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
 }
-
