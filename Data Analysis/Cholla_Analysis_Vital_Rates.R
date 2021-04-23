@@ -52,9 +52,15 @@ vol_repro = log(repro_data$volume_t)
 vol_viab = log(viability_data$volume_t)
 vol1_repro <- log(repro_data$volume_t1)
 # flower bud est
-good_viab <- viability_data$Goodbuds_t
-abort_viab <- viability_data$ABFlowerbuds_t
-tot_viab <- viability_data$TotFlowerbuds_t
+good_viab <- viability_data$Goodbuds_t1
+viability_data$prop_viab <- NA
+for(i in 1:nrow(viability_data)){
+  if(viability_data$TotFlowerbuds_t1[i] == 0 & viability_data$Goodbuds_t1[i] == 0){viability_data$prop_viab[i] <- 0}
+  else{viability_data$prop_viab[i] <- viability_data$Goodbuds_t1[i]/viability_data$TotFlowerbuds_t1[i]}
+}
+prop_viab <- viability_data$prop_viab
+abort_viab <- viability_data$ABFlowerbuds_t1
+tot_viab <- viability_data$TotFlowerbuds_t1
 # outcome predictors
 y_repro = repro_data$flower1_YN
 y_grow = log(grow_data$volume_t1)
