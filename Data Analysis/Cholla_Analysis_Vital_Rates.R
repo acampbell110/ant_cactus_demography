@@ -14,12 +14,13 @@ grow_data$year <- as.integer(grow_data$Year_t)
 grow_data$Plot <- as.factor(grow_data$Plot)
 grow_data$plot <- as.integer(grow_data$Plot)
 ## Flower Data Set (Total)
-flower_data <- cactus[ , c("TotFlowerbuds_t1", "volume_t","Year_t","Plot")]
+flower_data <- cactus[ , c("TotFlowerbuds_t", "volume_t","Year_t","Plot")]
 flower_data <- na.omit(flower_data)
 flower_data$Year_t <- as.factor(flower_data$Year_t)
 flower_data$year <- as.integer(flower_data$Year_t)
 flower_data$Plot <- as.factor(flower_data$Plot)
 flower_data$plot <- as.integer(flower_data$Plot)
+flower_data <- subset(flower_data, TotFlowerbuds_t > 0)
 ## Repro Data Set
 repro_data <- cactus[ , c("flower1_YN","volume_t","Year_t","Plot", "volume_t1")]
 repro_data <- na.omit(repro_data)
@@ -149,8 +150,6 @@ write.csv(surv_outputs, "surv_outputs.csv")
 stan_data_flow <- list(N_flower = N_flower, ## number of observations
                   vol_flower = vol_flower, ## predictors volume
                   y_flow = y_flow, ## response volume next year
-                  ant_flower = ant_flower,## predictors ants
-                  N_ant = N_ant, ## number of ant states
                   N_Year_flower = N_Year_flower, ## number of years
                   N_Plot_flower = N_Plot_flower, ## number of plots
                   plot_flower = plot_flower, ## predictor plots
@@ -158,19 +157,21 @@ stan_data_flow <- list(N_flower = N_flower, ## number of observations
 ) 
 # Check that you are happy witht he subsetting
 plot(stan_data_flow$vol_flower, stan_data_flow$y_flow)
+points(log(flower_data$volume_t), flower_data$TotFlowerbuds_t, col = "red")
 plot(log(cactus$volume_t), cactus$TotFlowerbuds_t)
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/flower_mix_ant.stan")
 fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
-flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("beta0","beta1","y_rep"))
+flow_yrep <- rstan::extract(fit_flow_mix_ant, pars = c("y_rep"))$y_rep
+flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("beta0","beta1"))
+write.csv(flow_yrep, "flow_yrep.csv")
 write.csv(flow_outputs, "flow_outputs.csv")
 
 
 #### Viability Model
 ## Create Stan Data
 stan_data_viab <- list(N_viab = N_viab, ## number of observations
-                       vol_viab = vol_viab, ## predictors volume
                        good_viab = good_viab,
                        abort_viab = abort_viab, ## aborted buds data
                        tot_viab = tot_viab, ## number of trials
@@ -187,8 +188,9 @@ plot(log(cactus$volume_t), cactus$Goodbuds_t)
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/viab_mix_ant.stan")
-fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant.stan", data = stan_data_viab, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
-viab_outputs <- rstan::extract(fit_viab_mix_ant, pars = c("beta0","beta1","y_rep"))
+fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant2.stan", data = stan_data_viab, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+viab_yrep <- rstan::extract(fit_viab_mix_ant, pars = c("y_rep"))$y_rep
+viab_outputs <- rstan::extract(fit_viab_mix_ant, pars = c("beta0"))
 write.csv(viab_outputs, "viab_outputs.csv")
 
 
