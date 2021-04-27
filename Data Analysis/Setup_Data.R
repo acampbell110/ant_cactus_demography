@@ -128,6 +128,20 @@ for(i in 1:8187){
     cactus$ABFlowerbuds_t1[i] <- cactus$TotFlowerbuds_t1[i] - cactus$Goodbuds_t1[i]
   }
 }
+for(i in 1:8187){
+  # if good buds and Aborted buds not NA set total = Sum
+  if(is.na(cactus$TotFlowerbuds_t[i]) == TRUE & is.na(cactus$Goodbuds_t[i]) == FALSE & is.na(cactus$ABFlowerbuds_t[i]) == FALSE){
+    cactus$TotFlowerbuds_t[i] <- cactus$Goodbuds_t[i] + cactus$ABFlowerbuds_t[i]
+  }
+  # if aborted buds and total buds is not NA, set good = total - aborted
+  if(is.na(cactus$ABFlowerbuds_t[i]) == FALSE & is.na(cactus$TotFlowerbuds_t[i]) == FALSE & is.na(cactus$Goodbuds_t[i]) == TRUE){
+    cactus$Goodbuds_t[i] <- cactus$TotFlowerbuds_t[i] - cactus$ABFlowerbuds_t[i]
+  }
+  # if total and good not NA, set aborted = total - good
+  if(is.na(cactus$TotFlowerbuds_t[i]) == FALSE & is.na(cactus$Goodbuds_t[i]) == FALSE & is.na(cactus$ABFlowerbuds_t[i]) == TRUE){
+    cactus$ABFlowerbuds_t[i] <- cactus$TotFlowerbuds_t[i] - cactus$Goodbuds_t[i]
+  }
+}
 
 cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
 
