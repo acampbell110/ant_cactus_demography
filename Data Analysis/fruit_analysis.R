@@ -33,49 +33,36 @@ ggplot(data = fruit1) +
   aes(x = fruit_number, y = seed_count, color = ant_state) + 
   geom_smooth()
 ## IPM Section
-seed_prod <- fruit1[,c("seed_count","ant_state","fruit_number")]
+seed_prod <- fruit2[,c("seed_count","ant_state","plant")]
 seed_prod <- na.omit(seed_prod)
 
 stan_data_seed <- list(N_obs = nrow(seed_prod), # Number of observations
                       seed = seed_prod$seed_count, # Number of seeds
-                      ant = seed_prod$ant_state, # Ant state
+                      ant = as.numeric(as.factor(seed_prod$ant_state)), # Ant state
                       fruit = seed_prod$fruit_number, # Fruit number
-                      N_ant = 4
+                      N_ant = 3,
+                      N_Plant_ID = length(unique(seed_prod$plant)),
+                      plant = as.numeric(factor(seed_prod$plant))
                       )  
-fit_seed_ant <- stan(file = "STAN Models/seed_prod.stan", data = stan_data_seed, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
-viab_outputs <- rstan::extract(fit_viab_mix_ant, pars = c("beta0","beta1","y_rep"))
-write.csv(viab_outputs, "viab_outputs.csv")
+fit_seed_ant <- stan(file = "STAN Models/seed_prod.stan", data = stan_data_seed, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+seed_outputs <- rstan::extract(fit_seed_ant, pars = c("beta0","y_rep"))
+write.csv(seed_outputs, "seed_outputs.csv")
 
 
-write("// Stan model for simple total flowers regression
 
-data {
-  int <lower = 1> N_obs; // number of observations
-  int <lower = 2> N_ant; // number of observations
-  int <lower = 1, upper = N_ant> ant[N_obs]; // the list of ant species 
-  int <lower = 0> seed[N_obs]; // survival in year t1
-}
-parameters {
-  real < lower = 0> phi;
-  vector[N_ant] beta0; //intercept, unique to ant sp
-  real < lower = 0 > sigma; // Error SD
-}
-transformed parameters{
-  vector[N_obs] mu; //linear predictor for the mean
-  for(i in 1:N_obs){
-   	mu[i] = beta0[ant[i]];
-  }
-}
-model {
-  beta0 ~ normal(0,100); // intercept distribution
-  for(i in 1:N_obs){
-    seed[i] ~ neg_binomial_2(inv_logit(mu[i]), phi);
-  }
-}
-generated quantities {
-  int<lower = 0> y_rep[N_flower] = neg_binomial_2_rng(inv_logit(mu), phi);
-  real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
-  real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
-} 
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+seed_data <- read.csv("/Users/alicampbell/Cactus Dropbox/Ant-Demography-Project/Model Outputs/seed_outputs.csv", header = TRUE,stringsAsFactors=T)
 
-","STAN Models/seed_prod_stan.stan")
+## Formulas
+y_seed = quantile(seed_data$beta0,0.5)
+y_low_seed = quantile(seed_data$beta0,0.05) 
+y_high_seed = quantile(seed_data$beta0,0.95) 
+png("seed_panels1.png")
+plot((seed_prod$seed_count) ~ factor(seed_prod$ant_state))
+dev.off()
+range(seed_prod$seed_count[seed_prod$ant_state == "Vacant"])
+range(seed_prod$seed_count[seed_prod$ant_state == "Crem"])
+range(seed_prod$seed_count[seed_prod$ant_state == "Liom"])
+
+barplot(table(seed_prod$seed_count, factor(seed_prod$ant_state)))
+barplot(seed_prod$seed_count, (seed_prod$ant_state))
