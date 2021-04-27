@@ -300,7 +300,7 @@ layout(matrix(c(1,2),
               ncol = 1, byrow = TRUE), heights = c(1.2,2))
 plot.new()
 text(0.5,0.1,"Number of Flowers Produced",cex=2,font=2)
-plot(x = size_dummy_3  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4)
+plot(x = size_dummy_3  ,y = (y_flow), type = "l", col = "chartreuse4", lwd = 4)
 points(x = log(flower_data$volume_t), y = (flower_data$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
 #points( x = log(cactus$volume_t), y = cactus$TotFlowerbuds_t1, col = "red")
 lines(x = size_dummy, y = exp(y_low_flow), type = "l", col = "darkgrey", lty = 2, lwd = 2)
