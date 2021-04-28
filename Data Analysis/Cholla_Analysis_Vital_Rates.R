@@ -31,6 +31,7 @@ repro_data$plot <- as.integer(repro_data$Plot)
 ## Viability Data Set
 viability_data <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "volume_t","Year_t","Plot")]
 viability_data <- na.omit(viability_data)
+viability_data <- subset(viability_data, TotFlowerbuds_t1 > 0)
 viability_data$ant <- as.integer(viability_data$ant_t)
 viability_data$Year_t <- as.factor(viability_data$Year_t)
 viability_data$year <- as.integer(viability_data$Year_t)
@@ -165,7 +166,6 @@ plot(log(cactus$volume_t), cactus$TotFlowerbuds_t)
 fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
 flow_yrep <- rstan::extract(fit_flow_mix_ant, pars = c("y_rep"))$y_rep
 flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("beta0","beta1"))
-write.csv(flow_yrep, "flow_yrep.csv")
 write.csv(flow_outputs, "flow_outputs.csv")
 
 
@@ -183,8 +183,7 @@ stan_data_viab <- list(N_viab = N_viab, ## number of observations
                        year_viab = year_viab ## predictor years
 ) 
 # Check that you are happy with the subsetting
-plot(stan_data_viab$vol_viab, stan_data_viab$good_viab)
-plot(log(cactus$volume_t), cactus$Goodbuds_t)
+
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/viab_mix_ant.stan")
