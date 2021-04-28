@@ -3,7 +3,7 @@ data {
   int <lower = 0> good_viab[N_viab]; // Number of viable seeds
   int <lower = 1> N_ant; // number of ant states
   int <lower = 1, upper = N_ant> ant_viab[N_viab]; // the list of ant species 
-  int<lower=0> tot_viab[N_viab]; // number of trials
+  int<lower=1> tot_viab[N_viab]; // number of trials
   int<lower=0> abort_viab[N_viab];
   int<lower=1> N_Year_viab; //number of plots
   int<lower=1> N_Plot_viab; //number of years
