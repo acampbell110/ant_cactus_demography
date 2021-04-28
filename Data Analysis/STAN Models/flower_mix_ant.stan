@@ -3,7 +3,7 @@
 data {
  int <lower = 1> N_flower; // number of observations
   vector[N_flower] vol_flower;	//size_t
-  int <lower = 0> y_flow[N_flower]; // survival in year t1
+  int <lower = 1> y_flow[N_flower]; // number of flowers produced in year t (natural number)
   int<lower=1> N_Year_flower; //number of plots
   int<lower=1> N_Plot_flower; //number of years
   int<lower=1, upper=N_Plot_flower> plot_flower[N_flower]; // plot
