@@ -5,14 +5,14 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 cactus <- read.csv("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
 #### Create local data frames to call in the Growth STAN models
 cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
-grow_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
-grow_data <- na.omit(grow_data)
-grow_data$ant <- as.integer(grow_data$ant_t)
-grow_data$ant1 <- as.integer(grow_data$ant_t1)
-grow_data$Year_t <- as.factor(grow_data$Year_t)
-grow_data$year <- as.integer(grow_data$Year_t)
-grow_data$Plot <- as.factor(grow_data$Plot)
-grow_data$plot <- as.integer(grow_data$Plot)
+growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
+growth_data <- na.omit(growth_data)
+growth_data$ant <- as.integer(growth_data$ant_t)
+growth_data$ant1 <- as.integer(growth_data$ant_t1)
+growth_data$Year_t <- as.factor(growth_data$Year_t)
+growth_data$year <- as.integer(growth_data$Year_t)
+growth_data$Plot <- as.factor(growth_data$Plot)
+growth_data$plot <- as.integer(growth_data$Plot)
 ## Flower Data Set (Total)
 flower_data <- cactus[ , c("TotFlowerbuds_t", "volume_t","Year_t","Plot")]
 flower_data <- na.omit(flower_data)
@@ -22,12 +22,12 @@ flower_data$Plot <- as.factor(flower_data$Plot)
 flower_data$plot <- as.integer(flower_data$Plot)
 flower_data <- subset(flower_data, TotFlowerbuds_t > 0)
 ## Repro Data Set
-repro_data <- cactus[ , c("flower1_YN","volume_t","Year_t","Plot", "volume_t1")]
-repro_data <- na.omit(repro_data)
-repro_data$Year_t <- as.factor(repro_data$Year_t)
-repro_data$year <- as.integer(repro_data$Year_t)
-repro_data$Plot <- as.factor(repro_data$Plot)
-repro_data$plot <- as.integer(repro_data$Plot)
+reproductive_data <- cactus[ , c("flower1_YN","volume_t","Year_t","Plot", "volume_t1")]
+reproductive_data <- na.omit(reproductive_data)
+reproductive_data$Year_t <- as.factor(reproductive_data$Year_t)
+reproductive_data$year <- as.integer(reproductive_data$Year_t)
+reproductive_data$Plot <- as.factor(reproductive_data$Plot)
+reproductive_data$plot <- as.integer(reproductive_data$Plot)
 ## Viability Data Set
 viability_data <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "volume_t","Year_t","Plot")]
 viability_data <- na.omit(viability_data)
@@ -47,12 +47,12 @@ survival_data$Plot <- as.factor(survival_data$Plot)
 survival_data$plot <- as.integer(survival_data$Plot)
 ## Name local data variables to input to Stan Data
 # volume data
-vol_grow = log(grow_data$volume_t)
+vol_grow = log(growth_data$volume_t)
 vol_flower = log(flower_data$volume_t)
 vol_surv = log(survival_data$volume_t)
-vol_repro = log(repro_data$volume_t)
+vol_repro = log(reproductive_data$volume_t)
 vol_viab = log(viability_data$volume_t)
-vol1_repro <- log(repro_data$volume_t1)
+vol1_repro <- log(reproductive_data$volume_t1)
 # flower bud est
 good_viab <- viability_data$Goodbuds_t1
 viability_data$prop_viab <- NA
@@ -64,42 +64,42 @@ prop_viab <- viability_data$prop_viab
 abort_viab <- viability_data$ABFlowerbuds_t1
 tot_viab <- viability_data$TotFlowerbuds_t1
 # outcome predictors
-y_repro = repro_data$flower1_YN
-y_grow = log(grow_data$volume_t1)
+y_repro = reproductive_data$flower1_YN
+y_grow = log(growth_data$volume_t1)
 y_surv = survival_data$Survival_t1
 y_flow <- flower_data$TotFlowerbuds_t
 # num of obs
-N_grow = nrow(grow_data)
+N_grow = nrow(growth_data)
 N_flower = nrow(flower_data)
 N_surv = nrow(survival_data)
 N_viab = nrow(viability_data)
-N_repro = nrow(repro_data)
+N_repro = nrow(reproductive_data)
 N_ant = 4
-N_Year_grow <- max(grow_data$year)
-N_Plot_grow <- max(grow_data$plot)
+N_Year_grow <- max(growth_data$year)
+N_Plot_grow <- max(growth_data$plot)
 N_Year_surv <- max(survival_data$year)
 N_Plot_surv <- max(survival_data$plot)
 N_Year_viab <- max(viability_data$year)
 N_Plot_viab <- max(viability_data$plot)
-N_Year_repro <- max(repro_data$year)
-N_Plot_repro <- max(repro_data$plot)
+N_Year_repro <- max(reproductive_data$year)
+N_Plot_repro <- max(reproductive_data$plot)
 N_Year_flower <- max(flower_data$year)
 N_Plot_flower <- max(flower_data$plot)
 # ant data
-ant_grow = grow_data$ant
+ant_grow = growth_data$ant
 ant_surv = survival_data$ant
 ant_viab = viability_data$ant
 # random effects
-plot_grow <- grow_data$plot
-year_grow <- grow_data$year
+plot_grow <- growth_data$plot
+year_grow <- growth_data$year
 plot_flower = flower_data$plot
 year_flower = flower_data$year
 plot_surv = survival_data$plot
 year_surv = survival_data$year
 plot_viab <- viability_data$plot
 year_viab <- viability_data$year
-plot_repro <- repro_data$plot
-year_repro <- repro_data$year
+plot_repro <- reproductive_data$plot
+year_repro <- reproductive_data$year
 
 #### Growth Model
 ## Create Stan Data
@@ -119,8 +119,9 @@ plot(log(cactus$volume_t), log(cactus$volume_t1))
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/grow_mix_ant.stan")
-fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 5000, iter = 10000, chains = 3, cores = 2, thin = 1)
-grow_outputs <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1","y_rep"))
+fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+grow_outputs <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1"))
+grow_yrep <- rstan::extract(fit_grow_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(grow_outputs, "grow_outputs.csv")
 
 #### Survival Model
