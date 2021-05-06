@@ -32,7 +32,7 @@ model {
   beta0 ~ normal(0,100); // intercept distribution
   beta1 ~ normal(0,100); // slope distribution
   for(i in 1:N_flower){
-    y_flow[i] ~ neg_binomial_2(inv_logit(mu[i]), phi);
+    y_flow[i] ~ neg_binomial_2(exp(mu[i]), phi);
   }
 }
 generated quantities {
