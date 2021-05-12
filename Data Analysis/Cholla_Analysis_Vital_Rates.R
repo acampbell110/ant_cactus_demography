@@ -45,6 +45,11 @@ survival_data$Year_t <- as.factor(survival_data$Year_t)
 survival_data$year <- as.integer(survival_data$Year_t)
 survival_data$Plot <- as.factor(survival_data$Plot)
 survival_data$plot <- as.integer(survival_data$Plot)
+## Seed Data Set
+seed_data <- fruit2[ , c("ant_state","plant","seed_count","fruit_number")]
+seed_data <- na.omit(seed_data)
+seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
+seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
 ## Name local data variables to input to Stan Data
 # volume data
 vol_grow = log(growth_data$volume_t)
@@ -120,7 +125,7 @@ plot(log(cactus$volume_t), log(cactus$volume_t1))
 #Check if the model is written to the right place
 #stanc("STAN Models/grow_mix_ant.stan")
 fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
-grow_outputs <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1"))
+grow_outputs <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1","sigma"))
 grow_yrep <- rstan::extract(fit_grow_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(grow_outputs, "grow_outputs.csv")
 
@@ -150,6 +155,7 @@ write.csv(surv_outputs, "surv_outputs.csv")
 #### Flowering Model
 ## Create Stan Data
 stan_data_flow <- list(N_flower = N_flower, ## number of observations
+                       lower_limit = 1, ## we want the 0s to be removed
                   vol_flower = vol_flower, ## predictors volume
                   y_flow = y_flow, ## response volume next year
                   N_Year_flower = N_Year_flower, ## number of years
@@ -166,7 +172,7 @@ plot(log(cactus$volume_t), cactus$TotFlowerbuds_t)
 #stanc("STAN Models/flower_mix_ant.stan")
 fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
 flow_yrep <- rstan::extract(fit_flow_mix_ant, pars = c("y_rep"))$y_rep
-flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("beta0","beta1"))
+flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
 write.csv(flow_outputs, "flow_outputs.csv")
 
 
@@ -184,7 +190,6 @@ stan_data_viab <- list(N_viab = N_viab, ## number of observations
                        year_viab = year_viab ## predictor years
 ) 
 # Check that you are happy with the subsetting
-
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/viab_mix_ant.stan")
@@ -215,58 +220,82 @@ repro_outputs <- rstan::extract(fit_repro_mix_ant, pars = c("beta0","beta1","y_r
 write.csv(repro_outputs, "repro_outputs.csv")
 
 
-#### Multinomial Model 1
+#### Seeds Model
 ## Create Stan Data
-stan_data_multi1 <- list(N_data = N_data, ## number of observations
-                  N_ant = N_ant, ## number of ants
-                  vol_data = vol_data, ## Volume in year t
-                  ant1_data = ant1_data, ## ant state in year t1
-                  ant_data = ant_data,
-                  N_Year = N_Year,
-                  N_Plot = N_Plot,
-                  year_data = year_data,
-                  plot_data = plot_data
+stan_data_seed <- list(N_obs = nrow(seed_data),
+                        N_ant = 3,
+                        N_Plant_ID = length(unique(seed_data$plant)),
+                        ant = seed_data$ant,
+                        plant = seed_data$plant_fac,
+                        seed = seed_data$seed_count)
+fit_seed <- stan(file = "STAN Models/seed_prod.stan", data = stan_data_seed, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+seed_outputs <- rstan::extract(fit_seed, pars = c("beta0","phi","sigma_v","v","sigma"))
+write.csv(seed_outputs, "seed_outputs.csv")
+seed_yrep <- rstan::extract(fit_seed, pars = c("y_rep"))$y_rep
+
+########################################## The Full Model ###########################################################
+stan_data <- list(
+  #### Growth Variables
+  N_grow = N_grow, ## number of observations
+  vol_grow = vol_grow, ## predictors volume
+  y_grow = y_grow, ## response volume next year
+  ant_grow = ant_grow,## predictors ants
+  N_ant = N_ant, ## number of ant states
+  N_Year_grow = N_Year_grow, ## number of years
+  N_Plot_grow = N_Plot_grow, ## number of plots
+  plot_grow = plot_grow, ## predictor plots
+  year_grow = year_grow, ## predictor years
+  #### Survival Variables
+  N_surv = N_surv, ## number of observations
+  vol_surv = vol_surv, ## predictors volume
+  y_surv = y_surv, ## response volume next year
+  ant_surv = ant_surv,## predictors ants
+  N_ant = N_ant, ## number of ant states
+  N_Year_surv = N_Year_surv, ## number of years
+  N_Plot_surv = N_Plot_surv, ## number of plots
+  plot_surv = plot_surv, ## predictor plots
+  year_surv = year_surv, ## predictor years
+  #### Flowering Variables
+  N_flower = N_flower, ## number of observations
+  lower_limit = 1, ## we want the 0s to be removed
+  vol_flower = vol_flower, ## predictors volume
+  y_flow = y_flow, ## response volume next year
+  N_Year_flower = N_Year_flower, ## number of years
+  N_Plot_flower = N_Plot_flower, ## number of plots
+  plot_flower = plot_flower, ## predictor plots
+  year_flower = year_flower, ## predictor years
+  #### Viability Variables
+  N_viab = N_viab, ## number of observations
+  good_viab = good_viab,
+  abort_viab = abort_viab, ## aborted buds data
+  tot_viab = tot_viab, ## number of trials
+  ant_viab = ant_viab,## predictors ants
+  N_ant = N_ant, ## number of ant states
+  N_Year_viab = N_Year_viab, ## number of years
+  N_Plot_viab = N_Plot_viab, ## number of plots
+  plot_viab = plot_viab, ## predictor plots
+  year_viab = year_viab, ## predictor years
+  #### Reproductive State Variables
+  N_repro = N_repro, ## number of observations
+  vol1_repro = vol1_repro, ## predictors volume
+  y_repro = y_repro, ## response volume next year
+  N_Year_repro = N_Year_repro, ## number of years
+  N_Plot_repro = N_Plot_repro, ## number of plots
+  plot_repro = plot_repro, ## predictor plots
+  year_repro = year_repro, ## predictor years
+  #### Seed Variables
+  N_seed = nrow(seed_data),
+  N_ant_seed = 3,
+  N_Plant_ID = length(unique(seed_data$plant)),
+  ant_seed = seed_data$ant,
+  plant_seed = seed_data$plant_fac,
+  seed = seed_data$seed_count
 )
-## Run the Model
-#Check if the model is written to the right place
-#stanc("STAN Models/multinomial1.stan")
-fit_multi1_mix_ant <- stan(file = "STAN Models/multinomial1.stan", data = stan_data_multi1, warmup = 5?
 
+fit_full <- stan(file = "STAN Models/full_vitals.stan", data = stan_data, warmup = 5, iter = 10, chains = 3, cores = 2, thin = 1)
+full_outputs <- rstan::extract(fit_full, pars = c("beta0","phi","sigma_v","v","sigma"))
+write.csv(seed_outputs, "params_outputs.csv")
 
-#### Multinomial Model 2
-## Create Stan Data
-stan_data_multi2 <- list(N_data = N_data, ## number of observations
-                         N_ant = N_ant, ## number of ants
-                         vol_data = vol_data, ## Volume in year t
-                         ant1_data = ant1_data, ## ant state in year t1
-                         N_Year = N_Year,
-                         N_Plot = N_Plot,
-                         year_data = year_data,
-                         plot_data = plot_data,
-                         ant_data = ant_data ## ant state in year t
-)
-## Run the Model
-#Check if the model is written to the right place
-#stanc("STAN Models/multinomial2.stan")
-fit_multi2_mix_ant <- stan(file = "STAN Models/multinomial2.stan", data = stan_data_multi2, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
-
-
-#### Multinomail Model 3
-## Create Stan Data
-stan_data_multi3 <- list(N_data = N_data, ## number of observations
-                         N_ant = N_ant, ## number of ants
-                         vol_data = vol_data, ## Volume in year t
-                         ant1_data = ant1_data, ## ant state in year t1
-                         N_Year = N_Year,
-                         N_Plot = N_Plot,
-                         year_data = year_data,
-                         plot_data = plot_data,
-                         ant_data = ant_data ## ant state in year t
-)
-## Run the Model
-#Check if the model is written to the right place
-#stanc("STAN Models/multinomial3.stan")
-fit_multi3_mix_ant <- stan(file = "STAN Models/multinomial3.stan", data = stan_data_multi3, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
 
 
 
