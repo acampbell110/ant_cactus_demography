@@ -50,6 +50,7 @@ seed_data <- fruit2[ , c("ant_state","plant","seed_count","fruit_number")]
 seed_data <- na.omit(seed_data)
 seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
 seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
+seed_data <- subset(seed_data, seed_count > 0)
 ## Name local data variables to input to Stan Data
 # volume data
 vol_grow = log(growth_data$volume_t)
