@@ -145,57 +145,20 @@ legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("bla
 mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.3)
 mtext("Log(Volume) year t+1",side=2,line=0,outer=TRUE,cex=1.3,las=0)
 dev.off()
-## Make distribution plots
-plot(density(x = y_other_mean_grow), ylim = c(0,0.065), xlim = c(-10,20), xlab = "Log(Volume)", ylab = "Density")
-lines(density(x = y_crem_mean_grow), col = "red")
-lines(density(x = y_liom_mean_grow), col = "blue")
-lines(density(x = y_vac_mean_grow), col = "pink")
-
-dist_other <- grow_data$beta0.3 + mean(size_dummy) * grow_data$beta1.3
-dist_crem <- grow_data$beta0.1 + mean(size_dummy) * grow_data$beta1.1
-dist_liom <- grow_data$beta0.2 + mean(size_dummy) * grow_data$beta1.2
-dist_vac <- grow_data$beta0.4 + mean(size_dummy) * grow_data$beta1.4
-dist_other_h <- grow_data$beta0.3 + quantile(size_dummy, 0.95) * grow_data$beta1.3
-dist_crem_h <- grow_data$beta0.1 + quantile(size_dummy, 0.95) * grow_data$beta1.1
-dist_liom_h <- grow_data$beta0.2 + quantile(size_dummy, 0.95) * grow_data$beta1.2
-dist_vac_h <- grow_data$beta0.4 + quantile(size_dummy, 0.95) * grow_data$beta1.4
-dist_other_l <- grow_data$beta0.3 + quantile(size_dummy, 0.05) * grow_data$beta1.3
-dist_crem_l <- grow_data$beta0.1 + quantile(size_dummy, 0.05) * grow_data$beta1.1
-dist_liom_l <- grow_data$beta0.2 + quantile(size_dummy, 0.05) * grow_data$beta1.2
-dist_vac_l <- grow_data$beta0.4 + quantile(size_dummy, 0.05) * grow_data$beta1.4
+## Make Distribution Plots
+dist_other <- mean(grow_data$beta0.3) + mean(size_dummy) * mean(grow_data$beta1.3)
+dist_crem <- mean(grow_data$beta0.1) + mean(size_dummy) * mean(grow_data$beta1.1)
+dist_liom <- mean(grow_data$beta0.2) + mean(size_dummy) * mean(grow_data$beta1.2)
+dist_vac <- mean(grow_data$beta0.4) + mean(size_dummy) * mean(grow_data$beta1.4)
+dist_other_h <- mean(grow_data$beta0.3) + quantile(size_dummy, 0.95) * mean(grow_data$beta1.3)
+dist_crem_h <- mean(grow_data$beta0.1) + quantile(size_dummy, 0.95) * mean(grow_data$beta1.1)
+dist_liom_h <- mean(grow_data$beta0.2) + quantile(size_dummy, 0.95) * mean(grow_data$beta1.2)
+dist_vac_h <- mean(grow_data$beta0.4) + quantile(size_dummy, 0.95) * mean(grow_data$beta1.4)
+dist_other_l <- mean(grow_data$beta0.3) + quantile(size_dummy, 0.25) * mean(grow_data$beta1.3)
+dist_crem_l <- mean(grow_data$beta0.1) + quantile(size_dummy, 0.25) * mean(grow_data$beta1.1)
+dist_liom_l <- mean(grow_data$beta0.2) + quantile(size_dummy, 0.25) * mean(grow_data$beta1.2)
+dist_vac_l <- mean(grow_data$beta0.4) + quantile(size_dummy, 0.25) * mean(grow_data$beta1.4)
 #### Plot the growth at year t1
-png("grow_dist1.png")
-par(mar=c(2,2,2,2),oma=c(2,2,0,0))
-layout(matrix(c(1,1,1,2,3,4),
-              ncol = 3, byrow = TRUE), heights = c(0.3,1), widths = c(3.9,4,4))
-plot.new()
-text(0.5,0.1,"Distributions Next Sizes by Ant",cex=2,font=2)
-#par(mfrow = c(1,3))
-plot(density(dist_other_l), xlab = "Small Cacti",ylab = "Density", main = "",xlim = c(-4,-1), ylim = c(0,4), lwd = 2)
-lines(density(dist_crem_l), col = "red", lwd = 2)
-lines(density(dist_liom_l), col = "blue", lwd = 2)
-lines(density(dist_vac_l), col = "pink", lwd = 2)
-abline(v = quantile(dist_other_l, 0.5), col = "black", lty = 2)
-abline(v = quantile(dist_crem_l, 0.5), col = "red", lty = 2)
-abline(v = quantile(dist_liom_l, 0.5), col = "blue", lty = 2)
-abline(v = quantile(dist_vac_l, 0.5), col = "pink", lty = 2)
-plot(density(dist_other), xlab = "Medium Cacti",ylab = "", main = "", xlim = c(4.8,6.3), ylim = c(0,5.5), lwd = 2)
-lines(density(dist_crem), col = "red", lwd = 2)
-lines(density(dist_liom), col = "blue", lwd = 2)
-lines(density(dist_vac), col = "pink", lwd = 2)
-abline(v = quantile(dist_other, 0.5), col = "black", lty = 2)
-abline(v = quantile(dist_crem, 0.5), col = "red", lty = 2)
-abline(v = quantile(dist_liom, 0.5), col = "blue", lty = 2)
-abline(v = quantile(dist_vac, 0.5), col = "pink", lty = 2)
-plot(density(dist_other_h), xlab = "Large Cacti",ylab = "", main = "", xlim = c(13,14.4), ylim = c(0,5), lwd = 2)
-lines(density(dist_crem_h), col = "red", lwd = 2)
-lines(density(dist_liom_h), col = "blue", lwd = 2)
-lines(density(dist_vac_h), col = "pink", lwd = 2)
-abline(v = quantile(dist_other_h, 0.5), col = "black", lty = 2)
-abline(v = quantile(dist_crem_h, 0.5), col = "red", lty = 2)
-abline(v = quantile(dist_liom_h, 0.5), col = "blue", lty = 2)
-abline(v = quantile(dist_vac_h, 0.5), col = "pink", lty = 2)
-dev.off()
 png("grow_dist1b.png")
 par(mar=c(2,2,2,2),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4),
@@ -203,79 +166,23 @@ layout(matrix(c(1,1,1,2,3,4),
 plot.new()
 text(0.5,0.1,"Distributions Next Sizes by Ant",cex=2,font=2)
 #par(mfrow = c(1,3))
-plot(density(dist_other_l), xlab = "Small Cacti",ylab = "Density", main = "",xlim = c(-4,-1), ylim = c(0,4), lwd = 2)
-lines(density(dist_crem_l), col = "red", lwd = 2)
-lines(density(dist_liom_l), col = "blue", lwd = 2)
-lines(density(dist_vac_l), col = "pink", lwd = 2)
-abline(v = quantile(size_dummy, 0.05), col = "grey", lty = 2)
-plot(density(dist_other), xlab = "Medium Cacti",ylab = "", main = "", xlim = c(4.8,6.3), ylim = c(0,5.5), lwd = 2)
-lines(density(dist_crem), col = "red", lwd = 2)
-lines(density(dist_liom), col = "blue", lwd = 2)
-lines(density(dist_vac), col = "pink", lwd = 2)
-abline(v = quantile(size_dummy, 0.5), col = "grey", lty = 2)
-plot(density(dist_other_h), xlab = "Large Cacti",ylab = "", main = "", xlim = c(13,14.4), ylim = c(0,5), lwd = 2)
-lines(density(dist_crem_h), col = "red", lwd = 2)
-lines(density(dist_liom_h), col = "blue", lwd = 2)
-lines(density(dist_vac_h), col = "pink", lwd = 2)
-abline(v = quantile(size_dummy, 0.95), col = "grey", lty = 2)
+plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other_l, sd = mean(grow_data$sigma)), type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(-5,2))
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem_l, sd = mean(grow_data$sigma)), col = "red", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_l, sd = mean(grow_data$sigma)), col = "blue", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_l, sd = mean(grow_data$sigma)), col = "pink", lwd = 2)
+abline(v = quantile(size_dummy, 0.05), col = "grey", lty = 2, lwd = 2)
+plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other, sd = mean(grow_data$sigma)), type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(2,9))
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem, sd = mean(grow_data$sigma)), col = "red", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom, sd = mean(grow_data$sigma)), col = "blue", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac, sd = mean(grow_data$sigma)), col = "pink", lwd = 2)
+abline(v = mean(size_dummy), col = "grey", lty = 2, lwd = 2)
+plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other_h, sd = mean(grow_data$sigma)), type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(11,15))
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem_h, sd = mean(grow_data$sigma)), col = "red", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_h, sd = mean(grow_data$sigma)), col = "blue", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_h, sd = mean(grow_data$sigma)), col = "pink", lwd = 2)
+abline(v = quantile(size_dummy, 0.95), col = "grey", lty = 2, lwd = 2)
 dev.off()
 ####
-png("grow_dist2.png")
-plot(density(dist_other), xlab = "Growth Rate",ylab = "Density", main = "Next Size \n for Medium Cacti", xlim = c(4.8,6.3), ylim = c(0,5.5), lwd = 2)
-lines(density(dist_crem), col = "red", lwd = 2)
-lines(density(dist_liom), col = "blue", lwd = 2)
-lines(density(dist_vac), col = "pink", lwd = 2)
-abline(v = mean(size_dummy), col = "grey", lty = 2)
-dev.off()
-
-##Plot the actual slope of the growth rate??
-png("grow_dist5.png")
-par(mar=c(2,2,2,2),oma=c(2,2,0,0))
-layout(matrix(c(1,1,1,2,3,4),
-              ncol = 3, byrow = TRUE), heights = c(0.5,2.5), widths = c(3.9,3.9,3.9))
-plot.new()
-text(0.5,0.5,"Distributions of Growth Rates by Ant",cex=2,font=2)
-#par(mfrow = c(1,3))
-a <- hist(dist_other_l/quantile(size_dummy, 0.05))
-b <- hist(dist_crem_l/quantile(size_dummy, 0.05))
-c <- hist(dist_liom_l/quantile(size_dummy, 0.05))
-d <- hist(dist_vac_l/quantile(size_dummy, 0.05))
-plot(a , col = "grey", xlab = "Growth Rate \n for Small Cacti",ylab = "Number of Individuals", main = "", xlim = c(0.2,1.2), ylim = c(0,600), lwd = 2)
-lines(b, col = "red", lwd = 2)
-lines(c, col = "blue", lwd = 2)
-lines(d, col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "black")
-e <- hist(dist_other/mean(size_dummy))
-f <- hist(dist_crem/mean(size_dummy))
-g <- hist(dist_liom/mean(size_dummy))
-h <- hist(dist_vac/mean(size_dummy))
-plot(e, col = "grey", xlab = "Growth Rate \n for Medium Cacti",ylab = "", main = "", xlim = c(0.9, 1.25), ylim = c(0,600), lwd = 2)
-lines(f, col = "red", lwd = 2)
-lines(g, col = "blue", lwd = 2)
-lines(h, col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "black")
-i <- hist(dist_other_h/quantile(size_dummy, 0.95))
-j <- hist(dist_crem_h/quantile(size_dummy, 0.95))
-k <- hist(dist_liom_h/quantile(size_dummy, 0.95))
-l <- hist(dist_vac_h/quantile(size_dummy, 0.95))
-plot(i, col = "grey", xlab = "Growth Rate \n for Large Cacti",ylab = "", main = "", xlim = c(0.92, 1.04), ylim = c(0,600), lwd = 2)
-lines(j, col = "red", lwd = 2)
-lines(k, col = "blue", lwd = 2)
-lines(l, col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "black")
-dev.off()
-##
-png("grow_dist6.png")
-e <- hist(dist_other/mean(size_dummy))
-f <- hist(dist_crem/mean(size_dummy))
-g <- hist(dist_liom/mean(size_dummy))
-h <- hist(dist_vac/mean(size_dummy))
-plot(e, col = "grey", xlab = "Growth Rates \n for Medium Cacti",ylab = "Number of Individuals", main = "Distribution of Growth Rates by Ant Species", xlim = c(0.9, 1.25), ylim = c(0,600), lwd = 2)
-lines(f, col = "red", lwd = 2)
-lines(g, col = "blue", lwd = 2)
-lines(h, col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "black")
-dev.off()
 
 ##Density of Growth Rates
 png("grow_dist3.png")
@@ -285,31 +192,23 @@ layout(matrix(c(1,1,1,2,3,4),
 plot.new()
 text(0.5,0.5,"Distributions of Growth Rates by Ant",cex=2,font=2)
 #par(mfrow = c(1,3))
-plot(density(dist_other_l/quantile(size_dummy, 0.05)) , xlab = "Growth Rate \n for Small Cacti",ylab = "Density", main = "", xlim = c(0.2,1.2), ylim = c(0,13), lwd = 2)
-lines(density(dist_crem_l/quantile(size_dummy, 0.05)), col = "red", lwd = 2)
-lines(density(dist_liom_l/quantile(size_dummy, 0.05)), col = "blue", lwd = 2)
-lines(density(dist_vac_l/quantile(size_dummy, 0.05)), col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "grey")
-plot(density(dist_other/mean(size_dummy)), xlab = "Growth Rate \n for Medium Cacti",ylab = "", main = "", xlim = c(0.9, 1.25), ylim = c(0,30), lwd = 2)
-lines(density(dist_crem/mean(size_dummy)), col = "red", lwd = 2)
-lines(density(dist_liom/mean(size_dummy)), col = "blue", lwd = 2)
-lines(density(dist_vac/mean(size_dummy)), col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "grey")
-plot(density(dist_other_h/quantile(size_dummy, 0.95)), xlab = "Growth Rate \n for Large Cacti",ylab = "", main = "", xlim = c(0.92, 1.04), ylim = c(0,70), lwd = 2)
-lines(density(dist_crem_h/quantile(size_dummy, 0.95)), col = "red", lwd = 2)
-lines(density(dist_liom_h/quantile(size_dummy, 0.95)), col = "blue", lwd = 2)
-lines(density(dist_vac_h/quantile(size_dummy, 0.95)), col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "grey")
+plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other_l/quantile(size_dummy, 0.25), sd = mean(grow_data$sigma)), type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(0,15))
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem_l/quantile(size_dummy, 0.25), sd = mean(grow_data$sigma)), col = "red", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_l/quantile(size_dummy, 0.25), sd = mean(grow_data$sigma)), col = "blue", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_l/quantile(size_dummy, 0.25), sd = mean(grow_data$sigma)), col = "pink", lwd = 2)
+abline(v = 1, col = "grey", lty = 2, lwd = 2)
+plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other/mean(size_dummy), sd = mean(grow_data$sigma)), type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(-2,4))
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem/mean(size_dummy,), sd = mean(grow_data$sigma)), col = "red", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom/mean(size_dummy), sd = mean(grow_data$sigma)), col = "blue", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac/mean(size_dummy), sd = mean(grow_data$sigma)), col = "pink", lwd = 2)
+abline(v = 1, col = "grey", lty = 2, lwd = 2)
+plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other_h/quantile(size_dummy, 0.95), sd = mean(grow_data$sigma)), type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(-2,4))
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem_h/quantile(size_dummy, 0.95), sd = mean(grow_data$sigma)), col = "red", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_h/quantile(size_dummy, 0.95), sd = mean(grow_data$sigma)), col = "blue", lwd = 2)
+lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_h/quantile(size_dummy, 0.95), sd = mean(grow_data$sigma)), col = "pink", lwd = 2)
+abline(v = 1, col = "grey", lty = 2, lwd = 2)
 dev.off()
 ##
-png("grow_dist4.png")
-plot(density(dist_other/mean(size_dummy)), xlab = "Growth Rate",ylab = "Density", main = "Growth Rate \nof for Medium Cacti", xlim = c(0.9, 1.25), ylim = c(0,30), lwd = 2)
-lines(density(dist_crem/mean(size_dummy)), col = "red", lwd = 2)
-lines(density(dist_liom/mean(size_dummy)), col = "blue", lwd = 2)
-lines(density(dist_vac/mean(size_dummy)), col = "pink", lwd = 2)
-abline(v = 1, lty = 2, col = "grey")
-dev.off()
-
 #### Survival Visuals #####################################################################################################
 ## Extract & Format Data
 #overlay plot data
@@ -605,20 +504,20 @@ mixed <- as.data.frame(matrix(nrow = 4 * nrow(viab_data)))
 for(i in 1:nrow(viab_data)){
   mixed$beta[i] <- viab_data$beta0.1[i]
   mixed$ant[i] <- "crem"
-  mixed$low[i] <- y_other_low_viab
-  mixed$high[i] <- y_other_high_viab
-}
-for(i in 1:nrow(viab_data)){
-  mixed$beta[nrow(viab_data) + i] <- viab_data$beta0.2[i]
-  mixed$ant[nrow(viab_data) + i] <- "liom"
   mixed$low[i] <- y_crem_low_viab
   mixed$high[i] <- y_crem_high_viab
 }
 for(i in 1:nrow(viab_data)){
-  mixed$beta[2*nrow(viab_data) + i] <- viab_data$beta0.3[i]
-  mixed$ant[2*nrow(viab_data) + i] <- "other"
+  mixed$beta[nrow(viab_data) + i] <- viab_data$beta0.2[i]
+  mixed$ant[nrow(viab_data) + i] <- "liom"
   mixed$low[i] <- y_liom_low_viab
   mixed$high[i] <- y_liom_high_viab
+}
+for(i in 1:nrow(viab_data)){
+  mixed$beta[2*nrow(viab_data) + i] <- viab_data$beta0.3[i]
+  mixed$ant[2*nrow(viab_data) + i] <- "other"
+  mixed$low[i] <- y_other_low_viab
+  mixed$high[i] <- y_other_high_viab
 }
 for(i in 1:nrow(viab_data)){
   mixed$beta[3*nrow(viab_data) + i] <- viab_data$beta0.4[i]
@@ -662,30 +561,44 @@ png("viab_bars2.png")
 plot(invlogit(mixed$beta) ~ factor(mixed$ant), xlab = "Ant Species",ylab = "Viability Rate", col = c("red","blue","black","pink"), alpha = 0.5)
 dev.off()
 
+#### Seed Visuals #####################################################################################################
+seed_outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_outputs.csv", header = TRUE,stringsAsFactors=T)
+y_crem <- seed_outputs$beta0.1
+y_vac <- seed_outputs$beta0.3
+y_liom <- seed_outputs$beta0.2
+y_crem_l <- quantile(seed_outputs$beta0.1,0.05)
+y_vac_l <- quantile(seed_outputs$beta0.3,0.05)
+y_liom_l <- quantile(seed_outputs$beta0.2,0.05)
+y_crem_h <- quantile(seed_outputs$beta0.1,0.95)
+y_vac_h <- quantile(seed_outputs$beta0.3,0.95)
+y_liom_h <- quantile(seed_outputs$beta0.2,0.95)
 
-#### Multinomial 1 #####################################################################################################
-## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Multinomial1 Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = fit_multi1_mix_ant@mean_y_rep,
-                            yrep = posterior_predict(fit_multi1_mix_ant@y_rep, draws = 5)) + plot_title
-## Convergence Plots
-bayesplot::mcmc_trace(As.mcmc.list(fit_multi1_mix_ant, pars=c("beta0", "beta1")))
+seeds <- as.data.frame(matrix(nrow = 3 * nrow(seed_outputs)))
+for(i in 1:nrow(seed_outputs)){
+  seeds$beta[i] <- seed_outputs$beta0.1[i]
+  seeds$ant[i] <- "crem"
+  seeds$low[i] <- y_crem_l
+  seeds$high[i] <- y_crem_h
+}
+for(i in 1:nrow(seed_outputs)){
+  seeds$beta[nrow(seed_outputs) + i] <- seed_outputs$beta0.2[i]
+  seeds$ant[nrow(seed_outputs) + i] <- "liom"
+  seeds$low[i] <- y_liom_l
+  seeds$high[i] <- y_liom_h
+}
+for(i in 1:nrow(seed_outputs)){
+  seeds$beta[2*nrow(seed_outputs) + i] <- seed_outputs$beta0.3[i]
+  seeds$ant[2*nrow(seed_outputs) + i] <- "vacant"
+  seeds$low[i] <- y_vac_l
+  seeds$high[i] <- y_vac_h
+}
 
-#### Multinomial 2
-## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Multinomial2 Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = fit_multi2_mix_ant@mean_y_rep,
-                            yrep = posterior_predict(fit_multi2_mix_ant@y_rep, draws = 5)) + plot_title
-## Convergence Plots
-bayesplot::mcmc_trace(As.mcmc.list(fit_multi2_mix_ant, pars=c("beta0", "beta1")))
-
-#### Multinomial 3
-## Overlay Plots
-plot_title <- ggtitle("Mixed Ant Effects Multinomial3 Model Simulated Data")
-bayesplot::ppc_dens_overlay(y = fit_multi3_mix_ant@mean_y_rep,
-                            yrep = posterior_predict(fit_multi3_mix_ant@y_rep, draws = 5)) + plot_title
-## Convergence Plots
-bayesplot::mcmc_trace(As.mcmc.list(fit_multi3_mix_ant, pars=c("beta0", "beta1")))
-
-
-
+png("seeds_bars.png")
+plot(exp(seeds$beta) ~ factor(seeds$ant), xlab = "Ant Species",ylab = "Expected Seeds", col = c("red","blue","pink"), main = "Liom. Provides Advantages for Seed Prod.")
+dev.off()
+y <- fruit2$seed_count
+samp100 <- sample(nrow(seed_yrep), 500)
+png("seeds_post.png")
+bayesplot::ppc_dens_overlay(y, seed_yrep[samp100,])
+dev.off()
+#
