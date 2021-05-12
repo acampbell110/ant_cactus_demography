@@ -11,8 +11,8 @@ matrix[N, D] x;
 }
 parameters {
 matrix[D, K] beta;
-vector[N_Plot] u; //subject intercepts
-vector[N_Year] w; //item intercepts
+vector[N_Plot] u; 
+vector[N_Year] w; 
 real < lower = 0 > sigma_u; // plot SD
 real < lower = 0 > sigma_w; // year SD
 }
