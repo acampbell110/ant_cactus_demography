@@ -176,6 +176,23 @@ flow_yrep <- rstan::extract(fit_flow_mix_ant, pars = c("y_rep"))$y_rep
 flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
 write.csv(flow_outputs, "flow_outputs.csv")
 
+stan_data_flow_trunc <- list(N_flower = N_flower, ## number of observations
+                       lower_limit = 1, ## we want the 0s to be removed
+                       vol_flower = vol_flower, ## predictors volume
+                       y_flow = y_flow, ## response volume next year
+                       N_Year_flower = N_Year_flower, ## number of years
+                       N_Plot_flower = N_Plot_flower, ## number of plots
+                       plot_flower = plot_flower, ## predictor plots
+                       year_flower = year_flower ## predictor years
+) 
+## Run the Model
+#Check if the model is written to the right place
+#stanc("STAN Models/flower_mix_ant.stan")
+fit_flow_mix_ant_trunc <- stan(file = "STAN Models/flower_mix_ant_trunc.stan", data = stan_data_flow_trunc, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+flow_yrep_trunc <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("y_rep"))$y_rep
+flow_outputs_trunc <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
+write.csv(flow_outputs_trunc, "flow_outputs_trunc.csv")
+
 
 #### Viability Model
 ## Create Stan Data
@@ -294,8 +311,13 @@ stan_data <- list(
 )
 
 fit_full <- stan(file = "STAN Models/full_vitals.stan", data = stan_data, warmup = 5, iter = 10, chains = 3, cores = 2, thin = 1)
-full_outputs <- rstan::extract(fit_full, pars = c("beta0","phi","sigma_v","v","sigma"))
-write.csv(seed_outputs, "params_outputs.csv")
+full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g","sigma_g","sigma_u_g","sigma_w_g", "y_rep_g", "mean_y_rep_g","sd_y_rep_g", 
+                                                  "beta0_s","beta1_s","u_s","w_s","sigma_s","sigma_u_s","sigma_w_s", "y_rep_s", "mean_y_rep_s","sd_y_rep_s",
+                                                  "beta0_f","beta1_f","u_f","w_f","sigma_f","sigma_u_f","sigma_w_f", "phi_f",  "y_rep_f", "mean_y_rep_f","sd_y_rep_f",
+                                                  "beta0_r","beta1_r","u_r","w_r","sigma_r","sigma_u_r","sigma_w_r", "y_rep_r", "mean_y_rep_r","sd_y_rep_r",
+                                                  "beta0_v","u_v","w_v","sigma_v","sigma_u_v","sigma_w_v", "y_rep_v", "mean_y_rep_v","sd_y_rep_v",
+                                                  "beta0_seed","v_seed","sigma_seed","sigma_v_seed","phi_seed", "y_rep_seed", "mean_y_rep_seed","sd_y_rep_seed"))
+write.csv(full_outputs, "params_outputs.csv")
 
 
 
