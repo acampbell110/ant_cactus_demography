@@ -33,8 +33,8 @@ model {
   beta0 ~ normal(0,100); // intercept distribution
   beta1 ~ normal(0,100); // slope distribution
   for(i in 1:N_flower){
-    target += - log1m(neg_binomial_2_log_lpmf(0 | mu[i], phi));
-    //y_flow[i] ~ neg_binomial_2(exp(mu[i]), phi);
+    y_flow[i] ~ neg_binomial_2(exp(mu[i]), phi);
+    target += - log1m(neg_binomial_2_log_lpmf(0 | mu[i], phi)); // manually adjusting computation of likelihood
   }
 }
 generated quantities {
