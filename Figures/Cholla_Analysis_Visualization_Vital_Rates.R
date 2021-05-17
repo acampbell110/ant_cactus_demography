@@ -353,28 +353,71 @@ mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=1.3)
 mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.3,las=0)
 dev.off()
 
+png("surv_panel3.png")
+par(mfrow = c(2,2))
+samp <- sample(nrow(surv_data), 50)
+plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4, ylim = c(0,1),xlim = c(-5,15), xlab = "",ylab = "")
+for(i in 1:1500){
+  lines(x = size_other, y = invlogit(surv_data$beta0.3[i] + size_other * surv_data$beta1.3[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4)
+points(x = log(y_other_subset_surv$volume_t), y = (y_other_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Crem (1)
+plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "") 
+for(i in 1:1500){
+  lines(x = size_crem, y = invlogit(surv_data$beta0.1[i] + size_crem * surv_data$beta1.1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4)
+points(x = log(y_crem_subset_surv$volume_t), y = (y_crem_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Liom (2)
+plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "")
+for(i in 1:1500){
+  lines(x = size_liom, y = invlogit(surv_data$beta0.2[i] + size_liom * surv_data$beta1.2[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4)
+points(x = log(y_liom_subset_surv$volume_t), y = (y_liom_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3))
+# Vacant (4)s
+plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "") 
+for(i in 1:1500){
+  lines(x = size_vac, y = invlogit(surv_data$beta0.4[i] + size_vac * surv_data$beta1.4[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4)
+points(x = log(y_vac_subset_surv$volume_t), y = (y_vac_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+dev.off()
 
 #### Flowering Visuals #####################################################################################################
 ## Extract & Format Data
 #extract from StAN models
 flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_outputs.csv", header = TRUE,stringsAsFactors=T)
-
+flow_data_trunc <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_outputs_trunc.csv", header = TRUE,stringsAsFactors=T)
 size_dummy_3 <- seq(min(log(flower_data$volume_t), na.rm = TRUE), max(log(flower_data$volume_t), na.rm = TRUE), by = 0.1)
 #format for overlay plots
 y <- y_flow
 yrep_flow <- flow_yrep
 samp100 <- sample(nrow(yrep_flow), 500)
+y_trunc <- y_flow
+yrep_flow_trunc <- flow_yrep_trunc
+samp100 <- sample(nrow(yrep_flow_trunc), 500)
 ## Formulas
 y_flow = quantile(flow_data$beta0,0.5) + size_dummy * quantile(flow_data$beta1,0.5)
 y_low_flow = quantile(flow_data$beta0,0.05) + size_dummy * quantile(flow_data$beta1,0.05)
 y_high_flow = quantile(flow_data$beta0,0.95) + size_dummy * quantile(flow_data$beta1,0.95)
+y_flow_trunc = quantile(flow_data_trunc$beta0,0.5) + size_dummy * quantile(flow_data_trunc$beta1,0.5)
+y_low_flow_trunc = quantile(flow_data_trunc$beta0,0.05) + size_dummy * quantile(flow_data_trunc$beta1,0.05)
+y_high_flow_trunc = quantile(flow_data_trunc$beta0,0.95) + size_dummy * quantile(flow_data_trunc$beta1,0.95)
 ## Overlay Plots
 png(file = "flow_post1.png")
 bayesplot::ppc_dens_overlay(y, yrep_flow[samp100,])
 dev.off()
+png(file = "flow_post_trunc1.png")
+bayesplot::ppc_dens_overlay(y_trunc, yrep_flow_trunc[samp100,])
+dev.off()
 ## Convergence Plots
 png(file = "flow_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_flow_mix_ant, pars=c("beta0", "beta1")))
+dev.off()
+png(file = "flow_conv_trunc1")
+bayesplot::mcmc_trace(As.mcmc.list(fit_flow_mix_ant_trunc, pars=c("beta0", "beta1")))
 dev.off()
 ##Panel Plot
 png("flow_panels3.png")
@@ -403,6 +446,34 @@ for(i in 1:1500){
   lines(x = size_dummy, y = exp(flow_data$beta0[i] + size_dummy * flow_data$beta1[i]),col = "lightgrey", alpha = 0.1)
 }
 lines(x = size_dummy  ,y = exp(y_flow), type = "l", col = "chartreuse4", lwd = 4)
+points(x = log(flower_data$volume_t), y = (flower_data$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+dev.off()
+png("flow_panels_trunc3.png")
+par(mar=c(5,5,0,1))
+layout(matrix(c(1,2),
+              ncol = 1, byrow = TRUE), heights = c(1.2,2))
+plot.new()
+text(0.5,0.1,"Number of Flowers Produced by Size",cex=2,font=2)
+plot(x = size_dummy  ,y = exp(y_flow_trunc), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,100), xlab = "Log(Volume)",ylab = "Flowerbuds Produced")
+points(x = log(flower_data$volume_t), y = (flower_data$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
+#points( x = log(cactus$volume_t), y = cactus$TotFlowerbuds_t1, col = "red")
+lines(x = size_dummy, y = exp(y_low_flow_trunc), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+lines(x = size_dummy, y = exp(y_high_flow_trunc), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(exp(y_high_flow_trunc), rev(exp(y_low_flow_trunc))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+dev.off()
+
+png("flow_panels_trunc4.png")
+par(mar=c(2,2,2,2))
+layout(matrix(c(1,2),
+              ncol = 1, byrow = TRUE), heights = c(1,2))
+plot.new()
+text(0.5,0.1,"Total Number of Flowers Produced by Size",cex=2,font=2)
+plot(x = size_dummy  ,y = exp(y_flow_trunc), type = "l", col = "chartreuse4", lwd = 4, xlim = c(-5,15), ylim = c(0,100), xlab = "Log(Volume)",ylab = "Flowerbuds Produced")
+for(i in 1:1500){
+  lines(x = size_dummy, y = exp(flow_data_trunc$beta0[i] + size_dummy * flow_data_trunc$beta1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_dummy  ,y = exp(y_flow_trunc), type = "l", col = "chartreuse4", lwd = 4)
 points(x = log(flower_data$volume_t), y = (flower_data$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
 dev.off()
 
