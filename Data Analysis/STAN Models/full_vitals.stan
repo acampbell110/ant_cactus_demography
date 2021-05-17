@@ -104,34 +104,29 @@ parameters {
   real < lower = 0 > sigma_seed; // Error SD
 }
 transformed parameters{
-  //Growth Predictors
+  //Mus
   vector[N_grow] mu_g; //linear predictor for the mean
+  vector[N_surv] mu_s; //linear predictor for the mean
+  vector[N_flower] mu_f; //linear predictor for the mean
+  vector[N_repro] mu_r; //linear predictor for the mean
+  real mu_v[N_viab]; // proportion viable for each plant?
+  vector[N_seed] mu_seed; //linear predictor for the mean
+  // Mu equations
   for(i in 1:N_grow){
     mu_g[i] = beta0_g[ant_grow[i]] + beta1_g[ant_grow[i]] * vol_grow[i] + u_g[plot_grow[i]] + w_g[year_grow[i]];
   };
-  //Survival Predictors
-  vector[N_surv] mu_s; //linear predictor for the mean
   for(i in 1:N_surv){
     mu_s[i] = beta0_s[ant_surv[i]] + beta1_s[ant_surv[i]] * vol_surv[i] + u_s[plot_surv[i]] + w_s[year_surv[i]];
   };
-  
-  //Flowerbud Predictors
-  vector[N_flower] mu_f; //linear predictor for the mean
   for(i in 1:N_flower){
    	mu_f[i] = beta0_f + beta1_f * vol_flower[i] + u_f[plot_flower[i]] + w_f[year_flower[i]];
   };
-  //Repro Predictors
-  vector[N_repro] mu_r; //linear predictor for the mean
   for(i in 1:N_repro){
     mu_r[i] = beta0_r + beta1_r * vol1_repro[i] + u_r[plot_repro[i]] + w_r[year_repro[i]];
   };
-  //Viability Predictors
-  real mu_v[N_viab]; // proportion viable for each plant?
   for(i in 1:N_viab){
     mu_v[i] = beta0_v[ant_viab[i]] + u_v[plot_viab[i]] + w_v[year_viab[i]];
   };
-  //Seed Predictors
-  vector[N_seed] mu_seed; //linear predictor for the mean
   for(i in 1:N_seed){
    	mu_seed[i] = beta0_seed[ant_seed[i]] + v_seed[plant_seed[i]];
   };
@@ -205,7 +200,7 @@ generated quantities {
   real<lower = 0> mean_y_rep_v = mean(to_vector(y_rep_v));
   real<lower = 0> sd_y_rep_v = sd(to_vector(y_rep_v));
   //Seed Predictors
-  int<lower = 0> y_rep_seed[N_seeds] = neg_binomial_2_rng(exp(mu_seed), phi_seed);
+  int<lower = 0> y_rep_seed[N_seed] = neg_binomial_2_rng(exp(mu_seed), phi_seed);
   real<lower = 0> mean_y_rep_seed = mean(to_vector(y_rep_seed));
   real<lower = 0> sd_y_rep_seed = sd(to_vector(y_rep_seed));
 } 
