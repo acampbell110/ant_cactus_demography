@@ -1,3 +1,6 @@
+// https://mc-stan.org/docs/2_20/stan-users-guide/multi-logit-section.html
+// This has no intercept. This also has no reference level. 
+
 data {
 int K; //alternatives
 int N; //number of trials
