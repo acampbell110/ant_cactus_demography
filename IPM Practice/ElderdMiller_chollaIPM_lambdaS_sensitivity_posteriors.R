@@ -23,7 +23,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Practice")
 ## -------- read in MCMC output ---------------------- ##
 
 ##This file contains random draws from the joint posterior distribution of all parameters
-post.params<-read.csv("ElderdMiller_cholla.all.params.post.csv")
+post.params<-read.csv("params_outputs.csv")
 
 ## Number of draws to take from the joint posterior distribution of the parameters. 
 ## Cannot be greater than the number of draws provided in the .csv file, which is 500.
