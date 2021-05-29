@@ -36,3 +36,4 @@ to_vector(beta) ~ normal(0, 5);
 for (n in 1:N)
 y[n] ~ categorical_logit(alpha + x_beta[n]');
 }
+

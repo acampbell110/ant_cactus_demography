@@ -9,33 +9,33 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 ## ----------- Vital rate functions. Parameter indices are hard-coded and must correspond to rows of MCMC matrix ------------- ##
 #GROWTH FROM SIZE X TO Y
 gxy<-function(x,y,params,yrfx,plotfx){
-  xb=pmin(pmax(x,params[61]),params[62]) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  return(dnorm(y,mean=params[1] + params[2]*xb  + yrfx[1] + plotfx[1],sd=params[4]))
+  xb=pmin(pmax(x,quantile(params[61,],0.5)),quantile(params[62,],0.5)) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+  return(dnorm(y,mean=quantile(params[1,],0.5) + quantile(params[2,],0.5)*xb  + quantile(yrfx[1,],0.5) + quantile(plotfx[1,],0.5),sd=quantile(params[3,],0.5)))
 }
 
 #SURVIVAL AT SIZE X.
 sx<-function(x,params,yrfx,plotfx){
-  xb=pmin(pmax(x,params[61]),params[62])
-  return(invlogit(params[11] + params[12]*xb   + yrfx[2] + plotfx[2]))
+  xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
+  return(invlogit(quantile(params[11],0.5) + quantile(params[12],0.5)*xb   + quantile(yrfx[2],0.5) + quantile(plotfx[2],0.5)))
 }
 
 #SURVIVAL*GROWTH
 pxy<-function(x,y,params,yrfx,plotfx){
-  xb=pmin(pmax(x,params[61]),params[62])
+  xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
   sx(xb,params,yrfx,plotfx)*gxy(xb,y,params,yrfx,plotfx)
 }
 
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
 fx<-function(x,params,yrfx,plotfx,f.eps){
-  xb=pmin(pmax(x,params[61]),params[62])
-  p.flow<-invlogit(params[21] + params[22]*xb + yrfx[3] + plotfx[3]) 
-  nfruits<-exp(params[31] + params[32]*xb + yrfx[4] + plotfx[4] + f.eps)   
-  seeds.per.fruit<-params[41]
-  seed.survival<-invlogit(params[42])^2  ## I measured 6-month seed survival; annual survival is its square
+  xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
+  p.flow<-invlogit(quantile(params[21],0.5) + quantile(params[22],0.5)*xb + quantile(yrfx[3],0.5) + quantile(plotfx[3],0.5)) 
+  nfruits<-exp(quantile(params[31],0.5) + quantile(params[32],0.5)*xb + quantile(yrfx[4],0.5) + quantile(plotfx[4],0.5) + f.eps)   
+  seeds.per.fruit<-quantile(params[51],0.5)
+  seed.survival<-invlogit(quantile(params[42],0.5))^2  ## I measured 6-month seed survival; annual survival is its square
   return(p.flow*nfruits*seeds.per.fruit*seed.survival)  
 }
 
-bigmatrix<-function(params,yrfx,plotfx,mwye,f.eps,lower,upper,matsize){  
+bigmatrix<-function(params,yrfx,plotfx,f.eps,lower,upper,matsize){  
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -60,13 +60,13 @@ bigmatrix<-function(params,yrfx,plotfx,mwye,f.eps,lower,upper,matsize){
   Tmat<-matrix(0,(n+2),(n+2))
   
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-  Tmat[2,1]<-1-invlogit(params[43])
+  Tmat[2,1]<-1-invlogit(quantile(params[43],0.5))
   
   # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-  Tmat[3:(n+2),1]<-invlogit(params[43])*recruits(y,params)*h*invlogit(params[45])   
+  Tmat[3:(n+2),1]<-invlogit(quantile(params[43],0.5))*recruits(y,params)*h*invlogit(quantile(params[45],0.5))   
   
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-  Tmat[3:(n+2),2]<-invlogit(params[44])*recruits(y,params)*h*invlogit(params[45])  
+  Tmat[3:(n+2),2]<-invlogit(quantile(params[44],0.5))*recruits(y,params)*h*invlogit(quantile(params[45],0.5))  
   
   # Growth/survival transitions among cts sizes
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,params=params,yrfx=yrfx,plotfx=plotfx))*h
@@ -76,8 +76,8 @@ bigmatrix<-function(params,yrfx,plotfx,mwye,f.eps,lower,upper,matsize){
   
   return(list(IPMmat=IPMmat,Fmat=Fmat,Tmat=Tmat,meshpts=y))
 }
-image(y,y,t(Tmat),main='fecundity kernel')
-image(y,y,t(Fmat),main='fecundity kernel')
+#image(y,y,t(Tmat),main='fecundity kernel')
+#image(y,y,t(Fmat),main='fecundity kernel')
 
 
 ## ----------------- Function that simulates population dynamics and returns lambdaS ------------- ############
@@ -98,7 +98,6 @@ lambda.fun<-function(parameters,yrfx,plotfx,f.eps=0,iter,
   
   if(stochastic==F){
     yrfx <- matrix(0,1,4)
-    mwye <- 0
     lambda<-Re(eigen(bigmatrix(params=parameters,yrfx=yrfx,plotfx=plotfx,f.eps=f.eps,lower=lower,upper=upper,matsize=matsize)$IPMmat)$values[1])
     return(lambda)
   }

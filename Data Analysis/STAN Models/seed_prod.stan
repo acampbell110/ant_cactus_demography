@@ -29,7 +29,7 @@ model {
   }
 }
 generated quantities {
-  int<lower = 0> y_rep[N_seeds] = neg_binomial_2_rng(exp(mu), phi);
+  int<lower = 0> y_rep[N_seed] = neg_binomial_2_rng(exp(mu), phi);
   real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
 } 

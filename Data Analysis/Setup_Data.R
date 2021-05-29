@@ -149,51 +149,29 @@ cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
 write.csv(cactus, "cholla_demography_20042019_cleaned.csv")
 
 #import the data
-fruit_uncleaned <- read.csv("JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
+seed_uncleaned <- read.csv("JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
 ## PEAA = Ant Access
 ## PAAA = Ant Access
 ## PEAE = Ant Exclusion
 ## PAAE = Ant Exclusion
-
-fruit1 <- subset(fruit_uncleaned, treatment == "PEAE" | treatment == "PEAA")
-fruit2 <- subset(fruit_uncleaned, treatment == "PAAA" | treatment == "PAAE")
-
+seed <- subset(seed_uncleaned, treatment == "PAAA" | treatment == "PAAE")
 #make the column for the ant state of the part of the plant producing seeds
-for(i in 1:nrow(fruit1)){
+for(i in 1:nrow(seed)){
   #If there is no ant access then vacant
-  if(fruit1$ant.access[i] == "n" & is.na(fruit1$ant.access[i]) == FALSE){
-    fruit1$ant_state[i] <- "Vacant"
+  if(seed$ant.access[i] == "n" & is.na(seed$ant.access[i]) == FALSE){
+    seed$ant_state[i] <- "Vacant"
   }
   #If there is ant access but it is still vacant then vacant
-  if(fruit1$ant.access[i] == "y" & is.na(fruit1$ant.access[i]) == FALSE & fruit1$vacant[i] == "y" & is.na(fruit1$vacant[i]) == FALSE){
-    fruit1$ant_state[i] <- "Vacant"
+  if(seed$ant.access[i] == "y" & is.na(seed$ant.access[i]) == FALSE & seed$vacant[i] == "y"){
+    seed$ant_state[i] <- "Vacant"
   }
   #if there is ant access and it is not vacant and the ant is crem then crem
-  if(fruit1$ant.access[i] == "y" & is.na(fruit1$ant.access[i]) == FALSE & fruit1$vacant[i] == "n" & fruit1$species[i] == "c"){
-    fruit1$ant_state[i] <- "Crem"
+  if(seed$ant.access[i] == "y" & is.na(seed$ant.access[i]) == FALSE & seed$vacant[i] == "n" & seed$species[i] == "c"){
+    seed$ant_state[i] <- "Crem"
   }
   #if there is ant access and it is not vacant and the ant is liom then liom
-  if(fruit1$ant.access[i] == "y" & is.na(fruit1$ant.access[i]) == FALSE & fruit1$vacant[i] == "n" & fruit1$species[i] == "l"){
-    fruit1$ant_state[i] <- "Liom"
-  }
-}
-#make the column for the ant state of the part of the plant producing seeds
-for(i in 1:nrow(fruit2)){
-  #If there is no ant access then vacant
-  if(fruit2$ant.access[i] == "n" & is.na(fruit2$ant.access[i]) == FALSE){
-    fruit2$ant_state[i] <- "Vacant"
-  }
-  #If there is ant access but it is still vacant then vacant
-  if(fruit2$ant.access[i] == "y" & is.na(fruit2$ant.access[i]) == FALSE & fruit2$vacant[i] == "y"){
-    fruit2$ant_state[i] <- "Vacant"
-  }
-  #if there is ant access and it is not vacant and the ant is crem then crem
-  if(fruit2$ant.access[i] == "y" & is.na(fruit2$ant.access[i]) == FALSE & fruit2$vacant[i] == "n" & fruit2$species[i] == "c"){
-    fruit2$ant_state[i] <- "Crem"
-  }
-  #if there is ant access and it is not vacant and the ant is liom then liom
-  if(fruit2$ant.access[i] == "y" & is.na(fruit2$ant.access[i]) == FALSE & fruit2$vacant[i] == "n" & fruit2$species[i] == "l"){
-    fruit2$ant_state[i] <- "Liom"
+  if(seed$ant.access[i] == "y" & is.na(seed$ant.access[i]) == FALSE & seed$vacant[i] == "n" & seed$species[i] == "l"){
+    seed$ant_state[i] <- "Liom"
   }
 }
 

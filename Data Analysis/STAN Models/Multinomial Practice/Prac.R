@@ -130,6 +130,7 @@ a$mu[1:1000] <- mu$beta1
 a$mu[1001:2000] <- mu$beta2
 a$mu[2001:3000] <- mu$beta3
 a$mu[3001:4000] <- mu$beta4
+invlogit(a$mu)
 #This figure
 png("real_size_only_box.png")
 boxplot(invlogit(a$mu) ~ a$beta, main = "Probability at any size of \n each ant state", xlab = "Ant Species", ylab = "Probability of being tended by this ant", col = c("red","blue","darkgrey","pink"))
@@ -258,6 +259,17 @@ png("multi_3_conv.png")
 bayesplot::mcmc_trace(As.mcmc.list(mod3_data, pars=c("beta","alpha")))
 dev.off()
 
+pi_1 = 1/(1 + sum(exp(mu$beta2), exp(mu$beta3), exp(mu$beta4)))
+pi_2 = exp(mu$beta2)/(1 + sum(exp(mu$beta2), exp(mu$beta3), exp(mu$beta4)))
+pi_3 = exp(mu$beta3)/(1 + sum(exp(mu$beta2), exp(mu$beta3), exp(mu$beta4)))
+pi_4 = exp(mu$beta4)/(1 + sum(exp(mu$beta2), exp(mu$beta3), exp(mu$beta4)))
+
+pi_1 = 1/(1 + sum(exp(mod3_data_outputs$beta.1.2), exp(mod3_data_outputs$beta.1.3), exp(mod3_data_outputs$beta.1.4)))
+pi_2 = exp(mod3_data_outputs$beta.1.2)/(1 + sum(exp(mod3_data_outputs$beta.1.2), exp(mod3_data_outputs$beta.1.3), exp(mod3_data_outputs$beta.1.4)))
+pi_3 = exp(mod3_data_outputs$beta.1.3)/(1 + sum(exp(mod3_data_outputs$beta.1.2), exp(mod3_data_outputs$beta.1.3), exp(mod3_data_outputs$beta.1.4)))
+pi_4 = exp(mod3_data_outputs$beta.1.4)/(1 + sum(exp(mod3_data_outputs$beta.1.2), exp(mod3_data_outputs$beta.1.3), exp(mod3_data_outputs$beta.1.4)))
+
+range(pi_2)
 #################### Include Ant State as a predictor
 multi_data3 <- cactus[,c("ant_t1","volume_t","Year_t","Plot", "ant_t")]
 multi_data3 <- na.omit(multi_data3)
