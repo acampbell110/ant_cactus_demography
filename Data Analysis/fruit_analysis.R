@@ -48,7 +48,21 @@ fit_seed_ant <- stan(file = "STAN Models/seed_prod.stan", data = stan_data_seed,
 seed_outputs <- rstan::extract(fit_seed_ant, pars = c("beta0","y_rep"))
 write.csv(seed_outputs, "seed_outputs.csv")
 
-
+#### Fruit Survival
+Fr.on.grnd.not.chewed/Fr.on.plant
+stan_fruit_surv <- list(on_ground = fruit.surv$Fr.on.grnd.not.chewed,
+                        on_plant = fruit.surv$Fr.on.plant,
+                        fr_prop = fruit.surv$Fr.on.grnd.not.chewed/fruit.surv$Fr.on.plant,
+                        N_fruit = nrow(fruit.surv),
+                        N_Transect = 3,
+                        N_Plant = 8,
+                        transect = as.integer(factor(fruit.surv$Transect)),
+                        plant = as.integer(factor(fruit.surv$Plant))
+  
+)
+fit_fruit_surv <- stan(file = "STAN Models/fruit_surv.stan", data = stan_fruit_surv, warmup = 5, iter = 10, chains = 1, cores = 2, thin = 1)
+fruit_surv_outputs <- rstan::extract(fit_fruit_surv, pars = c("beta0","y_rep"))
+write.csv(fruit_surv_outputs, "fruit_surv_outputs.csv")
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 seed_data <- read.csv("/Users/alicampbell/Cactus Dropbox/Ant-Demography-Project/Model Outputs/seed_outputs.csv", header = TRUE,stringsAsFactors=T)

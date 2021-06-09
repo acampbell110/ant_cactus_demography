@@ -37,9 +37,4 @@ model {
     target += - log1m(neg_binomial_2_log_lpmf(0 | mu[i], phi)); // manually adjusting computation of likelihood
   }
 }
-generated quantities {
-  int<lower = 0> y_rep[N_flower] = neg_binomial_2_rng(inv_logit(mu), phi);
-  real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
-  real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
-} 
 

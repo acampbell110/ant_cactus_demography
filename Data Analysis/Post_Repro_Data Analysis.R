@@ -6,7 +6,8 @@ fruit.dat<-read.csv("JO_fruit_data_final_dropplant0.csv",T)  %>% drop_na() %>%
   ## this is the subset used in Elderd&Miller
   filter(poll.access=="y" & treatment!="tc" & vacant=="n" & ant.access=="y")
 ### Fruit Surv
-fruit.surv<-read.csv("FruitSurvival.csv",T) %>% drop_na()
+fruit.surv<-read.csv("FruitSurvival.csv",header = TRUE,stringsAsFactors=T) %>% drop_na()
+fruit.surv <- fruit.surv[which(fruit.surv$Fr.on.grnd.not.chewed > 0),]
 fruitsurv<-glm((Fr.on.grnd.not.chewed/Fr.on.plant~1),weights=Fr.on.plant,family="binomial",data=fruit.surv)
 ## this model fits the ca.-6mo seed survival rate. Squaring this estimates gives the ca. 1-year rate.
 ## But this may over-estimate mortality. Maybe most of it does happen in that 6-mo window...experiment with this

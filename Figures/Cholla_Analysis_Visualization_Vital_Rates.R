@@ -3,11 +3,6 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t), na.rm = TRUE), by = 0.1)
 #### Growth Visuals #####################################################################################################
 ## Extract & Format Data
-#For overlay plots
-y <- y_grow
-grow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs.csv", header = TRUE,stringsAsFactors=T)
-yrep_grow <- grow_yrep
-samp100 <- sample(nrow(yrep_grow), 500)
 #extract from original data
 y_subset <- growth_data[,c("volume_t1","ant", "volume_t")]
 ## Formulas
@@ -27,19 +22,6 @@ y_vac_mean_grow <- quantile(grow_data$beta0.4,0.5) + size_dummy * quantile(grow_
 y_vac_low_grow <- quantile(grow_data$beta0.4,0.05) + size_dummy * quantile(grow_data$beta1.4,0.05)
 y_vac_high_grow <- quantile(grow_data$beta0.4,0.95) + size_dummy * quantile(grow_data$beta1.4,0.95)
 y_vac_subset_grow <- subset(y_subset, ant == 4)
-## Overlay Plots
-png(file = "grow_post1.png")
-bayesplot::ppc_dens_overlay(y, yrep_grow[samp100,])
-dev.off()
-png(file = "grow_ant_post1.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_grow[samp100,], group = ant_grow)
-dev.off()
-## Convergence Plots
-png("grow_conv2.png")
-ggtitle("Growth Model Parameter Convergence")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow_mix_ant, pars=c("beta0", "beta1")))
-title()
-dev.off()
 ## Panel Plots
 png("grow_panel.png")
 par(mar=c(2,2,2,2),oma=c(2,2,0,0))
@@ -211,11 +193,6 @@ dev.off()
 ##
 #### Survival Visuals #####################################################################################################
 ## Extract & Format Data
-#overlay plot data
-y <- y_surv
-surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_outputs.csv", header = TRUE,stringsAsFactors=T)
-yrep_surv <- subset(surv_data, select = -c(1:9))
-samp100 <- sample(nrow(yrep_surv), 500)
 #extract from original ddata
 y_subset <- survival_data[,c("Survival_t1","ant", "volume_t")]
 #Size Dummies for every ant
@@ -244,17 +221,6 @@ y_vac_low_surv = quantile(surv_data$Bebeta0.4ta0_4,0.05) + size_vac * quantile(s
 y_vac_high_surv = quantile(surv_data$beta0.4,0.95) + size_vac * quantile(surv_data$beta1.4,0.95)
 vac_extr = quantile(surv_data$beta0.4,0.5) + size_dummy * quantile(surv_data$beta1.4,0.5)
 y_vac_subset_surv <- subset(y_subset, ant == 4)
-## Overlay Plots
-png(file = "surv_post1.png")
-bayesplot::ppc_dens_overlay(y, yrep_surv[samp100,])
-dev.off()
-png(file = "surv_ant_post1.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_surv[samp100,],group = ant_surv)
-dev.off()
-## Convergence Plots
-png(file = "surv_conv1.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_surv_mix_ant, pars=c("beta0", "beta1")))
-dev.off()
 ## Panel Plots
 png("surv_panels1.png")
 par(mar=c(2,2,2,2))
@@ -301,6 +267,8 @@ lines(x = size_liom, y = invlogit(y_liom_surv), col = "blue", lwd = 2)
 lines(x = size_vac, y = invlogit(y_vac_surv), col = "pink", lwd = 2)
 legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
 dev.off()
+
+
 par(mfrow = c(1,1))
 
 ## Panels 2
@@ -392,12 +360,6 @@ flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutu
 flow_data_trunc <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_outputs_trunc.csv", header = TRUE,stringsAsFactors=T)
 size_dummy_3 <- seq(min(log(flower_data$volume_t), na.rm = TRUE), max(log(flower_data$volume_t), na.rm = TRUE), by = 0.1)
 #format for overlay plots
-y <- y_flow
-yrep_flow <- flow_yrep
-samp100 <- sample(nrow(yrep_flow), 500)
-y_trunc <- y_flow
-yrep_flow_trunc <- flow_yrep_trunc
-samp100 <- sample(nrow(yrep_flow_trunc), 500)
 ## Formulas
 y_flow = quantile(flow_data$beta0,0.5) + size_dummy * quantile(flow_data$beta1,0.5)
 y_low_flow = quantile(flow_data$beta0,0.05) + size_dummy * quantile(flow_data$beta1,0.05)
@@ -405,20 +367,6 @@ y_high_flow = quantile(flow_data$beta0,0.95) + size_dummy * quantile(flow_data$b
 y_flow_trunc = quantile(flow_data_trunc$beta0,0.5) + size_dummy * quantile(flow_data_trunc$beta1,0.5)
 y_low_flow_trunc = quantile(flow_data_trunc$beta0,0.05) + size_dummy * quantile(flow_data_trunc$beta1,0.05)
 y_high_flow_trunc = quantile(flow_data_trunc$beta0,0.95) + size_dummy * quantile(flow_data_trunc$beta1,0.95)
-## Overlay Plots
-png(file = "flow_post1.png")
-bayesplot::ppc_dens_overlay(y, yrep_flow[samp100,])
-dev.off()
-png(file = "flow_post_trunc1.png")
-bayesplot::ppc_dens_overlay(y_trunc, yrep_flow_trunc[samp100,])
-dev.off()
-## Convergence Plots
-png(file = "flow_conv1")
-bayesplot::mcmc_trace(As.mcmc.list(fit_flow_mix_ant, pars=c("beta0", "beta1")))
-dev.off()
-png(file = "flow_conv_trunc1")
-bayesplot::mcmc_trace(As.mcmc.list(fit_flow_mix_ant_trunc, pars=c("beta0", "beta1")))
-dev.off()
 ##Panel Plot
 png("flow_panels3.png")
 par(mar=c(5,5,0,1))
@@ -481,12 +429,6 @@ dev.off()
 ## Extract & Format Data
 #format for overlay plots
 #extract from STAN models
-repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro_outputs.csv", header = TRUE,stringsAsFactors=T)
-y <- y_repro
-yrep_repro <- subset(repro_data, select = -c(1:3))
-samp100 <- sample(nrow(yrep_repro), 500)
-
-
 #extract from original data
 y_subset <- reproductive_data[,c("flower1_YN", "volume_t")]
 ## Formulas
@@ -494,14 +436,6 @@ size_dummy2 <- seq(min(log(reproductive_data$volume_t)),max(log(reproductive_dat
 y_repro = quantile(repro_data$beta0,0.5,na.rm = TRUE) + size_dummy2 * quantile(repro_data$beta1,0.5,na.rm = TRUE)
 y_low_repro = quantile(repro_data$beta0,0.05) + size_dummy2 * quantile(repro_data$beta1,0.05)
 y_high_repro = quantile(repro_data$beta0,0.95) + size_dummy2 * quantile(repro_data$beta1,0.95)
-## Overlay Plots
-png(file = "repro_post1.png")
-bayesplot::ppc_dens_overlay(y, yrep_repro[samp100,])
-dev.off()
-## Convergence Plots
-png(file = "repro_conv1.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_repro_mix_ant, pars=c("beta0", "beta1")))
-dev.off()
 ## Panel Plots
 png("repro_panel1.png")
 par(mar=c(5,5,0,1))
@@ -542,9 +476,6 @@ dev.off()
 ## Extract & Format Data
 viab_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab_outputs.csv", header = TRUE,stringsAsFactors=T)
 #format for overlay plots
-y <- good_viab
-yrep_viab <- viab_yrep
-samp100 <- sample(nrow(yrep_viab), 500)
 #extract from original data
 y_subset_good <- viability_data[,c("Goodbuds_t1","ant", "volume_t")]
 ## Formulas
@@ -596,21 +527,6 @@ for(i in 1:nrow(viab_data)){
   mixed$low[i] <- y_vac_low_viab
   mixed$high[i] <- y_vac_high_viab
 }
-## Overlay Plots
-png(file = "viab_post1.png")
-bayesplot::ppc_dens_overlay(y, yrep_viab[samp100,])
-dev.off()
-png(file = "viab_ant_post1.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_viab[samp100,],group = ant_viab)
-dev.off()
-## Convergence Plots
-png(file = "viab_conv1")
-bayesplot::mcmc_trace(As.mcmc.list(fit_viab_mix_ant, pars=c("beta0")))
-dev.off()
-## Convergence Plots
-png(file = "viab_conv1")
-bayesplot::mcmc_trace(As.mcmc.list(fit_viab_mix_ant, pars=c("beta0")))
-dev.off()
 ## Panel Plots (proportion of viable buds)
 plot(x = log(other_subset$volume_t),y = other_subset$Goodbuds_t1/other_subset$TotFlowerbuds_t1)
 
@@ -672,4 +588,112 @@ samp100 <- sample(nrow(seed_yrep), 500)
 png("seeds_post.png")
 bayesplot::ppc_dens_overlay(y, seed_yrep[samp100,])
 dev.off()
-#
+
+
+#### Seed Survival
+y_subset <- na.omit(precensus.dat)
+seed_surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_surv_outputs.csv", header = TRUE,stringsAsFactors=T)
+#Size Dummies for every ant
+size_dummy = seq(min(precensus.dat$Log.size, na.rm = TRUE), max(precensus.dat$Log.size, na.rm = TRUE), by = 0.1)
+## Formulas
+y_surv = quantile(seed_surv_data$beta0.3,0.5) + size_dummy * quantile(seed_surv_data$beta1.3,0.5)
+y_low_surv = quantile(seed_surv_data$beta0.3,0.05) + size_dummy * quantile(seed_surv_data$beta1.3,0.05)
+y_high_surv = quantile(seed_surv_data$beta0.3,0.95) + size_dummy * quantile(seed_surv_data$beta1.3,0.95)
+## Panel Plots
+png("seed_surv_panels1.png")
+plot(x = size_dummy  ,y = invlogit(y_surv), type = "l", col = "black", lwd = 4, ylim = c(0,1))
+points(x = log(y_subset$volume_t), y = y_subset$Survival_t1, col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+#lines(x = size_dummy, y = invlogit(y_other_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+#lines(x = size_dummy, y = invlogit(y_other_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
+polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_high_surv), rev(invlogit(y_low_surv))),
+        col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+dev.off()
+
+
+par(mfrow = c(1,1))
+
+## Panels 2
+png("surv_panel2.png")
+par(mar=c(5,5,0,1),oma=c(2,2,0,0))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(1,2,2), widths = c(4,4,4))
+plot.new()
+text(0.5,0.5,"Survival Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
+# Other (3)
+samp <- sample(nrow(surv_data), 50)
+plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4, ylim = c(0,1),xlim = c(-5,15), xlab = "",ylab = "")
+for(i in 1:1500){
+  lines(x = size_other, y = invlogit(surv_data$beta0.3[i] + size_other * surv_data$beta1.3[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4)
+points(x = log(y_other_subset_surv$volume_t), y = (y_other_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Crem (1)
+plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "") 
+for(i in 1:1500){
+  lines(x = size_crem, y = invlogit(surv_data$beta0.1[i] + size_crem * surv_data$beta1.1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4)
+points(x = log(y_crem_subset_surv$volume_t), y = (y_crem_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Liom (2)
+plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "")
+for(i in 1:1500){
+  lines(x = size_liom, y = invlogit(surv_data$beta0.2[i] + size_liom * surv_data$beta1.2[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4)
+points(x = log(y_liom_subset_surv$volume_t), y = (y_liom_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3))
+# Vacant (4)s
+plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "") 
+for(i in 1:1500){
+  lines(x = size_vac, y = invlogit(surv_data$beta0.4[i] + size_vac * surv_data$beta1.4[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4)
+points(x = log(y_vac_subset_surv$volume_t), y = (y_vac_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+  # All together
+  plot(x = size_dummy, y = invlogit(other_extr), type = "l", col = "black", lwd = 2, ylim = c(0,1), lty = 2, xlab = "", ylab = "")
+lines(x = size_dummy, y = invlogit(crem_extr), col = "red",lwd = 2, lty = 2)
+lines(x = size_dummy, y = invlogit(liom_extr), col = "blue", lwd = 2, lty = 2)
+lines(x = size_dummy, y = invlogit(vac_extr), col = "pink", lwd = 2, lty = 2)
+lines(x = size_other, y = invlogit(y_other_surv), col = "black", lwd = 2)
+lines(x = size_crem, y = invlogit(y_crem_surv), col = "red", lwd = 2)
+lines(x = size_liom, y = invlogit(y_liom_surv), col = "blue", lwd = 2)
+lines(x = size_vac, y = invlogit(y_vac_surv), col = "pink", lwd = 2)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c("black","red","blue","pink"), pch = 16)
+mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=1.3)
+mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.3,las=0)
+dev.off()
+
+png("surv_panel3.png")
+par(mfrow = c(2,2))
+samp <- sample(nrow(surv_data), 50)
+plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4, ylim = c(0,1),xlim = c(-5,15), xlab = "",ylab = "")
+for(i in 1:1500){
+  lines(x = size_other, y = invlogit(surv_data$beta0.3[i] + size_other * surv_data$beta1.3[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = "black", lwd = 4)
+points(x = log(y_other_subset_surv$volume_t), y = (y_other_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Crem (1)
+plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "") 
+for(i in 1:1500){
+  lines(x = size_crem, y = invlogit(surv_data$beta0.1[i] + size_crem * surv_data$beta1.1[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = "red", lwd = 4)
+points(x = log(y_crem_subset_surv$volume_t), y = (y_crem_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+# Liom (2)
+plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "")
+for(i in 1:1500){
+  lines(x = size_liom, y = invlogit(surv_data$beta0.2[i] + size_liom * surv_data$beta1.2[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = "blue", lwd = 4)
+points(x = log(y_liom_subset_surv$volume_t), y = (y_liom_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3))
+# Vacant (4)s
+plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4, ylim = c(0,1),xlim = c(-5,15),xlab = "",ylab = "") 
+for(i in 1:1500){
+  lines(x = size_vac, y = invlogit(surv_data$beta0.4[i] + size_vac * surv_data$beta1.4[i]),col = "lightgrey", alpha = 0.1)
+}
+lines(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4)
+points(x = log(y_vac_subset_surv$volume_t), y = (y_vac_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
+  dev.off()
+
+
+
+

@@ -51,6 +51,32 @@ seed_data <- na.omit(seed_data)
 seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
 seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
 seed_data <- subset(seed_data, seed_count > 0)
+fruit.dat<-read.csv("JO_fruit_data_final_dropplant0.csv",T)  %>% drop_na() %>% 
+  ## taking the subset of pollinator+ant access, not vacant
+  ## this is the subset used in Elderd&Miller
+  filter(poll.access=="y" & treatment!="tc" & vacant=="n" & ant.access=="y")
+### Fruit Surv
+fruit.surv<-read.csv("FruitSurvival.csv",header = TRUE,stringsAsFactors=T) %>% drop_na()
+fruit.surv <- fruit.surv[which(fruit.surv$Fr.on.grnd.not.chewed > 0),]
+### Germ Data
+germ.dat<-read.csv("Germination.csv") 
+germ.dat <- na.omit(germ.dat)
+germ.dat$rate <- 0
+for(i in 1:nrow(germ.dat)){
+if(germ.dat$Seedlings04[i] != 0){
+  germ.dat$rate[i] <- (germ.dat$Seedlings04[i] - germ.dat$Seedlings05[i])/germ.dat$Seedlings04[i]
+}
+}
+germ.dat[-c(42,39,40),]
+
+### Pre-Census Surv
+precensus.dat<-read.csv("PrecensusSurvival.csv") 
+precensus.dat%>%  drop_na(precensus.dat$survive0405)
+seedlings <- cactus %>% 
+  mutate(vol_t = log(volume(h = Height_t, w = Width_t, p = Perp_t)),
+         standvol_t = (vol_t - mean(vol_t,na.rm=T))/sd(vol_t,na.rm=T)) %>% 
+  filter(str_sub(Plot,1,1)=="H",
+         Recruit==1)
 ## Name local data variables to input to Stan Data
 # volume data
 vol_grow = log(growth_data$volume_t)
@@ -125,7 +151,7 @@ plot(log(cactus$volume_t), log(cactus$volume_t1))
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/grow_mix_ant.stan")
-fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
 grow_outputs <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1","sigma"))
 grow_yrep <- rstan::extract(fit_grow_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(grow_outputs, "grow_outputs.csv")
@@ -148,8 +174,9 @@ plot(log(cactus$volume_t), cactus$Survival_t1)
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/surv_mix_ant.stan")
-fit_surv_mix_ant <- stan(file = "STAN Models/surv_mix_ant.stan", data = stan_data_surv, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
-surv_outputs <- rstan::extract(fit_surv_mix_ant, pars = c("beta0","beta1","y_rep"))
+fit_surv_mix_ant <- stan(file = "STAN Models/surv_mix_ant.stan", data = stan_data_surv, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+surv_outputs <- rstan::extract(fit_surv_mix_ant, pars = c("beta0","beta1"))
+surv_yrep <- rstan::extract(fit_surv_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(surv_outputs, "surv_outputs.csv")
 
 
@@ -171,7 +198,7 @@ plot(log(cactus$volume_t), cactus$TotFlowerbuds_t)
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/flower_mix_ant.stan")
-fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
 flow_yrep <- rstan::extract(fit_flow_mix_ant, pars = c("y_rep"))$y_rep
 flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
 write.csv(flow_outputs, "flow_outputs.csv")
@@ -188,8 +215,9 @@ stan_data_flow_trunc <- list(N_flower = N_flower, ## number of observations
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/flower_mix_ant.stan")
-fit_flow_mix_ant_trunc <- stan(file = "STAN Models/flower_mix_ant_trunc.stan", data = stan_data_flow_trunc, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
-flow_yrep_trunc <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("y_rep"))$y_rep
+fit_flow_mix_ant_trunc <- stan(file = "STAN Models/flower_mix_ant_trunc.stan", data = stan_data_flow_trunc, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+flow_pred <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("mu"))$mu
+phi_flow <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("phi"))$phi
 flow_outputs_trunc <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
 write.csv(flow_outputs_trunc, "flow_outputs_trunc.csv")
 
@@ -211,7 +239,7 @@ stan_data_viab <- list(N_viab = N_viab, ## number of observations
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/viab_mix_ant.stan")
-fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant2.stan", data = stan_data_viab, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant2.stan", data = stan_data_viab, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
 viab_yrep <- rstan::extract(fit_viab_mix_ant, pars = c("y_rep"))$y_rep
 viab_outputs <- rstan::extract(fit_viab_mix_ant, pars = c("beta0"))
 write.csv(viab_outputs, "viab_outputs.csv")
@@ -233,23 +261,84 @@ plot(log(cactus$volume_t1), cactus$flower1_YN)
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/repro_mix_ant.stan")
-fit_repro_mix_ant <- stan(file = "STAN Models/repro_mix_ant.stan", data = stan_data_repro, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
-repro_outputs <- rstan::extract(fit_repro_mix_ant, pars = c("beta0","beta1","y_rep"))
+fit_repro_mix_ant <- stan(file = "STAN Models/repro_mix_ant.stan", data = stan_data_repro, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+repro_outputs <- rstan::extract(fit_repro_mix_ant, pars = c("beta0","beta1"))
+repro_yrep <- rstan::extract(fit_repro_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(repro_outputs, "repro_outputs.csv")
 
 
-#### Seeds Model
+#### Seeds Model (# Seeds per fruit)
 ## Create Stan Data
-stan_data_seed <- list(N_obs = nrow(seed_data),
-                        N_ant = 3,
+stan_data_seed <- list(N_obs_seed = nrow(seed_data),
+                        N_ant_seed = 3,
                         N_Plant_ID = length(unique(seed_data$plant)),
-                        ant = seed_data$ant,
-                        plant = seed_data$plant_fac,
+                        ant_seed = as.integer(as.factor(seed_data$ant)),
+                        plant_seed = seed_data$plant_fac,
                         seed = seed_data$seed_count)
-fit_seed <- stan(file = "STAN Models/seed_prod.stan", data = stan_data_seed, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+fit_seed <- stan(file = "STAN Models/seed_prod.stan", data = stan_data_seed, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
 seed_outputs <- rstan::extract(fit_seed, pars = c("beta0","phi","sigma_v","v","sigma"))
 write.csv(seed_outputs, "seed_outputs.csv")
 seed_yrep <- rstan::extract(fit_seed, pars = c("y_rep"))$y_rep
+
+#### Seed Survival Pre Census
+## Create Stan Data
+stan_data_seed_surv <- list(N_ss = nrow(precensus.dat),
+                            N_Plant_ss = length(unique(precensus.dat$plant.ID)),
+                            N_Transect_ss = length(unique(precensus.dat$Transect)),
+                            vol_ss = precensus.dat$Log.size,
+                            plant_ss = as.integer(as.factor(precensus.dat$plant.ID)),
+                            transect_ss = as.integer(as.factor(precensus.dat$Transect)),
+                            y_ss = precensus.dat$survive0405)
+fit_seed_surv <- stan(file = "STAN Models/seed_survival.stan", data = stan_data_seed_surv, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+seed_surv_outputs <- rstan::extract(fit_seed_surv, pars = c("beta0","beta1","sigma_u","u","sigma_w","w"))
+write.csv(seed_surv_outputs, "seed_surv_outputs.csv")
+seed_surv_yrep <- rstan::extract(fit_seed_surv, pars = c("y_rep"))$y_rep
+
+#### Number Fruits Per Plant
+## Create Stan Data
+stan_data_fruit <- list()
+fit_fruit <- stan(file = "STAN Models/fruit.stan", data = stan_data_fruit, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+fruit_outputs <- rstan::extract(fit_fruit, pars = c("beta0","beta1","sigma_u","u","sigma_w","w"))
+write.csv(fruit_outputs, "fruit_outputs.csv")
+fruit_yrep <- rstan::extract(fit_fruit, pars = c("y_rep"))$y_rep
+
+#### Fruit Survival
+## Create Stan Data
+Fr.on.grnd.not.chewed/Fr.on.plant
+stan_fruit_surv <- list(on_ground = fruit.surv$Fr.on.grnd.not.chewed,
+                        on_plant = fruit.surv$Fr.on.plant,
+                        fr_prop = fruit.surv$Fr.on.grnd.not.chewed/fruit.surv$Fr.on.plant,
+                        N_fruit = nrow(fruit.surv),
+                        N_Transect = 3,
+                        N_Plant = 8,
+                        transect = as.integer(factor(fruit.surv$Transect)),
+                        plant = as.integer(factor(fruit.surv$Plant))
+                        
+)
+fit_fruit_surv <- stan(file = "STAN Models/fruit_surv.stan", data = stan_fruit_surv, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+fruit_surv_outputs <- rstan::extract(fit_fruit_surv, pars = c("beta0"))
+write.csv(fruit_surv_outputs, "fruit_surv_outputs.csv")
+fruit_surv_yrep <- rstan::extract(fit_fruit_surv, pars = c("y_rep"))$y_rep
+
+#### Germination 
+y_germ1 <- germ.dat$Seedlings04
+stan_data_germ1 <- list(N_germ = nrow(germ.dat),
+                       y_germ1 = as.integer(germ.dat$Seedlings04),
+                       trials_germ1 = germ.dat$Input)
+stan_data_germ2 <- list(N_germ = nrow(germ.dat),
+                       y_germ2 = germ.dat$Seedlings05,
+                       trials_germ2 = germ.dat$Input-germ.dat$Seedlings04)
+## Create Stan Data
+fit_germ1 <- stan(file = "STAN Models/germ_yr1.stan", data = stan_data_germ1, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+fit_germ2 <- stan(file = "STAN Models/germ_yr2.stan", data = stan_data_germ2, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+germ1_outputs <- rstan::extract(fit_germ1, pars = c("beta0","beta1"))
+germ2_outputs <- rstan::extract(fit_germ2, pars = c("beta0","beta1"))
+write.csv(germ1_outputs, "germ1_outputs.csv")
+write.csv(germ2_outputs, "germ2_outputs.csv")
+germ1_yrep <- rstan::extract(fit_germ1, pars = c("y_rep"))$y_rep
+germ2_yrep <- rstan::extract(fit_germ2, pars = c("y_rep"))$y_rep
+
+
 
 ########################################## The Full Model ###########################################################
 stan_data <- list(
@@ -318,7 +407,6 @@ full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g
                                                   "beta0_v","u_v","w_v","sigma_v","sigma_u_v","sigma_w_v", "y_rep_v", "mean_y_rep_v","sd_y_rep_v",
                                                   "beta0_seed","v_seed","sigma_seed","sigma_v_seed","phi_seed", "y_rep_seed", "mean_y_rep_seed","sd_y_rep_seed"))
 write.csv(full_outputs, "params_outputs.csv")
-
 
 
 

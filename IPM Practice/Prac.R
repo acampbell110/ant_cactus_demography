@@ -8,34 +8,34 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 
 ## ----------- Vital rate functions. Parameter indices are hard-coded and must correspond to rows of MCMC matrix ------------- ##
 #GROWTH FROM SIZE X TO Y
-gxy<-function(x,y,params,yrfx,plotfx){
+gxy<-function(x,y,params){
   xb=pmin(pmax(x,quantile(params[61,],0.5)),quantile(params[62,],0.5)) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  return(dnorm(y,mean=quantile(params[1,],0.5) + quantile(params[2,],0.5)*xb  + quantile(yrfx[1,],0.5) + quantile(plotfx[1,],0.5),sd=quantile(params[3,],0.5)))
+  return(dnorm(y,mean=quantile(params[1,],0.5) + quantile(params[2,],0.5)*xb,sd=quantile(params[3,],0.5)))
 }
 
 #SURVIVAL AT SIZE X.
-sx<-function(x,params,yrfx,plotfx){
+sx<-function(x,params){
   xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
-  return(invlogit(quantile(params[11],0.5) + quantile(params[12],0.5)*xb   + quantile(yrfx[2],0.5) + quantile(plotfx[2],0.5)))
+  return(invlogit(quantile(params[11],0.5) + quantile(params[12],0.5)*xb))
 }
 
 #SURVIVAL*GROWTH
-pxy<-function(x,y,params,yrfx,plotfx){
+pxy<-function(x,y,params){
   xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
-  sx(xb,params,yrfx,plotfx)*gxy(xb,y,params,yrfx,plotfx)
+  sx(xb,params)*gxy(xb,y,params)
 }
 
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
-fx<-function(x,params,yrfx,plotfx,f.eps){
+fx<-function(x,params){
   xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
-  p.flow<-invlogit(quantile(params[21],0.5) + quantile(params[22],0.5)*xb + quantile(yrfx[3],0.5) + quantile(plotfx[3],0.5)) 
-  nfruits<-exp(quantile(params[31],0.5) + quantile(params[32],0.5)*xb + quantile(yrfx[4],0.5) + quantile(plotfx[4],0.5) + f.eps)   
+  p.flow<-invlogit(quantile(params[21],0.5) + quantile(params[22],0.5)*xb) 
+  nfruits<-exp(quantile(params[31],0.5) + quantile(params[32],0.5)*xb)   
   seeds.per.fruit<-quantile(params[51],0.5)
   seed.survival<-invlogit(quantile(params[42],0.5))^2  ## I measured 6-month seed survival; annual survival is its square
   return(p.flow*nfruits*seeds.per.fruit*seed.survival)  
 }
 
-bigmatrix<-function(params,yrfx,plotfx,f.eps,lower,upper,matsize){  
+bigmatrix<-function(params,lower,upper,matsize){  
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -54,7 +54,7 @@ bigmatrix<-function(params,yrfx,plotfx,f.eps,lower,upper,matsize){
   Fmat<-matrix(0,(n+2),(n+2))
   
   # Banked seeds go in top row
-  Fmat[1,3:(n+2)]<-fx(y,params=params,yrfx=yrfx,plotfx=plotfx,f.eps=f.eps)
+  Fmat[1,3:(n+2)]<-fx(y,params=params)
   
   # Growth/survival transition matrix
   Tmat<-matrix(0,(n+2),(n+2))
@@ -69,7 +69,7 @@ bigmatrix<-function(params,yrfx,plotfx,f.eps,lower,upper,matsize){
   Tmat[3:(n+2),2]<-invlogit(quantile(params[44],0.5))*recruits(y,params)*h*invlogit(quantile(params[45],0.5))  
   
   # Growth/survival transitions among cts sizes
-  Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,params=params,yrfx=yrfx,plotfx=plotfx))*h
+  Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,params=params))*h
   
   # Put it all together
   IPMmat<-Fmat+Tmat     
@@ -82,7 +82,7 @@ bigmatrix<-function(params,yrfx,plotfx,f.eps,lower,upper,matsize){
 
 ## ----------------- Function that simulates population dynamics and returns lambdaS ------------- ############
 
-lambda.fun<-function(parameters,yrfx,plotfx,f.eps=0,iter,
+lambda.fun<-function(parameters,iter,
                      matsize,extra.grid=2,floor.extend=1,ceiling.extend=4,stochastic=T,corr=T){
   ############################################################################################
   ## This function returns the population growth rate for a given set of parameters
@@ -98,7 +98,7 @@ lambda.fun<-function(parameters,yrfx,plotfx,f.eps=0,iter,
   
   if(stochastic==F){
     yrfx <- matrix(0,1,4)
-    lambda<-Re(eigen(bigmatrix(params=parameters,yrfx=yrfx,plotfx=plotfx,f.eps=f.eps,lower=lower,upper=upper,matsize=matsize)$IPMmat)$values[1])
+    lambda<-Re(eigen(bigmatrix(params=parameters,lower=lower,upper=upper,matsize=matsize)$IPMmat)$values[1])
     return(lambda)
   }
   }
