@@ -19,7 +19,6 @@ data {
   int<lower=1> N_Plot_surv; //number of years
   int<lower=1, upper=N_Plot_surv> plot_surv[N_surv]; // plot
   int<lower=1, upper=N_Year_surv> year_surv[N_surv]; // year
-
   //Flower Bud Predictions
   int <lower = 1> N_flower; // number of observations
   vector[N_flower] vol_flower;	//size_t
@@ -46,13 +45,27 @@ data {
   int<lower=1> N_Plot_viab; //number of years
   int<lower=1, upper=N_Plot_viab> plot_viab[N_viab]; // plot
   int<lower=1, upper=N_Year_viab> year_viab[N_viab]; // year
-  //Seed Predictors
+  //Seed Prod Predictors
   int <lower = 1> N_seed; // number of observations
   int <lower = 2> N_ant_seed; // number of observations
-  int <lower = 1> N_Plant_ID; // number of plant observations
   int <lower = 1, upper = N_ant_seed> ant_seed[N_seed]; // the list of ant species 
-  int <lower = 1, upper = N_Plant_ID> plant_seed[N_seed]; // the list of plant IDs
   int <lower = 0> seed[N_seed]; // survival in year t1
+  //Seed Survival Predictors
+  int <lower = 1> N_seed_s; // number of observations
+  real <lower = 0, upper = 1> fr_prop[N_seed_s]; // survival in year t1
+  int<lower=1> on_ground[N_seed_s];
+  int<lower=1> on_plant[N_seed_s];
+  //Germ yr 1 Predictors
+  int <lower = 1> N_germ; // number of observations
+  int y_germ1[N_germ]; // number of flowers produced in year t (natural number)
+  int<lower=1> trials_germ1[N_germ]; // plot
+  //Germ 2
+  int y_germ2[N_germ]; // number of flowers produced in year t (natural number)
+  int<lower=1> trials_germ2[N_germ]; // plot
+  //Precensus
+  int <lower = 1> N_precen; // number of observations
+  vector[N_precen] vol_precen;	//size_t
+  int <lower = 0, upper = 1> y_precen[N_precen]; // survival in year t1
 }
 parameters {
   //Growth Predictors
@@ -71,7 +84,6 @@ parameters {
   real < lower = 0 > sigma_s; // Error SD
   real < lower = 0 > sigma_u_s; // plot SD
   real < lower = 0 > sigma_w_s; // year SD
-  
   //Flowerbud Predictors 
   real < lower = 0> phi_f;
   real beta0_f; //intercept
@@ -96,12 +108,27 @@ parameters {
   real < lower = 0 > sigma_v; // Error SD
   real < lower = 0 > sigma_u_v; // plot SD
   real < lower = 0 > sigma_w_v; // year SD
-  //Seed Predictors
+  //Seed Prod Predictors
   real < lower = 0> phi_seed;
-  real < lower = 0 > sigma_v_seed; // plant ID SD
   vector[N_ant_seed] beta0_seed; //intercept, unique to ant sp
-  vector[N_Plant_ID] v_seed; // the random effects of plant ID
   real < lower = 0 > sigma_seed; // Error SD
+  //Seed Survival Predictors
+  vector [N_seed_s] beta0_seed_s; //intercept, unique to ant sp
+  real < lower = 0 > sigma_seed_s; // Error SD
+  //Germ 1
+  real < lower = 1> phi_germ1;
+  real beta0_germ1; //intercept
+  real beta1_germ1;
+  real < lower = 0 > sigma_germ1; // Error SD
+  //Germ 2
+  real < lower = 1> phi_germ2;
+  real beta0_germ2; //intercept
+  real beta1_germ2;
+  real < lower = 0 > sigma_germ2; // Error SD
+  //Precensus
+  real beta0_precen; //intercept, unique to ant sp
+  real beta1_precen; //slope, unique to ant sp
+  real < lower = 0 > sigma_precen; // Error SD
 }
 transformed parameters{
   //Mus
@@ -111,6 +138,10 @@ transformed parameters{
   vector[N_repro] mu_r; //linear predictor for the mean
   real mu_v[N_viab]; // proportion viable for each plant?
   vector[N_seed] mu_seed; //linear predictor for the mean
+  vector[N_seed_s] mu_seed_s; //linear predictor for the mean
+  vector[N_germ] mu_germ1; //linear predictor for the mean
+  vector[N_germ] mu_germ2; //linear predictor for the mean
+  vector[N_precen] mu_precen; //linear predictor for the mean
   // Mu equations
   for(i in 1:N_grow){
     mu_g[i] = beta0_g[ant_grow[i]] + beta1_g[ant_grow[i]] * vol_grow[i] + u_g[plot_grow[i]] + w_g[year_grow[i]];
@@ -128,8 +159,20 @@ transformed parameters{
     mu_v[i] = beta0_v[ant_viab[i]] + u_v[plot_viab[i]] + w_v[year_viab[i]];
   };
   for(i in 1:N_seed){
-   	mu_seed[i] = beta0_seed[ant_seed[i]] + v_seed[plant_seed[i]];
+   	mu_seed[i] = beta0_seed[ant_seed[i]];
   };
+  for(i in 1:N_seed_s){
+    mu_seed_s[i] = beta0_seed_s[i];
+  }
+  for(i in 1:N_germ){
+   	mu_germ1[i] = beta0_germ1 + beta1_germ1 * trials_germ1[i];
+  }
+  for(i in 1:N_germ){
+   	mu_germ2[i] = beta0_germ2 + beta1_germ2 * trials_germ2[i];
+  }
+  for(i in 1:N_precen){
+    mu_precen[i] = beta0_precen + beta1_precen * vol_precen[i];
+  }
 }
 model {
   //Growth Predictors
@@ -148,7 +191,6 @@ model {
   for(i in 1:N_surv){
     y_surv[i] ~ bernoulli_logit(mu_s[i]);
   };
-
   // Flowerbud Predictors
   u_f ~ normal(0, sigma_u_f); // plot random effects
   w_f ~ normal(0, sigma_w_f); // year random effects
@@ -171,38 +213,33 @@ model {
   w_v ~ normal(0, sigma_w_v); // year random effects
   good_viab ~ binomial_logit(tot_viab, mu_v);
   //Seed Predictors
-  v_seed ~ normal(0, sigma_v_seed); // plot random effects
   beta0_seed ~ normal(0,100); // intercept distribution
   for(i in 1:N_seed){
     seed[i] ~ neg_binomial_2(exp(mu_seed[i]), phi_seed);
   };
+  //Seed Survival Predictors
+  beta0_seed_s ~ normal(0,100); // intercept distribution
+  //Model
+  for(i in 1:N_seed_s){
+    on_ground[i]/on_plant[i] ~ bernoulli_logit(mu_seed_s[i]);
+  }
+  //Germ 1
+  beta0_germ1 ~ normal(0,100); // intercept distribution
+  for(i in 1:N_germ){
+    y_germ1[i] ~ binomial_logit(trials_germ1[i], (mu_germ1[i]));
+  }
+  //Germ 2
+  beta0_germ2 ~ normal(0,100); // intercept distribution
+  for(i in 1:N_germ){
+    y_germ2[i] ~ binomial_logit(trials_germ2[i], (mu_germ2[i]));
+  }
+  //Precensus
+  beta0_precen ~ normal(0,100); // intercept distribution
+  beta1_precen ~ normal(0,100); // slope distribution
+  for(i in 1:N_precen){
+  y_precen[i] ~ bernoulli_logit(mu_precen[i]);
+ }
 }
-generated quantities {
-  //Growth Predictors
-  real  y_rep_g[N_grow] = normal_rng(mu_g, sigma_g);
-  real  mean_y_rep_g = mean(to_vector(y_rep_g));
-  real  sd_y_rep_g = sd(to_vector(y_rep_g));
-  //Survival Predictors
-  int<lower = 0> y_rep_s[N_surv] = bernoulli_logit_rng(mu_s);
-  real<lower = 0> mean_y_rep_s = mean(to_vector(y_rep_s));
-  real<lower = 0> sd_y_rep_s = sd(to_vector(y_rep_s));
-  
-  //Flowerbud Predictors
-  int<lower = 0> y_rep_f[N_flower] = neg_binomial_2_rng(inv_logit(mu_f), phi_f);
-  real<lower = 0> mean_y_rep_f = mean(to_vector(y_rep_f));
-  real<lower = 0> sd_y_rep_f = sd(to_vector(y_rep_f));
-  //Repro Predictors
-  int<lower = 0> y_rep_r[N_repro] = bernoulli_logit_rng(mu_r);
-  real<lower = 0> mean_y_rep_r = mean(to_vector(y_rep_r));
-  real<lower = 0> sd_y_rep_r = sd(to_vector(y_rep_r));
-  //Viability Predictors
-  int<lower = 0> y_rep_v[N_viab] = binomial_rng(tot_viab , inv_logit(mu_v));
-  real<lower = 0> mean_y_rep_v = mean(to_vector(y_rep_v));
-  real<lower = 0> sd_y_rep_v = sd(to_vector(y_rep_v));
-  //Seed Predictors
-  int<lower = 0> y_rep_seed[N_seed] = neg_binomial_2_rng(exp(mu_seed), phi_seed);
-  real<lower = 0> mean_y_rep_seed = mean(to_vector(y_rep_seed));
-  real<lower = 0> sd_y_rep_seed = sd(to_vector(y_rep_seed));
-} 
+
 
 

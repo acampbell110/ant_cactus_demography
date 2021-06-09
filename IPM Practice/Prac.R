@@ -9,30 +9,31 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 ## ----------- Vital rate functions. Parameter indices are hard-coded and must correspond to rows of MCMC matrix ------------- ##
 #GROWTH FROM SIZE X TO Y
 gxy<-function(x,y,params){
-  xb=pmin(pmax(x,quantile(params[61,],0.5)),quantile(params[62,],0.5)) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  return(dnorm(y,mean=quantile(params[1,],0.5) + quantile(params[2,],0.5)*xb,sd=quantile(params[3,],0.5)))
+  xb=pmin(pmax(x,params[101]),params[102]) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+  return(dnorm(y,mean=params[1] + params[2]*xb,sd=params[3]))
 }
 
 #SURVIVAL AT SIZE X.
 sx<-function(x,params){
-  xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
-  return(invlogit(quantile(params[11],0.5) + quantile(params[12],0.5)*xb))
+  xb=pmin(pmax(x,params[101]),params[102])
+  return(invlogit(params[11] + params[12]*xb))
 }
 
 #SURVIVAL*GROWTH
 pxy<-function(x,y,params){
-  xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
+  xb=pmin(pmax(x,params[101]),params[102])
   sx(xb,params)*gxy(xb,y,params)
 }
 
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
 fx<-function(x,params){
-  xb=pmin(pmax(x,quantile(params[61],0.5)),quantile(params[62],0.5))
-  p.flow<-invlogit(quantile(params[21],0.5) + quantile(params[22],0.5)*xb) 
-  nfruits<-exp(quantile(params[31],0.5) + quantile(params[32],0.5)*xb)   
-  seeds.per.fruit<-quantile(params[51],0.5)
-  seed.survival<-invlogit(quantile(params[42],0.5))^2  ## I measured 6-month seed survival; annual survival is its square
-  return(p.flow*nfruits*seeds.per.fruit*seed.survival)  
+  xb=pmin(pmax(x,params[101]),params[102])        ## X dummy variable
+  p.flow<-invlogit(params[31] + params[32]*xb)    ## Probability of Reproducing
+  nflow<-exp(params[21] + params[22]*xb)          ## Number of FLowers produced
+  flow.surv<-invlogit(params[41] + params[42]*xb) ## Proportion of Flowers survive to fruit
+  seeds.per.fruit<-params[51]                     ## Number of Seeds per Fruit
+  seed.survival<-invlogit(params[62])^2           ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
+  return(p.flow*nflow*flow.surv*seeds.per.fruit*seed.survival)  
 }
 
 bigmatrix<-function(params,lower,upper,matsize){  
@@ -60,13 +61,13 @@ bigmatrix<-function(params,lower,upper,matsize){
   Tmat<-matrix(0,(n+2),(n+2))
   
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-  Tmat[2,1]<-1-invlogit(quantile(params[43],0.5))
+  Tmat[2,1]<-1-invlogit(params[71])
   
   # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-  Tmat[3:(n+2),1]<-invlogit(quantile(params[43],0.5))*recruits(y,params)*h*invlogit(quantile(params[45],0.5))   
+  Tmat[3:(n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)   
   
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-  Tmat[3:(n+2),2]<-invlogit(quantile(params[44],0.5))*recruits(y,params)*h*invlogit(quantile(params[45],0.5))  
+  Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)  
   
   # Growth/survival transitions among cts sizes
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,params=params))*h
@@ -82,8 +83,8 @@ bigmatrix<-function(params,lower,upper,matsize){
 
 ## ----------------- Function that simulates population dynamics and returns lambdaS ------------- ############
 
-lambda.fun<-function(parameters,iter,
-                     matsize,extra.grid=2,floor.extend=1,ceiling.extend=4,stochastic=T,corr=T){
+lambda.fun<-function(params,iter,
+                     matsize,extra.grid=2,floor.extend=1,ceiling.extend=4){
   ############################################################################################
   ## This function returns the population growth rate for a given set of parameters
   ## Defaults to lambdaS (stochastic=T) but can give deterministic lambda based on vital rate means
@@ -93,15 +94,12 @@ lambda.fun<-function(parameters,iter,
   ############################################################################################
   
   ## IPM bounds
-  lower<- parameters[61] - floor.extend
-  upper<- parameters[62] + ceiling.extend
+  lower<- params[101] - floor.extend
+  upper<- params[102] + ceiling.extend
   
-  if(stochastic==F){
-    yrfx <- matrix(0,1,4)
-    lambda<-Re(eigen(bigmatrix(params=parameters,lower=lower,upper=upper,matsize=matsize)$IPMmat)$values[1])
-    return(lambda)
-  }
-  }
+  lambda<-Re(eigen(bigmatrix(params,lower=lower,upper=upper,matsize=matsize)$IPMmat)$values[1])
+  return(lambda)
+}
   
   
   

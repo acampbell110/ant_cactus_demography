@@ -155,7 +155,7 @@ dev.off()
 
 ## Germination Rate ################################################################################################
 ## Germ yr 1
-y <- germ.dat$Seedlings04
+y <- germ.dat$Seedlings04/germ.dat$Input
 yrep_germ1 <- germ1_yrep
 samp100 <- sample(nrow(yrep_germ1), 500)
 ## Overlay Plots
@@ -167,7 +167,7 @@ png(file = "germ1_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_germ1, pars=c("beta0","beta1")))
 dev.off()
 ## Germ yr 2
-y <- germ.dat$Seedlings05
+y <- germ.dat$Seedlings05/(germ.dat$Input - germ.dat$Seedlings04)
 yrep_germ2 <- germ2_yrep
 samp100 <- sample(nrow(yrep_germ2), 500)
 ## Overlay Plots

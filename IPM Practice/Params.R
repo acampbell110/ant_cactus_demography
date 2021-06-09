@@ -5,7 +5,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Practice")
 ## -------- read in MCMC output ---------------------- ##
 
 ##This file contains random draws from the joint posterior distribution of all parameters
-post.params<-read.csv("params_outputs.csv")
+post.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/params_outputs.csv", header = TRUE,stringsAsFactors=T)          
 
 ## Number of draws to take from the joint posterior distribution of the parameters. 
 ## Cannot be greater than the number of draws provided in the .csv file, which is 500.
@@ -14,16 +14,21 @@ post.params<-post.params[1:Ndraws,]
 Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
 iter <- 1000
+matsize<-200
+floor.extend=1
+ceiling.extend=4
+lower<- cholla[101] - floor.extend
+upper<- cholla[102] + ceiling.extend
+
 ## -------- load IPM source functions ---------------------- ##
 
-source("ElderdMiller_chollaIPM_SOURCE.R")
 source("Prac.R")
 
 ## -------- Set up IPM parameter vector ---------------------- ##
 
 ## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
 ## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
-cholla<-matrix(NA,nrow=100,ncol=Ndraws) 
+cholla<-matrix(NA,nrow=105,ncol=Ndraws) 
 
 ##----------------------Growth Parameters----------------## Ant 1 (crem)
 
@@ -61,44 +66,70 @@ cholla[42,]<-post.params$sigma_v			    ## viab error
 cholla[43,]<-post.params$sigma_u_v  	    ## viab plotfx error
 cholla[44,]<-post.params$sigma_w_v        ## viab yrfx error
 
-##-----------------------Seeds Parameters-----------------## Ant 1 (crem)
+##-----------------------Seeds Prod Parameters-----------------## Ant 1 (crem)
 cholla[51,]<-post.params$beta0_seed.1     ## seed intercept
 cholla[52,]<-post.params$sigma_seed			  ## seed error
-cholla[53,]<-post.params$sigma_v_seed  	  ## seed plotfx error
-cholla[54,]<-post.params$phi_seed         ## seed dispersion parameter
+cholla[53,]<-post.params$phi_seed         ## seed dispersion parameter
+
+##-----------------------Seeds Surv Parameters-----------------## Ant 1 (crem)
+cholla[61,]<-post.params$beta0_seed_s.1     ## seed intercept
+cholla[62,]<-post.params$sigma_seed_s			  ## seed error
+cholla[63,]<-post.params$phi_seed_s         ## seed dispersion parameter
+
+##-----------------------Germ1 Parameters-----------------## Ant 1 (crem)
+cholla[71,]<-post.params$beta0_germ1        ## germ intercept
+cholla[72,]<-post.params$beta1_germ1        ## germ slope
+cholla[73,]<-post.params$sigma_germ1        ## germ error
+cholla[74,]<-post.params$phi_germ1          ## germ dispersion parameter
+
+##-----------------------Germ2 Parameters-----------------## Ant 1 (crem)
+cholla[81,]<-post.params$beta0_germ2        ## germ intercept
+cholla[82,]<-post.params$beta1_germ2        ## germ slope
+cholla[83,]<-post.params$sigma_germ2        ## germ error
+cholla[84,]<-post.params$phi_germ2          ## germ dispersion parameter
+
+##-----------------------Precensus Surv Parameters-----------------## Ant 1 (crem)
+cholla[91,]<-post.params$beta0_precen       ## precen intercept
+cholla[92,]<-post.params$beta1_precen       ## precen slope
+cholla[93,]<-post.params$sigma_precen       ## precen error
+
 
 ## Params 61-70: Misc params (bounds of continuous size domain, in units of log(cm^3)). Hard coded from Miller's data. 
-cholla[61,]<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
-cholla[62,]<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
+cholla[101,]<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
+cholla[102,]<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
 
 for(i in 1:Ndraws) {
   
   ## sample a sequence of random deviates representing plot-to-plot variance in each of the four main vital rates
-  plotfx <- matrix(0,4,Nplots)
-  plotfx[1,] <- rnorm(n=Nplots,mean=0,sd=cholla[6,i]) # Growth
-  plotfx[2,] <- rnorm(n=Nplots,mean=0,sd=cholla[15,i]) # Survival 
-  plotfx[3,] <- rnorm(n=Nplots,mean=0,sd=cholla[25,i]) # Probability of flowering 
-  plotfx[4,] <- rnorm(n=Nplots,mean=0,sd=cholla[35,i]) # Fertility
-  
+  yrfx <- matrix(0,5,Nplots)
+  yrfx[1,] <- rnorm(n=Nplots,mean=0,sd=cholla[6,i]) # Growth
+  yrfx[2,] <- rnorm(n=Nplots,mean=0,sd=cholla[15,i]) # Survival 
+  yrfx[3,] <- rnorm(n=Nplots,mean=0,sd=cholla[25,i]) # Repro 
+  yrfx[4,] <- rnorm(n=Nplots,mean=0,sd=cholla[35,i]) # Flowers
+  yrfx[5,] <- rnorm(n=Nplots,mean=0,sd=cholla[44,i]) # Viability
   ## sample a sequence of random deviates representing year-to-year variance in each of the four main vital rates, individually
-  yrfx <- matrix(0,4,iter)  
-  yrfx[1,] <- rnorm(n=iter,mean=0,sd=cholla[5,i]) # Growth
-  yrfx[2,] <- rnorm(n=iter,mean=0,sd=cholla[14,i]) # Survival 
-  yrfx[3,] <- rnorm(n=iter,mean=0,sd=cholla[24,i]) # Probability of flowering 
-  yrfx[4,] <- rnorm(n=iter,mean=0,sd=cholla[34,i]) # Fertility
+  plotfx <- matrix(0,5,iter)  
+  plotfx[1,] <- rnorm(n=iter,mean=0,sd=cholla[5,i]) # Growth
+  plotfx[2,] <- rnorm(n=iter,mean=0,sd=cholla[14,i]) # Survival 
+  plotfx[3,] <- rnorm(n=iter,mean=0,sd=cholla[24,i]) # Probability of flowering 
+  plotfx[4,] <- rnorm(n=iter,mean=0,sd=cholla[34,i]) # Fertility
+  plotfx[5,] <- rnorm(n=iter,mean=0,sd=cholla[43,i]) # Viability
 }
   
 
 ##### #Run the matrix once with quantile values for the betas
-gxy(log(cactus$volume_t), log(cactus$volume_t1),cholla,yrfx,plotfx)
+gxy(4, 5,cholla)
 
-sx(cactus$volume_t, cholla, yrfx, plotfx)
+sx(4, cholla)
 
-pxy(log(cactus$volume_t), log(cactus$volume_t1), cholla,yrfx,plotfx)
+pxy(4, 5, cholla)
 
-image(y = cactus$volume_t1,y = cactus$volume_t1,t(Tmat),main='fecundity kernel')
-image(y,y,t(Fmat),main='fecundity kernel')
+fx(4,cholla) ## Not Working
 
+bigmatrix(cholla,lower,upper,matsize)
+
+lambda.fun(cholla,iter,matsize,extra.grid = 2,floor.extend = 1, ceiling.extend = 4)
+lambda
 
 
   

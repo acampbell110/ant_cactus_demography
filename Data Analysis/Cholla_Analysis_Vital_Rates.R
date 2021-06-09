@@ -46,15 +46,11 @@ survival_data$year <- as.integer(survival_data$Year_t)
 survival_data$Plot <- as.factor(survival_data$Plot)
 survival_data$plot <- as.integer(survival_data$Plot)
 ## Seed Data Set
-seed_data <- fruit2[ , c("ant_state","plant","seed_count","fruit_number")]
+seed_data <- seed
 seed_data <- na.omit(seed_data)
 seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
 seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
 seed_data <- subset(seed_data, seed_count > 0)
-fruit.dat<-read.csv("JO_fruit_data_final_dropplant0.csv",T)  %>% drop_na() %>% 
-  ## taking the subset of pollinator+ant access, not vacant
-  ## this is the subset used in Elderd&Miller
-  filter(poll.access=="y" & treatment!="tc" & vacant=="n" & ant.access=="y")
 ### Fruit Surv
 fruit.surv<-read.csv("FruitSurvival.csv",header = TRUE,stringsAsFactors=T) %>% drop_na()
 fruit.surv <- fruit.surv[which(fruit.surv$Fr.on.grnd.not.chewed > 0),]
@@ -390,22 +386,47 @@ stan_data <- list(
   N_Plot_repro = N_Plot_repro, ## number of plots
   plot_repro = plot_repro, ## predictor plots
   year_repro = year_repro, ## predictor years
-  #### Seed Variables
+  #### Seed Prod Variables
   N_seed = nrow(seed_data),
   N_ant_seed = 3,
-  N_Plant_ID = length(unique(seed_data$plant)),
   ant_seed = seed_data$ant,
-  plant_seed = seed_data$plant_fac,
-  seed = seed_data$seed_count
+  seed = seed_data$seed_count,
+  #### Seed Surv Variables
+  on_ground = fruit.surv$Fr.on.grnd.not.chewed,
+  on_plant = fruit.surv$Fr.on.plant,
+  fr_prop = fruit.surv$Fr.on.grnd.not.chewed/fruit.surv$Fr.on.plant,
+  N_seed_s = nrow(fruit.surv),
+  #### Germ 1 Variables
+  N_germ = nrow(germ.dat),
+  y_germ1 = as.integer(germ.dat$Seedlings04),
+  trials_germ1 = germ.dat$Input,
+  #### Germ 2 Variables
+  N_germ = nrow(germ.dat),
+  y_germ2 = germ.dat$Seedlings05,
+  trials_germ2 = germ.dat$Input-germ.dat$Seedlings04,
+  #### Precensus Surv Variables
+  N_precen = nrow(precensus.dat),
+  N_Plant_precen = length(unique(precensus.dat$plant.ID)),
+  N_Transect_precen = length(unique(precensus.dat$Transect)),
+  vol_precen = precensus.dat$Log.size,
+  plant_precen = as.integer(as.factor(precensus.dat$plant.ID)),
+  transect_precen = as.integer(as.factor(precensus.dat$Transect)),
+  y_precen = precensus.dat$survive0405
 )
 
-fit_full <- stan(file = "STAN Models/full_vitals.stan", data = stan_data, warmup = 5, iter = 10, chains = 3, cores = 2, thin = 1)
-full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g","sigma_g","sigma_u_g","sigma_w_g", "y_rep_g", "mean_y_rep_g","sd_y_rep_g", 
-                                                  "beta0_s","beta1_s","u_s","w_s","sigma_s","sigma_u_s","sigma_w_s", "y_rep_s", "mean_y_rep_s","sd_y_rep_s",
-                                                  "beta0_f","beta1_f","u_f","w_f","sigma_f","sigma_u_f","sigma_w_f", "phi_f",  "y_rep_f", "mean_y_rep_f","sd_y_rep_f",
-                                                  "beta0_r","beta1_r","u_r","w_r","sigma_r","sigma_u_r","sigma_w_r", "y_rep_r", "mean_y_rep_r","sd_y_rep_r",
-                                                  "beta0_v","u_v","w_v","sigma_v","sigma_u_v","sigma_w_v", "y_rep_v", "mean_y_rep_v","sd_y_rep_v",
-                                                  "beta0_seed","v_seed","sigma_seed","sigma_v_seed","phi_seed", "y_rep_seed", "mean_y_rep_seed","sd_y_rep_seed"))
+fit_full <- stan(file = "STAN Models/full_vitals.stan", data = stan_data, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
+full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g","sigma_g","sigma_u_g","sigma_w_g", 
+                                                  "beta0_s","beta1_s","u_s","w_s","sigma_s","sigma_u_s","sigma_w_s",
+                                                  "beta0_f","beta1_f","u_f","w_f","sigma_f","sigma_u_f","sigma_w_f", "phi_f",
+                                                  "beta0_r","beta1_r","u_r","w_r","sigma_r","sigma_u_r","sigma_w_r",
+                                                  "beta0_v","u_v","w_v","sigma_v","sigma_u_v","sigma_w_v",
+                                                  "beta0_seed","sigma_seed","phi_seed",
+                                                  "beta0_seed_s","sigma_seed_s",
+                                                  "beta0_germ1","beta1_germ1","sigma_germ1","phi_germ1",
+                                                  "beta0_germ2","beta1_germ2","sigma_germ2","phi_germ2",
+                                                  "beta0_precen","beta1_precen","sigma_precen"
+                                                  )
+                               )
 write.csv(full_outputs, "params_outputs.csv")
 
 
