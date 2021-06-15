@@ -179,3 +179,19 @@ png(file = "germ2_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_germ2, pars=c("beta0","beta1")))
 dev.off()
 
+
+## Recruit ################################################################################################
+y <- seedling.dat$volume_t
+yrep_rec <- rec_yrep
+samp100 <- sample(nrow(yrep_rec), 500)
+## Overlay Plots
+png(file = "rec_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep_rec[samp100,])
+dev.off()
+## Convergence Plots
+png(file = "rec_conv1")
+bayesplot::mcmc_trace(As.mcmc.list(fit_rec, pars=c("beta0")))
+dev.off()
+
+
+

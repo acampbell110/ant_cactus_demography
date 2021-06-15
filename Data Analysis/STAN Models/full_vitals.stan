@@ -66,6 +66,9 @@ data {
   int <lower = 1> N_precen; // number of observations
   vector[N_precen] vol_precen;	//size_t
   int <lower = 0, upper = 1> y_precen[N_precen]; // survival in year t1
+  //Recruit
+  int <lower = 1> N_rec; // number of observations
+  vector[N_rec] y_rec; // size_t1
 }
 parameters {
   //Growth Predictors
@@ -129,6 +132,9 @@ parameters {
   real beta0_precen; //intercept, unique to ant sp
   real beta1_precen; //slope, unique to ant sp
   real < lower = 0 > sigma_precen; // Error SD
+  // Recruit
+  real beta0_rec; //intercept, unique to ant sp
+  real < lower = 0 > sigma_rec; // Error SD
 }
 transformed parameters{
   //Mus
@@ -142,6 +148,7 @@ transformed parameters{
   vector[N_germ] mu_germ1; //linear predictor for the mean
   vector[N_germ] mu_germ2; //linear predictor for the mean
   vector[N_precen] mu_precen; //linear predictor for the mean
+  vector[N_rec] mu_rec; //linear predictor for the mean
   // Mu equations
   for(i in 1:N_grow){
     mu_g[i] = beta0_g[ant_grow[i]] + beta1_g[ant_grow[i]] * vol_grow[i] + u_g[plot_grow[i]] + w_g[year_grow[i]];
@@ -172,6 +179,9 @@ transformed parameters{
   }
   for(i in 1:N_precen){
     mu_precen[i] = beta0_precen + beta1_precen * vol_precen[i];
+  }
+  for(i in 1:N_rec){
+    mu_rec[i] = beta0_rec;
   }
 }
 model {
@@ -220,9 +230,7 @@ model {
   //Seed Survival Predictors
   beta0_seed_s ~ normal(0,100); // intercept distribution
   //Model
-  for(i in 1:N_seed_s){
-    on_ground[i]/on_plant[i] ~ bernoulli_logit(mu_seed_s[i]);
-  }
+   on_ground ~ binomial_logit(on_plant,mu_seed_s);
   //Germ 1
   beta0_germ1 ~ normal(0,100); // intercept distribution
   for(i in 1:N_germ){
@@ -239,6 +247,11 @@ model {
   for(i in 1:N_precen){
   y_precen[i] ~ bernoulli_logit(mu_precen[i]);
  }
+ //Recruit
+   beta0_rec ~ normal(0,100); // intercept distribution
+  for(i in 1:N_rec){
+    y_rec[i] ~ normal(mu_rec[i], sigma_rec);
+  }
 }
 
 

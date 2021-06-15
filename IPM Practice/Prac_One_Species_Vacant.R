@@ -105,7 +105,3 @@ lambda.fun<-function(params,iter,
   lambda<-Re(eigen(bigmatrix(params,lower=lower,upper=upper,matsize=matsize)$IPMmat)$values[1])
   return(lambda)
 }
-  
-  
-  
-  

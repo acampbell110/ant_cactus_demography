@@ -65,6 +65,17 @@ if(germ.dat$Seedlings04[i] != 0){
 }
 germ.dat[-c(42,39,40),]
 
+seedlings <- cactus %>% 
+  mutate(volume_t = log(volume(h = Height_t, w = Width_t, p = Perp_t)),
+         standvol_t = (volume_t - mean(volume_t,na.rm=T))/sd(volume_t,na.rm=T)) %>% 
+  filter(str_sub(Plot,1,1)=="H",
+         Recruit==1)
+
+seedling.dat <- cactus %>% filter(str_sub(Plot,1,1)=="H",
+                  Recruit==1)
+cholla.dat$N_sdlgsize <- length(seedlings$standvol_t)
+cholla.dat$y_sdlgsize <- seedlings$standvol_t
+
 ### Pre-Census Surv
 precensus.dat<-read.csv("PrecensusSurvival.csv") 
 precensus.dat%>%  drop_na(precensus.dat$survive0405)
@@ -334,8 +345,15 @@ write.csv(germ2_outputs, "germ2_outputs.csv")
 germ1_yrep <- rstan::extract(fit_germ1, pars = c("y_rep"))$y_rep
 germ2_yrep <- rstan::extract(fit_germ2, pars = c("y_rep"))$y_rep
 
+#### Recruits
 
-
+stan_data_rec <- list(N_rec = length(seedling.dat$volume_t),
+                      y_rec = seedling.dat$volume_t
+)
+fit_rec <- stan(file = "STAN Models/rec.stan",data = stan_data_rec, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+rec_outputs <- rstan::extract(fit_rec, pars = c("beta0"))
+write.csv(rec_outputs,"rec_outputs.csv")
+rec_yrep <- rstan::extract(fit_rec,pars = c("y_rep"))$y_rep
 ########################################## The Full Model ###########################################################
 stan_data <- list(
   #### Growth Variables
@@ -411,7 +429,10 @@ stan_data <- list(
   vol_precen = precensus.dat$Log.size,
   plant_precen = as.integer(as.factor(precensus.dat$plant.ID)),
   transect_precen = as.integer(as.factor(precensus.dat$Transect)),
-  y_precen = precensus.dat$survive0405
+  y_precen = precensus.dat$survive0405,
+  #### Recruit Variables
+  N_rec = length(seedlings$volume_t),
+  y_rec = (seedlings$volume_t)
 )
 
 fit_full <- stan(file = "STAN Models/full_vitals.stan", data = stan_data, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
@@ -424,7 +445,8 @@ full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g
                                                   "beta0_seed_s","sigma_seed_s",
                                                   "beta0_germ1","beta1_germ1","sigma_germ1","phi_germ1",
                                                   "beta0_germ2","beta1_germ2","sigma_germ2","phi_germ2",
-                                                  "beta0_precen","beta1_precen","sigma_precen"
+                                                  "beta0_precen","beta1_precen","sigma_precen",
+                                                  "beta0_rec","sigma_rec"
                                                   )
                                )
 write.csv(full_outputs, "params_outputs.csv")

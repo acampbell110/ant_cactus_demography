@@ -19,9 +19,7 @@ model {
 //Priors
  beta0 ~ normal(0,100); // intercept distribution
  //Model
- for(i in 1:N_fruit){
- on_ground[i]/on_plant[i] ~ bernoulli_logit(mu[i]);
- }
+ on_ground ~ binomial_logit(on_plant,mu);
 }
 generated quantities {
   int<lower = 0> y_rep[N_fruit] = bernoulli_logit_rng(mu);
