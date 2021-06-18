@@ -82,9 +82,9 @@ bigmatrix<-function(params,lower,upper,matsize){
   
   return(list(IPMmat=IPMmat,Fmat=Fmat,Tmat=Tmat,meshpts=y))
 }
-#image(y,y,t(Tmat),main='fecundity kernel')
-#image(y,y,t(Fmat),main='fecundity kernel')
-
+image(t(Tmat),main='transition kernel')
+image(t(Fmat),main='fecundity kernel')
+image(t(IPMmat), main='full kernel')
 
 ## ----------------- Function that simulates population dynamics and returns lambdaS ------------- ############
 
