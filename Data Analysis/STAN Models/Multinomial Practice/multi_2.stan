@@ -1,32 +1,28 @@
 // https://mc-stan.org/docs/2_20/stan-users-guide/multi-logit-section.html
-// This has no intercept. This also has no reference level. 
+// This has no intercept. This also has no reference level.
 
 data {
-int K; //alternatives
+int K; //alternatives for Non Cont Predictor and Y
 int N; //number of trials
 int D; //number of predictors (1)
-int<lower=1> N_Year; //number of plots
-int<lower=1> N_Plot; //number of years
-int<lower=1, upper=N_Plot> plot[N]; // plot
-int<lower=1, upper=N_Year> year[N]; // year
-int y[N];
-matrix[N, D] x;
+int <lower = 1, upper = K> Y[N]; // Outcome
+real X[N]; // Continuous Predictor
+int <lower = 1, upper = K> Z[N]; // Non Continuous Predictor
 }
 parameters {
-matrix[D, K] beta;
-vector[N_Plot] u; 
-vector[N_Year] w; 
-real < lower = 0 > sigma_u; // plot SD
-real < lower = 0 > sigma_w; // year SD
+//vector[K] beta1; //slope param
+//vector[K] beta0; //intercept param
+}
+transformed parameters {
+  vector[N] mu; //linear predictor for the mean
+  for(i in 1:N){
+    mu[i] = beta1[Z[i]] * X[i];
+  }
 }
 model {
-	matrix[N, K] x_beta = x * beta;
-for(i in 1:N){
-	x_beta[i,K] = x_beta[i,K] + u[plot[i]] + w[year[i]];
+  for (i in 1:N){
+    Y[i] ~ categorical_logit(mu[i]);
+  }
 }
-u ~ normal(0, sigma_u); // plot random effects
-w ~ normal(0, sigma_w); // year random effects
-to_vector(beta) ~ normal(0, 5);
-for (n in 1:N)
-y[n] ~ categorical_logit(x_beta[n]');
-}
+
+
