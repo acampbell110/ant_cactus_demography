@@ -6,34 +6,34 @@ data {
 int K; //alternatives
 int N; //number of trials
 int D; //number of predictors (1)
-int<lower=1> N_Year; //number of plots
-int<lower=1> N_Plot; //number of years
-int<lower=1, upper=N_Plot> plot[N]; // plot
-int<lower=1, upper=N_Year> year[N]; // year
-int y[N];
-matrix[N, D] x;
+//int<lower=1> N_Year; //number of plots
+//int<lower=1> N_Plot; //number of years
+//int<lower=1, upper=N_Plot> plot[N]; // plot
+//int<lower=1, upper=N_Year> year[N]; // year
+int Y[N];
+matrix[N, D] X;
 }
 parameters {
 vector[K-1] alpha_raw;
-matrix[D, K] beta;
-vector[N_Plot] u; 
-vector[N_Year] w; 
-real < lower = 0 > sigma_u; // plot SD
-real < lower = 0 > sigma_w; // year SD
+matrix[D, K] beta1;
+//vector[N_Plot] u; 
+//vector[N_Year] w; 
+//real < lower = 0 > sigma_u; // plot SD
+//real < lower = 0 > sigma_w; // year SD
 }
 transformed parameters {
     vector[K] alpha; 
     alpha = append_row(0, alpha_raw); 
 }
 model {
-	matrix[N, K] x_beta = x * beta;
+	matrix[N, K] x_beta = X * beta1;
 for(i in 1:N){
-	x_beta[i,K] = x_beta[i,K] + u[plot[i]] + w[year[i]];
+	x_beta[i,K] = x_beta[i,K];// + u[plot[i]] + w[year[i]];
 }
-u ~ normal(0, sigma_u); // plot random effects
-w ~ normal(0, sigma_w); // year random effects
-to_vector(beta) ~ normal(0, 5);
+//u ~ normal(0, sigma_u); // plot random effects
+//w ~ normal(0, sigma_w); // year random effects
+to_vector(beta1) ~ normal(0, 5);
 for (n in 1:N)
-y[n] ~ categorical_logit(alpha + x_beta[n]');
+Y[n] ~ categorical_logit(alpha + x_beta[n]');
 }
 
