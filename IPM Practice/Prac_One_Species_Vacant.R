@@ -44,11 +44,17 @@ fx<-function(x,params,i){
          )
 }
 
+#
 recruits<-function(y,params){
   yb=pmin(pmax(y,params[94]),params[95])
   dnorm(yb, (params[96]),params[97])
 }
 
+beta<-function(vac_rec){
+  ifelse(vac_rec == TRUE, return(0), return(1))
+}
+
+#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
 transition.x<-function(i,j,x){
   xb=pmin(pmax(x,params[94]),params[95])        ## X dummy variable
   ifelse(i == "crem",
@@ -56,19 +62,20 @@ transition.x<-function(i,j,x){
                 (invlogit(params[100] + params[101]*xb)),
                 (1 - invlogit(params[100] + params[101]*xb))
          ),
-         ifelse(j == "crem",
+         ifelse(j == "vac",
                 (invlogit(params[98] + params[99]*xb)),
                 (1 - invlogit(params[98] + params[99]*xb))
          )
   )
 }
 
+#GROWTH*SURVIVAL*ANT PROBABILITIES
 ptxy<-function(x,y,params,i,j){
   xb=pmin(pmax(x,params[94]),params[95])
   return(sx(xb,params,i)*gxy(xb,y,params,i)*transition.x(i,j,xb))
 }
 
-bigmatrix<-function(params,lower,upper,matsize,i,j){  
+bigmatrix<-function(params,lower,upper,matsize){  
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -87,8 +94,10 @@ bigmatrix<-function(params,lower,upper,matsize,i,j){
   Fmat<-matrix(0,(2*n+2),(2*n+2))
   
   # Banked seeds go in top row
-  Fmat[1,3:(n+2)]<-fx(y,params=params,"crem")
-  Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"vac")
+  fec1_v<-fx(y,params=params,"vac")
+  fec1_c<-fx(y,params=params,"crem")
+  Fmat[1,3:(n+2)]<-fec1_c
+  Fmat[1,(n+3):(2*n+2)]<-fec1_v
   
   # Growth/survival transition matrix
   Tmat<-matrix(0,(2*n+2),(2*n+2))
@@ -97,28 +106,34 @@ bigmatrix<-function(params,lower,upper,matsize,i,j){
   Tmat[2,1]<-1-invlogit(params[71])
   
   # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-  #Tmat[3:(n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)   
-  Tmat[(n+3):(2*n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)   
-  Tmat[3:(n+2),1]<-0
-  
+  beta1_c<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+  beta1_v<- invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+  Tmat[3:(n+2),1]<-beta1_v
+  Tmat[3:(n+2),2]<-beta1_c
+
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)  
-  Tmat[(n+3):(2*n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)  
-  Tmat[(n+3):(2*n+2),2]<-0
-  
+  beta2_c<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+  beta2_v<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+  Tmat[(n+3):(2*n+2),1]<-beta2_v
+  Tmat[(n+3):(2*n+2),2]<-beta2_c
   # Growth/survival transitions among cts sizes
-  Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,params=params,"crem","crem"))*h ## Top left (from crem to crem)
-  Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,params=params,"vac","crem"))*h ## Top Right (from vac to crem)
-  Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,ptxy,params=params,"crem","vac"))*h ## Top Right (from crem to vac)
-  Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,params=params,"vac","vac"))*h ## Bottom Right (from vac to vac)
+  vac_vac<-t(outer(y,y,ptxy,params=params,"vac","vac"))*h
+  vac_crem<-t(outer(y,y,ptxy,params=params,"vac","crem"))*h
+  crem_vac<-t(outer(y,y,ptxy,params=params,"crem","vac"))*h
+  crem_crem<-t(outer(y,y,ptxy,params=params,"crem","crem"))*h
+  Tmat[3:(n+2),3:(n+2)]<- vac_vac## Top left 
+  Tmat[3:(n+2),(n+3):(2*n+2)]<-crem_vac ## Top Right 
+  Tmat[(n+3):(2*n+2),3:(n+2)]<- crem_crem## Bottom Right 
+  Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_crem## Bottom Right 
   
   # Put it all together
   IPMmat<-Fmat+Tmat     
   
   return(list(IPMmat=IPMmat,Fmat=Fmat,Tmat=Tmat,meshpts=y))
 }
-image(y,y,t(Tmat),main='fecundity kernel')
-image(y,y,t(Fmat),main='fecundity kernel')
+#image(y,y,t(Tmat),main='fecundity kernel')
+#image(y,y,t(Fmat),main='fecundity kernel')
 
 
 ## ----------------- Function that simulates population dynamics and returns lambdaS ------------- ############
@@ -139,4 +154,5 @@ lambda.fun<-function(params,iter,
   
   lambda<-Re(eigen(bigmatrix(params,lower,upper,matsize,i,j)$IPMmat)$values[1])
   return(lambda)
+  
 }
