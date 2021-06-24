@@ -28,6 +28,7 @@ floor.extend=1
 ceiling.extend=4
 lower<- cholla[101] - floor.extend
 upper<- cholla[102] + ceiling.extend
+extra.grid=2
 
 n<-matsize
 L<-lower; U<-upper
