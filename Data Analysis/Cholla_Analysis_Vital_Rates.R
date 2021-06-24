@@ -348,7 +348,7 @@ germ2_yrep <- rstan::extract(fit_germ2, pars = c("y_rep"))$y_rep
 #### Recruits
 
 stan_data_rec <- list(N_rec = length(seedling.dat$volume_t),
-                      y_rec = seedling.dat$volume_t
+                      y_rec = log(seedling.dat$volume_t)
 )
 fit_rec <- stan(file = "STAN Models/rec.stan",data = stan_data_rec, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
 rec_outputs <- rstan::extract(fit_rec, pars = c("beta0"))
@@ -432,7 +432,7 @@ stan_data <- list(
   y_precen = precensus.dat$survive0405,
   #### Recruit Variables
   N_rec = length(seedlings$volume_t),
-  y_rec = (seedlings$volume_t)
+  y_rec = log(seedlings$volume_t)
 )
 
 fit_full <- stan(file = "STAN Models/full_vitals.stan", data = stan_data, warmup = 500, iter = 1000, chains = 3, cores = 2, thin = 1)
@@ -443,8 +443,8 @@ full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g
                                                   "beta0_v","u_v","w_v","sigma_v","sigma_u_v","sigma_w_v",
                                                   "beta0_seed","sigma_seed","phi_seed",
                                                   "beta0_seed_s","sigma_seed_s",
-                                                  "beta0_germ1","beta1_germ1","sigma_germ1","phi_germ1",
-                                                  "beta0_germ2","beta1_germ2","sigma_germ2","phi_germ2",
+                                                  "beta0_germ1","beta1_germ1",
+                                                  "beta0_germ2","beta1_germ2",
                                                   "beta0_precen","beta1_precen","sigma_precen",
                                                   "beta0_rec","sigma_rec"
                                                   )
