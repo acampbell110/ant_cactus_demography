@@ -1,25 +1,86 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/STAN Models/Multinomial Practice")
 str(cactus)
 
-##### Model 2 -- No intercept ######################################################################################
-x <- matrix(NA, nrow = 1000, ncol = 1)
-y <- rep(NA,1000)
-for(j in 1:1){
-for (i in 1:1000) {
-  x[i] <- rnorm(1,mean = 20, sd = 3)
-  y[i] <- sample(4, i, replace = TRUE)
-}
-}
 
-stan_data_mod2 <- list(D = 1,
-                       K = 4,
-                       N = 1000,
-                       x = x,
-                       y = y)
-mod2 <- stan(file = "multi_2.stan",data = stan_data_mod2, warmup = 5, iter = 10, chains = 3, cores = 2, thin = 1)
-mod2_outputs <- rstan::extract(mod2, pars = c("beta"))
+
+
+##### Model 1 --  ######################################################################################
+
+setwd("/Users/alicampbell/Documents/GitHub/ART-Forum-2017-Stan-Tutorial/2_mnl")
+# Generate Fake Data
+generate_mnl_data <- function(N=1000, C=4, beta=c(1, -2, 5, -3), alpha = c(1,2,3,4)){
+  K <- length(beta)
+  Y <- rep(NA, N)
+  X <- list(NULL) 
+  for (i in 1:N) {
+    X[[i]] <- matrix(rnorm(C*K), ncol=K) # normal covariates  
+    Y[i] <- sample(x=C, size=1, prob=exp(X[[i]]%*%beta + alpha)) # logit formula
+  }
+  list(N=N, C=C, K=K, Y=Y, X=X)
+}
+d1 <- generate_mnl_data(N=1000, C=4, beta=c(1, -2, 5, 3), alpha = c(1,2,3,4))
+str(d1)
+# Visualize the "Observed" Fake data
+# Run the Stan Model and export params
+test.stan <- stan(file="mnl.stan", data=d1, iter=1000, chains=4) 
+mod1_outputs <- rstan::extract(mod1, pars = c("beta","alpha"))
+write.csv(mod1_outputs, "mod1_outputs.csv")
+mod1_outputs <- read.csv("mod1_outputs.csv")
+# Check the beta and alphas
+summary(test.stan)$summary
+summary(test.stan)$c_summary
+plot(test.stan, plotfun="trace")
+plot(test.stan)
+plot(test.stan, plotfun="hist")
+plot(test.stan, plotfun="dens")
+# Visualise the Simulated Data
+x_dum <- seq(min(X), max(X), by = 1)
+plot(x_dum, )
+
+
+##### Model 2 -- No intercept ######################################################################################
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/STAN Models/Multinomial Practice")
+
+## Simulate data
+generate_mnl_data <- function(N=1000, K=4, beta=c(1, -2)){
+  D <- length(beta)
+  Y <- rep(NA, N)
+  X <- list(NULL) 
+  for (i in 1:N) {
+    X[[i]] <- matrix(rep(NA,2), ncol = 2) # normal covariates 
+    X[[i]][1] <- rnorm(1)
+    X[[i]][2] <- sample(c(1,2,3,4), size = 1, replace = TRUE, prob = NULL)
+    Y[i] <- sample(x=K, size=1, prob=exp(X[[i]]%*%beta + alpha)) # logit formula
+    
+  }
+  list(N=N, D=D, K=K, Y=Y, X=X)
+}
+d1 <- generate_mnl_data(N=1000, K=4, beta=c(1, -2), alpha = c(1,2))
+str(d1)
+
+
+X[[1]] <- matrix(rep(NA,2), ncol = 2) # normal covariates 
+X[[1]][1] <- rnorm(1)
+X[[1]][2] <- sample(c(1,2,3,4), size = 1, replace = TRUE, prob = NULL)
+Y[1] <- sample(x=K, size=1, prob=exp(X[[i]]%*%beta + alpha)) # logit formula
+
+## Run the Model
+mod2 <- stan(file = "multi_2.stan",data = data_2, warmup = 5, iter = 10, chains = 3, cores = 2, thin = 1)
+mod2_outputs <- rstan::extract(mod2, pars = c("beta","alpha"))
 write.csv(mod2_outputs, "mod2_outputs.csv")
 mod2_outputs <- read.csv("mod2_outputs.csv")
+## Visualize to understand the differences
+summary(mod2)$summary
+plot(mod2)
+
+
+x_dummy<-seq(min(x),max(x),by = (max(x)-min(x))/999)
+plot(x = x_dummy, y = invlogit(mod2_outputs$beta.1.3))
+plot(density((mod2_outputs$beta.1.3)))
+lines(density((y)))
+
+
+
 
 mu <- data.frame(beta1 = rep(NA,1000), beta2 = rep(NA,1000), beta3 = rep(NA,1000), beta4 = rep(NA,1000))
 beta1 <- quantile(mod2_outputs$beta.1.1, 0.5)
@@ -159,7 +220,17 @@ lines(x = size_dummy, y = invlogit(mu$beta2), col = "blue")
 lines(x = size_dummy, y = invlogit(mu$beta3), col = "black")
 lines(x = size_dummy, y = invlogit(mu$beta4), col = "pink")
 dev.off()
+
+
+
+
+
+
+
 ##### Model 3 -- With an Intercept!  ######################################################################################
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/STAN Models/Multinomial Practice")
+
+
 ## This also has a reference level, which I believe is likely cremategastor
 multi_data <- cactus[,c("ant_t1","volume_t","Year_t","Plot")]
 multi_data <- na.omit(multi_data)
@@ -270,26 +341,4 @@ pi_3 = exp(mod3_data_outputs$beta.1.3)/(1 + sum(exp(mod3_data_outputs$beta.1.2),
 pi_4 = exp(mod3_data_outputs$beta.1.4)/(1 + sum(exp(mod3_data_outputs$beta.1.2), exp(mod3_data_outputs$beta.1.3), exp(mod3_data_outputs$beta.1.4)))
 
 range(pi_2)
-#################### Include Ant State as a predictor
-multi_data3 <- cactus[,c("ant_t1","volume_t","Year_t","Plot", "ant_t")]
-multi_data3 <- na.omit(multi_data3)
-multi_data3$ant_stat <- as.numeric(as.factor(multi_data3$ant_t1))
-multi_data3$ant_last <- as.numeric(as.factor(multi_data3$ant_t))
-multi_data3$Plot <- as.integer(as.factor(multi_data3$Plot))
-multi_data3$Year_t <- as.integer(as.factor(multi_data3$Year_t))
-x_mat <- matrix(log(multi_data3$volume_t))
-stan_data_mod3 <- list(D = 1,
-                       K = 4,
-                       N = nrow(multi_data3),
-                       x = x_mat,
-                       ant = multi_data3$ant_last,
-                       y = multi_data3$ant_stat, 
-                       N_Plot = max(unique(multi_data3$Plot)),
-                       N_Year = max(unique(multi_data3$Year_t)),
-                       plot = multi_data3$Plot,
-                       year = multi_data3$Year_t)
-mod3_data <- stan(file = "multi_3.stan",data = stan_data_mod3, warmup = 5, iter = 10, chains = 3, cores = 2, thin = 1)
-mod3_data_outputs <- rstan::extract(mod3_data, pars = c("beta"))
-write.csv(mod3_data_outputs, "mod3_data_outputs.csv")
-mod3_data_outputs <- read.csv("mod3_data_outputs.csv")
 
