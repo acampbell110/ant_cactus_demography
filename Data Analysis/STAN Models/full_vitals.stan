@@ -253,6 +253,3 @@ model {
     y_rec[i] ~ normal(mu_rec[i], sigma_rec);
   }
 }
-
-
-
