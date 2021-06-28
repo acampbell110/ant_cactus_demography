@@ -38,7 +38,7 @@ fx<-function(x,params){
 
 recruits<-function(y,params){
   yb=pmin(pmax(y,params[94]),params[95])
-  dnorm(yb, log(cholla[96,]),cholla[97,])
+  dnorm(yb, (cholla[96,]),cholla[97,])
 }
 
 beta<-function(vac_rec){
@@ -79,7 +79,7 @@ bigmatrix<-function(params,lower,upper,matsize){
     Tmat[2,1]<-1-invlogit(params[71,a])
     Tmat[3:(n+2),1]<-invlogit(params[71,a])*recruits(y,params)[a]*h*invlogit(params[91,a] + params[92,a] * xb)
     Tmat[3:(n+2),1]<-invlogit(params[81,a])*recruits(y,params)[a]*h*invlogit(params[91,a] + params[92,a] * xb)
-    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,params))*h
+    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,params)[,a])*h
     TMaster[[a]] <- Tmat
   }
   for(a in 1:100){
@@ -130,13 +130,20 @@ bigmatrix<-function(params,lower,upper,matsize){
   mat <- bigmatrix(params,lower=lower,upper=upper,matsize=matsize)$IPMMaster[[2]]
   
   lambda <- vector()
+  lam <- vector()
+  stable <- list()
   for(i in 1:100){
     mat <- bigmatrix(params,lower=lower,upper=upper,matsize=matsize)$IPMMaster[[i]]
     eig <- eigen(mat)
     lambda[i]<-Re(eig$values[1])
     
-    lambda(mat)
+    lam[i] <- lambda(mat)
+    
+    stable[[i]] <- stable.stage(bigmatrix(params,lower=lower,upper=upper,matsize=matsize)$IPMMaster[[i]])
   }
   
+  stable[[100]]
+  stable[[3]]
   
   plot(density(lambda))
+  
