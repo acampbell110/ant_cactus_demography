@@ -15,10 +15,10 @@ Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
 iter <- 1000
 matsize<-200
-floor.extend=1
-ceiling.extend=4
-lower<- cholla[94] - floor.extend
-upper<- cholla[95] + ceiling.extend
+floor.extend=0.9*cholla_min
+ceiling.extend=1.1*cholla_max
+lower<- cholla_min - floor.extend
+upper<- cholla_max + ceiling.extend
 
 n<-matsize
 L<-lower; U<-upper
@@ -34,7 +34,7 @@ source("Prac.R")
 
 ## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
 ## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
-cholla<-matrix(NA,nrow=105,ncol=Ndraws) 
+cholla<-matrix(NA,nrow=405,ncol=Ndraws) 
 
 ##----------------------Growth Parameters----------------## 
 ####Ant 1 (crem)
@@ -44,14 +44,14 @@ cholla[3,]<-post.params$sigma_g			      ## growth error
 cholla[4,]<-post.params$sigma_u_g  	      ## growth plotfx error
 cholla[5,]<-post.params$sigma_w_g         ## growth yrfx error
 ####Ant 2 (liom)
-#cholla[101,]<-post.params$beta0_g.2      	  ## growth intercept
-#cholla[102,]<-post.params$beta1_g.2				  ## growth slope
+cholla[101,]<-post.params$beta0_g.2      	  ## growth intercept
+cholla[102,]<-post.params$beta1_g.2				  ## growth slope
 ####Ant 3 (Other)
-#cholla[201,]<-post.params$beta0_g.3      	  ## growth intercept
-#cholla[202,]<-post.params$beta1_g.3				  ## growth slope
+cholla[201,]<-post.params$beta0_g.3      	  ## growth intercept
+cholla[202,]<-post.params$beta1_g.3				  ## growth slope
 ####Ant 4 (Vacant)
-#cholla[301,]<-post.params$beta0_g.4      	  ## growth intercept
-#cholla[302,]<-post.params$beta1_g.4				  ## growth slope
+cholla[301,]<-post.params$beta0_g.4      	  ## growth intercept
+cholla[302,]<-post.params$beta1_g.4				  ## growth slope
 
 ##-----------------------Survival Parameters-----------------## 
 ####Ant 1 (crem)
@@ -61,14 +61,14 @@ cholla[13,]<-post.params$sigma_s			    ## surv error
 cholla[14,]<-post.params$sigma_u_s  	    ## surv plotfx error
 cholla[15,]<-post.params$sigma_w_s        ## surv yrfx error
 ####Ant 2 (liom)
-#cholla[111,]<-post.params$beta0_s.2      	## surv intercept
-#cholla[112,]<-post.params$beta1_s.2				## surv slope
+cholla[111,]<-post.params$beta0_s.2      	## surv intercept
+cholla[112,]<-post.params$beta1_s.2				## surv slope
 ####Ant 3 (other)
-#cholla[211,]<-post.params$beta0_s.3      	## surv intercept
-#cholla[212,]<-post.params$beta1_s.3				## surv slope
+cholla[211,]<-post.params$beta0_s.3      	## surv intercept
+cholla[212,]<-post.params$beta1_s.3				## surv slope
 ####Ant 4 (Vacant)
-#cholla[311,]<-post.params$beta0_s.4      	## surv intercept
-#cholla[312,]<-post.params$beta1_s.4				## surv slope
+cholla[311,]<-post.params$beta0_s.4      	## surv intercept
+cholla[312,]<-post.params$beta1_s.4				## surv slope
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 cholla[21,]<-post.params$beta0_f      	  ## flower intercept
@@ -92,11 +92,11 @@ cholla[42,]<-post.params$sigma_v			    ## viab error
 cholla[43,]<-post.params$sigma_u_v  	    ## viab plotfx error
 cholla[44,]<-post.params$sigma_w_v        ## viab yrfx error
 ####Ant 2 (liom)
-#cholla[141,]<-post.params$beta0_v.2      	## viab coeff 
+cholla[141,]<-post.params$beta0_v.2      	## viab coeff 
 ####Ant 3 (other)
-#cholla[241,]<-post.params$beta0_v.3      	## viab coeff 
+cholla[241,]<-post.params$beta0_v.3      	## viab coeff 
 ####Ant 4 (vacant)
-#cholla[341,]<-post.params$beta0_v.4      	## viab coeff 
+cholla[341,]<-post.params$beta0_v.4      	## viab coeff 
 
 ##-----------------------Seeds Prod Parameters-----------------## 
 ####Ant 1 (crem)
@@ -107,29 +107,23 @@ cholla[53,]<-post.params$phi_seed         ## seed dispersion parameter
 ##-----------------------Seeds Surv Parameters-----------------## 
 cholla[61,]<-post.params$beta0_seed_s.1     ## seed intercept
 cholla[62,]<-post.params$sigma_seed_s			  ## seed error
-cholla[63,]<-post.params$phi_seed_s         ## seed dispersion parameter
 
 ##-----------------------Germ1 Parameters-----------------## Ant 1 (crem)
 cholla[71,]<-post.params$beta0_germ1        ## germ intercept
 cholla[72,]<-post.params$beta1_germ1        ## germ slope
-cholla[73,]<-post.params$sigma_germ1        ## germ error
-cholla[74,]<-post.params$phi_germ1          ## germ dispersion parameter
 
 ##-----------------------Germ2 Parameters-----------------## Ant 1 (crem)
 cholla[81,]<-post.params$beta0_germ2        ## germ intercept
 cholla[82,]<-post.params$beta1_germ2        ## germ slope
-cholla[83,]<-post.params$sigma_germ2        ## germ error
-cholla[84,]<-post.params$phi_germ2          ## germ dispersion parameter
 
 ##-----------------------Precensus Surv Parameters-----------------## Ant 1 (crem)
 cholla[91,]<-post.params$beta0_precen       ## precen intercept
 cholla[92,]<-post.params$beta1_precen       ## precen slope
-cholla[93,]<-post.params$sigma_precen       ## precen error
 
 
 ## Params 61-70: Misc params (bounds of continuous size domain, in units of log(cm^3)). Hard coded from Miller's data. 
-cholla[94,]<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
-cholla[95,]<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
+cholla_min<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
+cholla_max<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
 
 ## Recruitment
 cholla[96,]<-post.params$beta0_rec         ## Rec intercept
@@ -155,7 +149,6 @@ for(i in 1:Ndraws) {
   
 
 ##### #Run the matrix once with quantile values for the betas
-gxy(4, 5,cholla)
 
 sx(4, cholla)
 
