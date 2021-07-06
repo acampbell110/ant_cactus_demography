@@ -10,8 +10,7 @@ real X[N]; // Continuous Predictor
 int <lower = 1, upper = K> Z[N]; // Non Continuous Predictor
 }
 parameters {
-//vector[K] beta1; //slope param
-//vector[K] beta0; //intercept param
+vector[K] beta1; //slope param
 }
 transformed parameters {
   vector[N] mu; //linear predictor for the mean
@@ -20,9 +19,8 @@ transformed parameters {
   }
 }
 model {
-  for (i in 1:N){
-    Y[i] ~ categorical_logit(mu[i]);
-  }
+    Y ~ categorical_logit(mu);
+    
 }
 
 
