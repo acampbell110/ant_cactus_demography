@@ -178,11 +178,11 @@ sx(4, cholla,i)
 
 pxy(4, 5, cholla,i)
 
-fx(4,cholla,i) ## Not Working
+fx(4,cholla,i) 
 
 
 
-a <- bigmatrix(cholla,lower,upper,matsize)
+a <-bigmatrix(cholla,lower,upper,matsize)
 IPM_mat<- a$IPMmat
 T_mat <- a$Tmat
 F_mat <- a$Fmat
