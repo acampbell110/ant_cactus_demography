@@ -172,7 +172,7 @@ for(i in 1:Ndraws) {
 
 
 ##### #Run the matrix once with quantile values for the betas
-gxy(4, 5,cholla,"crem")
+gxy(4, 5,cholla)
 
 sx(4, cholla,i)
 
