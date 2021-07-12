@@ -32,7 +32,7 @@ pxy<-function(x,y,params){
 }
 
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
-fx<-function(x,params,){
+fx<-function(x,params){
   xb=pmin(pmax(x,params[94]),params[95])        ## X dummy variable
   p.flow<-invlogit(params[31] + params[32]*xb)    ## Probability of Reproducing
   nflow<-exp(params[21] + params[22]*xb)          ## Number of FLowers produced
@@ -74,9 +74,14 @@ transition.x<-function(i,j,x){
 #GROWTH*SURVIVAL*ANT PROBABILITIES
 ptxy<-function(x,y,params,i,j){
   xb=pmin(pmax(x,params[94]),params[95])
-  vac_vac = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(i,j,xb)
-  return(sx(xb,params,i)*gxy(xb,y,params,i)*transition.x(i,j,xb))
+  vac = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(i,j,xb) #i=vac
+  crem = sx(xb,params)$s_crem*gxy(xb,y,params)$g_crem*transition.x(i,j,xb) #i=crem
+  ifelse(i == "vac", 
+         return(vac),
+         return(crem))
+  #return(list(vac=vac, crem=crem))
 }
+ptxy(4,5,cholla,"vac","vac")
 
 bigmatrix<-function(params,lower,upper,matsize){  
   ###################################################################################################
@@ -138,24 +143,21 @@ bigmatrix<-function(params,lower,upper,matsize){
 #image(y,y,t(Tmat),main='fecundity kernel')
 #image(y,y,t(Fmat),main='fecundity kernel')
 
+bigmatrix(cholla,lower,upper,matsize)
 
 ## ----------------- Function that simulates population dynamics and returns lambdaS ------------- ############
+lambda.fun(cholla,iter,matsize,extra.grid = 2,floor.extend = 1,ceiling.extend = 4)
 
-lambda.fun<-function(params,iter,
-                     matsize,extra.grid=2,floor.extend=1,ceiling.extend=4,i,j){
-  ############################################################################################
-  ## This function returns the population growth rate for a given set of parameters
-  ## Defaults to lambdaS (stochastic=T) but can give deterministic lambda based on vital rate means
-  ## extra.grid adds the discrete seed stages to the cts kernel
-  ## floor extend and ceiling.extend correct eviction (see Williams, Miller, Ellner (2012), Ecology)
-  ## corr==T (default) includes vital rate correlations. corr==F sets mwye to zero and therefore turns correlations off
-  ############################################################################################
+big_list_c <- list()
+lambda_c <- vector()
+stable_c <- list()
+for(i in 1:10){
+  params = cholla[,i]
+  big_list_c[[i]]<-bigmatrix(cholla, lower, upper, matsize)$IPMmat
+  mat_c <- big_list_c[[i]]
+  eig_c <- eigen(mat_c)
+  lambda_c[i]<-Re(eig_c$values[1])
   
-  ## IPM bounds
-  lower<- params[94] - floor.extend
-  upper<- params[95] + ceiling.extend
-  
-  lambda<-Re(eigen(bigmatrix(params,lower,upper,matsize,i,j)$IPMmat)$values[1])
-  return(lambda)
-  
+  stable_c[[i]] <- stable.stage(mat_c)
 }
+hist(lambda_c)
