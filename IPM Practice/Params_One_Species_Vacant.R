@@ -6,15 +6,28 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Practice")
 
 ##This file contains random draws from the joint posterior distribution of all parameters
 post.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/params_one_outputs.csv", header = TRUE,stringsAsFactors=T)  
-trans.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs.csv", header = TRUE,stringsAsFactors=T) 
-trans.params<-trans.params[,-c(1)]
+trans.params_crem <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_crem.csv", header = TRUE,stringsAsFactors=T) 
+trans.params_other <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_other.csv", header = TRUE,stringsAsFactors=T) 
+trans.params_liom <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_liom.csv", header = TRUE,stringsAsFactors=T) 
 Ndraws<-min(100,nrow(post.params))
-trans.params<-trans.params[1:6,]
+trans.params_crem<-trans.params_crem[1:6,]
+trans.params_other<-trans.params_other[1:6,]
+trans.params_liom<-trans.params_liom[1:6,]
 
-post.params$beta0_ant.1 <- trans.params$beta0.1
-post.params$beta1_ant.1 <- trans.params$beta1.1
-post.params$beta0_ant.2 <- trans.params$beta1.1
-post.params$beta1_ant.2 <- trans.params$beta1.2
+post.params$beta0_ant.1_c <- trans.params_crem$beta0.1
+post.params$beta1_ant.1_c <- trans.params_crem$beta1.1
+post.params$beta0_ant.2_c <- trans.params_crem$beta1.1
+post.params$beta1_ant.2_c <- trans.params_crem$beta1.2
+
+post.params$beta0_ant.1_l <- trans.params_liom$beta0.1
+post.params$beta1_ant.1_l <- trans.params_liom$beta1.1
+post.params$beta0_ant.2_l <- trans.params_liom$beta1.1
+post.params$beta1_ant.2_l <- trans.params_liom$beta1.2
+
+post.params$beta0_ant.1_o <- trans.params_other$beta0.1
+post.params$beta1_ant.1_o <- trans.params_other$beta1.1
+post.params$beta0_ant.2_o <- trans.params_other$beta1.1
+post.params$beta1_ant.2_o <- trans.params_other$beta1.2
 
 post.params<-post.params[1:Ndraws,]
 
@@ -44,7 +57,7 @@ source("Prac_One_Species_Vacant.R")
 
 ## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
 ## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
-cholla<-matrix(NA,nrow=400,ncol=Ndraws) 
+cholla<-matrix(NA,nrow=4000,ncol=Ndraws) 
 
 ##----------------------Growth Parameters----------------## 
 ####Ant 1 (crem)
@@ -54,11 +67,11 @@ cholla[3,]<-post.params$sigma_g			      ## growth error
 cholla[4,]<-post.params$sigma_u_g  	      ## growth plotfx error
 cholla[5,]<-post.params$sigma_w_g         ## growth yrfx error
 ####Ant 2 (liom)
-#cholla[101,]<-post.params$beta0_g.2      	  ## growth intercept
-#cholla[102,]<-post.params$beta1_g.2				  ## growth slope
+cholla[101,]<-post.params$beta0_g.2      	  ## growth intercept
+cholla[102,]<-post.params$beta1_g.2				  ## growth slope
 ####Ant 3 (Other)
-#cholla[201,]<-post.params$beta0_g.3      	  ## growth intercept
-#cholla[202,]<-post.params$beta1_g.3				  ## growth slope
+cholla[201,]<-post.params$beta0_g.3      	  ## growth intercept
+cholla[202,]<-post.params$beta1_g.3				  ## growth slope
 ####Ant 4 (Vacant)
 cholla[301,]<-post.params$beta0_g.4      	  ## growth intercept
 cholla[302,]<-post.params$beta1_g.4				  ## growth slope
@@ -145,12 +158,27 @@ cholla[95,]<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize
 cholla[96,]<-post.params$beta0_rec         ## Rec intercept
 cholla[97,]<-post.params$sigma_rec         ## Rec error
 
-## Transition
-cholla[98,]<-post.params$beta0_ant.1       ## prob from t vac to t1 crem
-cholla[99,]<-post.params$beta1_ant.1       ## prob from t vac to t1 crem
-cholla[100,]<-post.params$beta0_ant.2      ## prob from t crem to t1 crem
-cholla[101,]<-post.params$beta1_ant.2      ## prob from t crem to t1 crem
+## Transition (Crem and Vac)
+cholla[98,]<-post.params$beta0_ant.1_c       ## prob from t vac to t1 crem
+cholla[99,]<-post.params$beta1_ant.1_c       ## prob from t vac to t1 crem
+cholla[100,]<-post.params$beta0_ant.2_c      ## prob from t crem to t1 crem
+cholla[101,]<-post.params$beta1_ant.2_c      ## prob from t crem to t1 crem
 cholla[102,]<-post.params$sigma_ant
+## Transition (Other and Vac)
+cholla[298,]<-post.params$beta0_ant.1_o       ## prob from t vac to t1 crem
+cholla[299,]<-post.params$beta1_ant.1_o       ## prob from t vac to t1 crem
+cholla[2100,]<-post.params$beta0_ant.2_o      ## prob from t crem to t1 crem
+cholla[2101,]<-post.params$beta1_ant.2_o      ## prob from t crem to t1 crem
+cholla[2102,]<-post.params$sigma_ant
+## Transition (Liom and Vac)
+cholla[198,]<-post.params$beta0_ant.1_l       ## prob from t vac to t1 crem
+cholla[199,]<-post.params$beta1_ant.1_l       ## prob from t vac to t1 crem
+cholla[1100,]<-post.params$beta0_ant.2_l      ## prob from t crem to t1 crem
+cholla[1101,]<-post.params$beta1_ant.2_l      ## prob from t crem to t1 crem
+cholla[1102,]<-post.params$sigma_ant
+
+cholla_min<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
+cholla_max<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
 
 for(i in 1:Ndraws) {
   
