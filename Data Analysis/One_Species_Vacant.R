@@ -70,8 +70,27 @@ fit_ant_crem <- stan("STAN Models/Multinomial Practice/crem_vac_prac.stan",data 
 ant_outputs_crem <- rstan::extract(fit_ant_crem, pars = c("beta0","beta1","sigma")
 )
 write.csv(ant_outputs_crem, "ant_outputs_crem.csv")
+crem_yrep <- rstan::extract(fit_ant_crem, pars = c("y_rep"))$y_rep
 
 summary(fit_ant_crem)
+
+y <- stan_data_ant_crem$success
+crem_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_crem.csv", header = TRUE,stringsAsFactors=T)
+yrep_crem <- crem_yrep
+samp100 <- sample(nrow(yrep_crem), 500)
+## Overlay Plots
+png(file = "crem_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep_crem[samp100,])
+dev.off()
+png(file = "crem_ant_post1.png")
+bayesplot::ppc_dens_overlay_grouped(y, yrep_crem[samp100,], group = stan_data_ant_crem$prev_ant)
+dev.off()
+## Convergence Plots
+png("grow_conv2.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_mix_ant, pars=c("beta0", "beta1")))
+title()
+dev.off()
+
 
 #### Other ############################################################################################
 ant.dat<-as.data.frame(table(cactus$ant_t ,cactus$Year_t))
