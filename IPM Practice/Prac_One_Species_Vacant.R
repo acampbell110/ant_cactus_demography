@@ -338,4 +338,26 @@ for(i in 1:100){
   stable_l[[i]] <- stable.stage(mat_l)
 }
 hist(lambda_c)
-plot(density(lambda_c))
+
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+
+png("two_species_models.png")
+plot(density(lambda_c), col = "red", xlim = c(0.5,0.85))
+lines(density(lambda_l), col = "blue")
+lines(density(lambda_o), col = "pink")
+dev.off()
+
+png("two_species_crem.png")
+plot(density(lambda_c), col = "red")
+dev.off()
+
+png("two_species_liom.png")
+plot(density(lambda_l), col = "blue")
+dev.off()
+
+png("two_species_other.png")
+plot(density(lambda_o), col = "pink")
+dev.off()
+
+
+
