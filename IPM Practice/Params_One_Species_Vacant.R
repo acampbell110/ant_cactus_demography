@@ -10,24 +10,21 @@ trans.params_crem <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-
 trans.params_other <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_other.csv", header = TRUE,stringsAsFactors=T) 
 trans.params_liom <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_liom.csv", header = TRUE,stringsAsFactors=T) 
 Ndraws<-min(100,nrow(post.params))
-trans.params_crem<-trans.params_crem[1:6,]
-trans.params_other<-trans.params_other[1:6,]
-trans.params_liom<-trans.params_liom[1:6,]
 
-post.params$beta0_ant.1_c <- trans.params_crem$beta0.1
-post.params$beta1_ant.1_c <- trans.params_crem$beta1.1
-post.params$beta0_ant.2_c <- trans.params_crem$beta1.1
-post.params$beta1_ant.2_c <- trans.params_crem$beta1.2
+post.params$beta0_ant.1_c <- trans.params_crem$beta0.1[1:Ndraws]
+post.params$beta1_ant.1_c <- trans.params_crem$beta1.1[1:Ndraws]
+post.params$beta0_ant.2_c <- trans.params_crem$beta1.1[1:Ndraws]
+post.params$beta1_ant.2_c <- trans.params_crem$beta1.2[1:Ndraws]
 
-post.params$beta0_ant.1_l <- trans.params_liom$beta0.1
-post.params$beta1_ant.1_l <- trans.params_liom$beta1.1
-post.params$beta0_ant.2_l <- trans.params_liom$beta1.1
-post.params$beta1_ant.2_l <- trans.params_liom$beta1.2
+post.params$beta0_ant.1_l <- trans.params_liom$beta0.1[1:Ndraws]
+post.params$beta1_ant.1_l <- trans.params_liom$beta1.1[1:Ndraws]
+post.params$beta0_ant.2_l <- trans.params_liom$beta1.1[1:Ndraws]
+post.params$beta1_ant.2_l <- trans.params_liom$beta1.2[1:Ndraws]
 
-post.params$beta0_ant.1_o <- trans.params_other$beta0.1
-post.params$beta1_ant.1_o <- trans.params_other$beta1.1
-post.params$beta0_ant.2_o <- trans.params_other$beta1.1
-post.params$beta1_ant.2_o <- trans.params_other$beta1.2
+post.params$beta0_ant.1_o <- trans.params_other$beta0.1[1:Ndraws]
+post.params$beta1_ant.1_o <- trans.params_other$beta1.1[1:Ndraws]
+post.params$beta0_ant.2_o <- trans.params_other$beta1.1[1:Ndraws]
+post.params$beta1_ant.2_o <- trans.params_other$beta1.2[1:Ndraws]
 
 post.params<-post.params[1:Ndraws,]
 
@@ -130,7 +127,6 @@ cholla[53,]<-post.params$phi_seed         ## seed dispersion parameter
 ##-----------------------Seeds Surv Parameters-----------------## 
 cholla[61,]<-post.params$beta0_seed_s.1     ## seed intercept
 cholla[62,]<-post.params$sigma_seed_s			  ## seed error
-cholla[63,]<-post.params$phi_seed_s         ## seed dispersion parameter
 
 ##-----------------------Germ1 Parameters-----------------## Ant 1 (crem)
 cholla[71,]<-post.params$beta0_germ1        ## germ intercept
