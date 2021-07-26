@@ -341,6 +341,7 @@ hist(lambda_c)
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
+#### Lambda dist
 png("two_species_models.png")
 plot(density(lambda_c), col = "red", xlim = c(0.5,0.85))
 lines(density(lambda_l), col = "blue")
