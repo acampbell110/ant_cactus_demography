@@ -5,26 +5,14 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Practice")
 ## -------- read in MCMC output ---------------------- ##
 
 ##This file contains random draws from the joint posterior distribution of all parameters
-post.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/params_one_outputs.csv", header = TRUE,stringsAsFactors=T)  
-trans.params_crem <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_crem.csv", header = TRUE,stringsAsFactors=T) 
-trans.params_other <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_other.csv", header = TRUE,stringsAsFactors=T) 
-trans.params_liom <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_liom.csv", header = TRUE,stringsAsFactors=T) 
+post.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/params_outputs_occ.csv", header = TRUE,stringsAsFactors=T)  
+trans.params_occ <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_occ.csv", header = TRUE,stringsAsFactors=T) 
 Ndraws<-min(100,nrow(post.params))
 
-post.params$beta0_ant.1_c <- trans.params_crem$beta0.1[1:Ndraws]
-post.params$beta1_ant.1_c <- trans.params_crem$beta1.1[1:Ndraws]
-post.params$beta0_ant.2_c <- trans.params_crem$beta1.1[1:Ndraws]
-post.params$beta1_ant.2_c <- trans.params_crem$beta1.2[1:Ndraws]
-
-post.params$beta0_ant.1_l <- trans.params_liom$beta0.1[1:Ndraws]
-post.params$beta1_ant.1_l <- trans.params_liom$beta1.1[1:Ndraws]
-post.params$beta0_ant.2_l <- trans.params_liom$beta1.1[1:Ndraws]
-post.params$beta1_ant.2_l <- trans.params_liom$beta1.2[1:Ndraws]
-
-post.params$beta0_ant.1_o <- trans.params_other$beta0.1[1:Ndraws]
-post.params$beta1_ant.1_o <- trans.params_other$beta1.1[1:Ndraws]
-post.params$beta0_ant.2_o <- trans.params_other$beta1.1[1:Ndraws]
-post.params$beta1_ant.2_o <- trans.params_other$beta1.2[1:Ndraws]
+post.params$beta0_ant.1 <- trans.params_occ$beta0.1[1:Ndraws]
+post.params$beta1_ant.1 <- trans.params_occ$beta1.1[1:Ndraws]
+post.params$beta0_ant.2 <- trans.params_occ$beta1.1[1:Ndraws]
+post.params$beta1_ant.2 <- trans.params_occ$beta1.2[1:Ndraws]
 
 post.params<-post.params[1:Ndraws,]
 
@@ -57,38 +45,26 @@ source("Prac_One_Species_Vacant.R")
 cholla<-matrix(NA,nrow=4000,ncol=Ndraws) 
 
 ##----------------------Growth Parameters----------------## 
-####Ant 1 (crem)
+####Ant 1 (occ)
 cholla[1,]<-post.params$beta0_g.1      	  ## growth intercept
 cholla[2,]<-post.params$beta1_g.1				  ## growth slope
 cholla[3,]<-post.params$sigma_g			      ## growth error
 cholla[4,]<-post.params$sigma_u_g  	      ## growth plotfx error
 cholla[5,]<-post.params$sigma_w_g         ## growth yrfx error
-####Ant 2 (liom)
-cholla[101,]<-post.params$beta0_g.2      	  ## growth intercept
-cholla[102,]<-post.params$beta1_g.2				  ## growth slope
-####Ant 3 (Other)
-cholla[201,]<-post.params$beta0_g.3      	  ## growth intercept
-cholla[202,]<-post.params$beta1_g.3				  ## growth slope
-####Ant 4 (Vacant)
-cholla[301,]<-post.params$beta0_g.4      	  ## growth intercept
-cholla[302,]<-post.params$beta1_g.4				  ## growth slope
+#### Ant 1 (vac)
+cholla[301,]<-post.params$beta0_g.2
+cholla[302,]<-post.params$beta1_g.2				  ## growth slope
 
 ##-----------------------Survival Parameters-----------------## 
-####Ant 1 (crem)
+####Ant 1 (occ)
 cholla[11,]<-post.params$beta0_s.1      	## surv intercept
 cholla[12,]<-post.params$beta1_s.1				## surv slope
 cholla[13,]<-post.params$sigma_s			    ## surv error
 cholla[14,]<-post.params$sigma_u_s  	    ## surv plotfx error
 cholla[15,]<-post.params$sigma_w_s        ## surv yrfx error
-####Ant 2 (liom)
-cholla[111,]<-post.params$beta0_s.2      	## surv intercept
-cholla[112,]<-post.params$beta1_s.2				## surv slope
-####Ant 3 (other)
-cholla[211,]<-post.params$beta0_s.3      	## surv intercept
-cholla[212,]<-post.params$beta1_s.3				## surv slope
-####Ant 4 (Vacant)
-cholla[311,]<-post.params$beta0_s.4      	## surv intercept
-cholla[312,]<-post.params$beta1_s.4				## surv slope
+####Ant 2 (vac)
+cholla[311,]<-post.params$beta0_s.2      	## surv intercept
+cholla[312,]<-post.params$beta1_s.2				## surv slope
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 cholla[21,]<-post.params$beta0_f      	  ## flower intercept
@@ -106,39 +82,35 @@ cholla[34,]<-post.params$sigma_u_r  	    ## repro plotfx error
 cholla[35,]<-post.params$sigma_w_r        ## repro yrfx error
 
 ##-----------------------Viability Parameters-----------------## 
-####Ant 1 (crem)
+####Ant 1 (occ)
 cholla[41,]<-post.params$beta0_v.1      	## viab coeff 
 cholla[42,]<-post.params$sigma_v			    ## viab error
 cholla[43,]<-post.params$sigma_u_v  	    ## viab plotfx error
 cholla[44,]<-post.params$sigma_w_v        ## viab yrfx error
-####Ant 2 (liom)
-cholla[141,]<-post.params$beta0_v.2      	## viab coeff 
-####Ant 3 (other)
-cholla[241,]<-post.params$beta0_v.3      	## viab coeff 
-####Ant 4 (vacant)
-cholla[341,]<-post.params$beta0_v.4      	## viab coeff 
+####Ant 2 (vac)
+cholla[341,]<-post.params$beta0_v.2      	## viab coeff 
 
 ##-----------------------Seeds Prod Parameters-----------------## 
-####Ant 1 (crem)
+####Ant 1 (occ)
 cholla[51,]<-post.params$beta0_seed.1     ## seed intercept
 cholla[52,]<-post.params$sigma_seed			  ## seed error
 cholla[53,]<-post.params$phi_seed         ## seed dispersion parameter
+####Ant 2 (vac)
+cholla[351,]<-post.params$beta0_seed.2     ## seed intercept
 
 ##-----------------------Seeds Surv Parameters-----------------## 
 cholla[61,]<-post.params$beta0_seed_s.1     ## seed intercept
 cholla[62,]<-post.params$sigma_seed_s			  ## seed error
+cholla[361,]<-post.params$beta0_seed_s.2     ## seed intercept
+
 
 ##-----------------------Germ1 Parameters-----------------## Ant 1 (crem)
 cholla[71,]<-post.params$beta0_germ1        ## germ intercept
 cholla[72,]<-post.params$beta1_germ1        ## germ slope
-cholla[73,]<-post.params$sigma_germ1        ## germ error
-cholla[74,]<-post.params$phi_germ1          ## germ dispersion parameter
 
 ##-----------------------Germ2 Parameters-----------------## Ant 1 (crem)
 cholla[81,]<-post.params$beta0_germ2        ## germ intercept
 cholla[82,]<-post.params$beta1_germ2        ## germ slope
-cholla[83,]<-post.params$sigma_germ2        ## germ error
-cholla[84,]<-post.params$phi_germ2          ## germ dispersion parameter
 
 ##-----------------------Precensus Surv Parameters-----------------## Ant 1 (crem)
 cholla[91,]<-post.params$beta0_precen       ## precen intercept
@@ -154,24 +126,11 @@ cholla[95,]<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize
 cholla[96,]<-post.params$beta0_rec         ## Rec intercept
 cholla[97,]<-post.params$sigma_rec         ## Rec error
 
-## Transition (Crem and Vac)
-cholla[98,]<-post.params$beta0_ant.1_c       ## prob from t vac to t1 crem
-cholla[99,]<-post.params$beta1_ant.1_c       ## prob from t vac to t1 crem
-cholla[100,]<-post.params$beta0_ant.2_c      ## prob from t crem to t1 crem
-cholla[101,]<-post.params$beta1_ant.2_c      ## prob from t crem to t1 crem
-cholla[102,]<-post.params$sigma_ant
-## Transition (Other and Vac)
-cholla[298,]<-post.params$beta0_ant.1_o       ## prob from t vac to t1 crem
-cholla[299,]<-post.params$beta1_ant.1_o       ## prob from t vac to t1 crem
-cholla[2100,]<-post.params$beta0_ant.2_o      ## prob from t crem to t1 crem
-cholla[2101,]<-post.params$beta1_ant.2_o      ## prob from t crem to t1 crem
-cholla[2102,]<-post.params$sigma_ant
-## Transition (Liom and Vac)
-cholla[198,]<-post.params$beta0_ant.1_l       ## prob from t vac to t1 crem
-cholla[199,]<-post.params$beta1_ant.1_l       ## prob from t vac to t1 crem
-cholla[1100,]<-post.params$beta0_ant.2_l      ## prob from t crem to t1 crem
-cholla[1101,]<-post.params$beta1_ant.2_l      ## prob from t crem to t1 crem
-cholla[1102,]<-post.params$sigma_ant
+## Transition (Occ and Vac)
+cholla[98,]<-post.params$beta0_ant.1       ## prob from t vac to t1 occ
+cholla[99,]<-post.params$beta1_ant.1       ## prob from t vac to t1 occ
+cholla[100,]<-post.params$beta0_ant.2      ## prob from t occ to t1 occ
+cholla[101,]<-post.params$beta1_ant.2      ## prob from t occ to t1 occ
 
 cholla_min<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
