@@ -210,18 +210,4 @@ png("two_species_models.png")
 plot(density(lambda), col = "black")
 dev.off()
 
-png("two_species_crem.png")
-plot(density(lambda_c), col = "red")
-dev.off()
-
-png("two_species_liom.png")
-plot(density(lambda_l), col = "blue")
-dev.off()
-
-png("two_species_other.png")
-plot(density(lambda_o), col = "pink")
-dev.off()
-
-
-
 
