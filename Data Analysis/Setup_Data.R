@@ -50,6 +50,7 @@ invlogit <- function(x){exp(x)/(1+exp(x))}
 #Create volume columns
 cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
 cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
+cactus$logsize <- invlogit(cactus$volume_t)
 
 ## assign ant counts of zero as vacant
 cactus$Antsp_t[cactus$antcount_t==0] <- "vacant"
