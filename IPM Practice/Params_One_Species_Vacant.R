@@ -5,7 +5,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Practice")
 ## -------- read in MCMC output ---------------------- ##
 
 ##This file contains random draws from the joint posterior distribution of all parameters
-post.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/params_outputs_occ.csv", header = TRUE,stringsAsFactors=T)  
+post.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/params_outputs.csv", header = TRUE,stringsAsFactors=T)  
 trans.params_occ <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_occ.csv", header = TRUE,stringsAsFactors=T) 
 Ndraws<-min(100,nrow(post.params))
 
@@ -45,26 +45,38 @@ source("Prac_One_Species_Vacant.R")
 cholla<-matrix(NA,nrow=4000,ncol=Ndraws) 
 
 ##----------------------Growth Parameters----------------## 
-####Ant 1 (occ)
+####Ant 1 (crem)
 cholla[1,]<-post.params$beta0_g.1      	  ## growth intercept
 cholla[2,]<-post.params$beta1_g.1				  ## growth slope
 cholla[3,]<-post.params$sigma_g			      ## growth error
 cholla[4,]<-post.params$sigma_u_g  	      ## growth plotfx error
 cholla[5,]<-post.params$sigma_w_g         ## growth yrfx error
+####Ant 2 (liom)
+cholla[101,]<-post.params$beta0_g.2      	  ## growth intercept
+cholla[102,]<-post.params$beta1_g.2				  ## growth slope
+####Ant 2 (other)
+cholla[201,]<-post.params$beta0_g.3      	  ## growth intercept
+cholla[202,]<-post.params$beta1_g.3				  ## growth slope
 #### Ant 1 (vac)
-cholla[301,]<-post.params$beta0_g.2
-cholla[302,]<-post.params$beta1_g.2				  ## growth slope
+cholla[301,]<-post.params$beta0_g.4
+cholla[302,]<-post.params$beta1_g.4				  ## growth slope
 
 ##-----------------------Survival Parameters-----------------## 
-####Ant 1 (occ)
+####Ant 1 (crem)
 cholla[11,]<-post.params$beta0_s.1      	## surv intercept
 cholla[12,]<-post.params$beta1_s.1				## surv slope
 cholla[13,]<-post.params$sigma_s			    ## surv error
 cholla[14,]<-post.params$sigma_u_s  	    ## surv plotfx error
 cholla[15,]<-post.params$sigma_w_s        ## surv yrfx error
+####Ant 1 (liom)
+cholla[111,]<-post.params$beta0_s.2      	## surv intercept
+cholla[112,]<-post.params$beta1_s.2				## surv slope
+####Ant 1 (other)
+cholla[211,]<-post.params$beta0_s.3      	## surv intercept
+cholla[212,]<-post.params$beta1_s.3				## surv slope
 ####Ant 2 (vac)
-cholla[311,]<-post.params$beta0_s.2      	## surv intercept
-cholla[312,]<-post.params$beta1_s.2				## surv slope
+cholla[311,]<-post.params$beta0_s.4      	## surv intercept
+cholla[312,]<-post.params$beta1_s.4				## surv slope
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 cholla[21,]<-post.params$beta0_f      	  ## flower intercept
@@ -82,21 +94,29 @@ cholla[34,]<-post.params$sigma_u_r  	    ## repro plotfx error
 cholla[35,]<-post.params$sigma_w_r        ## repro yrfx error
 
 ##-----------------------Viability Parameters-----------------## 
-####Ant 1 (occ)
+####Ant 1 (crem)
 cholla[41,]<-post.params$beta0_v.1      	## viab coeff 
 cholla[42,]<-post.params$sigma_v			    ## viab error
 cholla[43,]<-post.params$sigma_u_v  	    ## viab plotfx error
 cholla[44,]<-post.params$sigma_w_v        ## viab yrfx error
+####Ant 1 (liom)
+cholla[141,]<-post.params$beta0_v.2      	## viab coeff 
+####Ant 1 (other)
+cholla[241,]<-post.params$beta0_v.3      	## viab coeff 
 ####Ant 2 (vac)
-cholla[341,]<-post.params$beta0_v.2      	## viab coeff 
+cholla[341,]<-post.params$beta0_v.4      	## viab coeff 
 
 ##-----------------------Seeds Prod Parameters-----------------## 
-####Ant 1 (occ)
+####Ant 1 (crem)
 cholla[51,]<-post.params$beta0_seed.1     ## seed intercept
 cholla[52,]<-post.params$sigma_seed			  ## seed error
 cholla[53,]<-post.params$phi_seed         ## seed dispersion parameter
+####Ant 1 (crem)
+cholla[151,]<-post.params$beta0_seed.2     ## seed intercept
+####Ant 1 (other)
+cholla[251,]<-post.params$beta0_seed.2     ## seed intercept
 ####Ant 2 (vac)
-cholla[351,]<-post.params$beta0_seed.2     ## seed intercept
+cholla[351,]<-post.params$beta0_seed.3     ## seed intercept
 
 ##-----------------------Seeds Surv Parameters-----------------## 
 cholla[61,]<-post.params$beta0_seed_s.1     ## seed intercept
@@ -129,8 +149,8 @@ cholla[97,]<-post.params$sigma_rec         ## Rec error
 ## Transition (Occ and Vac)
 cholla[98,]<-post.params$beta0_ant.1       ## prob from t vac to t1 occ
 cholla[99,]<-post.params$beta1_ant.1       ## prob from t vac to t1 occ
-cholla[100,]<-post.params$beta0_ant.2      ## prob from t occ to t1 occ
-cholla[101,]<-post.params$beta1_ant.2      ## prob from t occ to t1 occ
+cholla[108,]<-post.params$beta0_ant.2      ## prob from t occ to t1 occ
+cholla[109,]<-post.params$beta1_ant.2      ## prob from t occ to t1 occ
 
 cholla_min<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
