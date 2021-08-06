@@ -7,6 +7,7 @@ library(bayesplot)
 library(dplyr)
 library(raster)
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+invlogit<-function(x){exp(x)/(1+exp(x))}
 
 # Real data analysis ------------------------------------------------------
 ants <- read.csv("Data Analysis/cholla_demography_20042019_cleaned.csv")
@@ -39,12 +40,16 @@ model {
 "Data Analysis/STAN Models/size_only_model.stan")
 
 ## select variables we need, and drop na's
-ants %>% select(ant_t1,logsize) %>% drop_na() %>% slice_sample(n=1000)-> ants_stan
+ants %>% 
+  dplyr::select(ant_t,ant_t1,logsize,Year_t) %>% 
+  drop_na() -> ants_stan
+  # %>% slice_sample(n=1000) ## slicing out this data subset will make things faster for practice
+  
 
-ants_na <- ants[,c("ant_t1","logsize")]
-ants_na <- na.omit(ants_na)
-ants_stan <- slice_sample(ants_na, n = 1000)
-
+#the code above should work now with dplyr::select
+#ants_na <- ants[,c("ant_t1","logsize")]
+#ants_na <- na.omit(ants_na)
+#ants_stan <- slice_sample(ants_na, n = 1000)
 
 size_only_dat <- list(K = length(levels(ants_stan$ant_t1)), # number of possible outcomes
                   N = (dim(ants_stan)[1]), # number of observations
@@ -63,7 +68,10 @@ ants_fit <- multinom(ant_t1 ~ 0 + logsize, data=ants_stan)
 ## note that the coefficients are expressing log odds with respect to the reference level
 coef(ants_fit)
 ## A one unit increase in size is associated with a 0.15 DECREASE in log odds of having crem vs vacant
-## Liom is the opposite sign, so increasing signs makes it more likely to have liom than vacant
+## Liom is the opposite sign, so increasing size makes it more likely to have liom than vacant
+newdata=data.frame(logsize=quantile(ants_stan$logsize,probs=c(0.05,0.25,0.5,0.75,0.95)))
+predict(ants_fit,newdata,"probs")
+##this comes from here: https://stackoverflow.com/questions/22293517/multinomial-regression-using-multinom-function-in-r?rq=1
 
 ## if we subtract the reference level from all other levels, we recover the ML estimates
 ## see: https://stackoverflow.com/questions/60551126/compare-multinom-to-stan-multi-logit-regression
@@ -82,8 +90,15 @@ size_only_out$beta.1.2 - size_only_out$beta.1.1 ## vector of all crem
 size_only_out$beta.1.3 - size_only_out$beta.1.1 ## vector of all liom
 size_only_out$beta.1.4 - size_only_out$beta.1.1 ## vector of all other
 
+mean(size_only_out$beta.1.1)*2
+mean(size_only_out$beta.1.2)*2
+mean(size_only_out$beta.1.3)*2
+mean(size_only_out$beta.1.4)*2
+
+model.matrix(~0 + ant_t + logsize, data=ants_stan[1:10,])
+
 ## Visualize the outcomes
-x_dummy <- seq(min(ants_na$logsize), max(ants_na$logsize), by = 0.1)
+x_dummy <- seq(min(ants_stan$logsize), max(ants_stan$logsize), by = 0.1)
 plot(x = x_dummy, y = invlogit(x_dummy*mean(size_only_out$beta.1.1)), type = "l", ylim = c(0,1), col = "pink") ##vac
 lines(x = x_dummy, y = invlogit(x_dummy*mean(size_only_out$beta.1.2 - size_only_out$beta.1.1)), col = "red") ##crem
 lines(x = x_dummy, y = invlogit(x_dummy*mean(size_only_out$beta.1.3 - size_only_out$beta.1.1)), col = "blue") ##liom
@@ -91,9 +106,53 @@ lines(x = x_dummy, y = invlogit(x_dummy*mean(size_only_out$beta.1.4 - size_only_
 
 ## So basically as I understand it these are the probabilities of being occupied by each ant at a given size
 ## cool
-
+##TOM: no, I don't think these are the probabilities! They do not sum to 1. 
 
 ### Include Previous Ant state ---------------------------------------------
+## to get a sense of what we are actually trying to do, start with the ML fit
+ants_fit2 <- multinom(ant_t1 ~ 0 + ant_t + logsize, data=ants_stan)
+## check out the coefficients and note that we have 12 coefficients to estimate
+coef(ants_fit2) 
+
+## we can use the same stan model as before, since it is coded very generally
+## we just need to update the dimensions of the design matrix
+size_ant_t_dat <- list(K = length(levels(ants_stan$ant_t1)), # number of possible outcomes
+                      N = (dim(ants_stan)[1]), # number of observations
+                      D = 5, # number of predictors: size and four levels of prior ant
+                      y = as.integer(ants_stan$ant_t1), # observations
+                      x = model.matrix(~ 0 + ant_t + logsize, data=ants_stan)) # design matrix
+
+fit_size_ant_t <- stan(file = "Data Analysis/STAN Models/size_only_model.stan", 
+                      data = size_ant_t_dat, warmup = 100, iter = 1000, chains = 2)
+fit_summary_size_ant_t <- summary(fit_size_ant_t, par="beta", probs=.5)$summary %>% as.data.frame
+size_ant_t <- rstan::extract(fit_size_ant_t, pars = c("beta"))
+write.csv(size_ant_t,"size_ant_t_outputs.csv")
+
+fit_summary_size_ant_t-fit_summary_size_ant_t[1,"mean"]
+
+## Tom's scratch pad here
+ants_MoM <- multinom(ant_t1 ~ 1, data=ants_stan)
+coef(ants_MoM)
+
+MoM_dat <- list(K = length(levels(ants_stan$ant_t1)), # number of possible outcomes
+                       N = (dim(ants_stan)[1]), # number of observations
+                       D = 1, # number of predictors: intercept only
+                       y = as.integer(ants_stan$ant_t1), # observations
+                       x = model.matrix(~ , data=ants_stan)) # design matrix
+
+fit_MoM <- stan(file = "Data Analysis/STAN Models/size_only_model.stan", 
+                       data = MoM_dat, warmup = 100, iter = 1000, chains = 3)
+mcmc_dens_overlay(fit_MoM, pars = c("beta[2,1]",
+                                    "beta[2,2]",
+                                    "beta[2,3]",
+                                    "beta[1,4]"))
+
+betas <- get_posterior_mean(fit_MoM)[,"mean-all chains"][1:4]
+betas[2:4]-betas[1];coef(ants_MoM)
+invlogit(betas)
+exp(betas[2:4]-betas[1])/(1+exp(betas[2:4]-betas[1]))
+
+### Ali's work starts here
 # Real data analysis ------------------------------------------------------
 ##stan
 size_ant_model <- "data {
