@@ -62,6 +62,8 @@ write.csv(size_only,"size_only_outputs.csv")
 ants_fit <- multinom(ant_t1 ~ 0 + logsize, data=ants_stan)
 ## note that the coefficients are expressing log odds with respect to the reference level
 coef(ants_fit)
+dses <- data.frame(logsize = mean(ants_stan$logsize))
+transition_beta <- predict(ants_fit, newdata = dses, "probs")
 ## A one unit increase in size is associated with a 0.15 DECREASE in log odds of having crem vs vacant
 ## Liom is the opposite sign, so increasing signs makes it more likely to have liom than vacant
 
@@ -173,10 +175,12 @@ ants_fit <- multinom(ant_t1 ~ 0 + logsize + ant_t, data=ants_stan)
 coef(ants_fit)
 ## A one unit increase in size is associated with a 0.15 DECREASE in log odds of having crem vs vacant
 ## Liom is the opposite sign, so increasing signs makes it more likely to have liom than vacant
-
 ## A one unit increase in size is associated with a 0.16 decrease in log odds of having crem vs vacant
 ## Liom means that increasing size is associated with a 0.03 increase in log odds of having liom vs vacant
 ## An increase in size is associated with a 0.27 decrease in log odds of having other vs vacant
+dses <- data.frame(ant_t = c("vacant","liom","crem","other"), logsize = mean(ants_stan$logsize))
+transition_beta <- predict(ants_fit, newdata = dses, "probs")
+
 
 size_ant_out <- read.csv("size_ant_outputs.csv")
 size_ant_out2 <- read.csv("size_ant_outputs2.csv")
