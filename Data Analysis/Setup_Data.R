@@ -52,6 +52,9 @@ cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
 cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
 cactus$logsize <- invlogit(cactus$volume_t)
 
+cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
+cactus$ant_t1 <- relevel(cactus$ant_t1, ref = "vacant")
+
 ## assign ant counts of zero as vacant
 cactus$Antsp_t[cactus$antcount_t==0] <- "vacant"
 # here are the ordered levels of the current variable
