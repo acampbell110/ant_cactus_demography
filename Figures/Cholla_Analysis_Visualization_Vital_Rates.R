@@ -1,7 +1,9 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
 size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t), na.rm = TRUE), by = 0.1)
+#########################################################################################################################
 #### Growth Visuals #####################################################################################################
+##########################################################################################################################################################################################################
 ## Extract & Format Data
 #extract from original data
 y_subset <- growth_data[,c("volume_t1","ant", "volume_t")]
@@ -190,8 +192,10 @@ lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_h/quantile(size
 lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_h/quantile(size_dummy, 0.95), sd = mean(grow_data$sigma)), col = "pink", lwd = 2)
 abline(v = 1, col = "grey", lty = 2, lwd = 2)
 dev.off()
-##
+
+###########################################################################################################################
 #### Survival Visuals #####################################################################################################
+#########################################################################################################################
 ## Extract & Format Data
 #extract from original ddata
 y_subset <- survival_data[,c("Survival_t1","ant", "volume_t")]
@@ -353,7 +357,9 @@ lines(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4
 points(x = log(y_vac_subset_surv$volume_t), y = (y_vac_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
 dev.off()
 
+#########################################################################################################################
 #### Flowering Visuals #####################################################################################################
+#########################################################################################################################
 ## Extract & Format Data
 #extract from StAN models
 flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_outputs.csv", header = TRUE,stringsAsFactors=T)
@@ -425,7 +431,9 @@ lines(x = size_dummy  ,y = exp(y_flow_trunc), type = "l", col = "chartreuse4", l
 points(x = log(flower_data$volume_t), y = (flower_data$TotFlowerbuds_t),col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.6))
 dev.off()
 
+#########################################################################################################################
 #### Reproductive Visuals #####################################################################################################
+#########################################################################################################################
 ## Extract & Format Data
 #format for overlay plots
 #extract from STAN models
@@ -471,8 +479,9 @@ stan_plot(fit_repro_mix_ant, pars = c("beta0","beta1"),
 dev.off()
 
 
-
+#########################################################################################################################
 #### Viability Visuals #####################################################################################################
+#########################################################################################################################
 ## Extract & Format Data
 viab_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab_outputs.csv", header = TRUE,stringsAsFactors=T)
 #format for overlay plots
@@ -548,7 +557,9 @@ png("viab_bars2.png")
 plot(invlogit(mixed$beta) ~ factor(mixed$ant), xlab = "Ant Species",ylab = "Viability Rate", col = c("red","blue","black","pink"), alpha = 0.5)
 dev.off()
 
+#########################################################################################################################
 #### Seed Visuals #####################################################################################################
+#########################################################################################################################
 seed_outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_outputs.csv", header = TRUE,stringsAsFactors=T)
 y_crem <- seed_outputs$beta0.1
 y_vac <- seed_outputs$beta0.3
@@ -590,7 +601,11 @@ bayesplot::ppc_dens_overlay(y, seed_yrep[samp100,])
 dev.off()
 
 
-#### Seed Survival
+barplot(means, col = c("grey","white"), names.arg = c("vacant","occupied"), ylim = c(0,150))
+arrows(x0 = 1, x1 = 1, y0 = low, y1 = high, angle = 90)
+
+
+#### Seed Survival #################################################################################
 y_subset <- na.omit(precensus.dat)
 seed_surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_surv_outputs.csv", header = TRUE,stringsAsFactors=T)
 #Size Dummies for every ant
@@ -694,6 +709,35 @@ lines(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = "pink", lwd = 4
 points(x = log(y_vac_subset_surv$volume_t), y = (y_vac_subset_surv$Survival_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) + 
   dev.off()
 
+################################################################################################################################################
+##################### Binomial Visuals ########################################################################
+###############################################################################################################################################
 
+################################################################################################################################################
+##################### Multinomial Visuals ########################################################################
+###############################################################################################################################################
+par(mfrow = c(2,2))
+plot(x_vol,p_o_o, type = "n", ylim = c(0,1), main = "From Other to ...", xlab = "size", ylab = "Next Ant")
+lines(x_vol, p_o_o, col = "pink")
+lines(x_vol, p_o_l, col = "blue")
+lines(x_vol, p_o_c, col = "red")
+lines(x_vol, p_o_v, col = "black")
 
+plot(x_vol,p_l_o, type = "n", ylim = c(0,1), main = "From Liom to ...", xlab = "size", ylab = "Next Ant")
+lines(x_vol, p_l_o, col = "pink")
+lines(x_vol, p_l_l, col = "blue")
+lines(x_vol, p_l_c, col = "red")
+lines(x_vol, p_l_v, col = "black")
+
+plot(x_vol,p_c_o, type = "n", ylim = c(0,1), main = "From Crem to ...", xlab = "size", ylab = "Next Ant")
+lines(x_vol, p_c_o, col = "pink")
+lines(x_vol, p_c_l, col = "blue")
+lines(x_vol, p_c_c, col = "red")
+lines(x_vol, p_c_v, col = "black")
+
+plot(x_vol,p_v_o, type = "n", ylim = c(0,1), main = "From Vacant to ...", xlab = "size", ylab = "Next Ant")
+lines(x_vol, p_v_o, col = "pink")
+lines(x_vol, p_v_l, col = "blue")
+lines(x_vol, p_v_c, col = "red")
+lines(x_vol, p_v_v, col = "black")
 
