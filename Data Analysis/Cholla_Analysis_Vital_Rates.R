@@ -1,8 +1,9 @@
 options(mc.cores = parallel::detectCores())
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
+setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography/Data Analysis")
 #setwd("/Users/alicampbell")
 # import the data
-cactus <- read.csv("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
 #### Create local data frames to call in the Growth STAN models
 cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
 growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
