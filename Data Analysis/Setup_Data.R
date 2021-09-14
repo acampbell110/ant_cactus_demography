@@ -1,3 +1,6 @@
+########################################################################################################
+##############          Load All Necessary Packages Here        ########################################
+########################################################################################################
 library(brms)  # for models
 library(tidyverse)
 library(boot)
@@ -33,15 +36,14 @@ library(popbio)
 knitr::opts_chunk$set(echo = TRUE)
 options(mc.cores = parallel::detectCores())
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
-
-#import the data
+#######################################################################################################
+################        import the data -- Cacti (main)        #######################################################
+#######################################################################################################
 cactus_uncleaned <- read.csv("cholla_demography_20042019.csv", header = TRUE,stringsAsFactors=T)
 str(cactus) ##<- problem: antcount is a factor
 #levels(cactus$Antcount_t);levels(cactus$Antcount_t1)
 ## drop the offending rows -- this is a 2019 data entry problem
 cactus <- cactus_uncleaned[-c(which(cactus_uncleaned$Antcount_t=="2-Jan"),which(cactus_uncleaned$Antcount_t1=="2-Jan")),]
-cactus$antcount_t <- as.numeric(as.character(cactus$Antcount_t))
-cactus$antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
 ## function for the volume of a cone
 volume <- function(h, w, p){
   (1/3)*pi*h*(((w + p)/2)/2)^2
@@ -50,10 +52,8 @@ invlogit <- function(x){exp(x)/(1+exp(x))}
 #Create volume columns
 cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
 cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
-cactus$logsize <- invlogit(cactus$volume_t)
-
-cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
-cactus$ant_t1 <- relevel(cactus$ant_t1, ref = "vacant")
+cactus$logsize_t <- invlogit(cactus$volume_t)
+cactus$logsize_t1 <- invlogit(cactus$volume_t1)
 
 ## assign ant counts of zero as vacant
 cactus$Antsp_t[cactus$antcount_t==0] <- "vacant"
@@ -118,6 +118,10 @@ cactus$ant_t1[cactus$Antsp_t1==""] <- NA
 cactus %>% filter(ant_t1=="other") %>% select(Antsp_t1,ant_t1)
 ## I am satisfied that everything assigned other in t1 is correctly assigned
 
+## Relevel so that vacancy is the reference level
+cactus$antcount_t <- as.numeric(as.character(cactus$Antcount_t))
+cactus$antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
+
 ## Fill in as many of the goodbuds, abortedbuds and total buds as possible
 for(i in 1:8187){
   # if good buds and Aborted buds not NA set total = Sum
@@ -153,7 +157,10 @@ cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
 ## Export cactus to a csv
 write.csv(cactus, "cholla_demography_20042019_cleaned.csv")
 
-#import the data
+#######################################################################################################
+################        import the data -- Seed Data        #######################################################
+#######################################################################################################
+
 seed_uncleaned <- read.csv("JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
 ## PEAA = Ant Access
 ## PAAA = Ant Access
@@ -180,7 +187,106 @@ for(i in 1:nrow(seed)){
   }
 }
 
+#######################################################################################################
+################        import the data -- Germination        #######################################################
+#######################################################################################################
+germ.dat<-read.csv("Germination.csv") 
+germ.dat <- na.omit(germ.dat)
+germ.dat$rate <- 0
+for(i in 1:nrow(germ.dat)){
+  if(germ.dat$Seedlings04[i] != 0){
+    germ.dat$rate[i] <- (germ.dat$Seedlings04[i] - germ.dat$Seedlings05[i])/germ.dat$Seedlings04[i]
+  }
+}
+germ.dat[-c(42,39,40),]
+
+#######################################################################################################
+################        import the data -- Fruit Survival        #######################################################
+#######################################################################################################
+seedling.dat <- cactus[,c("logsize_t","logsize_t1","Recruit")]
+seedling.dat <- filter(seedling.dat, Recruit == 1)
+
+#######################################################################################################
+################        import the data -- Precensus Survival        #######################################################
+#######################################################################################################
+precensus.dat<-read.csv("PrecensusSurvival.csv") 
+
+#######################################################################################################
+################        import the data -- Cholla Dat        #######################################################
+#######################################################################################################
+cholla.dat$N_sdlgsize <- length(seedlings$standvol_t)
+cholla.dat$y_sdlgsize <- seedlings$standvol_t
+
+#######################################################################################################
+################        Important Subsets -- Growth        #######################################################
+#######################################################################################################
+cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
+growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
+growth_data <- na.omit(growth_data)
+growth_data$ant <- as.integer(growth_data$ant_t)
+growth_data$ant1 <- as.integer(growth_data$ant_t1)
+growth_data$Year_t <- as.factor(growth_data$Year_t)
+growth_data$year <- as.integer(growth_data$Year_t)
+growth_data$Plot <- as.factor(growth_data$Plot)
+growth_data$plot <- as.integer(growth_data$Plot)
 
 
+#######################################################################################################
+################        Important Subsets -- Flowering Data        #######################################################
+#######################################################################################################
+flower_data <- cactus[ , c("TotFlowerbuds_t", "volume_t","Year_t","Plot")]
+flower_data <- na.omit(flower_data)
+flower_data$Year_t <- as.factor(flower_data$Year_t)
+flower_data$year <- as.integer(flower_data$Year_t)
+flower_data$Plot <- as.factor(flower_data$Plot)
+flower_data$plot <- as.integer(flower_data$Plot)
+flower_data <- subset(flower_data, TotFlowerbuds_t > 0)
+
+
+#######################################################################################################
+################        Important Subsets -- Survival        #######################################################
+#######################################################################################################
+survival_data <- cactus[ , c("Plot","Year_t","Survival_t1","ant_t","volume_t")]
+survival_data <- na.omit(survival_data)
+survival_data$ant <- as.integer(survival_data$ant_t)
+survival_data$Year_t <- as.factor(survival_data$Year_t)
+survival_data$year <- as.integer(survival_data$Year_t)
+survival_data$Plot <- as.factor(survival_data$Plot)
+survival_data$plot <- as.integer(survival_data$Plot)
+
+
+#######################################################################################################
+################        Important Subsets -- Repro        #######################################################
+#######################################################################################################
+## Repro Data Set
+reproductive_data <- cactus[ , c("flower1_YN","volume_t","Year_t","Plot", "volume_t1")]
+reproductive_data <- na.omit(reproductive_data)
+reproductive_data$Year_t <- as.factor(reproductive_data$Year_t)
+reproductive_data$year <- as.integer(reproductive_data$Year_t)
+reproductive_data$Plot <- as.factor(reproductive_data$Plot)
+reproductive_data$plot <- as.integer(reproductive_data$Plot)
+
+
+#######################################################################################################
+################        Important Subsets -- Viability        #######################################################
+#######################################################################################################
+viability_data <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "volume_t","Year_t","Plot")]
+viability_data <- na.omit(viability_data)
+viability_data <- subset(viability_data, TotFlowerbuds_t1 > 0)
+viability_data$ant <- as.integer(viability_data$ant_t)
+viability_data$Year_t <- as.factor(viability_data$Year_t)
+viability_data$year <- as.integer(viability_data$Year_t)
+viability_data$Plot <- as.factor(viability_data$Plot)
+viability_data$plot <- as.integer(viability_data$Plot)
+
+
+#######################################################################################################
+################        Important Subsets -- Seeds        #######################################################
+#######################################################################################################
+seed_data <- seed
+seed_data <- na.omit(seed_data)
+seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
+seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
+seed_data <- subset(seed_data, seed_count > 0)
 
 
