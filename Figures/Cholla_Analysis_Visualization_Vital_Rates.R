@@ -1,12 +1,18 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-
+source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Cholla_Analysis_Vital_Rates.R")
 size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t), na.rm = TRUE), by = 0.1)
 #########################################################################################################################
 #### Growth Visuals #####################################################################################################
 ##########################################################################################################################################################################################################
 ## Extract & Format Data
 #extract from original data
+
 y_subset <- growth_data[,c("volume_t1","ant", "volume_t")]
+y_crem_subset_grow <- subset(y_subset, ant == 1)
+y_liom_subset_grow <- filter(y_subset, ant == 2)
+y_vac_subset_grow <- filter(y_subset, ant == 4)
+y_other_subset_grow <- filter(y_subset, ant == 3)
+grow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs.csv", header = TRUE,stringsAsFactors=T)
 ## Formulas
 y_other_mean_grow <- quantile(grow_data$beta0.3,0.5) + size_dummy * quantile(grow_data$beta1.3,0.5)
 y_other_low_grow <- quantile(grow_data$beta0.3,0.05) + size_dummy * quantile(grow_data$beta1.3,0.05)
@@ -26,7 +32,7 @@ y_vac_high_grow <- quantile(grow_data$beta0.4,0.95) + size_dummy * quantile(grow
 y_vac_subset_grow <- subset(y_subset, ant == 4)
 ## Panel Plots
 png("grow_panel.png")
-par(mar=c(2,2,2,2),oma=c(2,2,0,0))
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
               ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
 plot.new()
@@ -77,9 +83,9 @@ mtext("Log(Volume) year t+1",side=2,line=0,outer=TRUE,cex=1.3,las=0)
 dev.off()
 ## Panels 2
 png("grow_panel2.png")
-par(mar=c(5,5,0,2),oma=c(2,2,0,0))
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.9,1.5,1.5), widths = c(3.9,3.9,3.9))
+              ncol = 3, byrow = TRUE), heights = c(0.5,1.5,1.5), widths = c(3.9,3.9,3.9))
 plot.new()
 text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
 # Other (3)
@@ -91,6 +97,7 @@ for(i in 1:samp){
 }
 lines(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = "black", lwd = 4)
 points(x = log(y_other_subset_grow$volume_t), y = log(y_other_subset_grow$volume_t1), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.3)) 
+
 # Crem (1)
 plot(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = "red", lwd = 4,
      xlab = "", ylab = "") 
@@ -198,7 +205,12 @@ dev.off()
 #########################################################################################################################
 ## Extract & Format Data
 #extract from original ddata
+surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_outputs.csv", header = TRUE,stringsAsFactors=T)
 y_subset <- survival_data[,c("Survival_t1","ant", "volume_t")]
+y_crem_subset_surv <- subset(y_subset, ant == 1)
+y_liom_subset_surv <- filter(y_subset, ant == 2)
+y_vac_subset_surv <- filter(y_subset, ant == 4)
+y_other_subset_surv <- filter(y_subset, ant == 3)
 #Size Dummies for every ant
 size_crem = seq(min(log(y_crem_subset_surv$volume_t), na.rm = TRUE), max (log(y_crem_subset_surv$volume_t), na.rm = TRUE), by = 0.1)
 size_other = seq(min(log(y_other_subset_surv$volume_t), na.rm = TRUE), max (log(y_other_subset_surv$volume_t), na.rm = TRUE), by = 0.1)
@@ -361,9 +373,9 @@ dev.off()
 #### Flowering Visuals #####################################################################################################
 #########################################################################################################################
 ## Extract & Format Data
-#extract from StAN models
 flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_outputs.csv", header = TRUE,stringsAsFactors=T)
 flow_data_trunc <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_outputs_trunc.csv", header = TRUE,stringsAsFactors=T)
+## Formulas
 size_dummy_3 <- seq(min(log(flower_data$volume_t), na.rm = TRUE), max(log(flower_data$volume_t), na.rm = TRUE), by = 0.1)
 #format for overlay plots
 ## Formulas
@@ -438,6 +450,7 @@ dev.off()
 #format for overlay plots
 #extract from STAN models
 #extract from original data
+repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro_outputs.csv", header = TRUE,stringsAsFactors=T)
 y_subset <- reproductive_data[,c("flower1_YN", "volume_t")]
 ## Formulas
 size_dummy2 <- seq(min(log(reproductive_data$volume_t)),max(log(reproductive_data$volume_t)), by = 0.1)
@@ -558,7 +571,7 @@ plot(invlogit(mixed$beta) ~ factor(mixed$ant), xlab = "Ant Species",ylab = "Viab
 dev.off()
 
 #########################################################################################################################
-#### Seed Visuals #####################################################################################################
+#### Seed Produced Visuals #####################################################################################################
 #########################################################################################################################
 seed_outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_outputs.csv", header = TRUE,stringsAsFactors=T)
 y_crem <- seed_outputs$beta0.1
@@ -594,7 +607,7 @@ for(i in 1:nrow(seed_outputs)){
 png("seeds_bars.png")
 plot(exp(seeds$beta) ~ factor(seeds$ant), xlab = "Ant Species",ylab = "Expected Seeds", col = c("red","blue","pink"), main = "Liom. Provides Advantages for Seed Prod.")
 dev.off()
-y <- fruit2$seed_count
+y <- seed$seed_count
 samp100 <- sample(nrow(seed_yrep), 500)
 png("seeds_post.png")
 bayesplot::ppc_dens_overlay(y, seed_yrep[samp100,])
@@ -604,16 +617,17 @@ dev.off()
 barplot(means, col = c("grey","white"), names.arg = c("vacant","occupied"), ylim = c(0,150))
 arrows(x0 = 1, x1 = 1, y0 = low, y1 = high, angle = 90)
 
-
+########################################################################################################
 #### Seed Survival #################################################################################
-y_subset <- na.omit(precensus.dat)
+###################################################################################################
+y_subset <- (precensus.dat)
 seed_surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_surv_outputs.csv", header = TRUE,stringsAsFactors=T)
 #Size Dummies for every ant
 size_dummy = seq(min(precensus.dat$Log.size, na.rm = TRUE), max(precensus.dat$Log.size, na.rm = TRUE), by = 0.1)
 ## Formulas
-y_surv = quantile(seed_surv_data$beta0.3,0.5) + size_dummy * quantile(seed_surv_data$beta1.3,0.5)
-y_low_surv = quantile(seed_surv_data$beta0.3,0.05) + size_dummy * quantile(seed_surv_data$beta1.3,0.05)
-y_high_surv = quantile(seed_surv_data$beta0.3,0.95) + size_dummy * quantile(seed_surv_data$beta1.3,0.95)
+y_surv = quantile(seed_surv_data$beta0,0.5) + size_dummy * quantile(seed_surv_data$beta1,0.5)
+y_low_surv = quantile(seed_surv_data$beta0,0.05) + size_dummy * quantile(seed_surv_data$beta1,0.05)
+y_high_surv = quantile(seed_surv_data$beta0,0.95) + size_dummy * quantile(seed_surv_data$beta1,0.95)
 ## Panel Plots
 png("seed_surv_panels1.png")
 plot(x = size_dummy  ,y = invlogit(y_surv), type = "l", col = "black", lwd = 4, ylim = c(0,1))
@@ -624,6 +638,7 @@ polygon(c(size_dummy,rev(size_dummy)),c(invlogit(y_high_surv), rev(invlogit(y_lo
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 dev.off()
 
+plot(x = size_dummy, y = invlogit(y_surv), ylim = c(0,1))
 
 par(mfrow = c(1,1))
 
@@ -710,8 +725,42 @@ points(x = log(y_vac_subset_surv$volume_t), y = (y_vac_subset_surv$Survival_t1),
   dev.off()
 
 ################################################################################################################################################
+##################### Germination Yr 1&2 Visuals ########################################################################
+###############################################################################################################################################
+germ1_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ1_outputs.csv", header = TRUE,stringsAsFactors=T)
+trials_dummy <- seq(min(germ.dat$Input), max(germ.dat$Input), by = 0.1)
+y_germ1 <- quantile(germ1_data$beta0, 0.5) + quantile(germ1_data$beta1, 0.5)
+y_germ1_low <- quantile(germ1_data$beta0, 0.05) + quantile(germ1_data$beta1, 0.05)
+y_germ1_high <- quantile(germ1_data$beta0, 0.95) + quantile(germ1_data$beta1, 0.95)
+germ2_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ2_outputs.csv", header = TRUE,stringsAsFactors=T)
+y_germ2 <- quantile(germ2_data$beta0, 0.5) + quantile(germ2_data$beta1, 0.5)
+
+plot(c(invlogit(y_germ1),invlogit(y_germ2)), ylim = c(0,1))
+
+
+################################################################################################################################################
+##################### Precensus Survival Visuals ########################################################################
+###############################################################################################################################################
+
+
+################################################################################################################################################
+##################### Recruit Sizes Visuals ########################################################################
+###############################################################################################################################################
+
+
+################################################################################################################################################
 ##################### Binomial Visuals ########################################################################
 ###############################################################################################################################################
+binom_crem <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_crem.csv", header = TRUE,stringsAsFactors=T)
+binom_liom <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_liom.csv", header = TRUE,stringsAsFactors=T)
+binom_occ <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_occ.csv", header = TRUE,stringsAsFactors=T)
+binom_other <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_other.csv", header = TRUE,stringsAsFactors=T)
+
+y_occ <- quantile(binom_occ$beta0.1, 0.5) + quantile(binom_occ$beta1.1, 0.5)*size_dummy
+y_vac <- quantile(binom_occ$beta0.2, 0.5) + quantile(binom_occ$beta1.2, 0.5)*size_dummy
+
+plot(size_dummy, invlogit(y_occ), type = "l", col = "green", ylim = c(0,1))
+lines(size_dummy, invlogit(y_vac), col = "red")
 
 ################################################################################################################################################
 ##################### Multinomial Visuals ########################################################################
