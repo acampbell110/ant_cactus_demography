@@ -1,9 +1,81 @@
 options(mc.cores = parallel::detectCores())
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
+setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography/Data Analysis")
 #setwd("/Users/alicampbell")
 # import the data
+<<<<<<< HEAD
 cactus <- read.csv("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Setup_Data.R")
+=======
+cactus <- read.csv("cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
+#### Create local data frames to call in the Growth STAN models
+cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
+growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
+growth_data <- na.omit(growth_data)
+growth_data$ant <- as.integer(growth_data$ant_t)
+growth_data$ant1 <- as.integer(growth_data$ant_t1)
+growth_data$Year_t <- as.factor(growth_data$Year_t)
+growth_data$year <- as.integer(growth_data$Year_t)
+growth_data$Plot <- as.factor(growth_data$Plot)
+growth_data$plot <- as.integer(growth_data$Plot)
+## Flower Data Set (Total)
+flower_data <- cactus[ , c("TotFlowerbuds_t", "volume_t","Year_t","Plot")]
+flower_data <- na.omit(flower_data)
+flower_data$Year_t <- as.factor(flower_data$Year_t)
+flower_data$year <- as.integer(flower_data$Year_t)
+flower_data$Plot <- as.factor(flower_data$Plot)
+flower_data$plot <- as.integer(flower_data$Plot)
+flower_data <- subset(flower_data, TotFlowerbuds_t > 0)
+## Repro Data Set
+reproductive_data <- cactus[ , c("flower1_YN","volume_t","Year_t","Plot", "volume_t1")]
+reproductive_data <- na.omit(reproductive_data)
+reproductive_data$Year_t <- as.factor(reproductive_data$Year_t)
+reproductive_data$year <- as.integer(reproductive_data$Year_t)
+reproductive_data$Plot <- as.factor(reproductive_data$Plot)
+reproductive_data$plot <- as.integer(reproductive_data$Plot)
+## Viability Data Set
+viability_data <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "volume_t","Year_t","Plot")]
+viability_data <- na.omit(viability_data)
+viability_data <- subset(viability_data, TotFlowerbuds_t1 > 0)
+viability_data$ant <- as.integer(viability_data$ant_t)
+viability_data$Year_t <- as.factor(viability_data$Year_t)
+viability_data$year <- as.integer(viability_data$Year_t)
+viability_data$Plot <- as.factor(viability_data$Plot)
+viability_data$plot <- as.integer(viability_data$Plot)
+## Survival Data Set
+survival_data <- cactus[ , c("Plot","Year_t","Survival_t1","ant_t","volume_t")]
+survival_data <- na.omit(survival_data)
+survival_data$ant <- as.integer(survival_data$ant_t)
+survival_data$Year_t <- as.factor(survival_data$Year_t)
+survival_data$year <- as.integer(survival_data$Year_t)
+survival_data$Plot <- as.factor(survival_data$Plot)
+survival_data$plot <- as.integer(survival_data$Plot)
+## Seed Data Set
+seed_data <- seed
+seed_data <- na.omit(seed_data)
+seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
+seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
+seed_data <- subset(seed_data, seed_count > 0)
+### Fruit Surv
+fruit.surv<-read.csv("FruitSurvival.csv",header = TRUE,stringsAsFactors=T) %>% drop_na()
+fruit.surv <- fruit.surv[which(fruit.surv$Fr.on.grnd.not.chewed > 0),]
+### Germ Data
+germ.dat<-read.csv("Germination.csv") 
+germ.dat <- na.omit(germ.dat)
+germ.dat$rate <- 0
+for(i in 1:nrow(germ.dat)){
+if(germ.dat$Seedlings04[i] != 0){
+  germ.dat$rate[i] <- (germ.dat$Seedlings04[i] - germ.dat$Seedlings05[i])/germ.dat$Seedlings04[i]
+}
+}
+germ.dat[-c(42,39,40),]
+
+seedlings <- cactus %>% 
+  mutate(volume_t = log(volume(h = Height_t, w = Width_t, p = Perp_t)),
+         standvol_t = (volume_t - mean(volume_t,na.rm=T))/sd(volume_t,na.rm=T)) %>% 
+  filter(str_sub(Plot,1,1)=="H",
+         Recruit==1)
+>>>>>>> 270924ae4ab31b8fd417a0ee8f03152d31656c65
 
 ## Name local data variables to input to Stan Data
 # volume data
