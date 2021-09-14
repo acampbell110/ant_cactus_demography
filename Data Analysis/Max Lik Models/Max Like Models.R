@@ -212,6 +212,8 @@ for(i in 1:length(x_vol)){
 p_l_o <- exp(liom_other + vol_liom * x_vol + liom_vol_other* x_vol)/(1+exp(liom_other + vol_liom * x_vol + liom_vol_other* x_vol))
 p_l_l <- exp(liom_liom + vol_liom * x_vol + liom_vol_liom* x_vol)/(1+exp(liom_liom + vol_liom * x_vol + liom_vol_liom* x_vol))
 p_l_c <- exp(liom_crem + vol_liom * x_vol + liom_vol_crem* x_vol)/(1+exp(liom_crem + vol_liom * x_vol + liom_vol_crem* x_vol))
+p_l_o+p_l_l+p_l_c
+
 p_l_v <- vector()
 for(i in 1:length(x_vol)){
   p_l_v[i] <- 1 - sum(p_l_o[i],p_l_l[i],p_l_c[i])
