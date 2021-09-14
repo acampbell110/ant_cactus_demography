@@ -116,7 +116,7 @@ seedling.dat <- cactus[,c("logsize_t","logsize_t1","Recruit")]
 seedling.dat <- filter(seedling.dat, Recruit == 1)
 rec_1 <- glm(logsize_t ~ 1, family = "gaussian", data = seedling.dat)
 ## The selected model is rec_1
-summary(rec_1)
+summary(rec_1)$dispersion ## <- this is the variance so sd is sqrt of this
 int_rec <- coef(rec_1)[1]
 sd_rec <- 0.007995
   
@@ -162,6 +162,8 @@ ant_transition_models[[3]] <- multinom(ant_t1_relevel ~ 0+ant_t + logsize_t, dat
 ant_transition_models[[4]] <- multinom(ant_t1_relevel ~ 0+ant_t * logsize_t, data = cactus)
 AICtab(ant_transition_models)
 ## The selected model is 4
+predict(ant_transition_models[[4]],newdata=cactus[1,],type="probs")
+
 summary(ant_transition_models[[4]])
 other_other <- coef(ant_transition_models[[4]])[1]
 other_crem <- coef(ant_transition_models[[4]])[2]
