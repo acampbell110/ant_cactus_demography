@@ -7,6 +7,9 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Cholla_Analysis_Vital_Rates.R")
 size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t), na.rm = TRUE), by = 0.1)
+
+
+
 #########################################################################################################################
 #### Growth Visuals #####################################################################################################
 ##########################################################################################################################################################################################################
@@ -778,29 +781,30 @@ multi_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mut
 head(multi_data)
 
 
-
-par(mfrow = c(2,2))
-plot(x_vol,p_o_o, type = "n", ylim = c(0,1), main = "From Other to ...", xlab = "size", ylab = "Next Ant")
-lines(x_vol, p_o_o, col = "pink")
-lines(x_vol, p_o_l, col = "blue")
-lines(x_vol, p_o_c, col = "red")
-lines(x_vol, p_o_v, col = "black")
-
-plot(x_vol,p_l_o, type = "n", ylim = c(0,1), main = "From Liom to ...", xlab = "size", ylab = "Next Ant")
-lines(x_vol, p_l_o, col = "pink")
-lines(x_vol, p_l_l, col = "blue")
-lines(x_vol, p_l_c, col = "red")
-lines(x_vol, p_l_v, col = "black")
-
-plot(x_vol,p_c_o, type = "n", ylim = c(0,1), main = "From Crem to ...", xlab = "size", ylab = "Next Ant")
-lines(x_vol, p_c_o, col = "pink")
-lines(x_vol, p_c_l, col = "blue")
-lines(x_vol, p_c_c, col = "red")
-lines(x_vol, p_c_v, col = "black")
-
-plot(x_vol,p_v_o, type = "n", ylim = c(0,1), main = "From Vacant to ...", xlab = "size", ylab = "Next Ant")
-lines(x_vol, p_v_o, col = "pink")
-lines(x_vol, p_v_l, col = "blue")
-lines(x_vol, p_v_c, col = "red")
-lines(x_vol, p_v_v, col = "black")
+transition_prob = function(multi_data,x){
+  transition_1.1 = multi_data$beta.1.1/(1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_1.2 = multi_data$beta.1.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_1.3 = multi_data$beta.1.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_1.4 = multi_data$beta.1.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  
+  transition_2.1 = multi_data$beta.2.1/(1+multi_data$beta.1.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_2.2 = multi_data$beta.2.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_2.3 = multi_data$beta.2.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_2.4 = multi_data$beta.2.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  
+  transition_3.1 = multi_data$beta.3.1/(1+multi_data$beta.2.1+multi_data$beta.1.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_3.2 = multi_data$beta.3.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.2.2+multi_data$beta.1.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_3.3 = multi_data$beta.3.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.2.3+multi_data$beta.1.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_3.4 = multi_data$beta.3.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.2.4+multi_data$beta.1.4+multi_data$beta.4.4)
+  
+  transition_4.1 = multi_data$beta.1.1/(1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.1.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_4.2 = multi_data$beta.1.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.1.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_4.3 = multi_data$beta.1.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.1.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+  transition_4.4 = multi_data$beta.1.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.1.4)
+  
+  transition_1.5 = 1 - (transition_1.1 + transition_1.2 + transition_1.3 + transition_1.4)
+  transition_2.5 = 1 - (transition_2.1 + transition_2.2 + transition_2.3 + transition_2.4)
+  transition_3.5 = 1 - (transition_3.1 + transition_3.2 + transition_3.3 + transition_3.4)
+  transition_4.5 = 1 - (transition_4.1 + transition_4.2 + transition_4.3 + transition_4.4)
+}
 
