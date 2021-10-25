@@ -2,11 +2,17 @@ options(mc.cores = parallel::detectCores())
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography/Data Analysis")
 #setwd("/Users/alicampbell")
+#######################################################################################################
+##
+##                  The purpose of this file is to run each vital rate sub model separately
+##                          and run the vital rate models as one large model 
+##
+#######################################################################################################
+
 # import the data
-<<<<<<< HEAD
 cactus <- read.csv("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Setup_Data.R")
-=======
+
 cactus <- read.csv("cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
 #### Create local data frames to call in the Growth STAN models
 cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
@@ -673,6 +679,84 @@ full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g
 )
 )
 write.csv(full_outputs, "params_outputs_occ.csv")
+#######################################################################################################
+#### Occupied vs Unoccupied ##########################################################################
+######################################################################################################
+ant.dat2 <- cactus
+ant.dat2$occ_t <- 2
+ant.dat2$occ_t1 <- 1
+ant.dat2$occ_t1[ant.dat2$ant_t1 == "vacant"] <- 0 
+ant.dat2$occ_t[ant.dat2$ant_t == "vacant"] <- 1
+table_occ <- table(ant.dat2$Year_t, ant.dat2$ant_t)
+ant.dat2$sum[ant.dat2$Year_t == 2004] <- sum(table_occ[1,])
+ant.dat2$sum[ant.dat2$Year_t == 2005] <- sum(table_occ[2,])
+ant.dat2$sum[ant.dat2$Year_t == 2006] <- sum(table_occ[3,])
+ant.dat2$sum[ant.dat2$Year_t == 2007] <- sum(table_occ[4,])
+ant.dat2$sum[ant.dat2$Year_t == 2009] <- sum(table_occ[5,])
+ant.dat2$sum[ant.dat2$Year_t == 2010] <- sum(table_occ[6,])
+ant.dat2$sum[ant.dat2$Year_t == 2011] <- sum(table_occ[7,])
+ant.dat2$sum[ant.dat2$Year_t == 2012] <- sum(table_occ[8,])
+ant.dat2$sum[ant.dat2$Year_t == 2013] <- sum(table_occ[9,])
+ant.dat2$sum[ant.dat2$Year_t == 2014] <- sum(table_occ[10,])
+ant.dat2$sum[ant.dat2$Year_t == 2015] <- sum(table_occ[11,])
+ant.dat2$sum[ant.dat2$Year_t == 2016] <- sum(table_occ[12,])
+ant.dat2$sum[ant.dat2$Year_t == 2017] <- sum(table_occ[13,])
+ant.dat2$sum[ant.dat2$Year_t == 2018] <- sum(table_occ[14,])
+ant.dat2$sum[ant.dat2$Year_t == 2019] <- sum(table_occ[15,])
+ant.dat2 <- ant.dat2[,c("occ_t1","occ_t","Year_t","sum","volume_t")]
+ant.dat2 <- na.omit(ant.dat2)
+View(ant.dat2)
+ant.dat2 <- filter(ant.dat2, sum > 0)
+stan_data_ant_occ <- list(N_obs = nrow(ant.dat2),
+                          success = ant.dat2$occ_t1,
+                          N_ant = 2,
+                          prev_ant = ant.dat2$occ_t,
+                          N_year = length(unique(ant.dat2$Year_t)),
+                          year = as.factor(as.integer(ant.dat2$Year_t)),
+                          trials = ant.dat2$sum,
+                          vol_ant = ant.dat2$volume_t
+)
 
+fit_ant_occ <- stan("STAN Models/Multinomial Practice/crem_vac_prac.stan",data = stan_data_ant_occ, warmup = 500, iter = 3000, chains = 3, cores = 2, thin = 1)
+ant_outputs_occ <- rstan::extract(fit_ant_occ, pars = c("beta0","beta1","sigma")
+)
+write.csv(ant_outputs_occ, "ant_outputs_occ.csv")
+occ_yrep <- rstan::extract(fit_ant_occ, pars = c("y_rep"))$y_rep
+######################################################################################################
+#### Multinomial Model ###############################################################################
+######################################################################################################
+ants_na <- ants[,c("ant_t1","logsize_t","ant_t")]
+ants_na <- na.omit(ants_na)
+ants_stan <- slice_sample(ants_na, n = 1000)
+ants_stan$logsize <- as.numeric(ants_stan$logsize)
+ants_stan$ant_t <- (as.factor(ants_stan$ant_t))
+ants_stan$ant_t <- relevel(factor(ants_stan$ant_t),ref="vacant")
+ants_stan$ant_t1 <- relevel(factor(ants_stan$ant_t1),ref="vacant")
+x = as.matrix(ants_stan$logsize)
+x = cbind(x,ants_stan$ant_t)
+ants_stan$ant_t <- relevel(factor(ants_stan$ant_t),ref="vacant")
+ants_stan$ant_t1 <- relevel(factor(ants_stan$ant_t1),ref="vacant")
+## Make each prev ant species have its own column
+crem <- as.integer(ants_stan$ant_t == "crem")
+vac <- as.integer(ants_stan$ant_t == "vacant")
+liom <- as.integer(ants_stan$ant_t == "liom")
+other <- as.integer(ants_stan$ant_t == "other")
+ants_stan$ant_t1 <- relevel(factor(ants_stan$ant_t1),ref="vacant")
+x = as.matrix(ants_stan$logsize)
+x = cbind(x,crem)
+x = cbind(x,liom)
+x = cbind(x,other)
+x = cbind(x, vac)
+size_ant_dat2 <- list(K = 4, # number of possible outcomes
+                      N = (dim(ants_stan)[1]), # number of observations
+                      D = 5, # number of predictors
+                      y = as.integer(as.factor(ants_stan$ant_t1)), # observations
+                      x = x) # design matrix
 
+## Getting no parameters error so here are different ways to run the code to try and fix this
+fit_size_ant2 <- stan(model_code = size_ant_model, 
+                      data = size_ant_dat, warmup = 100, iter = 1000, chains = 3, algorithm="Fixed_param")
 
+fit_size_ant_summary2 <- summary(fit_size_ant2, par="beta", probs=.5)$summary %>% as.data.frame
+size_ant2 <- rstan::extract(fit_size_ant, pars = c("beta"))
+write.csv(size_ant2,"size_ant_outputs2.csv")
