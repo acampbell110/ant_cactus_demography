@@ -1,5 +1,5 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-
+source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Cholla_Analysis_Vital_Rates.R")
 #### Y_rep checks
 
 ## Growth ################################################################################################
@@ -193,5 +193,20 @@ png(file = "rec_conv1")
 bayesplot::mcmc_trace(As.mcmc.list(fit_rec, pars=c("beta0")))
 dev.off()
 
-
+## Binomial Transition Model ##############################################################################
+y <- stan_data_ant_occ$success
+occ_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_occ.csv", header = TRUE,stringsAsFactors=T)
+yrep_occ <- occ_yrep
+samp100 <- sample(nrow(yrep_occ), 1000)
+## Overlay Plots
+png(file = "occ_post1.png")
+bayesplot::ppc_dens_overlay(y, yrep_occ[samp100,])
+dev.off()
+png(file = "occ_ant_post1.png")
+bayesplot::ppc_dens_overlay_grouped(y, yrep_occ[samp100,], group = stan_data_ant_occ$prev_ant)
+dev.off()
+## Convergence Plots
+png("occ_conv2.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_ant_occ, pars=c("beta0", "beta1")))
+dev.off()
 
