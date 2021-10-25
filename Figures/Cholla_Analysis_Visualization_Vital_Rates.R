@@ -1,3 +1,9 @@
+##################################################################################################################
+##
+##              This file visualizes the outputs of the Bayesian Models created in the sourced code
+##
+##################################################################################################################
+##################################################################################################################
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Cholla_Analysis_Vital_Rates.R")
 size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t), na.rm = TRUE), by = 0.1)
@@ -739,32 +745,40 @@ plot(c(invlogit(y_germ1),invlogit(y_germ2)), ylim = c(0,1))
 
 
 ################################################################################################################################################
-##################### Precensus Survival Visuals ########################################################################
-###############################################################################################################################################
-
-
-################################################################################################################################################
 ##################### Recruit Sizes Visuals ########################################################################
 ###############################################################################################################################################
+recruit_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/rec_outputs.csv", header = TRUE,stringsAsFactors=T)
+y_rec = quantile(recruit_data$beta0,0.5)
+y_rec_low = quantile(recruit_data$beta0,0.05)
+y_rec_high = quantile(recruit_data$beta0,0.95)
 
+plot(y_rec, ylim = c(0,0.25))
+arrows(x0 = 1, x1 = 1, y0 = y_rec_low, y1 = y_rec_high, angle = 90)
 
 ################################################################################################################################################
 ##################### Binomial Visuals ########################################################################
 ###############################################################################################################################################
-binom_crem <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_crem.csv", header = TRUE,stringsAsFactors=T)
-binom_liom <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_liom.csv", header = TRUE,stringsAsFactors=T)
 binom_occ <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_occ.csv", header = TRUE,stringsAsFactors=T)
-binom_other <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_other.csv", header = TRUE,stringsAsFactors=T)
+size_dummy_rec <- seq(min(log(ant.dat2$volume_t)), max(log(ant.dat2$volume_t)), by = 0.1)
+occ_beta0 = median(binom_occ$beta0.1)
+occ_beta1 = median(binom_occ$beta1.1)
+vac_beta0 = median(binom_occ$beta0.2)
+vac_beta2 = median(binom_occ$beta1.2)
 
-y_occ <- quantile(binom_occ$beta0.1, 0.5) + quantile(binom_occ$beta1.1, 0.5)*size_dummy
-y_vac <- quantile(binom_occ$beta0.2, 0.5) + quantile(binom_occ$beta1.2, 0.5)*size_dummy
+y_occ <- occ_beta0 + occ_beta1*size_dummy_rec
+y_vac <- quantile(binom_occ$beta0.2, 0.5) + quantile(binom_occ$beta1.2, 0.5)*size_dummy_rec
 
-plot(size_dummy, invlogit(y_occ), type = "l", col = "green", ylim = c(0,1))
-lines(size_dummy, invlogit(y_vac), col = "red")
+plot(size_dummy_rec, invlogit(y_occ), type = "l", col = "green", ylim = c(0,1))
+lines(size_dummy_rec, invlogit(y_vac), col = "red")
 
 ################################################################################################################################################
 ##################### Multinomial Visuals ########################################################################
 ###############################################################################################################################################
+multi_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/size_ant_outputs2.csv", header = TRUE,stringsAsFactors=T)
+head(multi_data)
+
+
+
 par(mfrow = c(2,2))
 plot(x_vol,p_o_o, type = "n", ylim = c(0,1), main = "From Other to ...", xlab = "size", ylab = "Next Ant")
 lines(x_vol, p_o_o, col = "pink")
