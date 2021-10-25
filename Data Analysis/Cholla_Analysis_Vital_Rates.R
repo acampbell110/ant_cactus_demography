@@ -8,128 +8,10 @@ setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography/Data Analysis")
 ##                          and run the vital rate models as one large model 
 ##
 #######################################################################################################
-
-# import the data
-cactus <- read.csv("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Setup_Data.R")
 
-cactus <- read.csv("cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
-#### Create local data frames to call in the Growth STAN models
-cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
-growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
-growth_data <- na.omit(growth_data)
-growth_data$ant <- as.integer(growth_data$ant_t)
-growth_data$ant1 <- as.integer(growth_data$ant_t1)
-growth_data$Year_t <- as.factor(growth_data$Year_t)
-growth_data$year <- as.integer(growth_data$Year_t)
-growth_data$Plot <- as.factor(growth_data$Plot)
-growth_data$plot <- as.integer(growth_data$Plot)
-## Flower Data Set (Total)
-flower_data <- cactus[ , c("TotFlowerbuds_t", "volume_t","Year_t","Plot")]
-flower_data <- na.omit(flower_data)
-flower_data$Year_t <- as.factor(flower_data$Year_t)
-flower_data$year <- as.integer(flower_data$Year_t)
-flower_data$Plot <- as.factor(flower_data$Plot)
-flower_data$plot <- as.integer(flower_data$Plot)
-flower_data <- subset(flower_data, TotFlowerbuds_t > 0)
-## Repro Data Set
-reproductive_data <- cactus[ , c("flower1_YN","volume_t","Year_t","Plot", "volume_t1")]
-reproductive_data <- na.omit(reproductive_data)
-reproductive_data$Year_t <- as.factor(reproductive_data$Year_t)
-reproductive_data$year <- as.integer(reproductive_data$Year_t)
-reproductive_data$Plot <- as.factor(reproductive_data$Plot)
-reproductive_data$plot <- as.integer(reproductive_data$Plot)
-## Viability Data Set
-viability_data <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "volume_t","Year_t","Plot")]
-viability_data <- na.omit(viability_data)
-viability_data <- subset(viability_data, TotFlowerbuds_t1 > 0)
-viability_data$ant <- as.integer(viability_data$ant_t)
-viability_data$Year_t <- as.factor(viability_data$Year_t)
-viability_data$year <- as.integer(viability_data$Year_t)
-viability_data$Plot <- as.factor(viability_data$Plot)
-viability_data$plot <- as.integer(viability_data$Plot)
-## Survival Data Set
-survival_data <- cactus[ , c("Plot","Year_t","Survival_t1","ant_t","volume_t")]
-survival_data <- na.omit(survival_data)
-survival_data$ant <- as.integer(survival_data$ant_t)
-survival_data$Year_t <- as.factor(survival_data$Year_t)
-survival_data$year <- as.integer(survival_data$Year_t)
-survival_data$Plot <- as.factor(survival_data$Plot)
-survival_data$plot <- as.integer(survival_data$Plot)
-## Seed Data Set
-seed_data <- seed
-seed_data <- na.omit(seed_data)
-seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
-seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
-seed_data <- subset(seed_data, seed_count > 0)
-### Fruit Surv
-fruit.surv<-read.csv("FruitSurvival.csv",header = TRUE,stringsAsFactors=T) %>% drop_na()
-fruit.surv <- fruit.surv[which(fruit.surv$Fr.on.grnd.not.chewed > 0),]
-### Germ Data
-germ.dat<-read.csv("Germination.csv") 
-germ.dat <- na.omit(germ.dat)
-germ.dat$rate <- 0
-for(i in 1:nrow(germ.dat)){
-if(germ.dat$Seedlings04[i] != 0){
-  germ.dat$rate[i] <- (germ.dat$Seedlings04[i] - germ.dat$Seedlings05[i])/germ.dat$Seedlings04[i]
-}
-}
-germ.dat[-c(42,39,40),]
-
-seedlings <- cactus %>% 
-  mutate(volume_t = log(volume(h = Height_t, w = Width_t, p = Perp_t)),
-         standvol_t = (volume_t - mean(volume_t,na.rm=T))/sd(volume_t,na.rm=T)) %>% 
-  filter(str_sub(Plot,1,1)=="H",
-         Recruit==1)
->>>>>>> 270924ae4ab31b8fd417a0ee8f03152d31656c65
-
-## Name local data variables to input to Stan Data
-# volume data
-vol_grow = log(growth_data$volume_t)
-vol_flower = log(flower_data$volume_t)
-vol_surv = log(survival_data$volume_t)
-vol_repro = log(reproductive_data$volume_t)
-vol_viab = log(viability_data$volume_t)
-vol1_repro <- log(reproductive_data$volume_t1)
-# outcome predictors
-y_repro = reproductive_data$flower1_YN
-y_grow = log(growth_data$volume_t1)
-y_surv = survival_data$Survival_t1
-y_flow <- flower_data$TotFlowerbuds_t
-# num of obs
-N_grow = nrow(growth_data)
-N_flower = nrow(flower_data)
-N_surv = nrow(survival_data)
-N_viab = nrow(viability_data)
-N_repro = nrow(reproductive_data)
-N_ant = 4
-N_Year_grow <- max(growth_data$year)
-N_Plot_grow <- max(growth_data$plot)
-N_Year_surv <- max(survival_data$year)
-N_Plot_surv <- max(survival_data$plot)
-N_Year_viab <- max(viability_data$year)
-N_Plot_viab <- max(viability_data$plot)
-N_Year_repro <- max(reproductive_data$year)
-N_Plot_repro <- max(reproductive_data$plot)
-N_Year_flower <- max(flower_data$year)
-N_Plot_flower <- max(flower_data$plot)
-# ant data
-ant_grow = growth_data$ant
-ant_surv = survival_data$ant
-ant_viab = viability_data$ant
-# random effects
-plot_grow <- growth_data$plot
-year_grow <- growth_data$year
-plot_flower = flower_data$plot
-year_flower = flower_data$year
-plot_surv = survival_data$plot
-year_surv = survival_data$year
-plot_viab <- viability_data$plot
-year_viab <- viability_data$year
-plot_repro <- reproductive_data$plot
-year_repro <- reproductive_data$year
-
-#### Growth Model
+#### Growth Model ############################################################################
+##############################################################################################
 ## Create Stan Data
 stan_data_grow <- list(N_grow = N_grow, ## number of observations
                   vol_grow = vol_grow, ## predictors volume
@@ -152,7 +34,8 @@ grow_outputs <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1","sigma
 grow_yrep <- rstan::extract(fit_grow_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(grow_outputs, "grow_outputs.csv")
 
-#### Survival Model
+#### Survival Model ########################################################################################
+########################################################################################################
 ## Create Stan Data
 stan_data_surv <- list(N_surv = N_surv, ## number of observations
                   vol_surv = vol_surv, ## predictors volume
@@ -176,7 +59,8 @@ surv_yrep <- rstan::extract(fit_surv_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(surv_outputs, "surv_outputs.csv")
 
 
-#### Flowering Model
+#### Flowering Model #################################################################################
+######################################################################################################
 ## Create Stan Data
 stan_data_flow <- list(N_flower = N_flower, ## number of observations
                        lower_limit = 1, ## we want the 0s to be removed
@@ -218,7 +102,8 @@ flow_outputs_trunc <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("phi","bet
 write.csv(flow_outputs_trunc, "flow_outputs_trunc.csv")
 
 
-#### Viability Model
+#### Viability Model #################################################################################
+#######################################################################################################
 ## Create Stan Data
 stan_data_viab <- list(N_viab = N_viab, ## number of observations
                        good_viab = good_viab,
@@ -241,7 +126,8 @@ viab_outputs <- rstan::extract(fit_viab_mix_ant, pars = c("beta0"))
 write.csv(viab_outputs, "viab_outputs.csv")
 
 
- #### Reproductive State Model
+ #### Reproductive State Model #######################################################################################
+################################################################################################################################
 ## Create Stan Data
 stan_data_repro <- list(N_repro = N_repro, ## number of observations
                   vol1_repro = vol1_repro, ## predictors volume
@@ -263,7 +149,8 @@ repro_yrep <- rstan::extract(fit_repro_mix_ant, pars = c("y_rep"))$y_rep
 write.csv(repro_outputs, "repro_outputs.csv")
 
 
-#### Seeds Model (# Seeds per fruit)
+#### Seeds Model (# Seeds per fruit/flower) ##########################################################
+###############################################################################################
 ## Create Stan Data
 stan_data_seed <- list(N_obs_seed = nrow(seed_data),
                         N_ant_seed = 3,
@@ -276,7 +163,7 @@ seed_outputs <- rstan::extract(fit_seed, pars = c("beta0","phi","sigma_v","v","s
 write.csv(seed_outputs, "seed_outputs.csv")
 seed_yrep <- rstan::extract(fit_seed, pars = c("y_rep"))$y_rep
 
-#### Seed Survival Pre Census
+#### Seed Survival Pre Census #####################################################################################################################################
 ## Create Stan Data
 stan_data_seed_surv <- list(N_ss = nrow(precensus.dat),
                             N_Plant_ss = length(unique(precensus.dat$plant.ID)),
@@ -290,7 +177,8 @@ seed_surv_outputs <- rstan::extract(fit_seed_surv, pars = c("beta0","beta1","sig
 write.csv(seed_surv_outputs, "seed_surv_outputs.csv")
 seed_surv_yrep <- rstan::extract(fit_seed_surv, pars = c("y_rep"))$y_rep
 
-#### Number Fruits Per Plant
+#### Number Fruits Per Plant ######################################################################
+###################################################################################################
 ## Create Stan Data
 stan_data_fruit <- list()
 fit_fruit <- stan(file = "STAN Models/fruit.stan", data = stan_data_fruit, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
@@ -298,7 +186,8 @@ fruit_outputs <- rstan::extract(fit_fruit, pars = c("beta0","beta1","sigma_u","u
 write.csv(fruit_outputs, "fruit_outputs.csv")
 fruit_yrep <- rstan::extract(fit_fruit, pars = c("y_rep"))$y_rep
 
-#### Fruit Survival
+#### Fruit Survival ######################################################################################
+#####################################################################################################
 ## Create Stan Data
 Fr.on.grnd.not.chewed/Fr.on.plant
 stan_fruit_surv <- list(on_ground = fruit.surv$Fr.on.grnd.not.chewed,
@@ -316,7 +205,8 @@ fruit_surv_outputs <- rstan::extract(fit_fruit_surv, pars = c("beta0"))
 write.csv(fruit_surv_outputs, "fruit_surv_outputs.csv")
 fruit_surv_yrep <- rstan::extract(fit_fruit_surv, pars = c("y_rep"))$y_rep
 
-#### Germination 
+#### Germination ################################################################################################
+######################################################################################################
 y_germ1 <- germ.dat$Seedlings04
 stan_data_germ1 <- list(N_germ = nrow(germ.dat),
                        y_germ1 = as.integer(germ.dat$Seedlings04),
@@ -334,8 +224,9 @@ write.csv(germ2_outputs, "germ2_outputs.csv")
 germ1_yrep <- rstan::extract(fit_germ1, pars = c("y_rep"))$y_rep
 germ2_yrep <- rstan::extract(fit_germ2, pars = c("y_rep"))$y_rep
 
-#### Recruits
-
+#### Recruits #######################################################################################3
+####################################################################################################
+## Create Stan Data
 stan_data_rec <- list(N_rec = length(seedling.dat$volume_t),
                       y_rec = log(seedling.dat$volume_t)
 )
@@ -343,7 +234,8 @@ fit_rec <- stan(file = "STAN Models/rec.stan",data = stan_data_rec, warmup = 500
 rec_outputs <- rstan::extract(fit_rec, pars = c("beta0"))
 write.csv(rec_outputs,"rec_outputs.csv")
 rec_yrep <- rstan::extract(fit_rec,pars = c("y_rep"))$y_rep
-########################################## The Full Model ###########################################################
+############################################################3333#######################################
+########################################## The Full Model (All ant states) ###########################################################
 stan_data <- list(
   #### Growth Variables
   N_grow = N_grow, ## number of observations
@@ -440,6 +332,7 @@ full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g
                                )
 write.csv(full_outputs, "params_outputs.csv")
 
+#####################################################################################################
 ########################################## The Full Model Occuopied or Vacant Only ###########################################################
 cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$occ_t <- "occupied"
@@ -680,7 +573,7 @@ full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g
 )
 write.csv(full_outputs, "params_outputs_occ.csv")
 #######################################################################################################
-#### Occupied vs Unoccupied ##########################################################################
+#### Occupied vs Unoccupied Binomial Prob ##########################################################################
 ######################################################################################################
 ant.dat2 <- cactus
 ant.dat2$occ_t <- 2
@@ -717,15 +610,15 @@ stan_data_ant_occ <- list(N_obs = nrow(ant.dat2),
                           vol_ant = ant.dat2$volume_t
 )
 
-fit_ant_occ <- stan("STAN Models/Multinomial Practice/crem_vac_prac.stan",data = stan_data_ant_occ, warmup = 500, iter = 3000, chains = 3, cores = 2, thin = 1)
+fit_ant_occ <- stan("STAN Models/crem_vac_prac.stan",data = stan_data_ant_occ, warmup = 500, iter = 3000, chains = 3, cores = 2, thin = 1)
 ant_outputs_occ <- rstan::extract(fit_ant_occ, pars = c("beta0","beta1","sigma")
 )
 write.csv(ant_outputs_occ, "ant_outputs_occ.csv")
 occ_yrep <- rstan::extract(fit_ant_occ, pars = c("y_rep"))$y_rep
 ######################################################################################################
-#### Multinomial Model ###############################################################################
+#### Multinomial Model Ant State ###############################################################################
 ######################################################################################################
-ants_na <- ants[,c("ant_t1","logsize_t","ant_t")]
+ants_na <- cactus[,c("ant_t1","logsize_t","ant_t")]
 ants_na <- na.omit(ants_na)
 ants_stan <- slice_sample(ants_na, n = 1000)
 ants_stan$logsize <- as.numeric(ants_stan$logsize)
@@ -747,16 +640,52 @@ x = cbind(x,crem)
 x = cbind(x,liom)
 x = cbind(x,other)
 x = cbind(x, vac)
-size_ant_dat2 <- list(K = 4, # number of possible outcomes
+size_ant_dat <- list(K = 4, # number of possible outcomes
                       N = (dim(ants_stan)[1]), # number of observations
                       D = 5, # number of predictors
                       y = as.integer(as.factor(ants_stan$ant_t1)), # observations
                       x = x) # design matrix
 
 ## Getting no parameters error so here are different ways to run the code to try and fix this
-fit_size_ant2 <- stan(model_code = size_ant_model, 
+fit_size_ant2 <- stan("STAN Models/size_ant_model.stan", 
                       data = size_ant_dat, warmup = 100, iter = 1000, chains = 3, algorithm="Fixed_param")
 
 fit_size_ant_summary2 <- summary(fit_size_ant2, par="beta", probs=.5)$summary %>% as.data.frame
-size_ant2 <- rstan::extract(fit_size_ant, pars = c("beta"))
+size_ant2 <- rstan::extract(fit_size_ant2, pars = c("beta"))
 write.csv(size_ant2,"size_ant_outputs2.csv")
+
+######################################################################################################
+#### Multinomial Model Ant State (no size) ###############################################################################
+######################################################################################################
+ants_na <- cactus[,c("ant_t1","ant_t")]
+ants_na <- na.omit(ants_na)
+ants_stan <- slice_sample(ants_na, n = 1000)
+ants_stan$ant_t <- (as.factor(ants_stan$ant_t))
+ants_stan$ant_t <- relevel(factor(ants_stan$ant_t),ref="vacant")
+ants_stan$ant_t1 <- relevel(factor(ants_stan$ant_t1),ref="vacant")
+x = as.matrix(x,ants_stan$ant_t)
+ants_stan$ant_t <- relevel(factor(ants_stan$ant_t),ref="vacant")
+ants_stan$ant_t1 <- relevel(factor(ants_stan$ant_t1),ref="vacant")
+## Make each prev ant species have its own column
+crem <- as.integer(ants_stan$ant_t == "crem")
+vac <- as.integer(ants_stan$ant_t == "vacant")
+liom <- as.integer(ants_stan$ant_t == "liom")
+other <- as.integer(ants_stan$ant_t == "other")
+ants_stan$ant_t1 <- relevel(factor(ants_stan$ant_t1),ref="vacant")
+x = as.matrix(x,crem)
+x = cbind(x,liom)
+x = cbind(x,other)
+x = cbind(x, vac)
+ant_dat <- list(K = 4, # number of possible outcomes
+                     N = (dim(ants_stan)[1]), # number of observations
+                     D = 8, # number of predictors
+                     y = as.integer(as.factor(ants_stan$ant_t1)), # observations
+                     x = x) # design matrix
+
+## Getting no parameters error so here are different ways to run the code to try and fix this
+fit_ant2 <- stan("STAN Models/size_ant_model.stan", 
+                      data = ant_dat, warmup = 100, iter = 1000, chains = 3, algorithm="Fixed_param")
+
+fit_ant_summary2 <- summary(fit_ant2, par="beta", probs=.5)$summary %>% as.data.frame
+ant2 <- rstan::extract(fit_ant2, pars = c("beta"))
+write.csv(ant2,"ant_outputs2.csv")
