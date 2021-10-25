@@ -40,3 +40,6 @@ vignettes/*.pdf
 
 .DS_Store
 .RDataTmp1
+.DS_Store
+Data Analysis/.DS_Store
+Data Analysis/STAN Models/.DS_Store
