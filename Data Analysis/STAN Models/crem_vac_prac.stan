@@ -4,7 +4,7 @@ data {
   int<lower=1> trials[N_obs]; // number of trials
   vector[N_obs] vol_ant;	//size_t
   int <lower = 1> N_ant; // number of ant states
-  int <lower = 0, upper = N_ant> prev_ant[N_obs]; // the list of ant species 
+  int <lower = 1, upper = N_ant> prev_ant[N_obs]; // the list of ant species 
 }
 parameters {
   vector[N_ant] beta0; //intercept, unique to ant sp
