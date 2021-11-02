@@ -71,72 +71,151 @@ beta<-function(vac_rec){
 }
 
 
-#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
-transition.x<-function(x, i, j, num_ants, params){
+#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (OCC VS VAC)
+transition.2<-function(x, i, j, params){
   xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## IF only one ant present, there will be no transition values
-  ## Now for if there are two ants aka length(ants) = 2
-  if(num_ants == 2){
-    occ_occ = (invlogit(params[108] + params[109]*xb))
-    occ_vac = (1 - invlogit(params[108] + params[109]*xb))
-    vac_occ = (invlogit(params[98] + params[99]*xb))
-    vac_vac = (1 - invlogit(params[98] + params[99]*xb))
-    ## Now return
-    if((i == "crem" | i == "liom" | i == "other") & (j == "crem" | j == "liom" | j == "other")) return(occ_occ)
-    if((i == "crem" | i == "liom" | i == "other") & j == "vac") return(occ_vac)
-    if(i == "vac" & j == "vac") return(vac_vac)
-    if(i == "vac" & (j == "crem" | j == "liom" | j == "other")) return(vac_occ)
-  }
-  ## Now if there are four ants
-  if(num_ants == 4){
-    cc = multi_data$beta.1.1 + multi_data$beta.2.1*x
-    co 
-    cl
-    cv
-  }
+  ifelse(num_ants == 2, (
+    ##YES 2 ants -> Calculate the probabilities
+      occ_occ = (invlogit(params[108] + params[109]*xb)) & 
+      occ_vac = (1 - invlogit(params[108] + params[109]*xb)) & 
+      vac_occ = (invlogit(params[98] + params[99]*xb)) & 
+      vac_vac = (1 - invlogit(params[98] + params[99]*xb)) & 
+      ## Return the probabilities
+      ifelse((i == "crem" | i == "liom" | i == "other") & (j == "crem" | j == "liom" | j == "other"), return(occ_occ),
+             ifelse((i == "crem" | i == "liom" | i == "other") & j == "vac", return(occ_vac),
+                    ifelse(i == "vac" & j == "vac", return(vac_vac),
+                           return(vac_occ)
+                    )
+             )
+      ) 
+  ),
+    ## NO 2 ants
+  )
 }
-  
-transition.x(4,i = "vac",j = "vac",num_ants = 4,cholla)
-  
+transition.2(x = 4, i = "vac",j = "crem", params = cholla)
 
+#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)
+transition.4<-function(x, i, j, params){
+  xb=pmin(pmax(x,cholla_min),cholla_max)
+  ##YES 4 ants -> Calculate the probabilities
+  crem_crem = 5 
+    crem_liom = 5 
+    crem_other = 5 
+    crem_vac = 5 
+    liom_crem = 4 
+    liom_liom = 4 
+    liom_other = 4 
+    liom_vac = 4 
+    other_crem  = 3 
+    other_liom = 3 
+    other_other = 3 
+    other_vac = 3 
+    vac_crem = 2 
+    vac_liom = 2 
+    vac_other = 2 
+    vac_vac = 2 
+    ## Return the probabilities
+    ifelse(i == "crem",
+           ##YES CREM
+           ifelse(j == "crem",
+                  ## YES J CREM
+                  return(crem_crem),
+                  ## NO J CREM
+                  ifelse(j == "liom",
+                         ##YES J LIOM
+                         return(crem_liom),
+                         ##NO J LIOM
+                         ifelse(j == "other",
+                                ##YES J OTHER
+                                return(crem_other),
+                                ##NO J OTHER
+                                return(crem_vac)
+                         )
+                  )
+           ),
+           ##NO CREM
+           ifelse(i == "liom",
+                  ## YES LIOM
+                  ifelse(j == "crem",
+                         ##YES J CREM
+                         return(liom_crem),
+                         ##NO J CREM
+                         ifelse(j == "liom",
+                                ##YES J LIOM
+                                return(liom_liom),
+                                ##NO J LIOM
+                                ifelse(j == "other",
+                                       ##YES J OTHER
+                                       return(liom_other),
+                                       ##NO J OTHER
+                                       return(liom_vac)
+                                )
+                         )
+                  ),
+                  ##NO LIOM
+                  ifelse(i == "other",
+                         ##YES OTHER
+                         ifelse(j == "crem",
+                                ##YES J CREM
+                                return(other_crem),
+                                ##NO J CREM
+                                ifelse(j == "liom",
+                                       ##YES J LIOM
+                                       return(other_liom),
+                                       ##NO J LIOM
+                                       ifelse(j == "other",
+                                              ##YES J OTHER
+                                              return(other_other),
+                                              ##NO J OTHER
+                                              return(other_vac)
+                                       )
+                                )
+                         ),
+                         ##NO OTHER
+                         ifelse(i == "vac",
+                                ##YES VAC
+                                ifelse(j == "crem",
+                                       ##YES J CREM
+                                       return(vac_crem),
+                                       ##NO J CREM
+                                       ifelse(j == "liom",
+                                              ##YES J LIOM
+                                              return(vac_liom),
+                                              ##NO J LIOM
+                                              ifelse(j == "other",
+                                                     ##YES J OTHER
+                                                     return(vac_other),
+                                                     ##NO J OTHER
+                                                     return(vac_vac)
+                                              )
+                                       )
+                                ),
+                                ##NO VAC
+                                
+                         )
+                  )
+           )
+    )
+}
+transition.4(x = 4, i = "crem",j = "other", params = cholla)
 
+#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE 
+transition.x <- function(x,i,j,num_ants,params){
+  ifelse(num_ants == 2, transition.2(x,i,j,params),
+         transition.4(x,i,j,params))
+}
+
+transition.x(x = 4, i = "crem", j = "other", num_ants = 4, params = cholla)
 
 #GROWTH*SURVIVAL*ANT PROBABILITIES
-ptxy<-function(x,y,params,i, j, ant){
-  xb=pmin(pmax(x,cholla_min),cholla_max)
-  
-  
-  ## Crem
-  vac_vac = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(xb,i,j) #i=vac
-  vac_crem = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(xb,i,j) #i=vac
-  crem_crem = sx(xb,params)$s_crem*gxy(xb,y,params)$g_crem*transition.x(xb,i,j) #i=crem
-  crem_vac = sx(xb,params)$s_crem*gxy(xb,y,params)$g_crem*transition.x(xb,i,j) #i=crem
-  if(i == "occ" & j == "occ" & ant == "crem") return(crem_crem)
-  if(i == "occ" & j == "vac" & ant == "crem") return(crem_vac)
-  if(i == "vac" & j == "vac" & ant == "crem") return(vac_vac)
-  if(i == "vac" & j == "occ" & ant == "crem") return(vac_crem)
-  ## Liom
-  vac_vac = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(xb,i,j) #i=vac
-  vac_liom = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(xb,i,j) #i=vac
-  liom_liom = sx(xb,params)$s_liom*gxy(xb,y,params)$g_liom*transition.x(xb,i,j) #i=liom
-  liom_vac = sx(xb,params)$s_liom*gxy(xb,y,params)$g_liom*transition.x(xb,i,j) #i=liom
-  if(i == "occ" & j == "occ" & ant == "liom") return(liom_liom)
-  if(i == "occ" & j == "vac" & ant == "liom") return(liom_vac)
-  if(i == "vac" & j == "vac" & ant == "liom") return(vac_vac)
-  if(i == "vac" & j == "occ" & ant == "liom") return(vac_liom)
-  ## Other
-  vac_vac = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(xb,i,j) #i=vac
-  vac_other = sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(xb,i,j) #i=vac
-  other_other = sx(xb,params)$s_other*gxy(xb,y,params)$g_other*transition.x(xb,i,j) #i=other
-  other_vac = sx(xb,params)$s_other*gxy(xb,y,params)$g_other*transition.x(xb,i,j) #i=other
-  if(i == "occ" & j == "occ" & ant == "other") return(other_other)
-  if(i == "occ" & j == "vac" & ant == "other") return(other_vac)
-  if(i == "vac" & j == "vac" & ant == "other") return(vac_vac)
-  if(i == "vac" & j == "occ" & ant == "other") return(vac_other)
+ptxy <- function(x,y,i,j,num_ants,params){
+  sx(xb,params)$s_vac*gxy(xb,y,params)$g_vac*transition.x(xb,i,j,num_ants,params)
 }
-ptxy(4,5,cholla,i = "occ",j = "occ", ant = "other")
+ptxy(x=4,y=5,i="liom",j="other",num_ants=4,params=cholla)
 
-bigmatrix<-function(params,lower,upper,matsize){  
+
+
+bigmatrix<-function(params,lower,upper,matsize,num_ants){  
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
