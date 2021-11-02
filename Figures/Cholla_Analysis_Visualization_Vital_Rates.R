@@ -5,7 +5,10 @@
 ##################################################################################################################
 ##################################################################################################################
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis/Cholla_Analysis_Vital_Rates.R")
+source( "/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Cholla_Analysis_Vital_Rates.R")
+
+
+##### Size variable used in most visualizations
 size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t), na.rm = TRUE), by = 0.1)
 
 
@@ -762,17 +765,25 @@ arrows(x0 = 1, x1 = 1, y0 = y_rec_low, y1 = y_rec_high, angle = 90)
 ##################### Binomial Visuals ########################################################################
 ###############################################################################################################################################
 binom_occ <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_occ.csv", header = TRUE,stringsAsFactors=T)
-size_dummy_rec <- seq(min(log(ant.dat2$volume_t)), max(log(ant.dat2$volume_t)), by = 0.1)
-occ_beta0 = median(binom_occ$beta0.1)
-occ_beta1 = median(binom_occ$beta1.1)
-vac_beta0 = median(binom_occ$beta0.2)
-vac_beta2 = median(binom_occ$beta1.2)
+occ_occ = (quantile(binom_occ$beta1.1, 0.5)) + size_dummy * quantile(binom_occ$beta1.2, 0.5)
+occ_occ_low = (quantile(binom_occ$beta1.1, 0.05)) + size_dummy * quantile(binom_occ$beta1.2, 0.05)
+occ_occ_high = (quantile(binom_occ$beta1.1, 0.75)) + size_dummy * quantile(binom_occ$beta1.2, 0.75)
+occ_vac = 1 - occ_occ
+vac_occ_low = quantile(binom_occ$beta0.1,0.05) + size_dummy * quantile(binom_occ$beta0.2, 0.05)
+vac_occ = quantile(binom_occ$beta0.1,0.5) + size_dummy * quantile(binom_occ$beta0.2, 0.5)
+vac_occ_high = quantile(binom_occ$beta0.1,0.75) + size_dummy * quantile(binom_occ$beta0.2, 0.75)
 
-y_occ <- occ_beta0 + occ_beta1*size_dummy_rec
-y_vac <- quantile(binom_occ$beta0.2, 0.5) + quantile(binom_occ$beta1.2, 0.5)*size_dummy_rec
+png("binomial ")
+plot(size_dummy, invlogit(vac_occ), type = "l", col = "black", ylim = c(0,1))
+lines(size_dummy, invlogit(vac_occ_low), col = "red")
+lines(size_dummy, invlogit(vac_occ_high), col = "red")
+lines(size_dummy, invlogit(vac_occ), col = "black", lty = 2)
 
-plot(size_dummy_rec, invlogit(y_occ), type = "l", col = "green", ylim = c(0,1))
-lines(size_dummy_rec, invlogit(y_vac), col = "red")
+lines(size_dummy, invlogit(occ_occ_low), col = "blue")
+lines(size_dummy, invlogit(occ_occ_high), col = "blue")
+lines(size_dummy, invlogit(occ_occ), col = "pink", lty = 2)
+dev.off()
+
 
 ################################################################################################################################################
 ##################### Multinomial Visuals ########################################################################
@@ -781,30 +792,111 @@ multi_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mut
 head(multi_data)
 
 
-transition_prob = function(multi_data,x){
-  transition_1.1 = multi_data$beta.1.1/(1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_1.2 = multi_data$beta.1.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_1.3 = multi_data$beta.1.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_1.4 = multi_data$beta.1.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
+multi_params = function(multi_data,x){
+  volume_crem = exp(multi_data$beta.1.1)/(1+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.1.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.1.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.1.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  volume_liom = exp(multi_data$beta.1.2)/(1+exp(multi_data$beta.1.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.2.1)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.1.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.1.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  volume_other = exp(multi_data$beta.1.3)/(1+exp(multi_data$beta.1.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.1.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.2.1)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.1.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  volume_vacant = exp(multi_data$beta.1.4)/(1+exp(multi_data$beta.1.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.1.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.1.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.2.1)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
   
-  transition_2.1 = multi_data$beta.2.1/(1+multi_data$beta.1.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_2.2 = multi_data$beta.2.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_2.3 = multi_data$beta.2.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_2.4 = multi_data$beta.2.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.3.4+multi_data$beta.4.4)
   
-  transition_3.1 = multi_data$beta.3.1/(1+multi_data$beta.2.1+multi_data$beta.1.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_3.2 = multi_data$beta.3.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.2.2+multi_data$beta.1.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_3.3 = multi_data$beta.3.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.2.3+multi_data$beta.1.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_3.4 = multi_data$beta.3.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.2.4+multi_data$beta.1.4+multi_data$beta.4.4)
   
-  transition_4.1 = multi_data$beta.1.1/(1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.1.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_4.2 = multi_data$beta.1.2/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.1.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_4.3 = multi_data$beta.1.3/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.1.3+multi_data$beta.1.4+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.4.4)
-  transition_4.4 = multi_data$beta.1.4/(1+multi_data$beta.1.1+multi_data$beta.2.1+multi_data$beta.3.1+multi_data$beta.4.1+multi_data$beta.1.2+multi_data$beta.2.2+multi_data$beta.3.2+multi_data$beta.4.2+multi_data$beta.1.3+multi_data$beta.2.3+multi_data$beta.3.3+multi_data$beta.4.3+multi_data$beta.2.4+multi_data$beta.3.4+multi_data$beta.1.4)
+  crem_crem = exp(multi_data$beta.2.1)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  crem_liom = exp(multi_data$beta.2.2)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.5.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  crem_other = exp(multi_data$beta.2.3)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.5.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  crem_vacant = exp(multi_data$beta.2.4)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.5.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
   
-  transition_1.5 = 1 - (transition_1.1 + transition_1.2 + transition_1.3 + transition_1.4)
-  transition_2.5 = 1 - (transition_2.1 + transition_2.2 + transition_2.3 + transition_2.4)
-  transition_3.5 = 1 - (transition_3.1 + transition_3.2 + transition_3.3 + transition_3.4)
-  transition_4.5 = 1 - (transition_4.1 + transition_4.2 + transition_4.3 + transition_4.4)
+  liom_crem = exp(multi_data$beta.3.1)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.4.1)
+                                          +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                          +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                          +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  liom_liom = exp(multi_data$beta.3.2)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  liom_liom = exp(multi_data$beta.3.3)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                        +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.4.2)
+                                        +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                        +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  liom_vacant = exp(multi_data$beta.3.4)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                          +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                          +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                          +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.4.4))
+  
+  other_crem = exp(multi_data$beta.4.1)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)
+                                         +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                         +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                         +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  other_liom = exp(multi_data$beta.4.2)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                         +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                         +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                         +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  other_other = exp(multi_data$beta.4.3)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                          +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                          +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)
+                                          +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  other_vacant = exp(multi_data$beta.4.4)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                           +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                           +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                           +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4))
+  
+  vacant_crem = exp(multi_data$beta.5.1)/(1+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                          +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                          +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                          +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  vacant_liom = exp(multi_data$beta.5.2)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                          +exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                          +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                          +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  vacant_other = exp(multi_data$beta.5.3)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                          +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                          +exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                          +exp(multi_data$beta.5.4)+exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  vacant_vacant = exp(multi_data$beta.5.4)/(1+exp(multi_data$beta.5.1)+exp(multi_data$beta.2.1)+exp(multi_data$beta.3.1)+exp(multi_data$beta.4.1)
+                                          +exp(multi_data$beta.5.2)+exp(multi_data$beta.2.2)+exp(multi_data$beta.3.2)+exp(multi_data$beta.4.2)
+                                          +exp(multi_data$beta.5.3)+exp(multi_data$beta.2.3)+exp(multi_data$beta.3.3)+exp(multi_data$beta.4.3)
+                                          +exp(multi_data$beta.2.4)+exp(multi_data$beta.3.4)+exp(multi_data$beta.4.4))
+  
+  
+  
+  
+return(list(volume_crem, volume_liom, volume_other, volume_vacant, 
+         crem_crem, crem_liom, crem_other, crem_vacant, 
+         liom_crem, liom_liom, liom_other, liom_vacant,
+         other_crem, other_liom, other_other, other_vacant,
+         vacant_crem, vacant_liom, vacant_other, vacant_vacant))
 }
+
+
+
+mean(probs)
+
+png("transitions_heatmap.png")
+heatmap(mean(probs))
+dev.off()
+
+
 
