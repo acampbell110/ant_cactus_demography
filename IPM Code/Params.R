@@ -6,17 +6,19 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
 ##This file contains random draws from the joint posterior distribution of all parameters
 post.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/params_outputs.csv", header = TRUE,stringsAsFactors=T)          
+Ndraws<-min(100,nrow(post.params))
+##This file contains random draws from the joint posterior distribution of the occupied vs vacant transition model 
+trans.params_occ <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/ant_outputs_occ.csv", header = TRUE,stringsAsFactors=T)
 post.params$beta0_ant.1 <- trans.params_occ$beta0.1[1:Ndraws]
 post.params$beta1_ant.1 <- trans.params_occ$beta1.1[1:Ndraws]
 post.params$beta0_ant.2 <- trans.params_occ$beta1.1[1:Ndraws]
 post.params$beta1_ant.2 <- trans.params_occ$beta1.2[1:Ndraws]
 
+## Number of draws to take from the joint posterior distribution of the parameters. 
+## Cannot be greater than the number of draws provided in the .csv file, which is 1500.
 post.params<-post.params[1:Ndraws,]
 
-## Number of draws to take from the joint posterior distribution of the parameters. 
-## Cannot be greater than the number of draws provided in the .csv file, which is 500.
-Ndraws<-min(100,nrow(post.params))
-post.params<-post.params[1:Ndraws,]
+
 Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
 iter <- 1000
@@ -34,7 +36,7 @@ y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
 
 ## -------- load IPM source functions ---------------------- ##
 
-source("Prac.R")
+source("IPM.R")
 
 ## -------- Set up IPM parameter vector ---------------------- ##
 
@@ -148,41 +150,6 @@ cholla[109,]<-post.params$beta1_ant.2      ## prob from t occ to t1 occ
 cholla_min<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
 
-for(i in 1:Ndraws) {
-  
-  ## sample a sequence of random deviates representing plot-to-plot variance in each of the four main vital rates
-  yrfx <- matrix(0,5,Nplots)
-  yrfx[1,] <- rnorm(n=Nplots,mean=0,sd=cholla[6,i]) # Growth
-  yrfx[2,] <- rnorm(n=Nplots,mean=0,sd=cholla[15,i]) # Survival 
-  yrfx[3,] <- rnorm(n=Nplots,mean=0,sd=cholla[25,i]) # Repro 
-  yrfx[4,] <- rnorm(n=Nplots,mean=0,sd=cholla[35,i]) # Flowers
-  yrfx[5,] <- rnorm(n=Nplots,mean=0,sd=cholla[44,i]) # Viability
-  ## sample a sequence of random deviates representing year-to-year variance in each of the four main vital rates, individually
-  plotfx <- matrix(0,5,iter)  
-  plotfx[1,] <- rnorm(n=iter,mean=0,sd=cholla[5,i]) # Growth
-  plotfx[2,] <- rnorm(n=iter,mean=0,sd=cholla[14,i]) # Survival 
-  plotfx[3,] <- rnorm(n=iter,mean=0,sd=cholla[24,i]) # Probability of flowering 
-  plotfx[4,] <- rnorm(n=iter,mean=0,sd=cholla[34,i]) # Fertility
-  plotfx[5,] <- rnorm(n=iter,mean=0,sd=cholla[43,i]) # Viability
-}
-  
-
-##### #Run the matrix once with quantile values for the betas
-
-sx(4, cholla)
-
-pxy(4, 5, cholla)
-
-fx(4,cholla) ## Not Working
-
-bigmatrix(cholla,lower,upper,matsize)
-IPM_mat<- a$IPMmat
-T_mat <- a$Tmat
-F_mat <- a$Fmat
-
-
-bigmatrix(cholla,lower,upper,matsize)
-lambda.fun(cholla,iter,matsize,extra.grid = 2,floor.extend = 1, ceiling.extend = 4)
 
 
   
