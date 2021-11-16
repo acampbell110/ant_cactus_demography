@@ -12,15 +12,15 @@ source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Setup_Data.R")
 #### Growth Model ############################################################################
 ##############################################################################################
 ## Create Stan Data
-stan_data_grow <- list(N_grow = N_grow, ## number of observations
-                  vol_grow = vol_grow, ## predictors volume
-                  y_grow = y_grow, ## response volume next year
-                  ant_grow = ant_grow,## predictors ants
-                  N_ant = N_ant, ## number of ant states
-                  N_Year_grow = N_Year_grow, ## number of years
-                  N_Plot_grow = N_Plot_grow, ## number of plots
-                  plot_grow = plot_grow, ## predictor plots
-                  year_grow = year_grow ## predictor years
+stan_data_grow <- list(N_grow = nrow(growth_data), ## number of observations
+                  vol_grow = log(growth_data$volume_t), ## predictors volume
+                  y_grow = log(growth_data$volume_t1), ## response volume next year
+                  ant_grow = growth_data$ant,## predictors ants
+                  N_ant = 4, ## number of ant states
+                  N_Year_grow = max(growth_data$year), ## number of years
+                  N_Plot_grow = max(growth_data$Plot), ## number of plots
+                  plot_grow = growth_data$Plot, ## predictor plots
+                  year_grow = growth_data$year ## predictor years
 ) 
 #Check that you are happy with the subsetting
 plot(stan_data_grow$vol_grow, stan_data_grow$y_grow)
@@ -36,15 +36,15 @@ write.csv(grow_outputs, "grow_outputs.csv")
 #### Survival Model ########################################################################################
 ########################################################################################################
 ## Create Stan Data
-stan_data_surv <- list(N_surv = N_surv, ## number of observations
-                  vol_surv = vol_surv, ## predictors volume
-                  y_surv = y_surv, ## response volume next year
-                  ant_surv = ant_surv,## predictors ants
-                  N_ant = N_ant, ## number of ant states
-                  N_Year_surv = N_Year_surv, ## number of years
-                  N_Plot_surv = N_Plot_surv, ## number of plots
-                  plot_surv = plot_surv, ## predictor plots
-                  year_surv = year_surv ## predictor years
+stan_data_surv <- list(N_surv = nrow(survival_data), ## number of observations
+                  vol_surv = log(survival_data$volume_t), ## predictors volume
+                  y_surv = survival_data$Survival_t1, ## response survival next year
+                  ant_surv = survival_data$ant,## predictors ants
+                  N_ant = 4, ## number of ant states
+                  N_Year_surv = max(survival_data$year), ## number of years
+                  N_Plot_surv = max(survival_data$Plot), ## number of plots
+                  plot_surv = survival_data$Plot, ## predictor plots
+                  year_surv = survival_data$year ## predictor years
 ) 
 #Check that you are happy with the subsetting
 plot(stan_data_surv$vol_surv,stan_data_surv$y_surv)
@@ -61,35 +61,14 @@ write.csv(surv_outputs, "surv_outputs.csv")
 #### Flowering Model #################################################################################
 ######################################################################################################
 ## Create Stan Data
-stan_data_flow <- list(N_flower = N_flower, ## number of observations
-                       lower_limit = 1, ## we want the 0s to be removed
-                  vol_flower = vol_flower, ## predictors volume
-                  y_flow = y_flow, ## response volume next year
-                  N_Year_flower = N_Year_flower, ## number of years
-                  N_Plot_flower = N_Plot_flower, ## number of plots
-                  plot_flower = plot_flower, ## predictor plots
-                  year_flower = year_flower ## predictor years
-) 
-# Check that you are happy witht he subsetting
-plot(stan_data_flow$vol_flower, stan_data_flow$y_flow)
-points(log(flower_data$volume_t), flower_data$TotFlowerbuds_t, col = "red")
-plot(log(cactus$volume_t), cactus$TotFlowerbuds_t)
-## Run the Model
-#Check if the model is written to the right place
-#stanc("STAN Models/flower_mix_ant.stan")
-fit_flow_mix_ant <- stan(file = "STAN Models/flower_mix_ant.stan", data = stan_data_flow, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-flow_yrep <- rstan::extract(fit_flow_mix_ant, pars = c("y_rep"))$y_rep
-flow_outputs <- rstan::extract(fit_flow_mix_ant, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
-write.csv(flow_outputs, "flow_outputs.csv")
-
-stan_data_flow_trunc <- list(N_flower = N_flower, ## number of observations
-                       lower_limit = 1, ## we want the 0s to be removed
-                       vol_flower = vol_flower, ## predictors volume
-                       y_flow = y_flow, ## response volume next year
-                       N_Year_flower = N_Year_flower, ## number of years
-                       N_Plot_flower = N_Plot_flower, ## number of plots
-                       plot_flower = plot_flower, ## predictor plots
-                       year_flower = year_flower ## predictor years
+stan_data_flow_trunc <- list(N_flower = nrow(flower_data), ## number of observations
+                             lower_limit = 1, ## we want the 0s to be removed
+                             vol_flower = log(flower_data$volume_t), ## predictors volume
+                             y_flow = flower_data$TotFlowerbuds_t, ## response flowers next year
+                             N_Year_flower = max(flower_data$year), ## number of years
+                             N_Plot_flower = max(flower_data$Plot), ## number of plots
+                             plot_flower = flower_data$Plot, ## predictor plots
+                             year_flower = flower_data$year ## predictor years
 ) 
 ## Run the Model
 #Check if the model is written to the right place
@@ -104,16 +83,16 @@ write.csv(flow_outputs_trunc, "flow_outputs_trunc.csv")
 #### Viability Model #################################################################################
 #######################################################################################################
 ## Create Stan Data
-stan_data_viab <- list(N_viab = N_viab, ## number of observations
-                       good_viab = good_viab,
-                       abort_viab = abort_viab, ## aborted buds data
-                       tot_viab = tot_viab, ## number of trials
-                       ant_viab = ant_viab,## predictors ants
-                       N_ant = N_ant, ## number of ant states
-                       N_Year_viab = N_Year_viab, ## number of years
-                       N_Plot_viab = N_Plot_viab, ## number of plots
-                       plot_viab = plot_viab, ## predictor plots
-                       year_viab = year_viab ## predictor years
+stan_data_viab <- list(N_viab = nrow(viability_data), ## number of observations
+                       good_viab = viability_data$Goodbuds_t1,
+                       abort_viab = viability_data$ABFlowerbuds_t1, ## aborted buds data
+                       tot_viab = viability_data$TotFlowerbuds_t1, ## number of trials
+                       ant_viab = viability_data$ant,## predictors ants
+                       N_ant = 4, ## number of ant states
+                       N_Year_viab = max(viability_data$year), ## number of years
+                       N_Plot_viab = max(viability_data$Plot), ## number of plots
+                       plot_viab = viability_data$Plot, ## predictor plots
+                       year_viab = viability_data$year ## predictor years
 ) 
 # Check that you are happy with the subsetting
 ## Run the Model
@@ -128,13 +107,13 @@ write.csv(viab_outputs, "viab_outputs.csv")
  #### Reproductive State Model #######################################################################################
 ################################################################################################################################
 ## Create Stan Data
-stan_data_repro <- list(N_repro = N_repro, ## number of observations
-                  vol1_repro = vol1_repro, ## predictors volume
-                  y_repro = y_repro, ## response volume next year
-                  N_Year_repro = N_Year_repro, ## number of years
-                  N_Plot_repro = N_Plot_repro, ## number of plots
-                  plot_repro = plot_repro, ## predictor plots
-                  year_repro = year_repro ## predictor years
+stan_data_repro <- list(N_repro = nrow(reproductive_data), ## number of observations
+                  vol1_repro = reproductive_data$volume_t1, ## predictors volume
+                  y_repro = reproductive_data$flower1_YN, ## response volume next year
+                  N_Year_repro = max(reproductive_data$year), ## number of years
+                  N_Plot_repro = max(reproductive_data$Plot), ## number of plots
+                  plot_repro = reproductive_data$Plot, ## predictor plots
+                  year_repro = reproductive_data$year ## predictor years
 ) 
 # Check that you are happy with the subsetting
 plot(stan_data_repro$vol1_repro, stan_data_repro$y_repro)
@@ -237,53 +216,53 @@ rec_yrep <- rstan::extract(fit_rec,pars = c("y_rep"))$y_rep
 ########################################## The Full Model (All ant states) ###########################################################
 stan_data <- list(
   #### Growth Variables
-  N_grow = N_grow, ## number of observations
-  vol_grow = vol_grow, ## predictors volume
-  y_grow = y_grow, ## response volume next year
-  ant_grow = ant_grow,## predictors ants
-  N_ant = N_ant, ## number of ant states
-  N_Year_grow = N_Year_grow, ## number of years
-  N_Plot_grow = N_Plot_grow, ## number of plots
-  plot_grow = plot_grow, ## predictor plots
-  year_grow = year_grow, ## predictor years
+  N_grow = nrow(growth_data), ## number of observations
+  vol_grow = log(growth_data$volume_t), ## predictors volume
+  y_grow = log(growth_data$volume_t1), ## response volume next year
+  ant_grow = growth_data$ant,## predictors ants
+  N_ant = 4, ## number of ant states
+  N_Year_grow = max(growth_data$year), ## number of years
+  N_Plot_grow = max(growth_data$Plot), ## number of plots
+  plot_grow = growth_data$Plot, ## predictor plots
+  year_grow = growth_data$year, ## predictor years
   #### Survival Variables
-  N_surv = N_surv, ## number of observations
-  vol_surv = vol_surv, ## predictors volume
-  y_surv = y_surv, ## response volume next year
-  ant_surv = ant_surv,## predictors ants
-  N_ant = N_ant, ## number of ant states
-  N_Year_surv = N_Year_surv, ## number of years
-  N_Plot_surv = N_Plot_surv, ## number of plots
-  plot_surv = plot_surv, ## predictor plots
-  year_surv = year_surv, ## predictor years
+  N_surv = nrow(survival_data), ## number of observations
+  vol_surv = log(survival_data$volume_t), ## predictors volume
+  y_surv = survival_data$Survival_t1, ## response survival next year
+  ant_surv = survival_data$ant,## predictors ants
+  N_ant = 4, ## number of ant states
+  N_Year_surv = max(survival_data$year), ## number of years
+  N_Plot_surv = max(survival_data$Plot), ## number of plots
+  plot_surv = survival_data$Plot, ## predictor plots
+  year_surv = survival_data$year, ## predictor years
   #### Flowering Variables
-  N_flower = N_flower, ## number of observations
+  N_flower = nrow(flower_data), ## number of observations
   lower_limit = 1, ## we want the 0s to be removed
-  vol_flower = vol_flower, ## predictors volume
-  y_flow = y_flow, ## response volume next year
-  N_Year_flower = N_Year_flower, ## number of years
-  N_Plot_flower = N_Plot_flower, ## number of plots
-  plot_flower = plot_flower, ## predictor plots
-  year_flower = year_flower, ## predictor years
+  vol_flower = log(flower_data$volume_t), ## predictors volume
+  y_flow = flower_data$TotFlowerbuds_t, ## response flowers next year
+  N_Year_flower = max(flower_data$year), ## number of years
+  N_Plot_flower = max(flower_data$Plot), ## number of plots
+  plot_flower = flower_data$Plot, ## predictor plots
+  year_flower = flower_data$year, ## predictor years
   #### Viability Variables
-  N_viab = N_viab, ## number of observations
-  good_viab = good_viab,
-  abort_viab = abort_viab, ## aborted buds data
-  tot_viab = tot_viab, ## number of trials
-  ant_viab = ant_viab,## predictors ants
-  N_ant = N_ant, ## number of ant states
-  N_Year_viab = N_Year_viab, ## number of years
-  N_Plot_viab = N_Plot_viab, ## number of plots
-  plot_viab = plot_viab, ## predictor plots
-  year_viab = year_viab, ## predictor years
+  N_viab = nrow(viability_data), ## number of observations
+  good_viab = viability_data$Goodbuds_t1,
+  abort_viab = viability_data$ABFlowerbuds_t1, ## aborted buds data
+  tot_viab = viability_data$TotFlowerbuds_t1, ## number of trials
+  ant_viab = viability_data$ant,## predictors ants
+  N_ant = 4, ## number of ant states
+  N_Year_viab = max(viability_data$year), ## number of years
+  N_Plot_viab = max(viability_data$Plot), ## number of plots
+  plot_viab = viability_data$Plot, ## predictor plots
+  year_viab = viability_data$year, ## predictor years
   #### Reproductive State Variables
-  N_repro = N_repro, ## number of observations
-  vol1_repro = vol1_repro, ## predictors volume
-  y_repro = y_repro, ## response volume next year
-  N_Year_repro = N_Year_repro, ## number of years
-  N_Plot_repro = N_Plot_repro, ## number of plots
-  plot_repro = plot_repro, ## predictor plots
-  year_repro = year_repro, ## predictor years
+  N_repro = nrow(reproductive_data), ## number of observations
+  vol1_repro = reproductive_data$volume_t1, ## predictors volume
+  y_repro = reproductive_data$flower1_YN, ## response volume next year
+  N_Year_repro = max(reproductive_data$year), ## number of years
+  N_Plot_repro = max(reproductive_data$Plot), ## number of plots
+  plot_repro = reproductive_data$Plot, ## predictor plots
+  year_repro = reproductive_data$year, ## predictor years
   #### Seed Prod Variables
   N_seed = nrow(seed_data),
   N_ant_seed = 3,
@@ -571,50 +550,7 @@ full_outputs <- rstan::extract(fit_full, pars = c("beta0_g","beta1_g","u_g","w_g
 )
 )
 write.csv(full_outputs, "params_outputs_occ.csv")
-#######################################################################################################
-#### Occupied vs Unoccupied Binomial Prob ##########################################################################
-######################################################################################################
-ant.dat2 <- cactus
-ant.dat2 <- ant.dat2[,c("Year_t","logsize", "ant_t","ant_t1")]
-ant.dat2<-na.omit(ant.dat2)
-ant.dat2$occ_t1 <- 1  ## 1 == occ, 2 == vac
-ant.dat2$occ_t1[ant.dat2$ant_t == "vacant"] <- 0
-ant.dat2$occ_t <- "occ"
-ant.dat2$occ_t[ant.dat2$ant_t1 == "vacant"] <- "vac" 
-ant.dat2$occ_t<-as.numeric(as.factor(ant.dat2$occ_t1))
-table_occ <- table(ant.dat2$Year_t, ant.dat2$ant_t)
-ant.dat2$sum[ant.dat2$Year_t == 2004] <- sum(table_occ[1,])
-ant.dat2$sum[ant.dat2$Year_t == 2005] <- sum(table_occ[2,])
-ant.dat2$sum[ant.dat2$Year_t == 2009] <- sum(table_occ[3,])
-ant.dat2$sum[ant.dat2$Year_t == 2010] <- sum(table_occ[4,])
-ant.dat2$sum[ant.dat2$Year_t == 2011] <- sum(table_occ[5,])
-ant.dat2$sum[ant.dat2$Year_t == 2012] <- sum(table_occ[6,])
-ant.dat2$sum[ant.dat2$Year_t == 2013] <- sum(table_occ[7,])
-ant.dat2$sum[ant.dat2$Year_t == 2014] <- sum(table_occ[8,])
-ant.dat2$sum[ant.dat2$Year_t == 2015] <- sum(table_occ[9,])
-ant.dat2$sum[ant.dat2$Year_t == 2016] <- sum(table_occ[10,])
-ant.dat2$sum[ant.dat2$Year_t == 2017] <- sum(table_occ[11,])
-ant.dat2$sum[ant.dat2$Year_t == 2018] <- sum(table_occ[1,])
-ant.dat2 <- na.omit(ant.dat2)
-View(ant.dat2)
 
-
-ant.dat2 <- filter(ant.dat2, sum > 0)
-stan_data_ant_occ <- list(N_obs = nrow(ant.dat2),
-                          success = ant.dat2$occ_t1,
-                          N_ant = 2,
-                          prev_ant = ant.dat2$occ_t,
-                          N_year = length(unique(ant.dat2$Year_t)),
-                          year = as.factor(as.integer(ant.dat2$Year_t)),
-                          trials = ant.dat2$sum,
-                          vol_ant = log(ant.dat2$volume_t)
-)
-
-fit_ant_occ <- stan("Data Analysis/STAN Models/crem_vac_prac.stan",data = stan_data_ant_occ, warmup = 50, iter = 300, chains = 3, cores = 2, thin = 1)
-ant_outputs_occ <- rstan::extract(fit_ant_occ, pars = c("beta0","beta1","sigma")
-)
-write.csv(ant_outputs_occ, "ant_outputs_occ.csv")
-occ_yrep <- rstan::extract(fit_ant_occ, pars = c("y_rep"))$y_rep
 ######################################################################################################
 #### Multinomial Model Ant State ###############################################################################
 ######################################################################################################
