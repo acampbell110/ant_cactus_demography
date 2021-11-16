@@ -18,6 +18,8 @@ post.params$beta1_ant.2 <- trans.params_occ$beta1.2[1:Ndraws]
 ## Cannot be greater than the number of draws provided in the .csv file, which is 1500.
 post.params<-post.params[1:Ndraws,]
 
+cholla_min<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
+cholla_max<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
 
 Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
@@ -36,14 +38,13 @@ y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
 
 ## -------- load IPM source functions ---------------------- ##
 
-source("IPM.R")
+#source("IPM.R")
 
 ## -------- Set up IPM parameter vector ---------------------- ##
 
 ## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
 ## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
 cholla<-matrix(NA,nrow=405,ncol=Ndraws) 
-
 ##----------------------Growth Parameters----------------## 
 ####Ant 1 (crem)
 cholla[1,]<-post.params$beta0_g.1      	  ## growth intercept
@@ -51,6 +52,7 @@ cholla[2,]<-post.params$beta1_g.1				  ## growth slope
 cholla[3,]<-post.params$sigma_g			      ## growth error
 cholla[4,]<-post.params$sigma_u_g  	      ## growth plotfx error
 cholla[5,]<-post.params$sigma_w_g         ## growth yrfx error
+
 ####Ant 2 (liom)
 cholla[101,]<-post.params$beta0_g.2      	  ## growth intercept
 cholla[102,]<-post.params$beta1_g.2				  ## growth slope
@@ -147,8 +149,6 @@ cholla[109,]<-post.params$beta1_ant.2      ## prob from t occ to t1 occ
 #### Four Species
 
 
-cholla_min<- min(log(cactus$volume_t), na.rm = TRUE)  ## minsize 
-cholla_max<- max(log(cactus$volume_t), na.rm = TRUE)  ## maxsize 
 
 
 
