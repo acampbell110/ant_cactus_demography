@@ -154,13 +154,43 @@ for(i in 1:8187){
 
 cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
 
+
+## Make an occupied vs vacant scenario
+cactus$occ_t1 <- 1  ## 1 == occ, 2 == vac
+cactus$occ_t1[cactus$ant_t == "vacant"] <- 0
+cactus$occ_t <- "occ"
+cactus$occ_t[cactus$ant_t1 == "vacant"] <- "vac" 
+cactus$occ_t<-as.numeric(as.factor(cactus$occ_t1))
+
 ## Export cactus to a csv
 write.csv(cactus, "cholla_demography_20042019_cleaned.csv")
 
-#######################################################################################################
-################        import the data -- Seed Data        #######################################################
-#######################################################################################################
+######################################################################################################
+################        Subset cactus data to different combinations of ants      ####################
+######################################################################################################
+## One ant only
+cactus_crem <- subset(cactus, ant_t == "crem" & ant_t1 == "crem") ## 163 rows
+cactus_liom <- subset(cactus, ant_t == "liom" & ant_t1 == "liom") ## 1753 rows
+cactus_other <- subset(cactus, ant_t == "other" & ant_t1 == "other") ## 29 rows
+cactus_vac <- subset(cactus, ant_t == "vac" & ant_t1 == "vac") ## 0
 
+## Two ants only
+cactus_crem_liom <- subset(cactus, (ant_t == "crem" | ant_t == "liom") & (ant_t1 == "crem" | ant_t1 == "liom")) ## 2106 rows
+cactus_crem_other <- subset(cactus, (ant_t == "crem" | ant_t == "other") & (ant_t1 == "crem" | ant_t1 == "other")) ## 263 rows
+cactus_crem_vac <- subset(cactus, (ant_t == "crem" | ant_t == "vac") & (ant_t1 == "crem" | ant_t1 == "vac")) ## 163 rows
+cactus_liom_other <- subset(cactus, (ant_t == "other" | ant_t == "liom") & (ant_t1 == "other" | ant_t1 == "liom")) ## 1935 rows
+cactus_liom_vac <- subset(cactus, (ant_t == "vac" | ant_t == "liom") & (ant_t1 == "vac" | ant_t1 == "liom")) ## 1753 rows
+cactus_other_vac <- subset(cactus, (ant_t == "other" | ant_t == "vac") & (ant_t1 == "other" | ant_t1 == "vac")) ## 29 rows
+
+## Three ants 
+cactus_crem_liom_other <- subset(cactus, (ant_t == "crem" | ant_t == "liom" | ant_t == "other") & (ant_t1 == "crem" | ant_t1 == "liom" | ant_t1 == "other")) ## 2359 rows
+cactus_crem_liom_vac <- subset(cactus, (ant_t == "crem" | ant_t == "liom" | ant_t == "vac") & (ant_t1 == "crem" | ant_t1 == "liom" | ant_t1 == "vac")) ## 2106 rows
+cactus_crem_other_vac <- subset(cactus, (ant_t == "crem" | ant_t == "other" | ant_t == "vac") & (ant_t1 == "crem" | ant_t1 == "other" | ant_t1 == "vac")) ## 263 rows
+cactus_liom_vac_other <- subset(cactus, (ant_t == "liom" | ant_t == "other" | ant_t == "vac") & (ant_t1 == "liom" | ant_t1 == "other" | ant_t1 == "vac")) ## 1935 rows
+
+#######################################################################################################
+################        import the data -- Seed Data (Including ant states)      #######################################################
+#######################################################################################################
 seed_uncleaned <- read.csv("JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
 ## PEAA = Ant Access
 ## PAAA = Ant Access
@@ -187,8 +217,9 @@ for(i in 1:nrow(seed)){
   }
 }
 
+
 #######################################################################################################
-################        import the data -- Germination        #######################################################
+################        import the data -- Germination  (No ant state)      #######################################################
 #######################################################################################################
 germ.dat<-read.csv("Germination.csv") 
 germ.dat <- na.omit(germ.dat)
@@ -201,13 +232,13 @@ for(i in 1:nrow(germ.dat)){
 germ.dat[-c(42,39,40),]
 
 #######################################################################################################
-################        import the data -- Fruit Survival        #######################################################
+################        import the data -- Fruit Survival  (No ant state)      #######################################################
 #######################################################################################################
 seedling.dat <- cactus[,c("logsize_t","logsize_t1","Recruit")]
 seedling.dat <- filter(seedling.dat, Recruit == 1)
 
 #######################################################################################################
-################        import the data -- Precensus Survival        #######################################################
+################        import the data -- Precensus Survival  (No ant state)      #######################################################
 #######################################################################################################
 precensus.dat<-read.csv("PrecensusSurvival.csv") 
 
@@ -218,10 +249,12 @@ cholla.dat$N_sdlgsize <- length(seedlings$standvol_t)
 cholla.dat$y_sdlgsize <- seedlings$standvol_t
 
 #######################################################################################################
-################        Important Subsets -- Growth        #######################################################
+################        Important Subsets -- Growth  (Includes Ant)      #######################################################
 #######################################################################################################
 cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
-growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
+
+## All Ant States
+growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","volume_t","volume_t1","flower1_YN")]
 growth_data <- na.omit(growth_data)
 growth_data$ant <- as.integer(growth_data$ant_t)
 growth_data$ant1 <- as.integer(growth_data$ant_t1)
@@ -229,6 +262,26 @@ growth_data$Year_t <- as.factor(growth_data$Year_t)
 growth_data$year <- as.integer(growth_data$Year_t)
 growth_data$Plot <- as.factor(growth_data$Plot)
 growth_data$plot <- as.integer(growth_data$Plot)
+
+## One Ant State
+growth_data_crem <- subset(growth_data, ant_t == "crem" & ant_t1 == "crem") ## 141 rows
+growth_data_liom <- subset(growth_data, ant_t == "liom" & ant_t1 == "liom") ## 1399 rows
+growth_data_other <- subset(growth_data, ant_t == "other" & ant_t1 == "other") ## 28 rows
+growth_data_vac <- subset(growth_data, ant_t == "vac" & ant_t1 == "vac") ## 0
+
+## Two Ant States
+growth_data_crem_liom <- subset(growth_data, (ant_t == "crem" | ant_t == "liom") & (ant_t1 == "crem" | ant_t1 == "liom")) ## 1700 rows
+growth_data_crem_other <- subset(growth_data, (ant_t == "crem" | ant_t == "other") & (ant_t1 == "crem" | ant_t1 == "other")) ## 226 rows
+growth_data_crem_vac <- subset(growth_data, (ant_t == "crem" | ant_t == "vac") & (ant_t1 == "crem" | ant_t1 == "vac")) ## 141 rows
+growth_data_liom_other <- subset(growth_data, (ant_t == "other" | ant_t == "liom") & (ant_t1 == "other" | ant_t1 == "liom")) ## 1560 rows
+growth_data_liom_vac <- subset(growth_data, (ant_t == "vac" | ant_t == "liom") & (ant_t1 == "vac" | ant_t1 == "liom")) ## 1399 rows
+growth_data_other_vac <- subset(growth_data, (ant_t == "other" | ant_t == "vac") & (ant_t1 == "other" | ant_t1 == "vac")) ## 28 rows
+
+## Three Ant States
+growth_data_crem_liom_other <- subset(growth_data, (ant_t == "crem" | ant_t == "liom" | ant_t == "other") & (ant_t1 == "crem" | ant_t1 == "liom" | ant_t1 == "other")) ## 1918 rows
+growth_data_crem_liom_vac <- subset(growth_data, (ant_t == "crem" | ant_t == "liom" | ant_t == "vac") & (ant_t1 == "crem" | ant_t1 == "liom" | ant_t1 == "vac")) ## 1700 rows
+growth_data_crem_other_vac <- subset(growth_data, (ant_t == "crem" | ant_t == "vac" | ant_t == "other") & (ant_t1 == "crem" | ant_t1 == "vac" | ant_t1 == "other")) ## 226 rows
+growth_data_liom_other_vac <- subset(growth_data, (ant_t == "vac" | ant_t == "liom" | ant_t == "other") & (ant_t1 == "vac" | ant_t1 == "liom" | ant_t1 == "other")) ## 1560 rows
 
 
 #######################################################################################################
@@ -244,7 +297,7 @@ flower_data <- subset(flower_data, TotFlowerbuds_t > 0)
 
 
 #######################################################################################################
-################        Important Subsets -- Survival        #######################################################
+################        Important Subsets -- Survival  (Includes Ants)      #######################################################
 #######################################################################################################
 survival_data <- cactus[ , c("Plot","Year_t","Survival_t1","ant_t","volume_t")]
 survival_data <- na.omit(survival_data)
@@ -253,6 +306,26 @@ survival_data$Year_t <- as.factor(survival_data$Year_t)
 survival_data$year <- as.integer(survival_data$Year_t)
 survival_data$Plot <- as.factor(survival_data$Plot)
 survival_data$plot <- as.integer(survival_data$Plot)
+
+## One Ant State
+survival_data_crem <- subset(survival_data, ant_t == "crem") ## 587 rows
+survival_data_liom <- subset(survival_data, ant_t == "liom") ## 2708 rows
+survival_data_other <- subset(survival_data, ant_t == "other") ## 268 rows
+survival_data_vac <- subset(survival_data, ant_t == "vac") ## 0
+
+## Two Ant States
+survival_data_crem_liom <- subset(survival_data, (ant_t == "crem" | ant_t == "liom")) ## 3286 rows
+survival_data_crem_other <- subset(survival_data, (ant_t == "crem" | ant_t == "other")) ## 846 rows
+survival_data_crem_vac <- subset(survival_data, (ant_t == "crem" | ant_t == "vac")) ## 578 rows
+survival_data_liom_other <- subset(survival_data, (ant_t == "other" | ant_t == "liom")) ## 2976 rows
+survival_data_liom_vac <- subset(survival_data, (ant_t == "vac" | ant_t == "liom")) ## 2708 rows
+survival_data_other_vac <- subset(survival_data, (ant_t == "other" | ant_t == "vac")) ## 268 rows
+
+## Three Ant States
+survival_data_crem_liom_other <- subset(survival_data, (ant_t == "crem" | ant_t == "liom" | ant_t == "other")) ## 3554 rows
+survival_data_crem_liom_vac <- subset(survival_data, (ant_t == "crem" | ant_t == "liom" | ant_t == "vac")) ## 3286 rows
+survival_data_crem_other_vac <- subset(survival_data, (ant_t == "crem" | ant_t == "vac" | ant_t == "other")) ## 846 rows
+survival_data_liom_other_vac <- subset(survival_data, (ant_t == "vac" | ant_t == "liom" | ant_t == "other")) ## 2976 rows
 
 
 #######################################################################################################
@@ -268,7 +341,7 @@ reproductive_data$plot <- as.integer(reproductive_data$Plot)
 
 
 #######################################################################################################
-################        Important Subsets -- Viability        #######################################################
+################        Important Subsets -- Viability  (Includes Ants)      #######################################################
 #######################################################################################################
 viability_data <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "volume_t","Year_t","Plot")]
 viability_data <- na.omit(viability_data)
@@ -278,6 +351,26 @@ viability_data$Year_t <- as.factor(viability_data$Year_t)
 viability_data$year <- as.integer(viability_data$Year_t)
 viability_data$Plot <- as.factor(viability_data$Plot)
 viability_data$plot <- as.integer(viability_data$Plot)
+
+## One Ant State
+viability_data_crem <- subset(viability_data, ant_t == "crem") ## 159 rows
+viability_data_liom <- subset(viability_data, ant_t == "liom") ## 1008 rows
+viability_data_other <- subset(viability_data, ant_t == "other") ## 93 rows
+viability_data_vac <- subset(viability_data, ant_t == "vac") ## 0
+
+## Two Ant States
+viability_data_crem_liom <- subset(viability_data, (ant_t == "crem" | ant_t == "liom")) ## 1167 rows
+viability_data_crem_other <- subset(viability_data, (ant_t == "crem" | ant_t == "other")) ## 252 rows
+viability_data_crem_vac <- subset(viability_data, (ant_t == "crem" | ant_t == "vac")) ## 159 rows
+viability_data_liom_other <- subset(viability_data, (ant_t == "other" | ant_t == "liom")) ## 1101 rows
+viability_data_liom_vac <- subset(viability_data, (ant_t == "vac" | ant_t == "liom")) ## 1008 rows
+viability_data_other_vac <- subset(viability_data, (ant_t == "other" | ant_t == "vac")) ## 93 rows
+
+## Three Ant States
+viability_data_crem_liom_other <- subset(viability_data, (ant_t == "crem" | ant_t == "liom" | ant_t == "other")) ## 1260 rows
+viability_data_crem_liom_vac <- subset(viability_data, (ant_t == "crem" | ant_t == "liom" | ant_t == "vac")) ## 1167 rows
+viability_data_crem_other_vac <- subset(viability_data, (ant_t == "crem" | ant_t == "vac" | ant_t == "other")) ## 252 rows
+viability_data_liom_other_vac <- subset(viability_data, (ant_t == "vac" | ant_t == "liom" | ant_t == "other")) ## 1101 rows
 
 
 #######################################################################################################
@@ -289,79 +382,54 @@ seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
 seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
 seed_data <- subset(seed_data, seed_count > 0)
 
+## One Ant State
+seed_data_crem <- subset(seed_data, ant_state == "Crem") ## 28 rows
+seed_data_liom <- subset(seed_data, ant_state == "Liom") ## 41 rows
+seed_data_vac <- subset(seed_data, ant_state == "Vacant") ## 73 rows
+
+## Two Ant States
+seed_data_crem_liom <- subset(seed_data, ant_state == "Crem"| ant_state == "Liom") ## 69 rows
+seed_data_crem_vacant <- subset(seed_data, ant_state == "Crem" | ant_state == "Vacant") ## 101 rows
+seed_data_liom_vacant <- subset(seed_data, ant_state == "Liom" | ant_state == "Vacant") ## 114 rows
+
+
+#############################################################################################################
+################        Multinomial Subsets                ###############################################
+########################################################################################################
+ant.dat2 <- cactus
+ant.dat2 <- ant.dat2[,c("logsize_t", "ant_t","ant_t1", "Year_t")]
+ant.dat2<-na.omit(ant.dat2)
+ant.dat2$occ_t1 <- 1  ## 1 == occ, 2 == vac
+ant.dat2$occ_t1[ant.dat2$ant_t == "vacant"] <- 0
+ant.dat2$occ_t <- "occ"
+ant.dat2$occ_t[ant.dat2$ant_t1 == "vacant"] <- "vac" 
+ant.dat2$occ_t<-as.numeric(as.factor(ant.dat2$occ_t1))
+table_occ <- table(ant.dat2$Year_t, ant.dat2$ant_t)
+ant.dat2$sum[ant.dat2$Year_t == 2004] <- sum(table_occ[1,])
+ant.dat2$sum[ant.dat2$Year_t == 2005] <- sum(table_occ[2,])
+ant.dat2$sum[ant.dat2$Year_t == 2009] <- sum(table_occ[3,])
+ant.dat2$sum[ant.dat2$Year_t == 2010] <- sum(table_occ[4,])
+ant.dat2$sum[ant.dat2$Year_t == 2011] <- sum(table_occ[5,])
+ant.dat2$sum[ant.dat2$Year_t == 2012] <- sum(table_occ[6,])
+ant.dat2$sum[ant.dat2$Year_t == 2013] <- sum(table_occ[7,])
+ant.dat2$sum[ant.dat2$Year_t == 2014] <- sum(table_occ[8,])
+ant.dat2$sum[ant.dat2$Year_t == 2015] <- sum(table_occ[9,])
+ant.dat2$sum[ant.dat2$Year_t == 2016] <- sum(table_occ[10,])
+ant.dat2$sum[ant.dat2$Year_t == 2017] <- sum(table_occ[11,])
+ant.dat2$sum[ant.dat2$Year_t == 2018] <- sum(table_occ[1,])
+ant.dat2 <- na.omit(ant.dat2)
+View(ant.dat2)
+
+
+plot(ant.dat2$occ_t1)
+points(cactus$occ_t1, col = "red")
+## I am missing out on a lot of vacant plants in my subset for year t1.
+
+
+
 #############################################################################################################
 ################        Set up Subsets for Models       ###############################################
 ########################################################################################################
-
-cactus <- read.csv("cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
-#### Create local data frames to call in the Growth STAN models
-cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
-growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","ant_t1","volume_t","volume_t1","flower1_YN")]
-growth_data <- na.omit(growth_data)
-growth_data$ant <- as.integer(growth_data$ant_t)
-growth_data$ant1 <- as.integer(growth_data$ant_t1)
-growth_data$Year_t <- as.factor(growth_data$Year_t)
-growth_data$year <- as.integer(growth_data$Year_t)
-growth_data$Plot <- as.factor(growth_data$Plot)
-growth_data$plot <- as.integer(growth_data$Plot)
-## Flower Data Set (Total)
-flower_data <- cactus[ , c("TotFlowerbuds_t", "volume_t","Year_t","Plot")]
-flower_data <- na.omit(flower_data)
-flower_data$Year_t <- as.factor(flower_data$Year_t)
-flower_data$year <- as.integer(flower_data$Year_t)
-flower_data$Plot <- as.factor(flower_data$Plot)
-flower_data$plot <- as.integer(flower_data$Plot)
-flower_data <- subset(flower_data, TotFlowerbuds_t > 0)
-## Repro Data Set
-reproductive_data <- cactus[ , c("flower1_YN","volume_t","Year_t","Plot", "volume_t1")]
-reproductive_data <- na.omit(reproductive_data)
-reproductive_data$Year_t <- as.factor(reproductive_data$Year_t)
-reproductive_data$year <- as.integer(reproductive_data$Year_t)
-reproductive_data$Plot <- as.factor(reproductive_data$Plot)
-reproductive_data$plot <- as.integer(reproductive_data$Plot)
-## Viability Data Set
-viability_data <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "volume_t","Year_t","Plot")]
-viability_data <- na.omit(viability_data)
-viability_data <- subset(viability_data, TotFlowerbuds_t1 > 0)
-viability_data$ant <- as.integer(viability_data$ant_t)
-viability_data$Year_t <- as.factor(viability_data$Year_t)
-viability_data$year <- as.integer(viability_data$Year_t)
-viability_data$Plot <- as.factor(viability_data$Plot)
-viability_data$plot <- as.integer(viability_data$Plot)
-## Survival Data Set
-survival_data <- cactus[ , c("Plot","Year_t","Survival_t1","ant_t","volume_t")]
-survival_data <- na.omit(survival_data)
-survival_data$ant <- as.integer(survival_data$ant_t)
-survival_data$Year_t <- as.factor(survival_data$Year_t)
-survival_data$year <- as.integer(survival_data$Year_t)
-survival_data$Plot <- as.factor(survival_data$Plot)
-survival_data$plot <- as.integer(survival_data$Plot)
-## Seed Data Set
-seed_data <- seed
-seed_data <- na.omit(seed_data)
-seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
-seed_data$plant_fac <- as.integer(as.factor(seed_data$plant))
-seed_data <- subset(seed_data, seed_count > 0)
-### Fruit Surv
-fruit.surv<-read.csv("FruitSurvival.csv",header = TRUE,stringsAsFactors=T) %>% drop_na()
-fruit.surv <- fruit.surv[which(fruit.surv$Fr.on.grnd.not.chewed > 0),]
-### Germ Data
-germ.dat<-read.csv("Germination.csv") 
-germ.dat <- na.omit(germ.dat)
-germ.dat$rate <- 0
-for(i in 1:nrow(germ.dat)){
-  if(germ.dat$Seedlings04[i] != 0){
-    germ.dat$rate[i] <- (germ.dat$Seedlings04[i] - germ.dat$Seedlings05[i])/germ.dat$Seedlings04[i]
-  }
-}
-germ.dat[-c(42,39,40),]
-
-seedlings <- cactus %>% 
-  mutate(volume_t = log(volume(h = Height_t, w = Width_t, p = Perp_t)),
-         standvol_t = (volume_t - mean(volume_t,na.rm=T))/sd(volume_t,na.rm=T)) %>% 
-  filter(str_sub(Plot,1,1)=="H",
-         Recruit==1)
-
 
 ## Name local data variables to input to Stan Data
 # volume data
