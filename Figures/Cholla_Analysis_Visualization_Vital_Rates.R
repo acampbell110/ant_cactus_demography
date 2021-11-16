@@ -773,7 +773,7 @@ vac_occ_low = quantile(binom_occ$beta0.1,0.05) + size_dummy * quantile(binom_occ
 vac_occ = quantile(binom_occ$beta0.1,0.5) + size_dummy * quantile(binom_occ$beta0.2, 0.5)
 vac_occ_high = quantile(binom_occ$beta0.1,0.75) + size_dummy * quantile(binom_occ$beta0.2, 0.75)
 
-png("binomial ")
+png("binomial.png")
 plot(size_dummy, invlogit(vac_occ), type = "l", col = "black", ylim = c(0,1))
 lines(size_dummy, invlogit(vac_occ_low), col = "red")
 lines(size_dummy, invlogit(vac_occ_high), col = "red")
