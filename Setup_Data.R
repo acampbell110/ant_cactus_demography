@@ -397,14 +397,11 @@ seed_data_liom_vacant <- subset(seed_data, ant_state == "Liom" | ant_state == "V
 ################        Multinomial Subsets                ###############################################
 ########################################################################################################
 ant.dat2 <- cactus
-ant.dat2 <- ant.dat2[,c("logsize_t", "ant_t","ant_t1", "Year_t")]
-ant.dat2<-na.omit(ant.dat2)
-ant.dat2$occ_t1 <- 1  ## 1 == occ, 2 == vac
-ant.dat2$occ_t1[ant.dat2$ant_t == "vacant"] <- 0
-ant.dat2$occ_t <- "occ"
-ant.dat2$occ_t[ant.dat2$ant_t1 == "vacant"] <- "vac" 
+ant.dat2 <- ant.dat2[,c("logsize_t", "occ_t", "occ_t1", "Year_t")]
 ant.dat2$occ_t<-as.numeric(as.factor(ant.dat2$occ_t1))
-table_occ <- table(ant.dat2$Year_t, ant.dat2$ant_t)
+ant.dat2 <- na.omit(ant.dat2)
+table_occ <- table(ant.dat2$Year_t, ant.dat2$occ_t1)
+cactus_occ <- table(cactus$Year_t, cactus$ant_t)
 ant.dat2$sum[ant.dat2$Year_t == 2004] <- sum(table_occ[1,])
 ant.dat2$sum[ant.dat2$Year_t == 2005] <- sum(table_occ[2,])
 ant.dat2$sum[ant.dat2$Year_t == 2009] <- sum(table_occ[3,])
