@@ -210,3 +210,5 @@ png("occ_conv2.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_ant_occ, pars=c("beta0", "beta1")))
 dev.off()
 
+## Multinomial Transition Model ##############################################################################
+
