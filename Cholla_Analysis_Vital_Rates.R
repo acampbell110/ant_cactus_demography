@@ -589,6 +589,54 @@ fit_size_ant2 <- stan("STAN Models/size_ant_model.stan",
 fit_size_ant_summary2 <- summary(fit_size_ant2, par="beta", probs=.5)$summary %>% as.data.frame
 size_ant2 <- rstan::extract(fit_size_ant2, pars = c("beta"))
 write.csv(size_ant2,"size_ant_outputs2.csv")
+
+bayesplot::mcmc_trace(fit_size_ant2, pars = c("beta[1,1]"))
+
+
+########################################################
+#### Dummy Model Multinomial 
+########################################################
+generate_mnl_data <- function(N=1000, C=3, beta=c(-3), alpha = c(1)){
+  K <- length(beta)
+  Y <- rep(NA, N)
+  X <- list(NULL) 
+  for (i in 1:N) {
+    X[[i]] <- matrix(rnorm(C*K), ncol=K) # normal covariates  
+    Y[i] <- sample(x=C, size=1, prob=exp(X[[i]]%*%beta + alpha)) # logit formula
+  }
+  list(N=N, C=C, K=K, Y=Y, X=X)
+}
+d1 <- generate_mnl_data(N=1000, C=3, beta=c(1), alpha = c(1))
+str(d1)
+head(d1$X)
+
+
+generate_hmnl_data <- function(R=10, S=30, C=3, 
+                               Theta=matrix(rep(1, 8), nrow=2), 
+                               Sigma=diag(0.1, 4)){
+  K <- ncol(Theta)
+  G <- nrow(Theta)
+  Y <- array(dim=c(R, S))
+  X <- array(rnorm(R*S*C*K), dim=c(R, S, C, K)) # normal covariates
+  Z <- array(dim=c(G, R))
+  Z[1,] <- 1  # intercept
+  if (G > 1) {
+    Z[2:G,] <- rnorm(R*(G-1)) # normal covariates
+  }
+  Beta <- array(dim=c(K, R))
+  for (r in 1:R) {
+    Beta[,r] <- mvrnorm(n=1, mu=Z[,r]%*%Theta, Sigma=Sigma)
+    for (s in 1:S)
+      Y[r,s] <- sample(x=C, size=1, prob=exp(X[r,s,,]%*%Beta[,r])) # logit formula
+  }
+  list(R=R, S=S, C=C, K=K, G=G, Y=Y, X=X, Z=Z, 
+       beta.true=beta, Theta.true=Theta, Sigma.true=Sigma)
+}
+
+d1 <- generate_hmnl_data()
+str(d1)
+head(d1)
+
 ######################################################################################################
 #### Multinomial Model Ant State (no size) ###############################################################################
 ######################################################################################################
