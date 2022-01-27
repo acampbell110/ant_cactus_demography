@@ -666,7 +666,7 @@ ant_dat <- list(K = 4, # number of possible outcomes
                      x = x) # design matrix
 
 ## Getting no parameters error so here are different ways to run the code to try and fix this
-fit_ant2 <- stan("STAN Models/size_ant_model.stan", 
+fit_ant2 <- stan("Data Analysis/STAN Models/size_ant_model.stan", 
                       data = ant_dat, warmup = 100, iter = 1000, chains = 3, algorithm="Fixed_param")
 
 fit_ant_summary2 <- summary(fit_ant2, par="beta", probs=.5)$summary %>% as.data.frame
