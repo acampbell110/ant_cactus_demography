@@ -140,7 +140,7 @@ recruits(c(-4.99,-3.99,-0.99,0.01,5.01), cholla)
 
 ####################################################
 beta<-function(vac_rec){
-  ifelse(vac_rec == TRUE, return(0), return(1))
+  ifelse(vac_rec == TRUE, return(1), return(0))
 }
 
 ## Check if it works
@@ -473,7 +473,7 @@ pxy<-function(x,y,params,i){
 
 pxy(c(3,-1,5),c(3.5,-1,5.01),cholla,"crem")
 
-bigmatrix.1 <- function(x,y,params,lower,upper,matsize,num_ants,i,j){
+bigmatrix.1 <- function(x,y,params,lower,upper,matsize,num_ants,i){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -509,7 +509,9 @@ bigmatrix.1 <- function(x,y,params,lower,upper,matsize,num_ants,i,j){
   return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
 }
 
-bigmatrix.1(4,4.5,cholla,lower,upper,matsize,1,"crem","liom")
+
+
+bigmatrix.1(4,4.5,cholla,lower,upper,matsize,1,"crem")$IPMmat
 ## Check that it works
 i = c("liom","vac","crem","other")
 j = c("vac","crem","crem","liom")
@@ -518,13 +520,224 @@ y = c(-1,-4,4.5,3.01)
 big1 <- list()
 lambda1 <- list()
 for(n in 1:length(i)){
-  big1[[n]] <- bigmatrix.1(x[n],y[n],cholla,lower,upper,matsize,1,i[n],j[n])
+  big1[[n]] <- bigmatrix.1(x[n],y[n],cholla,lower,upper,matsize,1,i[n])
   lambda1[[n]] <- Re(eigen(big1[[n]]$IPMmat)$values[1])
 }
 lambda1
+# 
+# ###############################################
+# bigmatrix.2<-function(x,y,params,lower,upper,matsize,num_ants,i,j){
+#   ###################################################################################################
+#   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
+#   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
+#   ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
+#   ## lower and upper are the integration limits
+#   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
+#   ###################################################################################################
+#   n<-matsize
+#   L<-lower; U<-upper
+#   h<-(U-L)/n                   #Bin size
+#   b<-L+c(0:n)*h;               #Lower boundaries of bins 
+#   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
+#   
+#   # Fertility matricies -- Two Ant
+#   Fmat <- matrix(0,(2*n+2),(2*n+2))
+#   # Growth/survival transition matricies -- Two Ant
+#   Tmat <- matrix(0,(2*n+2),(2*n+2))
+#   ## Full Matricies
+#   IPMmat <- matrix()
+#   # Banked Seeds go in top row
+#   fec1_i<-fx(y,params=params,i)  
+#   fec1_j<-fx(y,params=params,j) 
+#   Fmat[1,3:(n+2)]<-fec1_j 
+#   Fmat[1,(n+3):(2*n+2)]<-fec1_i 
+#   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
+#   Tmat[2,1]<-1-invlogit(params[71])  
+#   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
+#   #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)  
+#   beta2_j<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE) 
+#   beta2_i<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE) 
+#   Tmat[(n+3):(2*n+2),1]<-beta2_v 
+#   Tmat[(n+3):(2*n+2),2]<-beta2_c 
+#   # Growth/survival transitions among cts sizes
+#   vac_vac<-t(outer(y,y,ptxy,i,i,num_ants=2,params=params))*h 
+#   vac_occ<-t(outer(y,y,ptxy,i,j,num_ants=2,params=params))*h 
+#   occ_vac<-t(outer(y,y,ptxy,j,i,num_ants=2,params=params))*h 
+#   occ_occ<-t(outer(y,y,ptxy,j,j,num_ants=2,params=params))*h 
+#   Tmat[3:(n+2),3:(n+2)]<- vac_vac   ## Top left 
+#   Tmat[3:(n+2),(n+3):(2*n+2)]<-occ_vac   ## Top Right 
+#   Tmat[(n+3):(2*n+2),3:(n+2)]<- occ_occ   ## Bottom Left 
+#   Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_occ   ## Bottom Right 
+#   # Put it all together
+#   IPMmat<-Fmat+Tmat 
+#   return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
+# }
+# 
+# ## Check if it is working
+# i = c("liom","vac","other","vac","crem","vac")
+# j = c("vac","liom","vac","other","vac","crem")
+# x = c(-1,-5,4,-1,-5,4)
+# y = c(-1,-4,4.5,-1,-4,4.5)
+# big2 <- list()
+# lambda2 <- vector()
+# for(n in 1:length(i)){
+#   big2[[n]] <- bigmatrix.try2(x[n],y[n],cholla,lower,upper,matsize,2,i[n],j[n])
+#   lambda2[n] <- Re(eigen(big2[[n]]$IPMmat)$values[1])
+# }
+# lambda2
+# 
+# 
+# ##Crem_Vac
+# Re(eigen(bigmatrix.try2(x_dum,y_dum,cholla,lower,upper,matsize,2,"vac","crem")$IPMmat)$values[1])
+# ##Liom_Vac
+# Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vl)$values[1])
+# ##Other_Vac
+# Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vo)$values[1])
 
-###############################################
-bigmatrix.try2<-function(x,y,params,lower,upper,matsize,num_ants,i,j){
+# bigmatrix.try2 <- function(x,y,params,lower,upper,matsize,num_ants,i,j){
+#   ###################################################################################################
+#   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
+#   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
+#   ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
+#   ## lower and upper are the integration limits
+#   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
+#   ###################################################################################################
+#   n<-matsize
+#   L<-lower; U<-upper
+#   h<-(U-L)/n                   #Bin size
+#   b<-L+c(0:n)*h;               #Lower boundaries of bins 
+#   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
+#   
+#   # Fertility matricies -- Two Ant
+#   Fmat <- matrix(0,(2*n+2),(2*n+2))
+#   # Growth/survival transition matricies -- Two Ant
+#   Tmat <- matrix(0,(2*n+2),(2*n+2))
+#   ## Full Matricies
+#   IPMmat <- matrix()
+#   
+#   
+#   if(i == "crem" | j == "crem"){
+#     # Banked Seeds go in top row
+#     fec1_v<-fx(y,params=params,"vac")
+#     fec1_c<-fx(y,params=params,"crem")
+#     Fmat[1,3:(n+2)]<-fec1_c
+#     Fmat[1,(n+3):(2*n+2)]<-fec1_v
+#     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
+#     Tmat[2,1]<-1-invlogit(params[71])
+#     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
+#     #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)
+#     beta2_c<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+#     beta2_v<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+#     Tmat[(n+3):(2*n+2),1]<-beta2_v
+#     Tmat[(n+3):(2*n+2),2]<-beta2_c
+#     # Growth/survival transitions among cts sizes
+#     vac_vac<-t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h
+#     vac_crem<-t(outer(y,y,ptxy,i="vac",j="crem",num_ants=2,params=params))*h
+#     crem_vac<-t(outer(y,y,ptxy,i="crem",j="vac",num_ants=2,params=params))*h
+#     crem_crem<-t(outer(y,y,ptxy,i="crem",j="crem",num_ants=2,params=params))*h
+#     Tmat[3:(n+2),3:(n+2)]<- vac_vac   ## Top left
+#     Tmat[3:(n+2),(n+3):(2*n+2)]<-crem_vac   ## Top Right
+#     Tmat[(n+3):(2*n+2),3:(n+2)]<- crem_crem   ## Bottom Right
+#     Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_crem   ## Bottom Right
+#     # Put it all together
+#     IPMmat<-Fmat+Tmat
+#     return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
+#     #return("Crem,Vac")
+#   }
+#   
+#   if(i == "liom" | j == "liom"){
+#     ## LIOM
+#     # Banked seeds go in top row
+#     fec1_v<-fx(y,params=params,"vac")
+#     fec1_l<-fx(y,params=params, "liom")
+#     Fmat[1,3:(n+2)]<-fec1_l
+#     Fmat[1,(n+3):(2*n+2)]<-fec1_v
+#     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
+#     Tmat[2,1]<-1-invlogit(params[71])
+#     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
+#     Tmat[3:(n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE) ###  Recruits from 
+#     Tmat[(n+3):(2*n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+#     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
+#     Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+#     Tmat[(n+3):(2*n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+#     # Growth/survival transitions among cts sizes
+#     vac_vac<-t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h
+#     vac_liom<-t(outer(y,y,ptxy,i="vac",j="liom",num_ants=2,params=params))*h
+#     liom_vac<-t(outer(y,y,ptxy,i="liom",j="vac",num_ants=2,params=params))*h
+#     liom_liom<-t(outer(y,y,ptxy,i="liom",j="liom",num_ants=2,params=params))*h
+#     Tmat[3:(n+2),3:(n+2)]<- vac_vac   ## Top left
+#     Tmat[3:(n+2),(n+3):(2*n+2)]<-liom_vac  ## Top Right
+#     Tmat[(n+3):(2*n+2),3:(n+2)]<- liom_liom   ## Bottom Right
+#     Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_liom   ## Bottom Right
+#     # Put it all together
+#     IPMmat<-Fmat+Tmat
+#     return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
+#     #return("Liom,Vac")
+#   }
+#   
+#   if(i == "other" | j == "other"){
+#     ## OTHER
+#     # Banked seeds go in top row
+#     fec1_v<-fx(y,params=params, "vac")
+#     fec1_o<-fx(y,params=params, "other")
+#     Fmat[1,3:(n+2)]<-fec1_o
+#     Fmat[1,(n+3):(2*n+2)]<-fec1_v
+#     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
+#     Tmat[2,1]<-1-invlogit(params[71])
+#     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
+#     beta1_o<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+#     beta1_v<- invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+#     Tmat[3:(n+2),1]<-beta1_v
+#     Tmat[3:(n+2),2]<-beta1_o
+#     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
+#     #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)
+#     beta2_o<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+#     beta2_v<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+#     Tmat[(n+3):(2*n+2),1]<-beta2_v
+#     Tmat[(n+3):(2*n+2),2]<-beta2_o
+#     # Growth/survival transitions among cts sizes
+#     vac_vac<-t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h
+#     vac_other<-t(outer(y,y,ptxy,i="vac",j="other",num_ants=2,params=params))*h
+#     other_vac<-t(outer(y,y,ptxy,i="other",j="vac",num_ants=2,params=params))*h
+#     other_other<-t(outer(y,y,ptxy,i="other",j="other",num_ants=2,params=params))*h
+#     Tmat[3:(n+2),3:(n+2)]<- vac_vac  ## Top left
+#     Tmat[3:(n+2),(n+3):(2*n+2)]<-other_vac  ## Top Right
+#     Tmat[(n+3):(2*n+2),3:(n+2)]<- other_other  ## Bottom Right
+#     Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_other  ## Bottom Right
+#     # Put it all together
+#     IPMmat<-Fmat+Tmat
+#     return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
+#     #return("Other,Vac")
+#   }
+# }
+# 
+# bigmatrix.try2(3,4,cholla,lower,upper,matsize,2,"vac","other")
+# 
+# ## Check if it is working
+# i = c("liom","vac","other","vac","crem","vac")
+# j = c("vac","liom","vac","other","vac","crem")
+# x = c(-1,-1,-1,-1,-1,-1)
+# y = c(-1,-1,-1,-1,-1,-1)
+# big2 <- list()
+# lambda2 <- vector()
+# for(n in 1:length(i)){
+#   big2[[n]] <- bigmatrix.try2(x[n],y[n],cholla,lower,upper,matsize,2,i[n],j[n])
+#   lambda2[n] <- Re(eigen(big2[[n]]$IPMmat)$values[1])
+# }
+# lambda2
+# 
+# 
+# 
+# ##Crem_Vac
+# Re(eigen(bigmatrix.try2(4,5,cholla,lower,upper,matsize,2,"vac","crem")$IPMmat)$values[1])
+# ##Liom_Vac
+# Re(eigen(bigmatrix.try2(2,3,cholla,lower,upper,matsize,2,"liom","vac")$IPMmat)$values[1])
+# ##Other_Vac
+# Re(eigen(bigmatrix.try2(x,y,cholla,lower,upper,matsize,2,"vac","other")$IPMmat)$values[1])
+
+
+
+bigmatrix.try3 <- function(x,y,params,lower,upper,matsize,num_ants,i,j){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -544,201 +757,76 @@ bigmatrix.try2<-function(x,y,params,lower,upper,matsize,num_ants,i,j){
   Tmat <- matrix(0,(2*n+2),(2*n+2))
   ## Full Matricies
   IPMmat <- matrix()
-  # Banked Seeds go in top row
-  fec1_i<-fx(y,params=params,i)  
-  fec1_j<-fx(y,params=params,j) 
-  Fmat[1,3:(n+2)]<-fec1_j 
-  Fmat[1,(n+3):(2*n+2)]<-fec1_i 
-  # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-  Tmat[2,1]<-1-invlogit(params[71])  
-  # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-  #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)  
-  beta2_j<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE) 
-  beta2_i<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE) 
-  Tmat[(n+3):(2*n+2),1]<-beta2_v 
-  Tmat[(n+3):(2*n+2),2]<-beta2_c 
-  # Growth/survival transitions among cts sizes
-  vac_vac<-t(outer(y,y,ptxy,i,i,num_ants=2,params=params))*h 
-  vac_occ<-t(outer(y,y,ptxy,i,j,num_ants=2,params=params))*h 
-  occ_vac<-t(outer(y,y,ptxy,j,i,num_ants=2,params=params))*h 
-  occ_occ<-t(outer(y,y,ptxy,j,j,num_ants=2,params=params))*h 
-  Tmat[3:(n+2),3:(n+2)]<- vac_vac   ## Top left 
-  Tmat[3:(n+2),(n+3):(2*n+2)]<-occ_vac   ## Top Right 
-  Tmat[(n+3):(2*n+2),3:(n+2)]<- occ_occ   ## Bottom Left 
-  Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_occ   ## Bottom Right 
-  # Put it all together
-  IPMmat<-Fmat+Tmat 
-  return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
-}
-
-## Check if it is working
-i = c("liom","vac","other","vac","crem","vac")
-j = c("vac","liom","vac","other","vac","crem")
-x = c(-1,-5,4,-1,-5,4)
-y = c(-1,-4,4.5,-1,-4,4.5)
-big2 <- list()
-lambda2 <- vector()
-for(n in 1:length(i)){
-  big2[[n]] <- bigmatrix.try2(x[n],y[n],cholla,lower,upper,matsize,2,i[n],j[n])
-  lambda2[n] <- Re(eigen(big2[[n]]$IPMmat)$values[1])
-}
-lambda2
-
-
-##Crem_Vac
-Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vc)$values[1])
-##Liom_Vac
-Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vl)$values[1])
-##Other_Vac
-Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vo)$values[1])
-
-bigmatrix.try2 <- function(x,y,params,lower,upper,matsize,num_ants,i,j){
-  ###################################################################################################
-  ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
-  ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
-  ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
-  ## lower and upper are the integration limits
-  ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
-  ###################################################################################################
-  n<-matsize
-  L<-lower; U<-upper
-  h<-(U-L)/n                   #Bin size
-  b<-L+c(0:n)*h;               #Lower boundaries of bins 
-  y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
-  
-  # Fertility matricies -- Two Ant
-  Fmat <- matrix(0,(2*n+2),(2*n+2))
-  # Growth/survival transition matricies -- Two Ant
-  Tmat <- matrix(0,(2*n+2),(2*n+2))
-  ## Full Matricies
-  IPMmat <- matrix()
-  
-  
-  if(i == "crem" | j == "crem"){
-    # Banked Seeds go in top row
-    fec1_v<-fx(y,params=params,"vac")
-    fec1_c<-fx(y,params=params,"crem")
-    Fmat[1,3:(n+2)]<-fec1_c
-    Fmat[1,(n+3):(2*n+2)]<-fec1_v
-    # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-    Tmat[2,1]<-1-invlogit(params[71])
-    # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-    #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)
-    beta2_c<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
-    beta2_v<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
-    Tmat[(n+3):(2*n+2),1]<-beta2_v
-    Tmat[(n+3):(2*n+2),2]<-beta2_c
-    # Growth/survival transitions among cts sizes
-    vac_vac<-t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h
-    vac_crem<-t(outer(y,y,ptxy,i="vac",j="crem",num_ants=2,params=params))*h
-    crem_vac<-t(outer(y,y,ptxy,i="crem",j="vac",num_ants=2,params=params))*h
-    crem_crem<-t(outer(y,y,ptxy,i="crem",j="crem",num_ants=2,params=params))*h
-    Tmat[3:(n+2),3:(n+2)]<- vac_vac   ## Top left
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-crem_vac   ## Top Right
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- crem_crem   ## Bottom Right
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_crem   ## Bottom Right
-    # Put it all together
-    IPMmat<-Fmat+Tmat
-    return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
-    #return("Crem,Vac")
-  }
-  
+  ############################################# LIOM ############################################
   if(i == "liom" | j == "liom"){
-    ## LIOM
-    # Banked seeds go in top row
-    fec1_v<-fx(y,params=params,"vac")
-    fec1_l<-fx(y,params=params, "liom")
-    Fmat[1,3:(n+2)]<-fec1_l
-    Fmat[1,(n+3):(2*n+2)]<-fec1_v
+    ## Fecundity of plants
+    Fmat[1,3:(n+2)]<-fx(y,params=params,"vac") ## Production of seeds from x sized mom with no ant visitor
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom") ## Production of seeds from x sized mom with ant visitor
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(params[71])
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-    beta1_l<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
-    beta1_v<- invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
-    Tmat[3:(n+2),1]<-beta1_v
-    Tmat[3:(n+2),2]<-beta1_l
+    Tmat[3:(n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+    Tmat[(n+3):(2*n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-    #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)
-    beta2_l<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
-    beta2_v<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
-    Tmat[(n+3):(2*n+2),1]<-beta2_v
-    Tmat[(n+3):(2*n+2),2]<-beta2_l
+    Tmat[3:(n+2),1]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+    Tmat[(n+3):(2*n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
     # Growth/survival transitions among cts sizes
-    vac_vac<-t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h
-    vac_liom<-t(outer(y,y,ptxy,i="vac",j="liom",num_ants=2,params=params))*h
-    liom_vac<-t(outer(y,y,ptxy,i="liom",j="vac",num_ants=2,params=params))*h
-    liom_liom<-t(outer(y,y,ptxy,i="liom",j="liom",num_ants=2,params=params))*h
-    Tmat[3:(n+2),3:(n+2)]<- vac_vac   ## Top left
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-liom_vac  ## Top Right
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- liom_liom   ## Bottom Right
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_liom   ## Bottom Right
+    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h   ## Top left
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,i="liom",j="vac",num_ants=2,params=params))*h   ## Top Right
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,i="vac",j="liom",num_ants=2,params=params))*h   ## Bottom Left
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,i="liom",j="liom",num_ants=2,params=params))*h   ## Bottom Right
     # Put it all together
     IPMmat<-Fmat+Tmat
     return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
-    #return("Liom,Vac")
   }
-  
+  ############################################# CREM ###############################################
+  if(i == "crem" | j == "crem"){
+    ## Fecundity of plants
+    Fmat[1,3:(n+2)]<-fx(y,params=params,"vac") ## Production of seeds from x sized mom with no ant visitor
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"crem") ## Production of seeds from x sized mom with ant visitor
+    # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
+    Tmat[2,1]<-1-invlogit(params[71])
+    # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
+    Tmat[3:(n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+    Tmat[(n+3):(2*n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+    # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
+    Tmat[3:(n+2),1]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+    Tmat[(n+3):(2*n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
+    # Growth/survival transitions among cts sizes
+    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h   ## Top left
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,i="crem",j="vac",num_ants=2,params=params))*h   ## Top Right
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,i="vac",j="crem",num_ants=2,params=params))*h   ## Bottom Left
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,i="crem",j="crem",num_ants=2,params=params))*h   ## Bottom Right
+    # Put it all together
+    IPMmat<-Fmat+Tmat
+    return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
+  }
+  ############################################# OTHER ###########################################
   if(i == "other" | j == "other"){
-    ## OTHER
-    # Banked seeds go in top row
-    fec1_v<-fx(y,params=params, "vac")
-    fec1_o<-fx(y,params=params, "other")
-    Fmat[1,3:(n+2)]<-fec1_o
-    Fmat[1,(n+3):(2*n+2)]<-fec1_v
+    ## Fecundity of plants
+    Fmat[1,3:(n+2)]<-fx(y,params=params,"vac") ## Production of seeds from x sized mom with no ant visitor
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"other") ## Production of seeds from x sized mom with ant visitor
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(params[71])
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-    beta1_o<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
-    beta1_v<- invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
-    Tmat[3:(n+2),1]<-beta1_v
-    Tmat[3:(n+2),2]<-beta1_o
+    Tmat[3:(n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+    Tmat[(n+3):(2*n+2),1]<-invlogit(params[71])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-    #Tmat[3:(n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92] * xb)
-    beta2_o<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
-    beta2_v<- invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
-    Tmat[(n+3):(2*n+2),1]<-beta2_v
-    Tmat[(n+3):(2*n+2),2]<-beta2_o
+    Tmat[3:(n+2),1]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(TRUE)
+    Tmat[(n+3):(2*n+2),2]<-invlogit(params[81])*recruits(y,params)*h*invlogit(params[91] + params[92]*xb)*beta(FALSE)
     # Growth/survival transitions among cts sizes
-    vac_vac<-t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h
-    vac_other<-t(outer(y,y,ptxy,i="vac",j="other",num_ants=2,params=params))*h
-    other_vac<-t(outer(y,y,ptxy,i="other",j="vac",num_ants=2,params=params))*h
-    other_other<-t(outer(y,y,ptxy,i="other",j="other",num_ants=2,params=params))*h
-    Tmat[3:(n+2),3:(n+2)]<- vac_vac  ## Top left
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-other_vac  ## Top Right
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- other_other  ## Bottom Right
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- vac_other  ## Bottom Right
+    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,i="vac",j="vac",num_ants=2,params=params))*h   ## Top left
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,i="other",j="vac",num_ants=2,params=params))*h   ## Top Right
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,i="vac",j="other",num_ants=2,params=params))*h   ## Bottom Left
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,i="other",j="other",num_ants=2,params=params))*h   ## Bottom Right
     # Put it all together
     IPMmat<-Fmat+Tmat
     return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
-    #return("Other,Vac")
   }
 }
 
-bigmatrix.try2(3,4,cholla,lower,upper,matsize,2,"vac","other")
-
-## Check if it is working
-i = c("liom","vac","other","vac","crem","vac")
-j = c("vac","liom","vac","other","vac","crem")
-x = c(-1,-3,4,-1,-3,4)
-y = c(-1,-4,4.5,-1,-4,4.5)
-big2 <- list()
-lambda2 <- vector()
-for(n in 1:length(i)){
-  big2[[n]] <- bigmatrix.try2(x[n],y[n],cholla,lower,upper,matsize,2,i[n],j[n])
-  lambda2[n] <- Re(eigen(big2[[n]]$IPMmat)$values[1])
-}
-lambda2
-
-
-
-##Crem_Vac
-Re(eigen(bigmatrix.try2(x,y,cholla,lower,upper,matsize,2,"vac","crem")$IPMmat)$values[1])
-##Liom_Vac
-Re(eigen(bigmatrix.try2(x,y,cholla,lower,upper,matsize,2,"vac","liom")$IPMmat)$values[1])
-##Other_Vac
-Re(eigen(bigmatrix.try2(x,y,cholla,lower,upper,matsize,2,"vac","other")$IPMmat)$values[1])
-
-
-
+Re(eigen(bigmatrix.try3(4,5,cholla,lower,upper,matsize,2,"liom","vac")$IPMmat)$values[1])
+Re(eigen(bigmatrix.try3(4,5,cholla,lower,upper,matsize,2,"vac","crem")$IPMmat)$values[1])
+Re(eigen(bigmatrix.try3(4,5,cholla,lower,upper,matsize,2,"vac","other")$IPMmat)$values[1])
 
 
