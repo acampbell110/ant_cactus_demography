@@ -3,12 +3,13 @@
 setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography/Data Analysis")
 library("nnet")
 library(rstan)
+library(bayesplot)
 
 #Genarating 500 random numbers with zero mean
-x = rnorm(100,0)
+x = rnorm(1000,0)
 #Assigning the values of beta1 and beta2
-Beta1 = 2
-Beta2 = .5
+Beta1 = 20
+Beta2 = .05
 #Calculation of denominator for probability calculation
 Denominator= 1+exp(Beta1*x)+exp(Beta2*x)
 #Calculating the matrix of probabilities for three choices
@@ -31,12 +32,14 @@ write("data {
   int<lower=2> K;
   int<lower=0> N;
   int<lower=1> D;
-  array[N] int<lower=1, upper=K> y;
+  int<lower=1, upper=K> y[N];
   matrix[N, D] x;
 }
+
 parameters {
   matrix[D, K] beta;
 }
+
 model {
   matrix[N, K] x_beta = x * beta;
 
@@ -58,3 +61,46 @@ multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
 #thing <- model.matrix(y ~ x + 0, dfM)
 fit_stan <- stan(file = "STAN Models/multi_prac_tom_K.stan", 
                data = multi_dat, warmup = 100, iter = 1000, chains = 3)
+
+### now try K-1 version
+
+## Now Stan model
+write("data {
+  int<lower=2> K;
+  int<lower=0> N;
+  int<lower=1> D;
+  int<lower=1, upper=K> y[N];
+  matrix[N, D] x;
+}
+
+transformed data {
+  vector[D] zeros = rep_vector(0, D);
+}
+
+parameters {
+  matrix[D, K - 1] beta_raw;
+}
+
+transformed parameters {
+  matrix[D, K] beta = append_col(beta_raw, zeros);
+}
+
+model {
+  matrix[N, K] x_beta = x * beta;
+
+  to_vector(beta) ~ normal(0, 5);
+
+  for (n in 1:N) {
+    y[n] ~ categorical_logit(x_beta[n]');
+
+  }
+}",
+"STAN Models/multi_prac_tom_Km1.stan")
+
+fit_stan <- stan(file = "STAN Models/multi_prac_tom_Km1.stan", 
+                 data = multi_dat, warmup = 500, iter = 5000, chains = 3)
+
+mcmc_trace(fit_stan)
+
+fit<-(multinom(multi_dat$y ~ multi_dat$x + 0))
+summary(fit)

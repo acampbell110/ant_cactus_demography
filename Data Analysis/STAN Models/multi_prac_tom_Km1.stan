@@ -6,8 +6,16 @@ data {
   matrix[N, D] x;
 }
 
+transformed data {
+  vector[D] zeros = rep_vector(0, D);
+}
+
 parameters {
-  matrix[D, K] beta;
+  matrix[D, K - 1] beta_raw;
+}
+
+transformed parameters {
+  matrix[D, K] beta = append_col(beta_raw, zeros);
 }
 
 model {
