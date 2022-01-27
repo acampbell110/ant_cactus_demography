@@ -28,31 +28,26 @@ summary(fit2)
 
 ## Now Stan model
 write("data {
-  int K;
-  int N;
-  int D;
-  int y[N];
+  int<lower=2> K;
+  int<lower=0> N;
+  int<lower=1> D;
+  array[N] int<lower=1, upper=K> y;
   matrix[N, D] x;
 }
-transformed data {
-  row_vector[D] zeros = rep_row_vector(0, D);
-}
 parameters {
-  matrix[K - 1, D] beta_raw;
-}
-transformed parameters {
-  matrix[K, D] beta;
-  beta = append_row(beta_raw, zeros);
+  matrix[D, K] beta;
 }
 model {
   matrix[N, K] x_beta = x * beta;
 
   to_vector(beta) ~ normal(0, 5);
 
-  for (n in 1:N)
+  for (n in 1:N) {
     y[n] ~ categorical_logit(x_beta[n]');
+
+  }
 }",
-"STAN Models/multi_prac_tom.stan")
+"STAN Models/multi_prac_tom_K.stan")
 
 multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
                   N = (dim(dfM)[1]), # number of observations
@@ -61,5 +56,5 @@ multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
                   x = as.matrix(dfM$x)) # design matrix
 
 #thing <- model.matrix(y ~ x + 0, dfM)
-fit_stan <- stan(file = "STAN Models/multi_prac_tom.stan", 
+fit_stan <- stan(file = "STAN Models/multi_prac_tom_K.stan", 
                data = multi_dat, warmup = 100, iter = 1000, chains = 3)
