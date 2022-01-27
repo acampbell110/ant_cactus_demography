@@ -1,6 +1,7 @@
 ## simulation code from: https://stats.stackexchange.com/questions/103728/simulating-multinomial-logit-data-with-r
 #Adding library for multinomial logit regression
-setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography/Data Analysis")
+#setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 library("nnet")
 library(rstan)
 library(bayesplot)
@@ -61,6 +62,18 @@ multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
 #thing <- model.matrix(y ~ x + 0, dfM)
 fit_stan <- stan(file = "STAN Models/multi_prac_tom_K.stan", 
                data = multi_dat, warmup = 100, iter = 1000, chains = 3)
+
+
+multi_dat_real <- list(K = length(unique(cactus$ant_t1)), #number of possible ant species
+                       N = dim(cactus)[1], #number of observations
+                       D = 1, #number of predictors
+                       y = cactus$ant_t1, #observations
+                       x = as.matrix(cactus$volume_t) #design matrix
+                       )
+
+fit_stan <- stan(file = "STAN Models/multi_prac_tom_K.stan", 
+                 data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
+
 
 ### now try K-1 version
 
