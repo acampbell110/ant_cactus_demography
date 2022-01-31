@@ -122,3 +122,29 @@ mcmc_trace(fit_stan)
 
 fit<-(multinom(multi_dat$y ~ multi_dat$x + 0))
 summary(fit)
+
+###### now add intercept
+x = rnorm(1000,0)
+alpha <- c(-1,2)
+beta <- c(0,0)
+Denominator= 1+exp(alpha[1] + beta[1]*x)+exp(alpha[2] + beta[2]*x)
+#Calculating the matrix of probabilities for three choices
+vProb = cbind(1/Denominator, exp(alpha[1] + beta[1]*x)/Denominator, exp(alpha[2] + beta[2]*x)/Denominator )
+# Assigning the value one to maximum probability and zero for rest to get the appropriate choices for value of x
+mChoices = t(apply(vProb, 1, rmultinom, n = 1, size = 1))
+# Value of Y and X together
+dfM = cbind.data.frame(y = apply(mChoices, 1, function(x) which(x==1)), x)
+summary(multinom(y ~ x, dfM))
+
+multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
+                  N = (dim(dfM)[1]), # number of observations
+                  D = (dim(dfM)[2]), # number of predictors
+                  y = dfM$y, # observations
+                  x = model.matrix(~ x, dfM)) # design matrix
+
+fit_stan <- stan(file = "STAN Models/multi_prac_tom_Km1.stan", 
+                 data = multi_dat, warmup = 500, iter = 5000, chains = 3)
+mcmc_trace(fit_stan)
+
+mcmc_hist(fit_stan,pars=c("beta_raw[2,2]","beta_raw[2,1]",
+                          "beta_raw[1,2]","beta_raw[1,1]"))
