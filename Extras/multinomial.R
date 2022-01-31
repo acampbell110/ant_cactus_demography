@@ -51,7 +51,7 @@ model {
 
   }
 }",
-"STAN Models/multi_prac_tom_K.stan")
+"Data Analysis/STAN Models/multi_prac_tom_K.stan")
 
 multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
                   N = (dim(dfM)[1]), # number of observations
@@ -60,19 +60,24 @@ multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
                   x = as.matrix(dfM$x)) # design matrix
 
 #thing <- model.matrix(y ~ x + 0, dfM)
-fit_stan <- stan(file = "STAN Models/multi_prac_tom_K.stan", 
+fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_K.stan", 
                data = multi_dat, warmup = 100, iter = 1000, chains = 3)
 
 
-multi_dat_real <- list(K = length(unique(cactus$ant_t1)), #number of possible ant species
-                       N = dim(cactus)[1], #number of observations
+cactus_real<-cactus[, c("ant_t1","volume_t")]
+cactus_real<-na.omit(cactus_real)
+multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
+                       N = dim(cactus_real)[1], #number of observations
                        D = 1, #number of predictors
-                       y = cactus$ant_t1, #observations
-                       x = as.matrix(cactus$volume_t) #design matrix
+                       y = as.integer(as.factor(cactus_real$ant_t1)), #observations
+                       x = as.matrix(cactus_real$volume_t) #design matrix
                        )
 
-fit_stan <- stan(file = "STAN Models/multi_prac_tom_K.stan", 
-                 data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
+fit_stan_real <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_K.stan", 
+                 data = multi_dat_real, warmup = 1000, iter = 10000, chains = 3)
+
+
+mcmc_trace(fit_stan_real)
 
 
 ### now try K-1 version
