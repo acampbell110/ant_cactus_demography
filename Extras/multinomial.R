@@ -6,6 +6,7 @@ library("nnet")
 library(rstan)
 library(bayesplot)
 
+###### Simulate Fake Data 
 #Genarating 500 random numbers with zero mean
 x = rnorm(3885,0)
 #Assigning the values of beta1 and beta2
@@ -15,6 +16,8 @@ Beta2 = .05
 Denominator= 1+exp(Beta1*x)+exp(Beta2*x)
 #Calculating the matrix of probabilities for three choices
 vProb = cbind(1/Denominator, exp(x*Beta1)/Denominator, exp(x*Beta2)/Denominator )
+## check that all rows sum to 1
+sum(vProb[100,])
 # Assigning the value one to maximum probability and zero for rest to get the appropriate choices for value of x
 mChoices = t(apply(vProb, 1, rmultinom, n = 1, size = 1))
 # Value of Y and X together
@@ -28,138 +31,123 @@ summary(fit)
 fit2<-multinom(y ~ x, dfM)
 summary(fit2)
 
-## Now Stan model -- size only
-write("data {
-  int<lower=2> K;
-  int<lower=0> N;
-  int<lower=1> D;
-  int<lower=1, upper=K> y[N];
-  matrix[N, D] x;
-}
+###### Import real data and format it
+cactus_real <- cactus[,c("ant_t","ant_t1","volume_t")]
+cactus_real <- na.omit(cactus_real)
 
-parameters {
-  matrix[D, K] beta;
-}
 
-model {
-  matrix[N, K] x_beta = x * beta;
-
-  to_vector(beta) ~ normal(0, 5);
-
-  for (n in 1:N) {
-    y[n] ~ categorical_logit(x_beta[n]');
-
-  }
-}",
-"Data Analysis/STAN Models/multi_prac_tom_K.stan")
-
+################################################################################################
+###### Now Stan model -- size only ############################################################# 
+###### Data Analysis/STAN Models/multi_prac_tom_K.stan #########################################
+################################################################################################
 multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
                   N = (dim(dfM)[1]), # number of observations
                   D = 1, # number of predictors
                   y = dfM$y, # observations
                   x = as.matrix(dfM$x)) # design matrix
-
-#thing <- model.matrix(y ~ x + 0, dfM)
-fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_K.stan", 
+###### Run the model with simulated data & save the results
+k_fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_K.stan", 
                data = multi_dat, warmup = 100, iter = 1000, chains = 3)
+k_mod_sim_out <- rstan::extract(k_fit_stan, pars = "beta")
+## plot the chains
+mcmc_trace(k_fit_stan)
 
-mcmc_trace(fit_stan)
 
-cactus_real<-cactus[, c("ant_t1","volume_t")]
-cactus_real<-na.omit(cactus_real)
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 1, #number of predictors
                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
                        x = as.matrix(cactus_real$volume_t) #design matrix
                        )
+###### Run the model with real data & save the results
+k_fit_stan_real <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_K.stan", 
+                 data = multi_dat_real, warmup = 5000, iter = 10000, chains = 3)
+k_mod_real_out <- rstan::extract(k_fit_stan_real, pars = "beta")
+## plot the chains
+mcmc_trace(k_fit_stan_real)
 
-fit_stan_real <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_K.stan", 
-                 data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
 
 
-mcmc_trace(fit_stan_real)
-
-
-### now try K-1 version
-
-## Now Stan model -- size only
-write("data {
-  int<lower=2> K;
-  int<lower=0> N;
-  int<lower=1> D;
-  int<lower=1, upper=K> y[N];
-  matrix[N, D] x;
-}
-
-transformed data {
-  vector[D] zeros = rep_vector(0, D);
-}
-
-parameters {
-  matrix[D, K - 1] beta_raw;
-}
-
-transformed parameters {
-  matrix[D, K] beta = append_col(beta_raw, zeros);
-}
-
-model {
-  matrix[N, K] x_beta = x * beta;
-
-  to_vector(beta) ~ normal(0, 5);
-
-  for (n in 1:N) {
-    y[n] ~ categorical_logit(x_beta[n]');
-
-  }
-}",
-"Data Analysis/STAN Models/multi_prac_tom_Km1.stan")
-
-fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
+############################################################################################
+###### now try K-1 version -- size only ####################################################
+###### Data Analysis/STAN Models/multi_prac_tom_Km1.stan" ##################################
+############################################################################################
+###### run the model with simulated data & save the results
+km1_fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
                  data = multi_dat, warmup = 100, iter = 1000, chains = 3)
+km1_mod_sim_out <- rstan::extract(km1_fit_stan, pars = c("beta"))
+write.csv(km1_mod_sim_out, "km1_mod_sim_outputs.csv")
+## plot the chains
+mcmc_trace(km1_fit_stan)
 
-mcmc_trace(fit_stan)
+###### Try to interpret the betas
+km1_sim <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/km1_mod_sim_outputs.csv", header = TRUE,stringsAsFactors=T)
+size_dummy_sim <- seq(min(dfM$x), max(dfM$x), by=0.1)
+## Idea 1
+Denominator <- 1 + exp(quantile(km1_sim$beta.1.1, 0.5)*size_dummy_sim) + exp(quantile(km1_sim$beta.1.2,0.5)*size_dummy_sim)
+km1_vProb <- cbind(1*size_dummy_sim/Denominator, exp(quantile(km1_sim$beta.1.1, 0.5)*size_dummy_sim)/Denominator, exp(quantile(km1_sim$beta.1.2,0.5)*size_dummy_sim)/Denominator)
+## Check that all rows sum to 1
+sum(km1_vProb[35,]) ## it does not
+## plot the probabilities
+plot(size_dummy_sim, km1_vProb[,1],ylim = c(0,1), type = "l", col = "blue", xlab = "size", ylab = "probability")
+lines(size_dummy_sim, km1_vProb[,2], col = "red")
+lines(size_dummy_sim, km1_vProb[,3], col = "green")
 
-fit<-(multinom(multi_dat$y ~ multi_dat$x + 0))
-summary(fit)
-
-## Now run this model with the real data
-fit_stan_real <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
-                      data = multi_dat_real, warmup = 300, iter = 5000, chains = 3)
-
-mcmc_trace(fit_stan_real)
-
-###### now add intercept
-x = rnorm(1000,0)
-alpha <- c(-1,2)
-beta <- c(0,0)
-Denominator= 1+exp(alpha[1] + beta[1]*x)+exp(alpha[2] + beta[2]*x)
-#Calculating the matrix of probabilities for three choices
-vProb = cbind(1/Denominator, exp(alpha[1] + beta[1]*x)/Denominator, exp(alpha[2] + beta[2]*x)/Denominator )
-# Assigning the value one to maximum probability and zero for rest to get the appropriate choices for value of x
-mChoices = t(apply(vProb, 1, rmultinom, n = 1, size = 1))
-# Value of Y and X together
-dfM = cbind.data.frame(y = apply(mChoices, 1, function(x) which(x==1)), x)
-summary(multinom(y ~ x, dfM))
-
-multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
-                  N = (dim(dfM)[1]), # number of observations
-                  D = (dim(dfM)[2]), # number of predictors
-                  y = dfM$y, # observations
-                  x = model.matrix(~ x, dfM)) # design matrix
+## Idea 2
+Denominator <-exp(quantile(km1_sim$beta.1.1, 0.5)*size_dummy_sim) + exp(quantile(km1_sim$beta.1.2,0.5)*size_dummy_sim) + exp(quantile(km1_sim$beta.1.3,0.5)*size_dummy_sim)
+km1_vProb <- cbind(exp(quantile(km1_sim$beta.1.3,0.5)*size_dummy_sim)/Denominator, exp(quantile(km1_sim$beta.1.1, 0.5)*size_dummy_sim)/Denominator, exp(quantile(km1_sim$beta.1.2,0.5)*size_dummy_sim)/Denominator)
+## Check that all rows sum to 1
+check <- vector()
+for(i in 1:61){
+  check[i] <- sum(km1_vProb[i,])
+}
+check ## Great, this seems to work!!
+## plot the probabilities
+plot(size_dummy_sim, km1_vProb[,1],ylim = c(0,1), type = "l", col = "blue", xlab = "size", ylab = "probability")
+lines(size_dummy_sim, km1_vProb[,2], col = "red")
+lines(size_dummy_sim, km1_vProb[,3], col = "green")
+legend("topright",c("outcome 1","outcome 2","outcome 3"), fill = c("blue","red","green"))
 
 
-fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
-                 data = multi_dat, warmup = 5000, iter = 10000, chains = 3)
-mcmc_trace(fit_stan)
+## Now run this model with the real data & save the results
+km1_fit_stan_real <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
+                      data = multi_dat_real, warmup = 500, iter = 10000, chains = 3)
+km1_mod_real_out <- rstan::extract(km1_fit_stan_real, pars = "beta")
+write.csv(km1_mod_real_out, "km1_mod_real_outputs.csv")
+## plot the chains
+mcmc_trace(km1_fit_stan_real)
 
-mcmc_hist(fit_stan,pars=c("beta_raw[2,2]","beta_raw[2,1]",
-                          "beta_raw[1,2]","beta_raw[1,1]"))
+###### Try to interpret the betas
+km1_real <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/km1_mod_real_outputs.csv", header = TRUE,stringsAsFactors=T)
+size_dummy_real <- seq(min(log(cactus_real$volume_t)), max(log(cactus_real$volume_t)), by=0.1)
+# 1 = other, 2 = crem, 3 = liom, 4 = vacant
+Denominator <- exp(quantile(km1_real$beta.1.1, 0.5)*size_dummy_real) + exp(quantile(km1_real$beta.1.2,0.5)*size_dummy_real) + exp(quantile(km1_real$beta.1.3,0.5)*size_dummy_real) + exp(quantile(km1_real$beta.1.4,0.5)*size_dummy_real)
+km1_vProb <- cbind(exp(quantile(km1_real$beta.1.1, 0.5)*size_dummy_real)/Denominator, exp(quantile(km1_real$beta.1.2,0.5)*size_dummy_real)/Denominator, exp(quantile(km1_real$beta.1.3,0.5)*size_dummy_real)/Denominator, exp(quantile(km1_real$beta.1.4,0.5)*size_dummy_real)/Denominator)
+## Check that all rows sum to 1
+check <- vector()
+for(i in 1:61){
+  check[i] <- sum(km1_vProb[i,])
+}
+check ## Great, this seems to work!!
 
-###### now add categorical variable
-x = rnorm(1000,0)
-## Create the x categorical variable of the dataset (Ant_t)
+###### plot the probabilities
+## prob of being occupied by other
+plot(size_dummy_real, km1_vProb[,1],ylim = c(0.24997,0.25002), type = "l", col = "black", xlab = "size", ylab = "probability")
+## prob of being occupied by crem
+lines(size_dummy_real, km1_vProb[,2], col = "red")
+## prob of being occupied by liom
+lines(size_dummy_real, km1_vProb[,3], col = "blue")
+## prob of being occupied by no one
+lines(size_dummy_real, km1_vProb[,4], col = "pink")
+legend("bottomleft", c("other","crem","liom","vac"), fill = c("black","red","blue","pink"))
+
+
+
+#############################################################################################
+###### now add categroical ##################################################################
+###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan ###############################
+#############################################################################################
+## create the categorical data & update the simulated data
 x_cat = matrix(0, nrow = 1000, ncol = 3) ## Categorical variable with 3 choices
 a <- vector()
 j <- vector()
@@ -176,11 +164,11 @@ x_t <- apply(x_cat, 1, function(x_cat) which(x_cat==1))
 ## Create the y of the dataset (Ant_t1)
 alpha <- c(-1,2)
 beta <- c(0,0,1,2,1,2,2,0)
-Denominator= 1+exp(alpha[1] + beta[1]*x_quant + beta[3]*x_cat[,1] + beta[5]*x_cat[,2] + beta[7]*x_cat[,3])+
-  exp(alpha[2] + beta[2]*x_quant + beta[4]*x_cat[1] + beta[6]*x_cat[2] + beta[8]*x_cat[3])
+Denominator= 1+exp(alpha[1] + beta[1]*x + beta[3]*x_cat[,1] + beta[5]*x_cat[,2] + beta[7]*x_cat[,3])+
+  exp(alpha[2] + beta[2]*x + beta[4]*x_cat[1] + beta[6]*x_cat[2] + beta[8]*x_cat[3])
 #Calculating the matrix of probabilities for three choices
-vProb = cbind(1/Denominator, exp(alpha[1] + beta[1]*x_quant + beta[3]*x_cat[,1] + beta[5]*x_cat[,2] + beta[7]*x_cat[,3])/Denominator, 
-              exp(alpha[2] + beta[2]*x_quant + beta[4]*x_cat[,1] + beta[6]*x_cat[,2] + beta[8]*x_cat[,3])/Denominator )
+vProb = cbind(1/Denominator, exp(alpha[1] + beta[1]*x + beta[3]*x_cat[,1] + beta[5]*x_cat[,2] + beta[7]*x_cat[,3])/Denominator, 
+              exp(alpha[2] + beta[2]*x + beta[4]*x_cat[,1] + beta[6]*x_cat[,2] + beta[8]*x_cat[,3])/Denominator )
 # Assigning the value one to maximum probability and zero for rest to get the appropriate choices for value of x
 mChoices = t(apply(vProb, 1, rmultinom, n = 1, size = 1))
 # Value of Y and X together
@@ -194,46 +182,120 @@ multi_dat <- list(K = length(unique(dfM$y)), # number of possible outcomes
                   x = model.matrix(~ x+x_t, dfM)) # design matrix
 
 
-## Now Stan model -- size + ant state
-write("data {
-  int<lower=2> K;
-  int<lower=0> N;
-  int<lower=1> D;
-  int<lower=1, upper=K> y[N];
-  matrix[N, D] x;
+###### run the model with simulated data & save results
+km1_full_fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan", 
+                 data = multi_dat, warmup = 500, iter = 1000, chains = 3)
+km1_full_mod_sim_out <- rstan::extract(km1_full_fit_stan, pars = "beta")
+write.csv(km1_full_mod_sim_out, "size_data_sim.csv")
+## plot chains
+mcmc_trace(km1_full_fit_stan)
+
+###### Import data from simulated run model
+full_data_sim <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/size_data_sim.csv", header = TRUE,stringsAsFactors=T)
+size_dummy_sim <- seq(min(dfM$x), max(dfM$x), by=0.1)
+
+###### try 1
+Denominator <- 1*size_dummy_sim + exp(quantile(full_data_sim$beta.1.1,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.1.2,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.1.3,0.5)*size_dummy_sim) + ## prob of choice 1
+  exp(quantile(full_data_sim$beta.2.1,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.2.2,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.2.3,0.5)*size_dummy_sim)
+km1_full_vProb <- cbind(1*size_dummy_sim/Denominator, (exp(quantile(full_data_sim$beta.1.1,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.1.2,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.1.3,0.5)*size_dummy_sim))/Denominator,
+                        (exp(quantile(full_data_sim$beta.2.1,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.2.2,0.5)*size_dummy_sim) + exp(quantile(full_data_sim$beta.2.3,0.5)*size_dummy_sim))/Denominator)
+## Check if the rows sum to 1
+check <- vector()
+for(i in 1:61){
+  check[i] <- sum(km1_full_vProb[i,])
 }
+check ## This works
 
-transformed data {
-  vector[D] zeros = rep_vector(0, D);
+###### plot the probabilities -- This is where it falls apart. There are negative probs and probs greater than 1
+plot(size_dummy_sim, km1_full_vProb[,1], type = "l", col = "red",ylim = c(-1,1))
+lines(size_dummy_sim, km1_full_vProb[,2], col = "blue")
+lines(size_dummy_sim, km1_full_vProb[,3], col = "green")
+legend("bottomright", c("option 1","option 2","option 3"), fill = c("blue","green","red"))
+
+###### Try 2
+Denominator <- 1*size_dummy_sim + ## baseline option
+                        exp(quantile(full_data_sim$beta.1.1,0.5)*size_dummy_sim + quantile(full_data_sim$beta.1.2,0.5)*size_dummy_sim + quantile(full_data_sim$beta.1.3,0.5)*size_dummy_sim) + ## prob of choice 1
+                        exp(quantile(full_data_sim$beta.2.1,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.2,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.3,0.5)*size_dummy_sim) ## prob of choice 2
+km1_full_vProb <- cbind((1*size_dummy_sim)/Denominator,  ## baseline prob
+                        exp(quantile(full_data_sim$beta.1.1,0.5)*size_dummy_sim + quantile(full_data_sim$beta.1.2,0.5)*size_dummy_sim + quantile(full_data_sim$beta.1.3,0.5)*size_dummy_sim)/Denominator, ## choice 1 prob
+                        exp(quantile(full_data_sim$beta.2.1,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.2,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.3,0.5)*size_dummy_sim)/Denominator) ## choice 2 prob
+## check if the rows sum to 1
+check <- vector()
+for(i in 1:61){
+  check[i] <- sum(km1_full_vProb[i,])
 }
+check ## This works!!
 
-parameters {
-  matrix[D, K - 1] beta_raw;
+###### plot the probabilities -- something is going wrong with the blyes and reds
+plot(size_dummy_sim, km1_full_vProb[,1], type = "l", col = "red")
+lines(size_dummy_sim, km1_full_vProb[,2], col = "blue")
+plot(size_dummy_sim, km1_full_vProb[,3], col = "green")
+
+###### Try 3
+Denominator <- exp(quantile(full_data_sim$beta.1.1,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.1,0.5)*size_dummy_sim) + ## prob of choice 1
+  exp(quantile(full_data_sim$beta.1.2,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.2,0.5)*size_dummy_sim) + ## prob of choice 2
+  exp(quantile(full_data_sim$beta.1.3,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.3,0.5)*size_dummy_sim) ## prob of choice 3
+km1_full_vProb <- cbind(exp(quantile(full_data_sim$beta.1.1,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.1,0.5)*size_dummy_sim)/Denominator, ## prob of choice 1
+                        exp(quantile(full_data_sim$beta.1.2,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.2,0.5)*size_dummy_sim)/Denominator, ## prob of choice 2
+                        exp(quantile(full_data_sim$beta.1.3,0.5)*size_dummy_sim + quantile(full_data_sim$beta.2.3,0.5)*size_dummy_sim)/Denominator) ## prob of choice 3
+## check if the rows sum to 1
+check <- vector()
+for(i in 1:61){
+  check[i] <- sum(km1_full_vProb[i,])
 }
+check ## This works!!
 
-transformed parameters {
-  matrix[D, K] beta = append_col(beta_raw, zeros);
+##### plot the probabilities -- something is going wrong with the blyes and reds
+plot(size_dummy_sim, km1_full_vProb[,1], type = "l", col = "red", ylim = c(0,1))
+lines(size_dummy_sim, km1_full_vProb[,2], col = "blue")
+lines(size_dummy_sim, km1_full_vProb[,3], col = "green")
+legend("topright", c("option 1","option 2","option 3"), fill = c("red","blue","green"))
+
+
+
+multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
+                       N = dim(cactus_real)[1], #number of observations
+                       D = dim(cactus_real)[2], #number of predictors -- prev ant state, prev size
+                       y = as.integer(as.factor(cactus_real$ant_t1)), #observations
+                       x = model.matrix(~ volume_t+as.integer(as.factor(ant_t)), cactus_real) #design matrix
+)
+#### run the model with real data & save results
+km1_full_fit_real <- stan(file = "Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan", 
+                          data = multi_dat_real, warmup = 500, iter = 1000, chains = 3)
+km1_full_mod_real_out <- rstan::extract(km1_full_fit_real, pars = "beta")
+write.csv(km1_full_mod_real_out, "full_data_real.csv")
+## plot the chains
+mcmc_trace(km1_full_fit_real)
+
+###### Import data from simulated run model
+full_data_real <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/full_data_real.csv", header = TRUE,stringsAsFactors=T)
+size_dummy_real <- seq(min(log(cactus_real$volume_t)), max(log(cactus_real$volume_t)), by=0.1)
+
+Denominator <- exp(quantile(full_data_real$beta.1.1,0.5)*size_dummy_real + quantile(full_data_real$beta.2.1,0.5)*size_dummy_real + quantile(full_data_real$beta.3.1,0.5)*size_dummy_real) + ## prob of choice 1
+  exp(quantile(full_data_real$beta.1.2,0.5)*size_dummy_real + quantile(full_data_real$beta.2.2,0.5)*size_dummy_real + quantile(full_data_real$beta.3.2,0.5)*size_dummy_real) + ## prob of choice 2
+  exp(quantile(full_data_real$beta.1.3,0.5)*size_dummy_real + quantile(full_data_real$beta.2.3,0.5)*size_dummy_real + quantile(full_data_real$beta.3.3,0.5)*size_dummy_real) + ## prob of choice 3
+  exp(quantile(full_data_real$beta.1.4,0.5)*size_dummy_real + quantile(full_data_real$beta.2.4,0.5)*size_dummy_real + quantile(full_data_real$beta.3.4,0.5)*size_dummy_real)   ## prob of choice 4
+km1_full_vProb <- cbind(exp(quantile(full_data_real$beta.1.1,0.5)*size_dummy_real + quantile(full_data_real$beta.2.1,0.5)*size_dummy_real + quantile(full_data_real$beta.3.1,0.5)*size_dummy_real)/Denominator, ## prob of choice 1
+                        exp(quantile(full_data_real$beta.1.2,0.5)*size_dummy_real + quantile(full_data_real$beta.2.2,0.5)*size_dummy_real + quantile(full_data_real$beta.3.2,0.5)*size_dummy_real)/Denominator, ## prob of choice 2
+                        exp(quantile(full_data_real$beta.1.3,0.5)*size_dummy_real + quantile(full_data_real$beta.2.3,0.5)*size_dummy_real + quantile(full_data_real$beta.3.3,0.5)*size_dummy_real)/Denominator, ## prob of choice 3
+                        exp(quantile(full_data_real$beta.1.4,0.5)*size_dummy_real + quantile(full_data_real$beta.2.4,0.5)*size_dummy_real + quantile(full_data_real$beta.3.4,0.5)*size_dummy_real)/Denominator) ## prob of choice 4
+## check if the rows sum to 1
+check <- vector()
+for(i in 1:length(size_dummy_real)){
+  check[i] <- sum(km1_full_vProb[i,])
 }
+check ## This works!!
 
-model {
-  matrix[N, K] x_beta = x * beta;
-
-  to_vector(beta) ~ normal(0, 5);
-
-  for (n in 1:N) {
-    y[n] ~ categorical_logit(x_beta[n]');
-
-  }
-}",
-"Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan")
-
-
-fit_stan <- stan(file = "Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan", 
-                 data = multi_dat, warmup = 50, iter = 100, chains = 3)
-mcmc_trace(fit_stan)
-
-mcmc_hist(fit_stan,pars=c("beta_raw[2,2]","beta_raw[2,1]",
-                          "beta_raw[1,2]","beta_raw[1,1]"))
+##### plot the probabilities -- something is going wrong with the blyes and reds
+## prob of being occupied by other
+plot(size_dummy_real, km1_full_vProb[,1], type = "l", col = "black", ylim = c(0,1))
+## prob of being occupied by crem
+lines(size_dummy_real, km1_full_vProb[,2], col = "red")
+## prob of being occupied by liom
+lines(size_dummy_real, km1_full_vProb[,3], col = "blue")
+## prob of being occupied by no one
+lines(size_dummy_real, km1_full_vProb[,4], col = "pink")
+legend("topright", c("other","crem","liom","vac"), fill = c("black","red","blue","pink"))
 
 
 
