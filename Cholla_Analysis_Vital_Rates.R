@@ -212,6 +212,44 @@ fit_rec <- stan(file = "STAN Models/rec.stan",data = stan_data_rec, warmup = 500
 rec_outputs <- rstan::extract(fit_rec, pars = c("beta0"))
 write.csv(rec_outputs,"rec_outputs.csv")
 rec_yrep <- rstan::extract(fit_rec,pars = c("y_rep"))$y_rep
+
+
+#### Binomial transitions between vacant and ant ####################################################
+########################################################################################################
+## Create Stan Data
+stan_data_binom <- list(N_binom = nrow(binom_ant), ## number of observations
+                        vol_binom = binom_ant$logsize_t, ## predictors volume
+                        y_binom = as.integer(as.factor(binom_ant$occ_t1))-1, ## response survival next year
+                        ant_binom = as.integer(as.factor(binom_ant$occ_t)), ## ant predictors
+                        N_ant = 2 ## number of ant states
+                        )
+
+fit_binom <- stan(file = "STAN Models/binom_ant.stan", data = stan_data_binom, warmup = 100, iter = 1000, chains = 3, cores = 3, thin = 1)
+
+binom_outputs <- rstan::extract(fit_binom, pars = c("beta0","beta1"))
+traceplot(fit_binom, pars = c("beta0"))
+
+summary(fit_binom)
+y_occ_sub <- binom_ant[binom_ant$occ_t == "occ",]
+y_vac_sub <- binom_ant[binom_ant$occ_t == "vac",]
+#Size Dummies for every ant
+size_occ = seq(min(y_occ_sub$logsize_t, na.rm = TRUE), max (y_occ_sub$logsize_t, na.rm = TRUE), by = 0.1)
+size_vac = seq(min(y_vac_sub$logsize_t, na.rm = TRUE), max (y_vac_sub$logsize_t, na.rm = TRUE), by = 0.1)
+## Formulas
+y_occ = quantile(binom_outputs$beta0[,1],0.5) + size_occ * quantile(binom_outputs$beta1[,1],0.5)
+y_occ_low = quantile(binom_outputs$beta0[,1],0.05) + size_occ * quantile(binom_outputs$beta1[,1],0.05)
+y_occ_high = quantile(binom_outputs$beta0[,1],0.95) + size_occ * quantile(binom_outputs$beta1[,1],0.95)
+other_extr = quantile(surv_data$beta0.3,0.5) + size_dummy * quantile(surv_data$beta1.3,0.5)
+y_vac = quantile(binom_outputs$beta0[,2],0.5) + size_vac * quantile(binom_outputs$beta1[,2],0.5)
+y_vac_low = quantile(binom_outputs$beta0[,2],0.05) + size_vac * quantile(binom_outputs$beta1[,2],0.05)
+y_vac_high = quantile(binom_outputs$beta0[,2],0.95) + size_vac * quantile(binom_outputs$beta1[,2],0.95)
+vac_extr = quantile(surv_data$beta0.4,0.5) + size_dummy * quantile(surv_data$beta1.4,0.5)
+y_vac_subset_surv <- subset(y_subset, ant == 4)
+
+plot(x = size_occ  ,y = invlogit(y_occ), type = "l", col = "black", lwd = 4, ylim = c(0,1), xlim = c(-5,15))
+points(x = y_occ_sub$logsize_t, y = y_occ_sub$occ_t1, col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.4))
+lines(x = size_vac , y = invlogit(y_vac), type = "l", col = "red", lwd = 4, ylim = c(0,1), xlim = c(-1,15))
+
 ############################################################3333#######################################
 ########################################## The Full Model (All ant states) ###########################################################
 stan_data <- list(
