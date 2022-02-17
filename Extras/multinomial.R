@@ -1,6 +1,6 @@
 ## simulation code from: https://stats.stackexchange.com/questions/103728/simulating-multinomial-logit-data-with-r
 #Adding library for multinomial logit regression
-#setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
+setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 library("nnet")
 library(rstan)
@@ -13,7 +13,7 @@ x = rnorm(3885,0)
 Beta1 = 20
 Beta2 = .05
 #Calculation of denominator for probability calculation
-Denominator= 1+exp(Beta1*x)+exp(Beta2*x)
+Denominator= exp(Beta1*x)+exp(Beta2*x)
 #Calculating the matrix of probabilities for three choices
 vProb = cbind(1/Denominator, exp(x*Beta1)/Denominator, exp(x*Beta2)/Denominator )
 ## check that all rows sum to 1
@@ -34,7 +34,47 @@ summary(fit2)
 ###### Import real data and format it
 cactus_real <- cactus[,c("ant_t","ant_t1","volume_t")]
 cactus_real <- na.omit(cactus_real)
+cactus_real$ant_t1_relevel <- relevel(cactus_real$ant_t1,ref = "vacant")
 
+#### fit model of the mean using the nnet function
+table(cactus_real$ant_t1)/nrow(cactus_real)
+cactus_fit <- summary(multinom(ant_t1_relevel ~ 1, cactus_real))
+pred_freq<-c(
+#pr(vacant)
+1/(1+sum(exp(cactus_fit$coefficients))),
+#pr(other)
+exp(cactus_fit$coefficients[1])/(1+sum(exp(cactus_fit$coefficients))),
+#pr(crem)
+exp(cactus_fit$coefficients[2])/(1+sum(exp(cactus_fit$coefficients))),
+#pr(liom)
+exp(cactus_fit$coefficients[3])/(1+sum(exp(cactus_fit$coefficients))))
+sum(pred_freq)
+
+### now fit model of the mean with stan
+multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
+                       N = dim(cactus_real)[1], #number of observations
+                       D = 1, #number of predictors
+                       y = as.integer(as.factor(cactus_real$ant_t1)), #observations
+                       x = model.matrix(~ 1, cactus_real)) #design matrix
+
+###### Run the model with real data & save the results
+k_fit_stan_real <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
+                        data = multi_dat_real, warmup = 500, iter = 4000, chains = 3)
+k_mod_real_out <- rstan::extract(k_fit_stan_real, pars = "beta")
+## plot the chains
+mcmc_trace(k_fit_stan_real)
+                  ## other                        ## crem                         ##liom
+postmean_beta <- c(mean(k_mod_real_out$beta[,,1]),mean(k_mod_real_out$beta[,,2]),mean(k_mod_real_out$beta[,,3]))
+stan_pred_freq<-c(
+  #pr(vacant)
+  1/(1+sum(exp(postmean_beta))),
+  #pr(other)
+  exp(postmean_beta[1])/(1+sum(exp(postmean_beta))),
+  #pr(crem)
+  exp(postmean_beta[2])/(1+sum(exp(postmean_beta))),
+  #pr(liom)
+  exp(postmean_beta[3])/(1+sum(exp(postmean_beta))))
+sum(pred_freq)
 
 ################################################################################################
 ###### Now Stan model -- size only ############################################################# 
