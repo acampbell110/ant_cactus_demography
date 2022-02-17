@@ -156,11 +156,16 @@ cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
 
 
 ## Make an occupied vs vacant scenario
-cactus$occ_t1 <- 1  ## 1 == occ, 2 == vac
-cactus$occ_t1[cactus$ant_t == "vacant"] <- 0
-cactus$occ_t <- "occ"
-cactus$occ_t[cactus$ant_t1 == "vacant"] <- "vac" 
-cactus$occ_t<-as.numeric(as.factor(cactus$occ_t1))
+#cactus$occ_t1 <- 1  ## 1 == occ, 2 == vac
+#cactus$occ_t1[cactus$ant_t == "vacant"] <- 0
+#cactus$occ_t <- "occ"
+#cactus$occ_t[cactus$ant_t1 == "vacant"] <- "vac" 
+#cactus$occ_t<-as.numeric(as.factor(cactus$occ_t1))
+
+cactus$occ_t[cactus$ant_t == "vacant"] <- "vac"
+cactus$occ_t[cactus$ant_t == "crem" | cactus$ant_t == "liom" | cactus$ant_t == "other"] <- "occ"
+cactus$occ_t1[cactus$ant_t1 == "vacant"] <- "vac"
+cactus$occ_t1[cactus$ant_t1 == "crem" | cactus$ant_t1 == "liom" | cactus$ant_t1 == "other"] <- "occ"
 
 ## Export cactus to a csv
 write.csv(cactus, "cholla_demography_20042019_cleaned.csv")
@@ -418,8 +423,10 @@ ant.dat2 <- na.omit(ant.dat2)
 View(ant.dat2)
 
 
-plot(ant.dat2$occ_t1)
-points(cactus$occ_t1, col = "red")
+binom_ant <- cactus[,c("occ_t", "occ_t1", "logsize_t")]
+binom_ant <- na.omit(binom_ant)
+plot((as.numeric(as.factor(binom_ant$occ_t1)))-1, ylim = c(0,1))
+points((as.numeric(as.factor(cactus$occ_t1)))-1, col = "red")
 ## I am missing out on a lot of vacant plants in my subset for year t1.
 
 
