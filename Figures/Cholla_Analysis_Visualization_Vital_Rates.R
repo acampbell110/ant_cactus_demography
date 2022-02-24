@@ -11,6 +11,21 @@ source( "/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Cholla_Analys
 ##### Size variable used in most visualizations
 size_dummy <- seq(min(log(cactus$volume_t), na.rm = TRUE), max(log(cactus$volume_t), na.rm = TRUE), by = 0.1)
 
+########################################################################################################
+#### Herbivores Visuals ################################################################################
+########################################################################################################
+str(cactus_herb)
+cactus_herb <- na.omit(cactus_herb)
+summary(cactus_herb$NP_juv)
+summary(cactus_herb$MA)
+cactus_herb$herb <- 0
+for(i in 1:nrow(cactus_herb)){
+if(cactus_herb$NP_juv[i] > 0 | cactus_herb$MA[i] > 0){
+  cactus_herb$herb[i] <- 1
+}
+}
+barplot(table(cactus_herb$herb[],cactus_herb$ant_t), col = c("pink","orange"))
+table(cactus_herb$herb, cactus_herb$ant_t)
 
 
 #########################################################################################################################
