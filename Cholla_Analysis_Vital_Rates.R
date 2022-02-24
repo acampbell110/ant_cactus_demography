@@ -1,5 +1,3 @@
-options(mc.cores = parallel::detectCores())
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 #######################################################################################################
 ##
@@ -7,101 +5,159 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 ##                          and run the vital rate models as one large model 
 ##
 #######################################################################################################
-source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Setup_Data.R")
+options(mc.cores = parallel::detectCores())
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Setup_Script.R")
 
+#######################################################################################################
 #### Growth Model ############################################################################
 ##############################################################################################
-## Create Stan Data
+## Create Stan Data for all ant states
 stan_data_grow <- list(N_grow = nrow(growth_data), ## number of observations
-                  vol_grow = log(growth_data$volume_t), ## predictors volume
-                  y_grow = log(growth_data$volume_t1), ## response volume next year
-                  ant_grow = growth_data$ant,## predictors ants
-                  N_ant = 4, ## number of ant states
-                  N_Year_grow = max(growth_data$year), ## number of years
-                  N_Plot_grow = max(growth_data$Plot), ## number of plots
-                  plot_grow = growth_data$Plot, ## predictor plots
-                  year_grow = growth_data$year ## predictor years
+                       vol_grow = (growth_data$logsize_t), ## predictors volume
+                       y_grow = (growth_data$logsize_t1), ## response volume next year
+                       ant_grow = as.integer(as.factor(growth_data$ant_t)),## predictors ants
+                       N_ant = 4, ## number of ant states
+                       N_Year_grow = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
+                       N_Plot_grow = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
+                       plot_grow = as.integer(as.factor(growth_data$Plot)), ## predictor plots
+                       year_grow = as.integer(as.factor(growth_data$Year_t)) ## predictor years
 ) 
-#Check that you are happy with the subsetting
-plot(stan_data_grow$vol_grow, stan_data_grow$y_grow)
-plot(log(cactus$volume_t), log(cactus$volume_t1))
 ## Run the Model
-#Check if the model is written to the right place
-#stanc("STAN Models/grow_mix_ant.stan")
-fit_grow_mix_ant <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs <- rstan::extract(fit_grow_mix_ant, pars = c("beta0","beta1","sigma"))
-grow_yrep <- rstan::extract(fit_grow_mix_ant, pars = c("y_rep"))$y_rep
-write.csv(grow_outputs, "grow_outputs.csv")
+fit_grow_all <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+grow_outputs_all <- rstan::extract(fit_grow_all)
+grow_yrep_all <- rstan::extract(fit_grow_all, pars = c("y_rep"))$y_rep
+write.csv(grow_yrep_all, "grow_yrep_all.csv")
+write.csv(grow_outputs_all, "grow_outputs_all.csv")
+
+## Create stan data for one ant state
+i = "vacant"
+growth_data_one <- subset(growth_data, ant_t == i & ant_t1 == i)
+stan_data_grow_one <- list(N_grow = nrow(growth_data_one), ## number of observations
+                         vol_grow = (growth_data_one$logsize_t), ## predictors volume
+                         y_grow = (growth_data_one$logsize_t1), ## response volume next year
+                         N_Year_grow = max(as.integer(as.factor(growth_data_one$Year_t))), ## number of years
+                         N_Plot_grow = max(as.integer(as.factor(growth_data_one$Plot))), ## number of plots
+                         plot_grow = as.integer(as.factor(growth_data_one$Plot)), ## predictor plots
+                         year_grow = as.integer(as.factor(growth_data_one$Year_t)) ## predictor years
+) 
+fit_grow_vac <- stan(file = "STAN Models/grow_one.stan", data = stan_data_grow_one, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+grow_outputs_vac <- rstan::extract(fit_grow_vac)
+grow_yrep_vac <- rstan::extract(fit_grow_vac, pars = c("y_rep"))$y_rep
+write.csv(grow_yrep_vac, "grow_yrep_vac.csv")
+write.csv(grow_outputs_vac, "grow_outputs_vac.csv")
+## Create stan data for two ant states (occupied and vacant)
+i = "liom"
+j = "vacant"
+growth_data_two <- growth_data[(growth_data$ant_t == i & growth_data$ant_t1 == i | growth_data$ant_t == i & growth_data$ant_t1 == j | growth_data$ant_t == j & growth_data$ant_t1 == j),]
+drop_levels(growth_data_two,)
+stan_data_grow_two <- list(N_grow = nrow(growth_data_two), ## number of observations
+                           vol_grow = (growth_data_two$logsize_t), ## predictors volume
+                           y_grow = (growth_data_two$logsize_t1), ## response volume next year
+                           ant_grow = as.integer(as.factor(growth_data_two$ant_t)),## predictors ants
+                           N_ant = 2, ## number of ant states
+                           N_Year_grow = max(as.integer(as.factor(growth_data_two$Year_t))), ## number of years
+                           N_Plot_grow = max(as.integer(as.factor(growth_data_two$Plot))), ## number of plots
+                           plot_grow = as.integer(as.factor(growth_data_two$Plot)), ## predictor plots
+                           year_grow = as.integer(as.factor(growth_data_two$Year_t)) ## predictor years
+) 
+fit_grow_liom_vac <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow_two, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+grow_outputs_liom_vac <- rstan::extract(fit_grow_liom_vac)
+grow_yrep_vac <- rstan::extract(fit_grow_vac, pars = c("y_rep"))$y_rep
+write.csv(grow_yrep_liom_vac, "grow_yrep_liom_vac.csv")
+write.csv(grow_outputs_liom_vac, "grow_outputs_liom_vac.csv")
+
+## Create stan data for three ant states
+i = "liom"
+j = "vac"
+k = "other"
+growth_data_three <- subset(growth_data, (ant_t == i & ant_t1 == i | ant_t == i & ant_t1 == j | ant_t == i & ant_t1 == k | ant_t == j & ant_t1 == i | ant_t == j & ant_t1 == j | ant_t == j & ant_t1 == k | ant_t == k & ant_t1 == i | ant_t == k & ant_t1 == j | ant_t == k & ant_t1 == k))
+stan_data_grow_three <- list(N_grow = nrow(growth_data_three), ## number of observations
+                           vol_grow = (growth_data_three$logsize_t), ## predictors volume
+                           y_grow = (growth_data_three$logsize_t1), ## response volume next year
+                           ant_grow = growth_data_three$ant_t,## predictors ants
+                           N_ant = 3, ## number of ant states
+                           N_Year_grow = max(growth_data_three$Year_t), ## number of years
+                           N_Plot_grow = max(as.integer(as.factor(growth_data_three$Plot))), ## number of plots
+                           plot_grow = growth_data_three$Plot, ## predictor plots
+                           year_grow = growth_data_three$Year_t ## predictor years
+) 
 
 #### Survival Model ########################################################################################
 ########################################################################################################
 ## Create Stan Data
-stan_data_surv <- list(N_surv = nrow(survival_data), ## number of observations
-                  vol_surv = log(survival_data$volume_t), ## predictors volume
-                  y_surv = survival_data$Survival_t1, ## response survival next year
-                  ant_surv = survival_data$ant,## predictors ants
+stan_data_surv_all <- list(N_surv = nrow(survival_data), ## number of observations
+                  vol_surv = (survival_data$logsize_t), ## predictors volume
+                  y_surv = (survival_data$Survival_t1), ## response survival next year
+                  ant_surv = as.integer(as.factor(survival_data$ant_t)),## predictors ants
                   N_ant = 4, ## number of ant states
-                  N_Year_surv = max(survival_data$year), ## number of years
-                  N_Plot_surv = max(survival_data$Plot), ## number of plots
-                  plot_surv = survival_data$Plot, ## predictor plots
-                  year_surv = survival_data$year ## predictor years
+                  N_Year_surv = max(as.integer(as.factor(survival_data$Year_t))), ## number of years
+                  N_Plot_surv = max(as.integer(as.factor(survival_data$Plot))), ## number of plots
+                  plot_surv = as.integer(as.factor(survival_data$Plot)), ## predictor plots
+                  year_surv = as.integer(as.factor(survival_data$Year_t)) ## predictor years
 ) 
 #Check that you are happy with the subsetting
-plot(stan_data_surv$vol_surv,stan_data_surv$y_surv)
-plot(log(cactus$volume_t), cactus$Survival_t1)
+plot(survival_data$logsize_t, survival_data$Survival_t1)
+points(cactus$logsize_t, cactus$Survival_t1, col = "red")
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/surv_mix_ant.stan")
-fit_surv_mix_ant <- stan(file = "STAN Models/surv_mix_ant.stan", data = stan_data_surv, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-surv_outputs <- rstan::extract(fit_surv_mix_ant, pars = c("beta0","beta1"))
-surv_yrep <- rstan::extract(fit_surv_mix_ant, pars = c("y_rep"))$y_rep
-write.csv(surv_outputs, "surv_outputs.csv")
+fit_surv_null <- stan(file = "STAN Models/surv_null.stan", data = stan_data_surv_all, warmup = 10, iter = 100, chains = 3, cores = 3, thin = 1)
+fit_surv_all <- stan(file = "STAN Models/surv_mix_ant.stan", data = stan_data_surv_all, warmup = 100, iter = 1000, chains = 3, cores = 3, thin = 1)
+surv_outputs_all <- rstan::extract(fit_surv_all, pars = c("beta0","beta1"))
+surv_yrep_all <- rstan::extract(fit_surv_all, pars = c("y_rep"))$y_rep
+write.csv(surv_outputs_all, "surv_outputs_all.csv")
+write.csv(surv_yrep_all, "surv_yrep_all.csv")
+
+bayesplot::mcmc_trace(As.mcmc.list(fit_surv_null, pars=c("beta0", "beta1")))
 
 
 #### Flowering Model #################################################################################
 ######################################################################################################
 ## Create Stan Data
-stan_data_flow_trunc <- list(N_flower = nrow(flower_data), ## number of observations
+stan_data_flow_trunc_all <- list(N_flower = nrow(flower_data), ## number of observations
                              lower_limit = 1, ## we want the 0s to be removed
-                             vol_flower = log(flower_data$volume_t), ## predictors volume
+                             vol_flower = (flower_data$logsize_t), ## predictors volume
                              y_flow = flower_data$TotFlowerbuds_t, ## response flowers next year
-                             N_Year_flower = max(flower_data$year), ## number of years
-                             N_Plot_flower = max(flower_data$Plot), ## number of plots
-                             plot_flower = flower_data$Plot, ## predictor plots
-                             year_flower = flower_data$year ## predictor years
+                             N_Year_flower = max(as.integer(as.factor(flower_data$Year_t))), ## number of years
+                             N_Plot_flower = max(as.integer(as.factor(flower_data$Plot))), ## number of plots
+                             plot_flower = as.integer(as.factor(flower_data$Plot)), ## predictor plots
+                             year_flower = as.integer(as.factor(flower_data$Year_t)) ## predictor years
 ) 
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/flower_mix_ant.stan")
-fit_flow_mix_ant_trunc <- stan(file = "STAN Models/flower_mix_ant_trunc.stan", data = stan_data_flow_trunc, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-flow_pred <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("mu"))$mu
-phi_flow <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("phi"))$phi
-flow_outputs_trunc <- rstan::extract(fit_flow_mix_ant_trunc, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
-write.csv(flow_outputs_trunc, "flow_outputs_trunc.csv")
-
+fit_flow_trunc_all <- stan(file = "STAN Models/flower_mix_ant_trunc.stan", data = stan_data_flow_trunc_all, warmup = 1000, iter = 10000, chains = 3, cores = 3, thin = 1)
+flow_outputs_trunc_all <- rstan::extract(fit_flow_trunc_all, pars = c("phi","beta0","beta1","u","w","sigma","sigma_u","sigma_w"))
+write.csv(flow_outputs_trunc_all, "flow_outputs_trunc_all.csv")
+flow_y_rep_all <- rstan::extract(fit_flow_trunc_all, pars = c("mu"))$mu
+write.csv(flow_y_rep_all, "flow_y_rep_all.csv")
+flow_phi_all <- rstan::extract(fit_flow_trunc_all, pars = c("phi"))$phi
+write.csv(flow_phi_all, "flow_phi_all.csv")
 
 #### Viability Model #################################################################################
 #######################################################################################################
 ## Create Stan Data
-stan_data_viab <- list(N_viab = nrow(viability_data), ## number of observations
+stan_data_viab_all <- list(N_viab = nrow(viability_data), ## number of observations
                        good_viab = viability_data$Goodbuds_t1,
                        abort_viab = viability_data$ABFlowerbuds_t1, ## aborted buds data
                        tot_viab = viability_data$TotFlowerbuds_t1, ## number of trials
-                       ant_viab = viability_data$ant,## predictors ants
+                       ant_viab = as.integer(as.factor(viability_data$ant)),## predictors ants
                        N_ant = 4, ## number of ant states
-                       N_Year_viab = max(viability_data$year), ## number of years
-                       N_Plot_viab = max(viability_data$Plot), ## number of plots
-                       plot_viab = viability_data$Plot, ## predictor plots
-                       year_viab = viability_data$year ## predictor years
+                       N_Year_viab = max(as.integer(as.factor(viability_data$Year_t))), ## number of years
+                       N_Plot_viab = max(as.integer(as.factor(viability_data$Plot))), ## number of plots
+                       plot_viab = as.integer(as.factor(viability_data$Plot)), ## predictor plots
+                       year_viab = as.integer(as.factor(viability_data$Year_t)) ## predictor years
 ) 
 # Check that you are happy with the subsetting
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/viab_mix_ant.stan")
-fit_viab_mix_ant <- stan(file = "STAN Models/viab_mix_ant2.stan", data = stan_data_viab, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-viab_yrep <- rstan::extract(fit_viab_mix_ant, pars = c("y_rep"))$y_rep
-viab_outputs <- rstan::extract(fit_viab_mix_ant, pars = c("beta0"))
-write.csv(viab_outputs, "viab_outputs.csv")
+fit_viab_all <- stan(file = "Data Analysis/STAN Models/viab_mix_ant2.stan", data = stan_data_viab_all, warmup = 1000, iter = 10000, chains = 3, cores = 3, thin = 1)
+viab_yrep_all <- rstan::extract(fit_viab_all, pars = c("y_rep"))$y_rep
+viab_outputs_all <- rstan::extract(fit_viab_all, pars = c("beta0"))
+write.csv(viab_outputs_all, "viab_outputs_all.csv")
+write.csv(viab_yrep_all, "viab_yrep_all.csv")
 
 
  #### Reproductive State Model #######################################################################################
