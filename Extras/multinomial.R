@@ -135,7 +135,11 @@ mcmc_trace(km1_fit_stan)
 ## this looks pretty good. All betas converge
 
 ## create a fake size variable that spans the range of observed sizes
+## Ali's path
 km1_real <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/km1_mod_real_outputs.csv", header = TRUE,stringsAsFactors=T)
+##Tom's path
+
+km1_real <- read.csv("C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/km1_mod_real_outputs.csv", header = TRUE,stringsAsFactors=T)
 size_dummy_real <- seq(min((cactus_real$logsize_t)), max((cactus_real$logsize_t)), by=0.1)
 
 Denominator <- 1 + exp(mean(km1_mod_real_out$beta[,1,1]) + mean(km1_mod_real_out$beta[,2,1])*size_dummy_real) + 
@@ -147,9 +151,25 @@ stan_pred_freq_real <- cbind(
   (exp(mean(km1_mod_real_out$beta[,1,2]) + mean(km1_mod_real_out$beta[,2,2])*size_dummy_real))/Denominator,
   (exp(mean(km1_mod_real_out$beta[,1,3]) + mean(km1_mod_real_out$beta[,2,3])*size_dummy_real))/Denominator
 )
+
+mean(km1_real$beta.1.2)
 ## Check if rows of this sum to 1
 sum(stan_pred_freq_real[1,])
 ## all rows sum to 1
+
+stan_pred_freq_real<-matrix(4,length(size_dummy_real))
+for(i in 1:length(size_dummy_real)){
+  Denominator <- 1 + exp(mean(km1_real$beta.1.1) + mean(km1_real$beta.2.1)*size_dummy_real[i]) + 
+    exp(mean(km1_real$beta.1.2) + mean(km1_real$beta.2.2)*size_dummy_real[i]) + 
+    exp(mean(km1_real$beta.1.3) + mean(km1_real$beta.2.3)*size_dummy_real[i])
+  stan_pred_freq_real[,i] <- cbind(
+    1/ Denominator,
+    (exp(mean(km1_real$beta.1.1) + mean(km1_real$beta.2.1)*size_dummy_real[i]))/Denominator,
+    (exp(mean(km1_real$beta.1.2) + mean(km1_real$beta.2.2)*size_dummy_real[i]))/Denominator,
+    (exp(mean(km1_real$beta.1.3) + mean(km1_real$beta.2.3)*size_dummy_real[i]))/Denominator
+  )
+}
+
 
 ###### plot the probabilities
 levels(cactus_real$ant_t1)
