@@ -53,6 +53,7 @@ exp(cactus_fit$coefficients[2])/(1+sum(exp(cactus_fit$coefficients))),
 exp(cactus_fit$coefficients[3])/(1+sum(exp(cactus_fit$coefficients))))
 sum(pred_freq)
 
+
 ####################################################################################################
 ###### Null Stan Model -- Real Data ################################################################
 ####################################################################################################
@@ -136,9 +137,10 @@ mcmc_trace(km1_fit_stan)
 ## create a fake size variable that spans the range of observed sizes
 km1_real <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/km1_mod_real_outputs.csv", header = TRUE,stringsAsFactors=T)
 size_dummy_real <- seq(min((cactus_real$logsize_t)), max((cactus_real$logsize_t)), by=0.1)
-Denominator <- 1 + exp(mean(km1_real$beta.1.1) + mean(km1_real$beta.2.1)*size_dummy_real) + 
-  exp(mean(km1_real$beta.1.2) + mean(km1_real$beta.2.2)*size_dummy_real) + 
-  exp(mean(km1_real$beta.1.3) + mean(km1_real$beta.2.3)*size_dummy_real)
+
+Denominator <- 1 + exp(mean(km1_mod_real_out$beta[,1,1]) + mean(km1_mod_real_out$beta[,2,1])*size_dummy_real) + 
+  exp(mean(km1_mod_real_out$beta[,1,2]) + mean(km1_mod_real_out$beta[,2,2])*size_dummy_real) + 
+  exp(mean(km1_mod_real_out$beta[,1,3]) + mean(km1_mod_real_out$beta[,2,3])*size_dummy_real)
 stan_pred_freq_real <- cbind(
   1/ Denominator,
   (exp(mean(km1_mod_real_out$beta[,1,1]) + mean(km1_mod_real_out$beta[,2,1])*size_dummy_real))/Denominator,
@@ -152,14 +154,14 @@ sum(stan_pred_freq_real[1,])
 ###### plot the probabilities
 levels(cactus_real$ant_t1)
 ## prob of being occupied by vacant
-plot(size_dummy_real, stan_pred_freq_real[,1],ylim = c(0,1), type = "l", col = "black", xlab = "size", ylab = "probability")
+plot(size_dummy_real, stan_pred_freq_real[,1],ylim = c(0,1), type = "l", col = "blue", xlab = "size", ylab = "probability")
 ## prob of being occupied by other
-lines(size_dummy_real, stan_pred_freq_real[,2], col = "red")
+lines(size_dummy_real, stan_pred_freq_real[,2], col = "black")
 ## prob of being occupied by crem
-lines(size_dummy_real, stan_pred_freq_real[,3], col = "blue")
+lines(size_dummy_real, stan_pred_freq_real[,3], col = "pink")
 ## prob of being occupied by liom
-lines(size_dummy_real, stan_pred_freq_real[,4], col = "pink")
-legend("topleft", c("other","crem","liom","vac"), fill = c("black","red","blue","pink"))
+lines(size_dummy_real, stan_pred_freq_real[,4], col = "red")
+legend("topleft", c("vac","crem","liom","other"), fill = c("black","red","blue","pink"))
 
 ## Check against real data
 
@@ -298,6 +300,10 @@ Denominator <- 1 + exp(mean(full_data_real$beta.1.1)*size_dummy_real + mean(full
   exp(mean(full_data_real$beta.1.2)*size_dummy_real + mean(full_data_real$beta.2.2)*size_dummy_real + mean(full_data_real$beta.3.2)*size_dummy_real) + 
   exp(mean(full_data_real$beta.1.3)*size_dummy_real + mean(full_data_real$beta.2.3)*size_dummy_real + mean(full_data_real$beta.3.3)*size_dummy_real) 
 ## 
+Denominator <- 1 + exp(mean(full_data_real$beta.1.1)*size_dummy_real + mean(full_data_real$beta.2.1)*size_dummy_real + mean(full_data_real$beta.3.1)*size_dummy_real) + 
+  exp(mean(full_data_real$beta.1.2)*size_dummy_real + mean(full_data_real$beta.2.2)*size_dummy_real + mean(full_data_real$beta.3.2)*size_dummy_real) + 
+  exp(mean(full_data_real$beta.1.3)*size_dummy_real + mean(full_data_real$beta.2.3)*size_dummy_real + mean(full_data_real$beta.3.3)*size_dummy_real) 
+
 stan_pred_freq_real <- cbind(
   1/ Denominator,
   (exp(mean(km1_mod_real_out$beta[,1,1]) + mean(km1_mod_real_out$beta[,2,1])*size_dummy_real))/Denominator,
