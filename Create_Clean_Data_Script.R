@@ -157,7 +157,8 @@ cactus$ant_t1[cactus$Antsp_t1==""] <- NA
 cactus$antcount_t <- as.numeric(as.character(cactus$Antcount_t))
 cactus$antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
 summary(cactus$ant_t1)
-
+cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
+cactus$ant_t_relevel <- relevel(cactus$ant_t, ref = "vacant")
 
 ## Fill in as many of the goodbuds, abortedbuds and total buds as possible
 for(i in 1:length(cactus)){
@@ -201,7 +202,7 @@ cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 ## Remove extra columns
 cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1","ant_t","ant_t1",
                       "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1","Antcount_t1",
-                      "occ_t","occ_t1","flower1_YN")]
+                      "occ_t","occ_t1","flower1_YN", "ant_t_relevel","ant_t1_relevel")]
 
 cactus_herb <- cactus[, c("NP_adult","NP_juv","MA","ant_t")]
 cactus_herb$NP_adult[cactus_herb$NP_adult == "dead"] <- NA
