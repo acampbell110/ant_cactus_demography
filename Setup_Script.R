@@ -90,10 +90,9 @@ points(precensus.dat.orig$Log.size, jitter(precensus.dat.orig$survive0405), col 
 ################        Important Subsets -- Growth  (Includes Ant)      ##############################
 #######################################################################################################
 ## All Ant States
-growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","ant_t","logsize_t","logsize_t1","ant_t1")]
+growth_data <- cactus[ ,c("Plot","Year_t","Survival_t1","logsize_t","logsize_t1","ant_t_relevel")]
 growth_data <- na.omit(growth_data)
 summary(growth_data$ant_t)
-summary(growth_data$ant_t1)
 # check that you are happy with the subsetting
 plot(growth_data$logsize_t, growth_data$logsize_t1)
 points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
