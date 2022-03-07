@@ -191,6 +191,67 @@ table(cactus_real$ant_t1_relevel)/nrow(cactus_real)
 # ###### now include categroical as the only predictor ########################################
 # ###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan ###############################
 # #############################################################################################
+cactus_fit <- summary(multinom(ant_t1_relevel ~ 0 + ant_t_relevel, cactus_real))
+cactus_fit_coef <- coef(cactus_fit)
+
+pred_freq_vac<-c(
+  #pr(vacant)
+  1/(1+sum(exp(cactus_fit_coef[,1]))),
+  #pr(other)
+  exp(cactus_fit_coef[1,1])/(1+sum(exp(cactus_fit_coef[,1]))),
+  #pr(crem)
+  exp(cactus_fit_coef[2,1])/(1+sum(exp(cactus_fit_coef[,1]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,1])/(1+sum(exp(cactus_fit_coef[,1]))))
+sum(pred_freq_vac)
+
+pred_crem_vac<-c(
+  #pr(vacant)
+  1/(1+sum(exp(cactus_fit_coef[,2]))),
+  #pr(other)
+  exp(cactus_fit_coef[1,2])/(1+sum(exp(cactus_fit_coef[,2]))),
+  #pr(crem)
+  exp(cactus_fit_coef[2,2])/(1+sum(exp(cactus_fit_coef[,2]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,2])/(1+sum(exp(cactus_fit_coef[,2]))))
+sum(pred_crem_vac)
+
+pred_liom_vac<-c(
+  #pr(vacant)
+  1/(1+sum(exp(cactus_fit_coef[,3]))),
+  #pr(other)
+  exp(cactus_fit_coef[1,3])/(1+sum(exp(cactus_fit_coef[,3]))),
+  #pr(crem)
+  exp(cactus_fit_coef[2,3])/(1+sum(exp(cactus_fit_coef[,3]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,3])/(1+sum(exp(cactus_fit_coef[,3]))))
+sum(pred_liom_vac)
+
+pred_other_vac<-c(
+  #pr(vacant)
+  1/(1+sum(exp(cactus_fit_coef[,4]))),
+  #pr(other)
+  exp(cactus_fit_coef[1,4])/(1+sum(exp(cactus_fit_coef[,4]))),
+  #pr(crem)
+  exp(cactus_fit_coef[2,4])/(1+sum(exp(cactus_fit_coef[,4]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,4])/(1+sum(exp(cactus_fit_coef[,4]))))
+sum(pred_other_vac)
+
+pred_mat <- cbind(pred_freq_vac,pred_crem_vac,pred_liom_vac,pred_other_vac)
+colSums(pred_mat)
+
+
+cactus_real$dummy <- sample(LETTERS[1:4],size=nrow(cactus_real),replace=T)
+table(cactus_real$ant_t1_relevel,cactus_real$dummy)
+
+obstab <- table(cactus_real$ant_t1_relevel,cactus_real$ant_t_relevel)
+obstab[,1]/colSums(obstab)[1]
+obstab[,2]/colSums(obstab)[2]
+obstab[,3]/colSums(obstab)[3]
+obstab[,4]/colSums(obstab)[4]
+
+
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 4, #number of predictors
