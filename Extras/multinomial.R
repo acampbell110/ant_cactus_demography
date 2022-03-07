@@ -188,52 +188,214 @@ table(cactus_real$ant_t1_relevel)/nrow(cactus_real)
 ## isn't that bad. It seems to underestimate all of them just a bit (except liom)
 
 # #############################################################################################
-# ###### now include categroical as the only predictor#########################################
+# ###### now include categroical as the only predictor ########################################
 # ###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan ###############################
 # #############################################################################################
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
-                       D = 2, #number of predictors
+                       D = 4, #number of predictors
                        y = as.integer(as.factor(cactus_real$ant_t1_relevel)), #observations
-                       x = model.matrix(~ as.integer(as.factor(ant_t_relevel)), cactus_real)) #design matrix
+                       x = model.matrix(~ 0 + (as.factor(ant_t_relevel)), cactus_real)) #design matrix
 ## Run the model & save the results
-real_ant_int <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
+real_ant_noint <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
                   data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
-real_ant_out <- rstan::extract(real_ant, pars = c("beta"))
+real_ant_out <- rstan::extract(real_ant_noint, pars = c("beta"))
+write.csv(real_ant_out, "multi_ant_out")
+## plot the chains
+mcmc_trace(real_ant_noint)
+summary(real_ant_noint)
+## this looks pretty good. All betas converge
+multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number of possible ant species
+                       N = dim(cactus_real)[1], #number of observations
+                       D = 4, #number of predictors
+                       y = as.integer(as.factor(cactus_real$ant_t1_relevel)), #observations
+                       x = model.matrix(~ (as.factor(ant_t_relevel)), cactus_real)) #design matrix
+real_ant_int <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
+                       data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
+real_ant_out <- rstan::extract(real_ant_int, pars = c("beta"))
 write.csv(real_ant_out, "multi_ant_out")
 ## plot the chains
 mcmc_trace(real_ant)
-mean(real_ant_out$beta[,1,2])
-summary(real_ant)
-## this looks pretty good. All betas converge
+summary(real_ant_int)
 
 ## Calculate the probabilities for each state
-                      ##  vac
-Denominator <- 1 + sum(exp(real_ant_out$beta[,1,1]) + 
-                         ##
-                         exp(real_ant_out$beta[,1,2]) + 
-                         ##
-                         exp(real_ant_out$beta[,1,3])
-                       )
-pred_freq_ant <- cbind(
+#### Try 1 -- 
+                      ##  prob of being occupied by liom (prev order: vac, other, crem, liom)
+Denominator_liom  <- 1 + exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,1,2] + real_ant_out$beta[,1,3])
+    ## prob of being occupied by vac
+Denominator_vac  <- 1 +   exp(real_ant_out$beta[,2,1] + real_ant_out$beta[,2,2] + real_ant_out$beta[,2,3])
+    ## other
+Denominator_other  <- 1 +  exp(real_ant_out$beta[,3,1] + real_ant_out$beta[,3,2] + real_ant_out$beta[,3,3])
+    ## crem
+Denominator_crem  <- 1 +  exp(real_ant_out$beta[,4,1] + real_ant_out$beta[,4,2] + real_ant_out$beta[,4,3])
+pred_ant <- cbind(
+  ## Liom
+  1/Denominator_liom,
+  exp(real_ant_out$beta[,1,1])/Denominator_liom,
+  exp(real_ant_out$beta[,1,2])/Denominator_liom,
+  exp(real_ant_out$beta[,1,3])/Denominator_liom,
+  ## Vac
+  1/Denominator_vac,
+  exp(real_ant_out$beta[,2,1])/Denominator_vac,
+  exp(real_ant_out$beta[,2,2])/Denominator_vac,
+  exp(real_ant_out$beta[,2,3])/Denominator_vac,
+  ## Other
+  1/Denominator_other,
+  exp(real_ant_out$beta[,3,1])/Denominator_other,
+  exp(real_ant_out$beta[,3,2])/Denominator_other,
+  exp(real_ant_out$beta[,3,3])/Denominator_other,
+  ## Crem
+  1/Denominator_crem,
+  exp(real_ant_out$beta[,4,1])/Denominator_crem,
+  exp(real_ant_out$beta[,4,2])/Denominator_crem,
+  exp(real_ant_out$beta[,4,3])/Denominator_crem
+)
+
+pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
+                mean(pred_ant[,2]), ## other -> liom,
+                mean(pred_ant[,3]), ## crem -> liom,
+                mean(pred_ant[,4]), ## liom -> liom,
+                mean(pred_ant[,5]), ## vac-> vac, 
+                mean(pred_ant[,6]), ## other -> vac,
+                mean(pred_ant[,7]), ## crem -> vac,
+                mean(pred_ant[,8]), ## liom -> vac,
+                mean(pred_ant[,9]), ## vac-> other, 
+                mean(pred_ant[,10]), ## other -> other,
+                mean(pred_ant[,11]), ## crem -> other,
+                mean(pred_ant[,12]), ## liom -> other,
+                mean(pred_ant[,13]), ## vac-> crem, 
+                mean(pred_ant[,14]), ## other -> crem,
+                mean(pred_ant[,15]), ## crem -> crem,
+                mean(pred_ant[,16]) ## liom -> crem,
+                )
+sum(pred_probs)
+
+
+### #Try 2
+## Probability o fbeing occupied by ____
+Denominator  <- 1 + exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,2,1] + real_ant_out$beta[,3,1] + real_ant_out$beta[,4,1]) + 
+  exp(real_ant_out$beta[,1,2] + real_ant_out$beta[,2,2] + real_ant_out$beta[,3,2] + real_ant_out$beta[,4,2]) + 
+  exp(real_ant_out$beta[,1,3] + real_ant_out$beta[,2,3] + real_ant_out$beta[,3,3] + real_ant_out$beta[,4,3]) 
+pred_ant <- cbind(
+  ## Liom
+  4/Denominator,
+  exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,2,1] + real_ant_out$beta[,3,1] + real_ant_out$beta[,4,1])/Denominator,
+  exp(real_ant_out$beta[,1,2] + real_ant_out$beta[,2,2] + real_ant_out$beta[,3,2] + real_ant_out$beta[,4,2]) /Denominator,
+  exp(real_ant_out$beta[,1,3] + real_ant_out$beta[,2,3] + real_ant_out$beta[,3,3] + real_ant_out$beta[,4,3])/Denominator
+)
+
+pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
+                mean(pred_ant[,2]), ## other -> liom,
+                mean(pred_ant[,3]), ## crem -> liom,
+                mean(pred_ant[,4])## liom -> crem,
+)
+sum(pred_probs)
+## all rows sum to 1
+
+
+#### Try 3 -- 
+##  prob of being occupied by liom (prev order: vac, other, crem, liom)
+Denominator  <- 1 + exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,1,2] + real_ant_out$beta[,1,3]) + 
+## prob of being occupied by vac
+  1 +   exp(real_ant_out$beta[,2,1] + real_ant_out$beta[,2,2] + real_ant_out$beta[,2,3]) + 
+## other
+  1 +  exp(real_ant_out$beta[,3,1] + real_ant_out$beta[,3,2] + real_ant_out$beta[,3,3]) + 
+## crem
+  1 +  exp(real_ant_out$beta[,4,1] + real_ant_out$beta[,4,2] + real_ant_out$beta[,4,3])
+pred_ant <- cbind(
+  ## Liom
   1/Denominator,
   exp(real_ant_out$beta[,1,1])/Denominator,
   exp(real_ant_out$beta[,1,2])/Denominator,
-  exp(real_ant_out$beta[,1,3])/Denominator
+  exp(real_ant_out$beta[,1,3])/Denominator,
+  ## Vac
+  1/Denominator,
+  exp(real_ant_out$beta[,2,1])/Denominator,
+  exp(real_ant_out$beta[,2,2])/Denominator,
+  exp(real_ant_out$beta[,2,3])/Denominator,
+  ## Other
+  1/Denominator,
+  exp(real_ant_out$beta[,3,1])/Denominator,
+  exp(real_ant_out$beta[,3,2])/Denominator,
+  exp(real_ant_out$beta[,3,3])/Denominator,
+  ## Crem
+  1/Denominator,
+  exp(real_ant_out$beta[,4,1])/Denominator,
+  exp(real_ant_out$beta[,4,2])/Denominator,
+  exp(real_ant_out$beta[,4,3])/Denominator
 )
-mean(pred_freq_ant[,4]) + mean(pred_freq_ant[,1]) + mean(pred_freq_ant[,2]) + mean(pred_freq_ant)
-pred_freq_ant<-cbind(
-  #pr(liom <- vac)
-  1/(Denominator),
-  #pr(liom <- )
-  exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,1,2] + real_ant_out$beta[,1,3] + real_ant_out$beta[,1,4])/(Denominator),
-  #pr(liom <- )
-  exp(real_ant_out$beta[,2,1] + real_ant_out$beta[,2,2] + real_ant_out$beta[,2,3] + real_ant_out$beta[,2,4])/(Denominator),
-  #pr(liom <- )
-  exp(real_ant_out$beta[,3,1] + real_ant_out$beta[,3,2] + real_ant_out$beta[,3,3] + real_ant_out$beta[,3,4])/(Denominator)
+
+pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
+                mean(pred_ant[,2]), ## other -> liom,
+                mean(pred_ant[,3]), ## crem -> liom,
+                mean(pred_ant[,4]), ## liom -> liom,
+                mean(pred_ant[,5]), ## vac-> vac, 
+                mean(pred_ant[,6]), ## other -> vac,
+                mean(pred_ant[,7]), ## crem -> vac,
+                mean(pred_ant[,8]), ## liom -> vac,
+                mean(pred_ant[,9]), ## vac-> other, 
+                mean(pred_ant[,10]), ## other -> other,
+                mean(pred_ant[,11]), ## crem -> other,
+                mean(pred_ant[,12]), ## liom -> other,
+                mean(pred_ant[,13]), ## vac-> crem, 
+                mean(pred_ant[,14]), ## other -> crem,
+                mean(pred_ant[,15]), ## crem -> crem,
+                mean(pred_ant[,16]) ## liom -> crem,
 )
-sum(pred_freq_ant[,2])
-## all rows sum to 1
+sum(pred_probs)
+
+
+
+
+## Try 4 -- 
+summary(real_ant_int)
+real_ant_out <- rstan::extract(real_ant_int, pars = c("beta"))
+                ## vac - > liom                       other - > liom            crem - > liom                 liom - > liom
+Denominator <- exp(real_ant_out$beta[,1,1]) + exp(real_ant_out$beta[,1,2]) + exp(real_ant_out$beta[,1,3]) + exp(real_ant_out$beta[,1,4]) + 
+  ## vac - > vac                        other -> vac                crem - > vac                        liom - > vac
+  exp(real_ant_out$beta[,2,1]) + exp(real_ant_out$beta[,2,2]) + exp(real_ant_out$beta[,2,3]) + exp(real_ant_out$beta[,2,4]) + 
+  ## vac - > other                      other -> other              crem -> other                       liom -> other
+  exp(real_ant_out$beta[,3,1]) + exp(real_ant_out$beta[,3,2]) + exp(real_ant_out$beta[,3,3]) + exp(real_ant_out$beta[,3,4]) + 
+  ## vac -> crem                        other -> crem               crem -> crem                        liom -> crem
+  exp(real_ant_out$beta[,4,1]) + exp(real_ant_out$beta[,4,2]) + exp(real_ant_out$beta[,4,3]) + exp(real_ant_out$beta[,4,4])
+
+pred_ant <- cbind(
+  exp(real_ant_out$beta[,1,1])/Denominator,
+  exp(real_ant_out$beta[,1,2])/Denominator,
+  exp(real_ant_out$beta[,1,3])/Denominator,
+  exp(real_ant_out$beta[,1,4])/Denominator,
+  exp(real_ant_out$beta[,2,1])/Denominator,
+  exp(real_ant_out$beta[,2,2])/Denominator,
+  exp(real_ant_out$beta[,2,3])/Denominator,
+  exp(real_ant_out$beta[,2,4])/Denominator,
+  exp(real_ant_out$beta[,3,1])/Denominator,
+  exp(real_ant_out$beta[,3,2])/Denominator,
+  exp(real_ant_out$beta[,3,3])/Denominator,
+  exp(real_ant_out$beta[,3,4])/Denominator,
+  exp(real_ant_out$beta[,4,1])/Denominator,
+  exp(real_ant_out$beta[,4,2])/Denominator,
+  exp(real_ant_out$beta[,4,3])/Denominator,
+  exp(real_ant_out$beta[,4,4])/Denominator
+)
+pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
+                mean(pred_ant[,2]), ## other -> liom,
+                mean(pred_ant[,3]), ## crem -> liom,
+                mean(pred_ant[,4]), ## liom -> liom,
+                mean(pred_ant[,5]), ## vac-> vac, 
+                mean(pred_ant[,6]), ## other -> vac,
+                mean(pred_ant[,7]), ## crem -> vac,
+                mean(pred_ant[,8]), ## liom -> vac,
+                mean(pred_ant[,9]), ## vac-> other, 
+                mean(pred_ant[,10]), ## other -> other,
+                mean(pred_ant[,11]), ## crem -> other,
+                mean(pred_ant[,12]), ## liom -> other,
+                mean(pred_ant[,13]), ## vac-> crem, 
+                mean(pred_ant[,14]), ## other -> crem,
+                mean(pred_ant[,15]), ## crem -> crem,
+                mean(pred_ant[,16]) ## liom -> crem,
+)
+sum(pred_probs)
+
 
 ###### plot the probabilities
 ## Barplot
@@ -273,8 +435,8 @@ c(sum(probs[1,]), sum(probs[2,]), sum(probs[3,]), sum(probs[4,]))
 ## vac, other, crem, liom
 pred_freq_ant
 ## Bayes data
-## liom, vac, other, crem
-(c(mean(pred_size[,1]), mean(pred_size[,2]), mean(pred_size[,3]), mean(pred_size[,4])))
+pred_probs
+c(sum(pred_probs[c(1,2,3,4)]), sum(pred_probs[c(5,6,7,8)]), sum(pred_probs[c(9,10,11,12)]), sum(pred_probs[c(13,14,15,16)]))
 ## The freq model is still very close to the real data. The Bayesian model is not as close, but 
 ## isn't that bad. It seems to underestimate all of them just a bit (except liom)
 
