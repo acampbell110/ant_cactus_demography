@@ -13,15 +13,11 @@ source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Setup_Script.R
 #### Growth Model ############################################################################
 ##############################################################################################
 ## Create Stan Data for all ant states
-stan_data_grow <- list(N_grow = nrow(growth_data), ## number of observations
-                       vol_grow = (growth_data$logsize_t), ## predictors volume
+stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        y_grow = (growth_data$logsize_t1), ## response volume next year
-                       ant_grow = as.integer(as.factor(growth_data$ant_t)),## predictors ants
-                       N_ant = 4, ## number of ant states
-                       N_Year_grow = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
-                       N_Plot_grow = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
-                       plot_grow = as.integer(as.factor(growth_data$Plot)), ## predictor plots
-                       year_grow = as.integer(as.factor(growth_data$Year_t)) ## predictor years
+                       K = 4, ## number of ant states
+                       D = 6, ## number of predictors
+                       x = model.matrix(~ logsize_t*as.integer(as.factor(ant_t_relevel)) + (1|as.integer(as.factor(growth_data$Year_t))) + (1|as.integer(as.factor(growth_data$Plot))), growth_data)
 ) 
 ## Run the Model
 fit_grow_all <- stan(file = "STAN Models/grow_mix_ant.stan", data = stan_data_grow, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
