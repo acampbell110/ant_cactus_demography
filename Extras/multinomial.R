@@ -73,16 +73,16 @@ mcmc_trace(real_null)
 ## all chains converge
 
 ## Calculate the probabilities for each state
-                          ## other                        ## crem                         ##liom
+                          ## vac                        ## other                         ##crem
 postmean_beta_null <- c(mean(real_null_out$beta[,,1]),mean(real_null_out$beta[,,2]),mean(real_null_out$beta[,,3]))
 pred_null<-c(
-  #pr(vacant)
-  1/(1+sum(exp(postmean_beta_null))),
-  #pr(other)
-  exp(postmean_beta_null[1])/(1+sum(exp(postmean_beta_null))),
-  #pr(crem)
-  exp(postmean_beta_null[2])/(1+sum(exp(postmean_beta_null))),
   #pr(liom)
+  1/(1+sum(exp(postmean_beta_null))),
+  #pr(vac)
+  exp(postmean_beta_null[1])/(1+sum(exp(postmean_beta_null))),
+  #pr(other)
+  exp(postmean_beta_null[2])/(1+sum(exp(postmean_beta_null))),
+  #pr(crem)
   exp(postmean_beta_null[3])/(1+sum(exp(postmean_beta_null))))
 sum(pred_null)
 ## Compare to real data and frequentist outputs
@@ -144,20 +144,23 @@ sum(pred_size[1,])
 
 ###### plot the probabilities
 ## prob of being occupied by liom
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("Size_Only_Multinom.png")
 plot(size_dummy_real, pred_size[,1],ylim = c(0,1), type = "l", col = "blue", xlab = "size", ylab = "probability")
 ## prob of being occupied by vac
-lines(size_dummy_real, pred_size[,2], col = "black")
+lines(size_dummy_real, pred_size[,2], col = "pink")
 ## prob of being occupied by other
-lines(size_dummy_real, pred_size[,3], col = "pink")
+lines(size_dummy_real, pred_size[,3], col = "black")
 ## prob of being occupied by crem
 lines(size_dummy_real, pred_size[,4], col = "red")
-legend("topleft", c("vac","crem","liom","other"), fill = c("black","red","blue","pink"))
-
+legend("topleft", c("vac","crem","liom","other"), fill = c("pink","red","blue","black"))
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 ## Check against Frequentist model 
 ## freq model 
 cactus_fit_size <- summary(multinom(ant_t1_relevel ~ logsize_t, cactus_real))
 ## Calculate the probabilities of each state
-                      ## other
+                        ## other
 Denominator <- 1 + sum(exp(cactus_fit_size$coefficients[1,1] + cactus_fit_size$coefficients[1,2]*size_dummy_real) + 
                          ## crem
                          exp(cactus_fit_size$coefficients[2,1] + cactus_fit_size$coefficients[2,2]*size_dummy_real) + 
@@ -191,67 +194,6 @@ table(cactus_real$ant_t1_relevel)/nrow(cactus_real)
 # ###### now include categroical as the only predictor ########################################
 # ###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan ###############################
 # #############################################################################################
-cactus_fit <- summary(multinom(ant_t1_relevel ~ 0 + ant_t_relevel, cactus_real))
-cactus_fit_coef <- coef(cactus_fit)
-
-pred_freq_vac<-c(
-  #pr(vacant)
-  1/(1+sum(exp(cactus_fit_coef[,1]))),
-  #pr(other)
-  exp(cactus_fit_coef[1,1])/(1+sum(exp(cactus_fit_coef[,1]))),
-  #pr(crem)
-  exp(cactus_fit_coef[2,1])/(1+sum(exp(cactus_fit_coef[,1]))),
-  #pr(liom)
-  exp(cactus_fit_coef[3,1])/(1+sum(exp(cactus_fit_coef[,1]))))
-sum(pred_freq_vac)
-
-pred_crem_vac<-c(
-  #pr(vacant)
-  1/(1+sum(exp(cactus_fit_coef[,2]))),
-  #pr(other)
-  exp(cactus_fit_coef[1,2])/(1+sum(exp(cactus_fit_coef[,2]))),
-  #pr(crem)
-  exp(cactus_fit_coef[2,2])/(1+sum(exp(cactus_fit_coef[,2]))),
-  #pr(liom)
-  exp(cactus_fit_coef[3,2])/(1+sum(exp(cactus_fit_coef[,2]))))
-sum(pred_crem_vac)
-
-pred_liom_vac<-c(
-  #pr(vacant)
-  1/(1+sum(exp(cactus_fit_coef[,3]))),
-  #pr(other)
-  exp(cactus_fit_coef[1,3])/(1+sum(exp(cactus_fit_coef[,3]))),
-  #pr(crem)
-  exp(cactus_fit_coef[2,3])/(1+sum(exp(cactus_fit_coef[,3]))),
-  #pr(liom)
-  exp(cactus_fit_coef[3,3])/(1+sum(exp(cactus_fit_coef[,3]))))
-sum(pred_liom_vac)
-
-pred_other_vac<-c(
-  #pr(vacant)
-  1/(1+sum(exp(cactus_fit_coef[,4]))),
-  #pr(other)
-  exp(cactus_fit_coef[1,4])/(1+sum(exp(cactus_fit_coef[,4]))),
-  #pr(crem)
-  exp(cactus_fit_coef[2,4])/(1+sum(exp(cactus_fit_coef[,4]))),
-  #pr(liom)
-  exp(cactus_fit_coef[3,4])/(1+sum(exp(cactus_fit_coef[,4]))))
-sum(pred_other_vac)
-
-pred_mat <- cbind(pred_freq_vac,pred_crem_vac,pred_liom_vac,pred_other_vac)
-colSums(pred_mat)
-
-
-cactus_real$dummy <- sample(LETTERS[1:4],size=nrow(cactus_real),replace=T)
-table(cactus_real$ant_t1_relevel,cactus_real$dummy)
-
-obstab <- table(cactus_real$ant_t1_relevel,cactus_real$ant_t_relevel)
-obstab[,1]/colSums(obstab)[1]
-obstab[,2]/colSums(obstab)[2]
-obstab[,3]/colSums(obstab)[3]
-obstab[,4]/colSums(obstab)[4]
-
-
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 4, #number of predictors
@@ -266,240 +208,186 @@ write.csv(real_ant_out, "multi_ant_out")
 mcmc_trace(real_ant_noint)
 summary(real_ant_noint)
 ## this looks pretty good. All betas converge
-multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number of possible ant species
-                       N = dim(cactus_real)[1], #number of observations
-                       D = 4, #number of predictors
-                       y = as.integer(as.factor(cactus_real$ant_t1_relevel)), #observations
-                       x = model.matrix(~ (as.factor(ant_t_relevel)), cactus_real)) #design matrix
-real_ant_int <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
-                       data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
-real_ant_out <- rstan::extract(real_ant_int, pars = c("beta"))
-write.csv(real_ant_out, "multi_ant_out")
-## plot the chains
-mcmc_trace(real_ant)
-summary(real_ant_int)
+
 
 ## Calculate the probabilities for each state
-#### Try 1 -- 
-                      ##  prob of being occupied by liom (prev order: vac, other, crem, liom)
-Denominator_liom  <- 1 + exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,1,2] + real_ant_out$beta[,1,3])
-    ## prob of being occupied by vac
-Denominator_vac  <- 1 +   exp(real_ant_out$beta[,2,1] + real_ant_out$beta[,2,2] + real_ant_out$beta[,2,3])
-    ## other
-Denominator_other  <- 1 +  exp(real_ant_out$beta[,3,1] + real_ant_out$beta[,3,2] + real_ant_out$beta[,3,3])
-    ## crem
-Denominator_crem  <- 1 +  exp(real_ant_out$beta[,4,1] + real_ant_out$beta[,4,2] + real_ant_out$beta[,4,3])
-pred_ant <- cbind(
-  ## Liom
-  1/Denominator_liom,
-  exp(real_ant_out$beta[,1,1])/Denominator_liom,
-  exp(real_ant_out$beta[,1,2])/Denominator_liom,
-  exp(real_ant_out$beta[,1,3])/Denominator_liom,
-  ## Vac
-  1/Denominator_vac,
-  exp(real_ant_out$beta[,2,1])/Denominator_vac,
-  exp(real_ant_out$beta[,2,2])/Denominator_vac,
-  exp(real_ant_out$beta[,2,3])/Denominator_vac,
-  ## Other
-  1/Denominator_other,
-  exp(real_ant_out$beta[,3,1])/Denominator_other,
-  exp(real_ant_out$beta[,3,2])/Denominator_other,
-  exp(real_ant_out$beta[,3,3])/Denominator_other,
-  ## Crem
-  1/Denominator_crem,
-  exp(real_ant_out$beta[,4,1])/Denominator_crem,
-  exp(real_ant_out$beta[,4,2])/Denominator_crem,
-  exp(real_ant_out$beta[,4,3])/Denominator_crem
-)
-
-pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
-                mean(pred_ant[,2]), ## other -> liom,
-                mean(pred_ant[,3]), ## crem -> liom,
-                mean(pred_ant[,4]), ## liom -> liom,
-                mean(pred_ant[,5]), ## vac-> vac, 
-                mean(pred_ant[,6]), ## other -> vac,
-                mean(pred_ant[,7]), ## crem -> vac,
-                mean(pred_ant[,8]), ## liom -> vac,
-                mean(pred_ant[,9]), ## vac-> other, 
-                mean(pred_ant[,10]), ## other -> other,
-                mean(pred_ant[,11]), ## crem -> other,
-                mean(pred_ant[,12]), ## liom -> other,
-                mean(pred_ant[,13]), ## vac-> crem, 
-                mean(pred_ant[,14]), ## other -> crem,
-                mean(pred_ant[,15]), ## crem -> crem,
-                mean(pred_ant[,16]) ## liom -> crem,
-                )
-sum(pred_probs)
-
-
-### #Try 2
-## Probability o fbeing occupied by ____
-Denominator  <- 1 + exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,2,1] + real_ant_out$beta[,3,1] + real_ant_out$beta[,4,1]) + 
-  exp(real_ant_out$beta[,1,2] + real_ant_out$beta[,2,2] + real_ant_out$beta[,3,2] + real_ant_out$beta[,4,2]) + 
-  exp(real_ant_out$beta[,1,3] + real_ant_out$beta[,2,3] + real_ant_out$beta[,3,3] + real_ant_out$beta[,4,3]) 
-pred_ant <- cbind(
-  ## Liom
-  4/Denominator,
-  exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,2,1] + real_ant_out$beta[,3,1] + real_ant_out$beta[,4,1])/Denominator,
-  exp(real_ant_out$beta[,1,2] + real_ant_out$beta[,2,2] + real_ant_out$beta[,3,2] + real_ant_out$beta[,4,2]) /Denominator,
-  exp(real_ant_out$beta[,1,3] + real_ant_out$beta[,2,3] + real_ant_out$beta[,3,3] + real_ant_out$beta[,4,3])/Denominator
-)
-
-pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
-                mean(pred_ant[,2]), ## other -> liom,
-                mean(pred_ant[,3]), ## crem -> liom,
-                mean(pred_ant[,4])## liom -> crem,
-)
-sum(pred_probs)
-## all rows sum to 1
-
-
-#### Try 3 -- 
-##  prob of being occupied by liom (prev order: vac, other, crem, liom)
-Denominator  <- 1 + exp(real_ant_out$beta[,1,1] + real_ant_out$beta[,1,2] + real_ant_out$beta[,1,3]) + 
-## prob of being occupied by vac
-  1 +   exp(real_ant_out$beta[,2,1] + real_ant_out$beta[,2,2] + real_ant_out$beta[,2,3]) + 
-## other
-  1 +  exp(real_ant_out$beta[,3,1] + real_ant_out$beta[,3,2] + real_ant_out$beta[,3,3]) + 
-## crem
-  1 +  exp(real_ant_out$beta[,4,1] + real_ant_out$beta[,4,2] + real_ant_out$beta[,4,3])
-pred_ant <- cbind(
-  ## Liom
-  1/Denominator,
-  exp(real_ant_out$beta[,1,1])/Denominator,
-  exp(real_ant_out$beta[,1,2])/Denominator,
-  exp(real_ant_out$beta[,1,3])/Denominator,
-  ## Vac
-  1/Denominator,
-  exp(real_ant_out$beta[,2,1])/Denominator,
-  exp(real_ant_out$beta[,2,2])/Denominator,
-  exp(real_ant_out$beta[,2,3])/Denominator,
-  ## Other
-  1/Denominator,
-  exp(real_ant_out$beta[,3,1])/Denominator,
-  exp(real_ant_out$beta[,3,2])/Denominator,
-  exp(real_ant_out$beta[,3,3])/Denominator,
-  ## Crem
-  1/Denominator,
-  exp(real_ant_out$beta[,4,1])/Denominator,
-  exp(real_ant_out$beta[,4,2])/Denominator,
-  exp(real_ant_out$beta[,4,3])/Denominator
-)
-
-pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
-                mean(pred_ant[,2]), ## other -> liom,
-                mean(pred_ant[,3]), ## crem -> liom,
-                mean(pred_ant[,4]), ## liom -> liom,
-                mean(pred_ant[,5]), ## vac-> vac, 
-                mean(pred_ant[,6]), ## other -> vac,
-                mean(pred_ant[,7]), ## crem -> vac,
-                mean(pred_ant[,8]), ## liom -> vac,
-                mean(pred_ant[,9]), ## vac-> other, 
-                mean(pred_ant[,10]), ## other -> other,
-                mean(pred_ant[,11]), ## crem -> other,
-                mean(pred_ant[,12]), ## liom -> other,
-                mean(pred_ant[,13]), ## vac-> crem, 
-                mean(pred_ant[,14]), ## other -> crem,
-                mean(pred_ant[,15]), ## crem -> crem,
-                mean(pred_ant[,16]) ## liom -> crem,
-)
-sum(pred_probs)
-
-
-
-
-## Try 4 -- 
-summary(real_ant_int)
-real_ant_out <- rstan::extract(real_ant_int, pars = c("beta"))
-                ## vac - > liom                       other - > liom            crem - > liom                 liom - > liom
-Denominator <- exp(real_ant_out$beta[,1,1]) + exp(real_ant_out$beta[,1,2]) + exp(real_ant_out$beta[,1,3]) + exp(real_ant_out$beta[,1,4]) + 
-  ## vac - > vac                        other -> vac                crem - > vac                        liom - > vac
-  exp(real_ant_out$beta[,2,1]) + exp(real_ant_out$beta[,2,2]) + exp(real_ant_out$beta[,2,3]) + exp(real_ant_out$beta[,2,4]) + 
-  ## vac - > other                      other -> other              crem -> other                       liom -> other
-  exp(real_ant_out$beta[,3,1]) + exp(real_ant_out$beta[,3,2]) + exp(real_ant_out$beta[,3,3]) + exp(real_ant_out$beta[,3,4]) + 
-  ## vac -> crem                        other -> crem               crem -> crem                        liom -> crem
-  exp(real_ant_out$beta[,4,1]) + exp(real_ant_out$beta[,4,2]) + exp(real_ant_out$beta[,4,3]) + exp(real_ant_out$beta[,4,4])
-
-pred_ant <- cbind(
-  exp(real_ant_out$beta[,1,1])/Denominator,
-  exp(real_ant_out$beta[,1,2])/Denominator,
-  exp(real_ant_out$beta[,1,3])/Denominator,
-  exp(real_ant_out$beta[,1,4])/Denominator,
-  exp(real_ant_out$beta[,2,1])/Denominator,
-  exp(real_ant_out$beta[,2,2])/Denominator,
-  exp(real_ant_out$beta[,2,3])/Denominator,
-  exp(real_ant_out$beta[,2,4])/Denominator,
-  exp(real_ant_out$beta[,3,1])/Denominator,
-  exp(real_ant_out$beta[,3,2])/Denominator,
-  exp(real_ant_out$beta[,3,3])/Denominator,
-  exp(real_ant_out$beta[,3,4])/Denominator,
-  exp(real_ant_out$beta[,4,1])/Denominator,
-  exp(real_ant_out$beta[,4,2])/Denominator,
-  exp(real_ant_out$beta[,4,3])/Denominator,
-  exp(real_ant_out$beta[,4,4])/Denominator
-)
-pred_probs <- c(mean(pred_ant[,1]), ## vac-> liom, 
-                mean(pred_ant[,2]), ## other -> liom,
-                mean(pred_ant[,3]), ## crem -> liom,
-                mean(pred_ant[,4]), ## liom -> liom,
-                mean(pred_ant[,5]), ## vac-> vac, 
-                mean(pred_ant[,6]), ## other -> vac,
-                mean(pred_ant[,7]), ## crem -> vac,
-                mean(pred_ant[,8]), ## liom -> vac,
-                mean(pred_ant[,9]), ## vac-> other, 
-                mean(pred_ant[,10]), ## other -> other,
-                mean(pred_ant[,11]), ## crem -> other,
-                mean(pred_ant[,12]), ## liom -> other,
-                mean(pred_ant[,13]), ## vac-> crem, 
-                mean(pred_ant[,14]), ## other -> crem,
-                mean(pred_ant[,15]), ## crem -> crem,
-                mean(pred_ant[,16]) ## liom -> crem,
-)
-sum(pred_probs)
-
+## Previous ant was vacant
+##real_ant_out$beta[iteration,previous ant state,next ant state]
+## Previously tended by none
+Denominator_vac <- exp(real_ant_out$beta[,1,1]) + exp(real_ant_out$beta[,1,2]) + exp(real_ant_out$beta[,1,3]) + exp(real_ant_out$beta[,1,4])
+pred_vac<-cbind(
+  #pr(vacant)
+  exp(real_ant_out$beta[,1,1])/Denominator_vac,
+  #pr(other)
+  exp(real_ant_out$beta[,1,2])/Denominator_vac,
+  #pr(crem)
+  exp(real_ant_out$beta[,1,3])/Denominator_vac,
+  #pr(liom)
+  exp(real_ant_out$beta[,1,4])/Denominator_vac)
+sum(pred_vac[1,])
+## Previously tended by Other
+Denominator_other <- exp(real_ant_out$beta[,2,1]) + exp(real_ant_out$beta[,2,2]) + exp(real_ant_out$beta[,2,3]) + exp(real_ant_out$beta[,2,4])
+pred_other<-cbind(
+  #pr(vacant)
+  exp(real_ant_out$beta[,2,1])/Denominator_other,
+  #pr(other)
+  exp(real_ant_out$beta[,2,2])/Denominator_other,
+  #pr(crem)
+  exp(real_ant_out$beta[,2,3])/Denominator_other,
+  #pr(liom)
+  exp(real_ant_out$beta[,2,4])/Denominator_other)
+sum(pred_other[1,])
+## Previously tended by Crem
+Denominator_crem <- exp(real_ant_out$beta[,3,1]) + exp(real_ant_out$beta[,3,2]) + exp(real_ant_out$beta[,3,3]) + exp(real_ant_out$beta[,3,4])
+pred_crem<-cbind(
+  #pr(vacant)
+  exp(real_ant_out$beta[,3,1])/Denominator_crem,
+  #pr(other)
+  exp(real_ant_out$beta[,3,2])/Denominator_crem,
+  #pr(crem)
+  exp(real_ant_out$beta[,3,3])/Denominator_crem,
+  #pr(liom)
+  exp(real_ant_out$beta[,3,4])/Denominator_crem)
+sum(pred_crem[1,])
+## Previously tended by Liom
+Denominator_liom <- exp(real_ant_out$beta[,4,1]) + exp(real_ant_out$beta[,4,2]) + exp(real_ant_out$beta[,4,3]) + exp(real_ant_out$beta[,4,4])
+pred_liom<-cbind(
+  #pr(vacant)
+  exp(real_ant_out$beta[,4,1])/Denominator_liom,
+  #pr(other)
+  exp(real_ant_out$beta[,4,2])/Denominator_liom,
+  #pr(crem)
+  exp(real_ant_out$beta[,4,3])/Denominator_liom,
+  #pr(liom)
+  exp(real_ant_out$beta[,4,4])/Denominator_liom)
+sum(pred_liom[1,])
+                      ## vac-> vac        vac -> other    vac -> crem       vac -> liom
+pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
+                        ## other-> vac        other -> other    other -> crem       other -> liom
+pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]) , (pred_other[,3]) , (pred_other[,4]))
+                        ## crem-> vac       crem -> other    crem -> crem       crem -> liom
+pred_probs_crem <- cbind((pred_crem[,1]) , (pred_crem[,2]) , (pred_crem[,3]) , (pred_crem[,4]))
+                        ## liom-> vac       liom -> other    liom -> crem       liom -> liom
+pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]) , (pred_liom[,3]) , (pred_liom[,4]))
 
 ###### plot the probabilities
 ## Barplot
-means <- c(mean(pred_ant[,1]),mean(pred_ant[,2]),mean(pred_ant[,3]),mean(pred_ant[,4]))
-barplot(means, col = c("blue","black","pink","red"))
-legend("topright", c("vac","crem","liom","other"), fill = c("black","red","blue","pink"))
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+## means
+means_vac <- c(mean(pred_probs_vac[,1]),mean(pred_probs_vac[,2]), mean(pred_probs_vac[,3]), mean(pred_probs_vac[,4]))
+means_other <-c(mean(pred_probs_other[,1]),mean(pred_probs_other[,2]), mean(pred_probs_other[,3]), mean(pred_probs_other[,4]))
+means_crem <- c(mean(pred_probs_crem[,1]),mean(pred_probs_crem[,2]), mean(pred_probs_crem[,3]), mean(pred_probs_crem[,4]))
+means_liom <- c(mean(pred_probs_liom[,1]),mean(pred_probs_liom[,2]), mean(pred_probs_liom[,3]), mean(pred_probs_liom[,4]))
+## 95%
+h_vac <- c(quantile(pred_probs_vac[,1],0.95),quantile(pred_probs_vac[,2],0.95), quantile(pred_probs_vac[,3],0.95), quantile(pred_probs_vac[,4],0.95))
+h_other <-c(quantile(pred_probs_other[,1],0.95),quantile(pred_probs_other[,2],0.95), quantile(pred_probs_other[,3],0.95), quantile(pred_probs_other[,4],0.95))
+h_crem <- c(quantile(pred_probs_crem[,1],0.95),quantile(pred_probs_crem[,2],0.95), quantile(pred_probs_crem[,3],0.95), quantile(pred_probs_crem[,4],0.95))
+h_liom <- c(quantile(pred_probs_liom[,1],0.95),quantile(pred_probs_liom[,2],0.95), quantile(pred_probs_liom[,3],0.95), quantile(pred_probs_liom[,4],0.95))
+## 5%
+l_vac <- c(quantile(pred_probs_vac[,1],0.05),quantile(pred_probs_vac[,2],0.05), quantile(pred_probs_vac[,3],0.05), quantile(pred_probs_vac[,4],0.05))
+l_other <-c(quantile(pred_probs_other[,1],0.05),quantile(pred_probs_other[,2],0.05), quantile(pred_probs_other[,3],0.05), quantile(pred_probs_other[,4],0.05))
+l_crem <- c(quantile(pred_probs_crem[,1],0.05),quantile(pred_probs_crem[,2],0.05), quantile(pred_probs_crem[,3],0.05), quantile(pred_probs_crem[,4],0.05))
+l_liom <- c(quantile(pred_probs_liom[,1],0.05),quantile(pred_probs_liom[,2],0.05), quantile(pred_probs_liom[,3],0.05), quantile(pred_probs_liom[,4],0.05))
 
+png("Ant_Only_Multi.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,1,2,3,4,5),
+              ncol = 2, nrow = 3, byrow = TRUE), heights = c(0.6,1.4,1.4), widths = c(3.9,3.9))
+plot.new()
+text(0.5,0.5,"Probability of Next Ant Partner By Previous",cex=2,font=2)
+
+barplot(means_vac, col = c("pink","black","red","blue"), main = "Previously Vacant", xlab = "Next Ant State", ylim = c(0,1))
+arrows(x0=0.7, h_vac[1], x1=0.7, l_vac[1], angle=90, code=3)
+arrows(x0=1.9, h_vac[2], x1=1.9, l_vac[2], angle=90, code=3)
+arrows(x0=3.1, h_vac[3], x1=3.1, l_vac[3], angle=90, code=3)
+arrows(x0=4.3, h_vac[4], x1=4.3, l_vac[4], angle=90, code=3)
+barplot(means_other, col = c("pink","black","red","blue"), main = "Previously Other", xlab = "Next Ant State", ylim = c(0,1))
+arrows(x0=0.7, h_other[1], x1=0.7, l_other[1], angle=90, code=3)
+arrows(x0=1.9, h_other[2], x1=1.9, l_other[2], angle=90, code=3)
+arrows(x0=3.1, h_other[3], x1=3.1, l_other[3], angle=90, code=3)
+arrows(x0=4.3, h_other[4], x1=4.3, l_other[4], angle=90, code=3)
+legend("topright",c("vacant","other","crem.","liom."), fill = c("pink","black","red","blue"))
+barplot(means_crem, col = c("pink","black","red","blue"), main = "Previously Crem", xlab = "Next Ant State", ylim = c(0,1))
+arrows(x0=0.7, h_crem[1], x1=0.7, l_crem[1], angle=90, code=3)
+arrows(x0=1.9, h_crem[2], x1=1.9, l_crem[2], angle=90, code=3)
+arrows(x0=3.1, h_crem[3], x1=3.1, l_crem[3], angle=90, code=3)
+arrows(x0=4.3, h_crem[4], x1=4.3, l_crem[4], angle=90, code=3)
+barplot(means_liom, col = c("pink","black","red","blue"), main = "Previously Liom", xlab = "Next Ant State", ylim = c(0,1))
+arrows(x0=0.7, h_liom[1], x1=0.7, l_liom[1], angle=90, code=3)
+arrows(x0=1.9, h_liom[2], x1=1.9, l_liom[2], angle=90, code=3)
+arrows(x0=3.1, h_liom[3], x1=3.1, l_liom[3], angle=90, code=3)
+arrows(x0=4.3, h_liom[4], x1=4.3, l_liom[4], angle=90, code=3)
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 ## Check against Frequentist model 
 ## freq model 
-cactus_fit_ant <- summary(multinom(ant_t1_relevel ~ (as.factor(ant_t_relevel)), cactus_real))
-## Calculate the probabilities of each state
-                                                                    ## other <- other               other <- crem                         other <- liom
-Denominator <- 1 + sum(exp(cactus_fit_ant$coefficients[1,1] + cactus_fit_ant$coefficients[1,2] + cactus_fit_ant$coefficients[1,3] + cactus_fit_ant$coefficients[1,4]) + 
-                                                                    ## crem <- other                crem <- crem                          crem <- liom
-                         exp(cactus_fit_ant$coefficients[2,1] + cactus_fit_ant$coefficients[2,2] + cactus_fit_ant$coefficients[2,3] + cactus_fit_ant$coefficients[2,4]) + 
-                                                                    ## liom <- other                liom <- crem                          liom <- liom
-                         exp(cactus_fit_ant$coefficients[3,1] + cactus_fit_ant$coefficients[3,2] + cactus_fit_ant$coefficients[3,3] + cactus_fit_ant$coefficients[3,4]))
+cactus_fit <- summary(multinom(ant_t1_relevel ~ 0 + ant_t_relevel, cactus_real))
+cactus_fit_coef <- coef(cactus_fit)
 
-pred_freq_ant<-cbind(
+pred_vac_freq<-c(
   #pr(vacant)
-  1/(Denominator),
+  1/(1+sum(exp(cactus_fit_coef[,1]))),
   #pr(other)
-  exp(cactus_fit_ant$coefficients[1,1] + cactus_fit_ant$coefficients[1,2] + cactus_fit_ant$coefficients[1,3] + cactus_fit_ant$coefficients[1,4])/(Denominator),
+  exp(cactus_fit_coef[1,1])/(1+sum(exp(cactus_fit_coef[,1]))),
   #pr(crem)
-  exp(cactus_fit_ant$coefficients[2,1] + cactus_fit_ant$coefficients[2,2] + cactus_fit_ant$coefficients[2,3] + cactus_fit_ant$coefficients[2,4])/(Denominator),
-    #pr(liom)
-  exp(cactus_fit_ant$coefficients[3,1] + cactus_fit_ant$coefficients[3,2] + cactus_fit_ant$coefficients[3,3] + cactus_fit_ant$coefficients[3,4])/(Denominator)
-)
-sum(pred_freq_ant)
+  exp(cactus_fit_coef[2,1])/(1+sum(exp(cactus_fit_coef[,1]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,1])/(1+sum(exp(cactus_fit_coef[,1]))))
+sum(pred_vac_freq)
+
+pred_crem_freq<-c(
+  #pr(vacant)
+  1/(1+sum(exp(cactus_fit_coef[,2]))),
+  #pr(other)
+  exp(cactus_fit_coef[1,2])/(1+sum(exp(cactus_fit_coef[,2]))),
+  #pr(crem)
+  exp(cactus_fit_coef[2,2])/(1+sum(exp(cactus_fit_coef[,2]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,2])/(1+sum(exp(cactus_fit_coef[,2]))))
+sum(pred_crem_freq)
+
+pred_liom_freq<-c(
+  #pr(vacant)
+  1/(1+sum(exp(cactus_fit_coef[,3]))),
+  #pr(other)
+  exp(cactus_fit_coef[1,3])/(1+sum(exp(cactus_fit_coef[,3]))),
+  #pr(crem)
+  exp(cactus_fit_coef[2,3])/(1+sum(exp(cactus_fit_coef[,3]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,3])/(1+sum(exp(cactus_fit_coef[,3]))))
+sum(pred_liom_freq)
+
+pred_other_freq<-c(
+  #pr(vacant)
+  1/(1+sum(exp(cactus_fit_coef[,4]))),
+  #pr(other)
+  exp(cactus_fit_coef[1,4])/(1+sum(exp(cactus_fit_coef[,4]))),
+  #pr(crem)
+  exp(cactus_fit_coef[2,4])/(1+sum(exp(cactus_fit_coef[,4]))),
+  #pr(liom)
+  exp(cactus_fit_coef[3,4])/(1+sum(exp(cactus_fit_coef[,4]))))
+sum(pred_other_freq)
+
 
 ## Compare the probabilities of the frequentist model to the bayesian model to the real data (total for y)
 ## Real data -- each row sums to the probability of being in state a in year t1
-probs <- table(cactus_real$ant_t1_relevel, cactus_real$ant_t_relevel)/nrow(cactus_real)
-c(sum(probs[1,]), sum(probs[2,]), sum(probs[3,]), sum(probs[4,]))
+obstab <- table(cactus_real$ant_t1_relevel,cactus_real$ant_t_relevel)
+obstab[,1]/colSums(obstab)[1]
+obstab[,2]/colSums(obstab)[2]
+obstab[,3]/colSums(obstab)[3]
+obstab[,4]/colSums(obstab)[4]
 ## Freq data 
 ## vac, other, crem, liom
-pred_freq_ant
+pred_mat <- cbind(pred_vac_freq,pred_crem_freq,pred_liom_freq,pred_other_freq)
+colSums(pred_mat)
 ## Bayes data
-pred_probs
-c(sum(pred_probs[c(1,2,3,4)]), sum(pred_probs[c(5,6,7,8)]), sum(pred_probs[c(9,10,11,12)]), sum(pred_probs[c(13,14,15,16)]))
-## The freq model is still very close to the real data. The Bayesian model is not as close, but 
-## isn't that bad. It seems to underestimate all of them just a bit (except liom)
+colSums(pred_probs_vac)
+colSums(pred_probs_other)
+colSums(pred_probs_crem)
+colSums(pred_probs_liom)
+
+##The Bayesian model is also very close!! Looks good
 
 
       
@@ -509,75 +397,193 @@ c(sum(pred_probs[c(1,2,3,4)]), sum(pred_probs[c(5,6,7,8)]), sum(pred_probs[c(9,1
 # #############################################################################################
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
-                       D = 3, #number of predictors
+                       D = 5, #number of predictors
                        y = as.integer(as.factor(cactus_real$ant_t1_relevel)), #observations
-                       x = model.matrix(~ as.integer(as.factor(ant_t_relevel)) + logsize_t, cactus_real)) #design matrix
+                       x = model.matrix(~ 0 + (as.factor(ant_t_relevel)) + logsize_t, cactus_real)) #design matrix
 ## Run the model & save the results
 real_ant_size <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
-                 data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
+                 data = multi_dat_real, warmup = 100, iter = 1000, chains = 1)
 real_ant_size_out <- rstan::extract(real_ant_size, pars = c("beta"))
 write.csv(real_ant_size_out, "multi_ant_size_out")
 ## plot the chains
-mcmc_trace(real_ant)
-mean(real_ant_out$beta[,1,2])
-summary(real_ant)
+mcmc_trace(real_ant_size)
+summary(real_ant_size)
 ## this looks pretty good. All betas converge
 
+## Calculate the probabilities of being tended by each ant species
+## Previously tended by none
+Denominator_vac <- exp(mean(real_ant_size_out$beta[,1,1]) + size_dummy_real*mean(real_ant_size_out$beta[,5,1])) + 
+                         exp(mean(real_ant_size_out$beta[,1,2]) + size_dummy_real*mean(real_ant_size_out$beta[,5,2])) + 
+                         exp(mean(real_ant_size_out$beta[,1,3]) + size_dummy_real*mean(real_ant_size_out$beta[,5,3])) + 
+                         exp(mean(real_ant_size_out$beta[,1,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))
+pred_vac<-cbind(
+  #pr(vacant)
+  exp(mean(real_ant_size_out$beta[,1,1]) + size_dummy_real*mean(real_ant_size_out$beta[,5,1]))/Denominator_vac,
+  #pr(other)
+  exp(mean(real_ant_size_out$beta[,1,2]) + size_dummy_real*mean(real_ant_size_out$beta[,5,2]))/Denominator_vac,
+  #pr(crem)
+  exp(mean(real_ant_size_out$beta[,1,3]) + size_dummy_real*mean(real_ant_size_out$beta[,5,3]))/Denominator_vac,
+  #pr(liom)
+  exp(mean(real_ant_size_out$beta[,1,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))/Denominator_vac)
+sum(pred_vac[1,])
+## Previously tended by Crem
+Denominator_other <- exp(mean(real_ant_size_out$beta[,2,1]) + size_dummy_real*mean(real_ant_size_out$beta[,5,1])) + 
+  exp(mean(real_ant_size_out$beta[,2,2]) + size_dummy_real*mean(real_ant_size_out$beta[,5,2])) + 
+  exp(mean(real_ant_size_out$beta[,2,3]) + size_dummy_real*mean(real_ant_size_out$beta[,5,3])) + 
+  exp(mean(real_ant_size_out$beta[,2,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))
+pred_other<-cbind(
+  #pr(vacant)
+  exp((mean(real_ant_size_out$beta[,2,1])) + size_dummy_real*mean(real_ant_size_out$beta[,5,1]))/Denominator_other,
+  #pr(other)
+  exp((mean(real_ant_size_out$beta[,2,2])) + size_dummy_real*mean(real_ant_size_out$beta[,5,2]))/Denominator_other,
+  #pr(crem)
+  exp((mean(real_ant_size_out$beta[,2,3])) + size_dummy_real*mean(real_ant_size_out$beta[,5,3]))/Denominator_other,
+  #pr(liom)
+  exp((mean(real_ant_size_out$beta[,2,4])) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))/Denominator_other)
+sum(pred_other[1,])
+## Previously tended by Liom
+Denominator_crem <- exp(mean(real_ant_size_out$beta[,3,1]) + size_dummy_real*mean(real_ant_size_out$beta[,5,1])) + 
+  exp(mean(real_ant_size_out$beta[,3,2]) + size_dummy_real*mean(real_ant_size_out$beta[,5,2])) + 
+  exp(mean(real_ant_size_out$beta[,3,3]) + size_dummy_real*mean(real_ant_size_out$beta[,5,3])) + 
+  exp(mean(real_ant_size_out$beta[,3,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))
+
+pred_crem<-cbind(
+  #pr(vacant)
+  exp(mean(real_ant_size_out$beta[,3,1]) + size_dummy_real*mean(real_ant_size_out$beta[,5,1]))/Denominator_crem,
+  #pr(other)
+  exp(mean(real_ant_size_out$beta[,3,2]) + size_dummy_real*mean(real_ant_size_out$beta[,5,2]))/Denominator_crem,
+  #pr(crem)
+  exp(mean(real_ant_size_out$beta[,3,3]) + size_dummy_real*mean(real_ant_size_out$beta[,5,3]))/Denominator_crem,
+  #pr(liom)
+  exp(mean(real_ant_size_out$beta[,3,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))/Denominator_crem)
+sum(pred_crem[1,])
+## Previously tended by Other
+Denominator_liom <- exp(mean(real_ant_size_out$beta[,4,1]) + size_dummy_real*mean(real_ant_size_out$beta[,5,1])) + 
+  exp(mean(real_ant_size_out$beta[,4,2]) + size_dummy_real*mean(real_ant_size_out$beta[,5,2])) + 
+  exp(mean(real_ant_size_out$beta[,4,3]) + size_dummy_real*mean(real_ant_size_out$beta[,5,3])) + 
+  exp(mean(real_ant_size_out$beta[,4,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))
+
+pred_liom<-cbind(
+  #pr(vacant)
+  exp(mean(real_ant_size_out$beta[,4,1]) + size_dummy_real*mean(real_ant_size_out$beta[,5,1]))/Denominator_liom,
+  #pr(other)
+  exp(mean(real_ant_size_out$beta[,4,2]) + size_dummy_real*mean(real_ant_size_out$beta[,5,2]))/Denominator_liom,
+  #pr(crem)
+  exp(mean(real_ant_size_out$beta[,4,3]) + size_dummy_real*mean(real_ant_size_out$beta[,5,3]))/Denominator_liom,
+  #pr(liom)
+  exp(mean(real_ant_size_out$beta[,4,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))/Denominator_liom)
+sum(pred_liom[1,])
+                      ## vac -> vac       vac -> other    vac -> crem       vac -> liom
+pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
+                        ## other-> vac        other -> other    other -> crem       other -> liom
+pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]) , (pred_other[,3]) , (pred_other[,4]))
+                        ## crem-> vac       crem -> other    crem -> crem      crem -> liom
+pred_probs_crem <- cbind((pred_crem[,1]) , (pred_crem[,2]) , (pred_crem[,3]) , (pred_crem[,4]))
+                        ## liom-> vac       liom -> other    liom -> crem       liom -> liom
+pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]) , (pred_liom[,3]) , (pred_liom[,4]))
+
+## Plot the probabilities
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("Ant_Size_Multi.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,1,2,3,4,5),
+              ncol = 2, nrow = 3, byrow = TRUE), heights = c(0.6,1.4,1.4), widths = c(3.9,3.9))
+plot.new()
+text(0.5,0.5,"Ant States",cex=2,font=2)
+plot(size_dummy_real, pred_vac[,1], type = "l", col = "pink",main = "Previously Vacant", ylim = c(0,1))
+lines(size_dummy_real, pred_vac[,2], col = "black")
+lines(size_dummy_real, pred_vac[,3], col = "red")
+lines(size_dummy_real, pred_vac[,4], col = "blue")
+plot(size_dummy_real, pred_other[,1], type = "l", col = "pink",main = "Previously Other", ylim = c(0,1))
+lines(size_dummy_real, pred_other[,2], col = "black")
+lines(size_dummy_real, pred_other[,3], col = "red")
+lines(size_dummy_real, pred_other[,4], col = "blue")
+legend("topright",c("vacant","other","crem.","liom."), fill = c("pink","black","red","blue"))
+plot(size_dummy_real, pred_crem[,1], type = "l", col = "pink",main = "Previously Crem", ylim = c(0,1))
+lines(size_dummy_real, pred_crem[,2], col = "black")
+lines(size_dummy_real, pred_crem[,3], col = "red")
+lines(size_dummy_real, pred_crem[,4], col = "blue")
+plot(size_dummy_real, pred_liom[,1], type = "l", col = "pink",main = "Previously Liom", ylim = c(0,1))
+lines(size_dummy_real, pred_liom[,2], col = "black")
+lines(size_dummy_real, pred_liom[,3], col = "red")
+lines(size_dummy_real, pred_liom[,4], col = "blue")
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.1)
+mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 
+## Look into the frequentist model
+cactus_fit <- summary(multinom(ant_t1_relevel ~ 0 + ant_t_relevel + logsize_t, cactus_real))
+cactus_fit_coef <- coef(cactus_fit)
 
+Denominator_freq_vac <- 1+sum(exp(cactus_fit_coef[1,1] + size_dummy_real*cactus_fit_coef[1,5]), 
+                               exp(cactus_fit_coef[2,1] + size_dummy_real*cactus_fit_coef[2,5]),
+                               exp(cactus_fit_coef[3,1] + size_dummy_real*cactus_fit_coef[3,5]))
+pred_vac_freq<-c(
+  #pr(vacant)
+  1/Denominator_freq_vac,
+  #pr(other)
+  exp(cactus_fit_coef[1,1] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_vac,
+  #pr(crem)
+  exp(cactus_fit_coef[2,1] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_vac,
+  #pr(liom)
+  exp(cactus_fit_coef[3,1] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_vac
+  )
+sum(pred_vac_freq)
 
-
-
-###### Import data from simulated run model
-full_data_real <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/full_data_real.csv", header = TRUE,stringsAsFactors=T)
-size_dummy_real <- seq(min((cactus_real$logsize_t)), max((cactus_real$logsize_t)), by=0.1)
-## make a denominator
-Denominator <- 1 + exp(mean(full_data_real$beta.1.1)*size_dummy_real + mean(full_data_real$beta.2.1)*size_dummy_real + mean(full_data_real$beta.3.1)*size_dummy_real) + 
-  exp(mean(full_data_real$beta.1.2)*size_dummy_real + mean(full_data_real$beta.2.2)*size_dummy_real + mean(full_data_real$beta.3.2)*size_dummy_real) + 
-  exp(mean(full_data_real$beta.1.3)*size_dummy_real + mean(full_data_real$beta.2.3)*size_dummy_real + mean(full_data_real$beta.3.3)*size_dummy_real) 
-## 
-Denominator <- 1 + exp(mean(full_data_real$beta.1.1)*size_dummy_real + mean(full_data_real$beta.2.1)*size_dummy_real + mean(full_data_real$beta.3.1)*size_dummy_real) + 
-  exp(mean(full_data_real$beta.1.2)*size_dummy_real + mean(full_data_real$beta.2.2)*size_dummy_real + mean(full_data_real$beta.3.2)*size_dummy_real) + 
-  exp(mean(full_data_real$beta.1.3)*size_dummy_real + mean(full_data_real$beta.2.3)*size_dummy_real + mean(full_data_real$beta.3.3)*size_dummy_real) 
-
-stan_pred_freq_real <- cbind(
-  1/ Denominator,
-  (exp(mean(km1_mod_real_out$beta[,1,1]) + mean(km1_mod_real_out$beta[,2,1])*size_dummy_real))/Denominator,
-  (exp(mean(km1_mod_real_out$beta[,1,2]) + mean(km1_mod_real_out$beta[,2,2])*size_dummy_real))/Denominator,
-  (exp(mean(km1_mod_real_out$beta[,1,3]) + mean(km1_mod_real_out$beta[,2,3])*size_dummy_real))/Denominator
+Denominator_freq_crem <- 1+sum(exp(cactus_fit_coef[1,2] + size_dummy_real*cactus_fit_coef[1,5]), 
+                              exp(cactus_fit_coef[2,2] + size_dummy_real*cactus_fit_coef[2,5]),
+                              exp(cactus_fit_coef[3,2] + size_dummy_real*cactus_fit_coef[3,5]))
+pred_crem_freq<-c(
+  #pr(vacant)
+  1/Denominator_freq_crem,
+  #pr(other)
+  exp(cactus_fit_coef[1,2] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_crem,
+  #pr(crem)
+  exp(cactus_fit_coef[2,2] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_crem,
+  #pr(liom)
+  exp(cactus_fit_coef[3,2] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_crem
 )
-## Check if rows of this sum to 1
-sum(stan_pred_freq_real[1,])
-## all rows sum to 1
+sum(pred_crem_freq)
 
+Denominator_freq_liom <- 1+sum(exp(cactus_fit_coef[1,3] + size_dummy_real*cactus_fit_coef[1,5]), 
+                               exp(cactus_fit_coef[2,3] + size_dummy_real*cactus_fit_coef[2,5]),
+                               exp(cactus_fit_coef[3,3] + size_dummy_real*cactus_fit_coef[3,5]))
+pred_liom_freq<-c(
+  #pr(vacant)
+  1/Denominator_freq_liom,
+  #pr(other)
+  exp(cactus_fit_coef[1,3] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_liom,
+  #pr(crem)
+  exp(cactus_fit_coef[2,3] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_liom,
+  #pr(liom)
+  exp(cactus_fit_coef[3,3] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_liom
+)
+sum(pred_liom_freq)
 
+Denominator_freq_other <- 1+sum(exp(cactus_fit_coef[1,4] + size_dummy_real*cactus_fit_coef[1,5]), 
+                               exp(cactus_fit_coef[2,4] + size_dummy_real*cactus_fit_coef[2,5]),
+                               exp(cactus_fit_coef[3,4] + size_dummy_real*cactus_fit_coef[3,5]))
+pred_other_freq<-c(
+  #pr(vacant)
+  1/Denominator_freq_other,
+  #pr(other)
+  exp(cactus_fit_coef[1,4] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_other,
+  #pr(crem)
+  exp(cactus_fit_coef[2,4] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_other,
+  #pr(liom)
+  exp(cactus_fit_coef[3,4] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_other
+)
+sum(pred_other_freq)
 
-Denominator <- exp(quantile(full_data_real$beta.1.1,0.5)*size_dummy_real + quantile(full_data_real$beta.2.1,0.5)*size_dummy_real + quantile(full_data_real$beta.3.1,0.5)*size_dummy_real) + ## prob of choice 1
-  exp(quantile(full_data_real$beta.1.2,0.5)*size_dummy_real + quantile(full_data_real$beta.2.2,0.5)*size_dummy_real + quantile(full_data_real$beta.3.2,0.5)*size_dummy_real) + ## prob of choice 2
-  exp(quantile(full_data_real$beta.1.3,0.5)*size_dummy_real + quantile(full_data_real$beta.2.3,0.5)*size_dummy_real + quantile(full_data_real$beta.3.3,0.5)*size_dummy_real) + ## prob of choice 3
-  exp(quantile(full_data_real$beta.1.4,0.5)*size_dummy_real + quantile(full_data_real$beta.2.4,0.5)*size_dummy_real + quantile(full_data_real$beta.3.4,0.5)*size_dummy_real)   ## prob of choice 4
-km1_full_vProb <- cbind(exp(quantile(full_data_real$beta.1.1,0.5)*size_dummy_real + quantile(full_data_real$beta.2.1,0.5)*size_dummy_real + quantile(full_data_real$beta.3.1,0.5)*size_dummy_real)/Denominator, ## prob of choice 1
-                        exp(quantile(full_data_real$beta.1.2,0.5)*size_dummy_real + quantile(full_data_real$beta.2.2,0.5)*size_dummy_real + quantile(full_data_real$beta.3.2,0.5)*size_dummy_real)/Denominator, ## prob of choice 2
-                        exp(quantile(full_data_real$beta.1.3,0.5)*size_dummy_real + quantile(full_data_real$beta.2.3,0.5)*size_dummy_real + quantile(full_data_real$beta.3.3,0.5)*size_dummy_real)/Denominator, ## prob of choice 3
-                        exp(quantile(full_data_real$beta.1.4,0.5)*size_dummy_real + quantile(full_data_real$beta.2.4,0.5)*size_dummy_real + quantile(full_data_real$beta.3.4,0.5)*size_dummy_real)/Denominator) ## prob of choice 4
-## check if the rows sum to 1
-check <- vector()
-for(i in 1:length(size_dummy_real)){
-  check[i] <- sum(km1_full_vProb[i,])
-}
-check ## This works!!
+## Compare outputs to real data and frequentist poutputs
+## Real data
 
-##### plot the probabilities -- something is going wrong with the blyes and reds
-## prob of being occupied by other
-plot(size_dummy_real, km1_full_vProb[,1], type = "l", col = "black", ylim = c(0,1))
-## prob of being occupied by crem
-lines(size_dummy_real, km1_full_vProb[,2], col = "red")
-## prob of being occupied by liom
-lines(size_dummy_real, km1_full_vProb[,3], col = "blue")
-## prob of being occupied by no one
-lines(size_dummy_real, km1_full_vProb[,4], col = "pink")
-legend("topright", c("other","crem","liom","vac"), fill = c("black","red","blue","pink"))
+## Freq data 
+## vac, other, crem, liom
+pred_mat <- cbind(mean(pred_vac_freq),mean(pred_crem_freq),mean(pred_liom_freq),mean(pred_other_freq))
+colSums(pred_mat)
 
 
 
