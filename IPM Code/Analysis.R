@@ -8,65 +8,83 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/IPM.R")
 
 #### One ant results
-##Crem
-for(i in 1:100){
-  params = cholla[,i]
-  big_list_c[[i]]<-bigmatrix.1(x_dum,y_dum,cholla, lower, upper, matsize)$IPMmat_c
-  mat_c <- big_list_c[[i]]
-  eig_c <- eigen(mat_c)
-  lambda_c[i]<-Re(eig_c$values[1])
-  
-  stable_c[[i]] <- stable.stage(mat_c)
+bigmatrix.1(4,4.5,lower,upper,matsize,1,"crem",(params))$IPMmat
+## Check that it works
+i = c("liom","vac","crem","other")
+j = c("vac","crem","crem","liom")
+x = c(-1,-5,4,3)
+y = c(-1,-4,4.5,3.01)
+big1 <- list()
+lambda1 <- list()
+for(n in 1:length(i)){
+  big1[[n]] <- bigmatrix.1(x[n],y[n],lower,upper,matsize,1,i[n],params)
+  lambda1[[n]] <- Re(eigen(big1[[n]]$IPMmat)$values[1])
 }
-Re(eigen(bigmatrix.1(x_dum,y_dum,cholla, lower, upper, matsize)$IPMmat_c)$values[1])
-hist(lambda_c)
-lambda_c
+lambda1
 
-##Liom
-Re(eigen(bigmatrix.1(x_dum,y_dum,cholla,lower,upper,matsize,1)$IPMmat_l)$values[1])
+## Crem
+crem_data <- subset(cactus, cactus$ant_t == "crem" & cactus$ant_t1 == "crem")
+i <- crem_data$ant_t
+j <- crem_data$ant_t1
+x <- crem_data$logsize_t
+y <- crem_data$logsize_t1
+big1 <- list()
+lambda1 <- list()
+lambda <- vector()
+for(n in 1:length(i)){
+  big1[[n]] <- bigmatrix.1(x[n],y[n],lower,upper,matsize,1,i[n],params)
+  lambda1[[n]] <- Re(eigen(big1[[n]]$IPMmat)$values[1])
+}
+lambda1
+## 0.9929766
 
-##Other
-Re(eigen(bigmatrix.1(x_dum,y_dum,cholla,lower,upper,matsize,1)$IPMmat_o)$values[1])
+## Other
+other_data <- subset(cactus, cactus$ant_t == "other" & cactus$ant_t1 == "other")
+i <- other_data$ant_t
+j <- other_data$ant_t1
+x <- other_data$logsize_t
+y <- other_data$logsize_t1
+big1 <- list()
+lambda1 <- list()
+lambda <- vector()
+for(n in 1:length(i)){
+  big1[[n]] <- bigmatrix.1(x[n],y[n],lower,upper,matsize,1,i[n],params)
+  lambda1[[n]] <- Re(eigen(big1[[n]]$IPMmat)$values[1])
+}
+lambda1
+## 0.9968325
 
-##Vacant
-Re(eigen(bigmatrix.1(x_dum,y_dum,cholla,lower,upper,matsize,1)$IPMmat_v)$values[1])
+## Liom
+liom_data <- subset(cactus, cactus$ant_t == "liom" & cactus$ant_t1 == "liom")
+i <- liom_data$ant_t
+j <- liom_data$ant_t1
+x <- liom_data$logsize_t
+y <- liom_data$logsize_t1
+big1 <- list()
+lambda1 <- list()
+lambda <- vector()
+for(n in 1:length(i)){
+  big1[[n]] <- bigmatrix.1(x[n],y[n],lower,upper,matsize,1,i[n],params)
+  lambda1[[n]] <- Re(eigen(big1[[n]]$IPMmat)$values[1])
+}
+lambda1
+## 0.9969405
 
-
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-
-#### Lambda dist
-png("two_species_models.png")
-plot(density(lambda_c), col = "red",xlim=c(0.5,0.75))
-lines(density(lambda_l), col = "blue")
-lines(density(lambda_o), col = "black")
-dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##Crem_Vac
-Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vc)$values[1])
-##Liom_Vac
-Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vl)$values[1])
-##Other_Vac
-Re(eigen(bigmatrix.2(x_dum,y_dum,cholla,lower,upper,matsize,2)$IPMmat_vo)$values[1])
-
-
-
+## vacant
+vac_data <- subset(cactus, cactus$ant_t == "vacant" & cactus$ant_t1 == "vacant")
+i <- vac_data$ant_t
+j <- vac_data$ant_t1
+x <- vac_data$logsize_t
+y <- vac_data$logsize_t1
+big1 <- list()
+lambda1 <- list()
+lambda <- vector()
+for(n in 1:length(i)){
+  big1[[n]] <- bigmatrix.1(x[n],y[n],lower,upper,matsize,1,i[n],params)
+  lambda1[[n]] <- Re(eigen(big1[[n]]$IPMmat)$values[1])
+}
+lambda1
+## 
 
 
 

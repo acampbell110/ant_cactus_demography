@@ -162,7 +162,7 @@ ant_transition_models[[3]] <- multinom(ant_t1_relevel ~ 0+ant_t + logsize_t, dat
 ant_transition_models[[4]] <- multinom(ant_t1_relevel ~ 0+ant_t * logsize_t, data = cactus)
 AICtab(ant_transition_models)
 ## The selected model is 4
-predict(ant_transition_models[[4]],newdata=cactus[1,],type="probs")
+predict(ant_transition_models[[3]],newdata=cactus[1,],type="probs")
 
 summary(ant_transition_models[[4]])
 other_other <- coef(ant_transition_models[[4]])[1]

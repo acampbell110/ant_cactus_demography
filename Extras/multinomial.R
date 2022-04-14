@@ -33,11 +33,11 @@ summary(fit2)
 
 
 ###### Import real data and format it
-cactus_real <- cactus[,c("ant_t","ant_t1","logsize_t")]
+cactus_real <- cactus[,c("ant_t","ant_t1","logsize_t","Year_t","Plot")]
 cactus_real <- na.omit(cactus_real)
 cactus_real$ant_t1_relevel <- relevel(cactus_real$ant_t1,ref = "vacant")
 cactus_real$ant_t_relevel <- relevel(cactus_real$ant_t, ref = "vacant")
-cactus_real <- cactus_real[,c("ant_t_relevel","ant_t1_relevel","logsize_t", "ant_t", "ant_t1")]
+cactus_real <- cactus_real[,c("ant_t_relevel","ant_t1_relevel","logsize_t", "ant_t", "ant_t1","Year_t","Plot")]
 
 #### fit model of the mean using the nnet function
 table(cactus_real$ant_t1)/nrow(cactus_real)
@@ -399,7 +399,7 @@ multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number o
                        N = dim(cactus_real)[1], #number of observations
                        D = 5, #number of predictors
                        y = as.integer(as.factor(cactus_real$ant_t1_relevel)), #observations
-                       x = model.matrix(~ 0 + (as.factor(ant_t_relevel)) + logsize_t, cactus_real)) #design matrix
+                       x = model.matrix(~ 0 + (as.factor(ant_t_relevel)) + logsize_t + as.factor(Year_t) + Plot, cactus_real)) #design matrix
 ## Run the model & save the results
 real_ant_size <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
                  data = multi_dat_real, warmup = 100, iter = 1000, chains = 1)
@@ -474,13 +474,13 @@ pred_liom<-cbind(
   exp(mean(real_ant_size_out$beta[,4,4]) + size_dummy_real*mean(real_ant_size_out$beta[,5,4]))/Denominator_liom)
 sum(pred_liom[1,])
                       ## vac -> vac       vac -> other    vac -> crem       vac -> liom
-pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
+vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
                         ## other-> vac        other -> other    other -> crem       other -> liom
-pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]) , (pred_other[,3]) , (pred_other[,4]))
+other <- cbind((pred_other[,1]) , (pred_other[,2]) , (pred_other[,3]) , (pred_other[,4]))
                         ## crem-> vac       crem -> other    crem -> crem      crem -> liom
-pred_probs_crem <- cbind((pred_crem[,1]) , (pred_crem[,2]) , (pred_crem[,3]) , (pred_crem[,4]))
+crem <- cbind((pred_crem[,1]) , (pred_crem[,2]) , (pred_crem[,3]) , (pred_crem[,4]))
                         ## liom-> vac       liom -> other    liom -> crem       liom -> liom
-pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]) , (pred_liom[,3]) , (pred_liom[,4]))
+liom <- cbind((pred_liom[,1]) , (pred_liom[,2]) , (pred_liom[,3]) , (pred_liom[,4]))
 
 ## Plot the probabilities
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")

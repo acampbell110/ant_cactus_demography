@@ -5,8 +5,44 @@
 ##                                                                                                    ##
 ########################################################################################################
 ########################################################################################################
-## load packages
+########################################################################################################
+##############          Load All Necessary Packages Here        ########################################
+########################################################################################################
+library(brms)  # for models
+library(tidyverse)
+library(boot)
+library(rstan)
+library(StanHeaders)
+library(shinystan)
+library(devtools)
+library(tidyr)
+library(lattice)
+library(lme4)
+library(dplyr)
+library(tidyverse)
+library(nnet)
+library(fixest)
+library(mlogit)
+library(dfidx)
+library(effects)
+library(bbmle)
 library(magrittr)
+library(Gmisc)
+library(RColorBrewer)
+library(ggeffects)
+library(heplots)
+library("posterior")
+library(Rlab)
+library(extraDistr)
+library(gridExtra)
+library(grid)
+library(gbm)
+library(dismo)
+library(popbio)
+#library(sjPlot)
+knitr::opts_chunk$set(echo = TRUE)
+options(mc.cores = parallel::detectCores())
+
 knitr::opts_chunk$set(echo = TRUE)
 options(mc.cores = parallel::detectCores())
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
@@ -14,21 +50,17 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 ################        import the data -- Cacti (main)        #######################################################
 #######################################################################################################
 #cactus_uncleaned <- read.csv("cholla_demography_20042021.csv", header = TRUE,stringsAsFactors=T)
-cactus_uncleaned <- read.csv("cholla_demography_20042019.csv", header = TRUE,stringsAsFactors=T)
-str(cactus_uncleaned) ##<- problem: antcount is a factor
+cactus <- read.csv("cholla_demography_20042019.csv", header = TRUE,stringsAsFactors=T)
+str(cactus) ##<- problem: antcount is a factor
 #levels(cactus$Antcount_t);levels(cactus$Antcount_t1)
-## drop the offending rows -- this is a 2019 data entry problem
-cactus <- cactus_uncleaned[-c(which(cactus_uncleaned$Antcount_t=="2-Jan"),which(cactus_uncleaned$Antcount_t1=="2-Jan")),]
 ## function for the volume of a cone
 volume <- function(h, w, p){
   (1/3)*pi*h*(((w + p)/2)/2)^2
 }
 invlogit <- function(x){exp(x)/(1+exp(x))}
 #Create volume columns
-cactus$volume_t <- volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t)
-cactus$volume_t1 <- volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1)
-cactus$logsize_t <- log(cactus$volume_t)
-cactus$logsize_t1 <- log(cactus$volume_t1)
+cactus$logsize_t <- log(volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t))
+cactus$logsize_t1 <- log(volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1))
 
 #######################################################################################################
 ############           cactus 2021 data         #######################################################
@@ -95,8 +127,14 @@ cactus$logsize_t1 <- log(cactus$volume_t1)
 ####################################################################################################
 ########            Cactus 2019 data                    ############################################
 ####################################################################################################
+## Change ant counts
+cactus$Antcount_t <- as.numeric(as.character(cactus$Antcount_t))
+cactus$Antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
+summary(as.factor(cactus$Antcount_t))
+summary(as.factor(cactus$Antcount_t1))
 ## assign ant counts of zero as vacant
-cactus$Antsp_t[cactus$antcount_t==0] <- "vacant"
+cactus$Antsp_t[cactus$Antcount_t==0] <- "vacant"
+summary(cactus$Antsp_t)
 # here are the ordered levels of the current variable
 Antsp_t_levels <- levels(cactus$Antsp_t)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
@@ -111,11 +149,11 @@ ant_t_levels[c(1,31)] <- "vacant"
 cactus$ant_t <- factor(cactus$Antsp_t,levels=Antsp_t_levels,labels=ant_t_levels)
 ## first, there are no ant data from 2007:
 cactus$Antcount_t[cactus$Year_t==2007]
-#so give these observations NA for ant status:
+#so give these observations NA for ant status: should be 118 values of NA now
 cactus$ant_t[cactus$Year_t==2007] <- NA
-# also, if a plant was new in year t+1 it's year t ant status should be NA
+# also, if a plant was new in year t+1 it's year t ant status should be NA now up to 503 NA values
 cactus$ant_t[cactus$Newplant==1] <- NA
-# plots 7 and 8 were added in 2011, so their year_t==2010 ant status should be NA
+# plots 7 and 8 were added in 2011, so their year_t==2010 ant status should be NA up to 638 NAs
 cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==7] <- NA
 cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==8] <- NA
 ## for now here is my workaround: year t ==2018, height_t ==NA, height_t1 !=NA
@@ -126,7 +164,8 @@ cactus$ant_t[cactus$Antsp_t==""]<-NA
 summary(cactus$ant_t)
 ## I am satisfied that everything assigned other is correctly assigned
 ## assign ant counts of zero as vacant
-cactus$Antsp_t1[cactus$antcount_t1==0] <- "vacant"
+cactus$Antsp_t1[cactus$Antcount_t1==0] <- "vacant"
+
 ## repeat for t1 -- these indices are different
 Antsp_t1_levels <- levels(cactus$Antsp_t1)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
@@ -151,44 +190,54 @@ cactus$ant_t1[is.na(cactus$Height_t1)] <- NA
 summary(cactus$ant_t1)
 ## there are some Antsp_t1=="" that show up as "other"
 #cactus %>% filter(Antsp_t1=="" & ant_t1=="other")
-## not sure why this happens but apparently there are some plants for which we have ant counts but no ant sp. Could be a mix in comments. For now make these NA.
-cactus$ant_t1[cactus$Antsp_t1==""] <- NA
+## finally there are these plants with Antsp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
+cactus$ant_t[cactus$Antsp_t==""]<-NA
 ## Relevel so that vacancy is the reference level
-cactus$antcount_t <- as.numeric(as.character(cactus$Antcount_t))
-cactus$antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
 summary(cactus$ant_t1)
-cactus$ant_t1_relevel <- relevel(cactus$ant_t1,ref = "vacant")
-cactus$ant_t_relevel <- relevel(cactus$ant_t, ref = "vacant")
+cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
+cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
 
-## Fill in as many of the goodbuds, abortedbuds and total buds as possible
-for(i in 1:length(cactus)){
-  # if good buds and Aborted buds not NA set total = Sum
-if(is.na(cactus$TotFlowerbuds_t1[i]) == TRUE & is.na(cactus$Goodbuds_t1[i]) == FALSE & is.na(cactus$ABFlowerbuds_t1[i]) == FALSE){
-  cactus$TotFlowerbuds_t1[i] <- cactus$Goodbuds_t1[i] + cactus$ABFlowerbuds_t1[i]
-}
-  # if aborted buds and total buds is not NA, set good = total - aborted
-if(is.na(cactus$TotFlowerbuds_t1[i]) == FALSE & is.na(cactus$Goodbuds_t1[i]) == TRUE & is.na(cactus$ABFlowerbuds_t1[i]) == FALSE){
-  cactus$Goodbuds_t1[i] <- cactus$TotFlowerbuds_t1[i] - cactus$ABFlowerbuds_t1[i]
-}
-  # if total and good not NA, set aborted = total - good
-if(is.na(cactus$TotFlowerbuds_t1[i]) == FALSE & is.na(cactus$Goodbuds_t1[i]) == FALSE & is.na(cactus$ABFlowerbuds_t1[i]) == TRUE){
-  cactus$ABFlowerbuds_t1[i] <- cactus$TotFlowerbuds_t1[i] - cactus$Goodbuds_t1[i]
-}
-  # if good buds and Aborted buds not NA set total = Sum
-if(is.na(cactus$TotFlowerbuds_t[i]) == TRUE & is.na(cactus$Goodbuds_t[i]) == FALSE & is.na(cactus$ABFlowerbuds_t[i]) == FALSE){
-  cactus$TotFlowerbuds_t[i] <- cactus$Goodbuds_t[i] + cactus$ABFlowerbuds_t[i]
-}
-# if aborted buds and total buds is not NA, set good = total - aborted
-if(is.na(cactus$TotFlowerbuds_t[i]) == FALSE & is.na(cactus$Goodbuds_t[i]) == TRUE & is.na(cactus$ABFlowerbuds_t[i]) == FALSE){
-  cactus$Goodbuds_t[i] <- cactus$TotFlowerbuds_t[i] - cactus$ABFlowerbuds_t[i]
-}
-# if total and good not NA, set aborted = total - good
-if(is.na(cactus$TotFlowerbuds_t[i]) == FALSE & is.na(cactus$Goodbuds_t[i]) == FALSE & is.na(cactus$ABFlowerbuds_t[i]) == TRUE){
-  cactus$ABFlowerbuds_t[i] <- cactus$TotFlowerbuds_t[i] - cactus$Goodbuds_t[i]
-}
+## Check the Flower data
+summary(cactus$Goodbuds_t)
+summary(cactus$Goodbuds_t1) ## Here you can see that there are a LOT of NAs
+summary(cactus$TotFlowerbuds_t)
+summary(cactus$TotFlowerbuds_t1) ## Again a LOT of NAs (The most)
+summary(cactus$ABFlowerbuds_t)
+summary(cactus$ABFlowerbuds_t1) ## Fewer, but still a LOT
+
+#### If Goodbuds is NA but Abortbuds and Totalbuds is not, set goodbuds = Tot - Ab (0 rows for t and 0 rows for t1)
+for(i in 1:nrow(cactus)){
+  if(is.na(cactus$Goodbuds_t[i]) == TRUE & is.na(cactus$ABFlowerbuds_t[i]) == FALSE & is.na(cactus$TotFlowerbuds_t[i]) == FALSE){
+    cactus$Goodbuds_t[i] <- cactus$TotFlowerbuds_t[i] - cactus$ABFlowerbuds_t[i]
   }
+  if(is.na(cactus$Goodbuds_t1[i]) == TRUE & is.na(cactus$ABFlowerbuds_t1[i]) == FALSE & is.na(cactus$TotFlowerbuds_t1[i]) == FALSE){
+    cactus$Goodbuds_t1[i] <- cactus$TotFlowerbuds_t1[i] - cactus$ABFlowerbuds_t1[i]
+  }
+}
+#### If Abortbuds is NA but Goodbuds and Totalbuds is not, set AB = Tot - Good (0 rows for t and 287 rows for t1)
+for(i in 1:nrow(cactus)){
+  if(is.na(cactus$ABFlowerbuds_t[i]) == TRUE & is.na(cactus$Goodbuds_t[i]) == FALSE & is.na(cactus$TotFlowerbuds_t[i]) == FALSE){
+    cactus$ABFlowerbuds_t[i] <- cactus$TotFlowerbuds_t[i] - cactus$Goodbuds_t[i]
+  }
+  if(is.na(cactus$Goodbuds_t1[i]) == TRUE & is.na(cactus$ABFlowerbuds_t1[i]) == FALSE & is.na(cactus$TotFlowerbuds_t1[i]) == FALSE){
+    cactus$ABFlowerbuds_t1[i] <- cactus$TotFlowerbuds_t1[i] - cactus$Goodbuds_t1[i]
+  }
+}
+#### If Totalbuds is NA but Goodbuds and Abortbuds is not, set Tot = AB + Good
+for(i in 1:nrow(cactus)){
+  if(is.na(cactus$TotFlowerbuds_t[i]) == TRUE & is.na(cactus$Goodbuds_t[i]) == FALSE & is.na(cactus$ABFlowerbuds_t[i]) == FALSE){
+    cactus$TotFlowerbuds_t[i] <- cactus$ABFlowerbuds_t[i] + cactus$Goodbuds_t[i]
+  }
+  if(is.na(cactus$TotFlowerbuds_t1[i]) == TRUE & is.na(cactus$Goodbuds_t1[i]) == FALSE & is.na(cactus$ABFlowerbuds_t1[i]) == FALSE){
+    cactus$TotFlowerbuds_t1[i] <- cactus$ABFlowerbuds_t1[i] + cactus$Goodbuds_t1[i]
+  }
+}
+
+
+
 ## Create a variable that shows if the cacti are flowering
 cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
+summary(cactus$flower1_YN)
 
 
 ## Create a variable that shows if the cacti are vacant or occupied
@@ -198,6 +247,10 @@ cactus$occ_t1[cactus$ant_t1 == "vacant"] <- "vac"
 cactus$occ_t1[cactus$ant_t1 == "crem" | cactus$ant_t1 == "liom" | cactus$ant_t1 == "other"] <- "occ"
 
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
+
+## If the plant is a new plant or a recruit, make the survival status NA
+cactus$Survival_t1[cactus$Recruit == 1] <- NA
+cactus$Survival_t1[cactus$Newplant == 1] <- NA
 
 ## Remove extra columns
 cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1","ant_t","ant_t1",
