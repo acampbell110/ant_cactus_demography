@@ -66,16 +66,16 @@ params<-params[,-1]
 params$grow_sig<-grow.params$sigma			    ## growth error
 params$grow_sig_u<-grow.params$sigma_u
 params$grow_sig_w<-grow.params$sigma_w
-####Ant 1 (crem)
+####Ant 1 (vacant)
 params$grow_beta01<-grow.params$beta0.1     	  ## growth intercept
 params$grow_beta11<-grow.params$beta1.1				## growth slope
-####Ant 2 (liom)
+####Ant 2 (other)
 params$grow_beta02<-grow.params$beta0.2     	  ## growth intercept
 params$grow_beta12<-grow.params$beta1.2				## growth slope
-####Ant 3 (Other)
+####Ant 3 (crem)
 params$grow_beta03<-grow.params$beta0.3     	  ## growth intercept
 params$grow_beta13<-grow.params$beta1.3				## growth slope
-####Ant 4 (Vacant)
+####Ant 4 (liom)
 params$grow_beta04<-grow.params$beta0.4     	## growth intercept
 params$grow_beta14<-grow.params$beta1.4				## growth slope
 
@@ -85,16 +85,16 @@ params$grow_beta14<-grow.params$beta1.4				## growth slope
 params$surv_sig<-surv.params$sigma
 params$surv_sig_u<-surv.params$sigma_u
 params$surv_sig_w<-surv.params$sigma_w
-####Ant 1 (crem)
+####Ant 1 (vacant)
 params$surv_beta01<-surv.params$beta0.1     	  ## surv intercept
 params$surv_beta11<-surv.params$beta1.1				## surv slope
-####Ant 2 (liom)
+####Ant 2 (other)
 params$surv_beta02<-surv.params$beta0.2     	  ## surv intercept
 params$surv_beta12<-surv.params$beta1.2				## surv slope
-####Ant 3 (Other)
+####Ant 3 (crem)
 params$surv_beta03<-surv.params$beta0.3     	  ## surv intercept
 params$surv_beta13<-surv.params$beta1.3				## surv slope
-####Ant 4 (Vacant)
+####Ant 4 (liom)
 params$surv_beta04<-surv.params$beta0.4     	  ## surv intercept
 params$surv_beta14<-surv.params$beta1.4				## surv slope
 
@@ -121,14 +121,14 @@ params$repro_beta1<-repro.params$beta1      ## repro slope
 params$viab_sig<-viab.params$sigma
 params$viab_sig_u<-viab.params$sigma_u
 params$viab_sig_w<-viab.params$sigma_w
-####Ant 1 (crem)
-params$viab_beta01<-viab.params$beta0.1     	  ## surv intercept
-####Ant 2 (liom)
-params$viab_beta02<-viab.params$beta0.2     	  ## surv intercept
-####Ant 3 (other)
-params$viab_beta03<-viab.params$beta0.3     	  ## surv intercept
-####Ant 4 (Vacant)
-params$viab_beta04<-viab.params$beta0.4     	  ## surv intercept
+####Ant 1 (vacant)
+params$viab_beta01<-viab.params$beta0.4     	  ## surv intercept
+####Ant 2 (other)
+params$viab_beta02<-viab.params$beta0.3     	  ## surv intercept
+####Ant 3 (crem)
+params$viab_beta03<-viab.params$beta0.1     	  ## surv intercept
+####Ant 4 (liom)
+params$viab_beta04<-viab.params$beta0.2     	  ## surv intercept
 
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
@@ -170,152 +170,35 @@ params$rec_beta0<-rec.params$beta0        ## Rec intercept
 params$rec_sig<-rec.params$sigma         ## Rec error
 
 ##-------------------------Transition Parameters-------------------##
-cholla.multi<-matrix(NA,nrow=20,ncol=Ndraws) 
-## Check the names of the parameters
-#head(multi.params)
+multi.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/multi_outputs.csv", header = TRUE,stringsAsFactors=T)
+## Pull the random draws from all posterior distributions
+multi.params<-multi.params[1:Ndraws,]
+##########################################
+## Prev Vac
+params$multi_betavv <- multi.params$beta.1.1
+params$multi_betavo <- multi.params$beta.1.2
+params$multi_betavc <- multi.params$beta.1.3
+params$multi_betavl <- multi.params$beta.1.4
+params$multi_betav <- multi.params$beta.5.1
+## Prev Other
+params$multi_betaov <- multi.params$beta.2.1
+params$multi_betaoo <- multi.params$beta.2.2
+params$multi_betaoc <- multi.params$beta.2.3
+params$multi_betaol <- multi.params$beta.2.4
+params$multi_betao <- multi.params$beta.5.2
+## Prev Crem
+params$multi_betacv <- multi.params$beta.3.1
+params$multi_betaco <- multi.params$beta.3.2
+params$multi_betacc <- multi.params$beta.3.3
+params$multi_betacl <- multi.params$beta.3.4
+params$multi_betac <- multi.params$beta.5.3
+## Vac
+params$multi_betalv <- multi.params$beta.4.1
+params$multi_betalo <- multi.params$beta.4.2
+params$multi_betalc <- multi.params$beta.4.3
+params$multi_betall <- multi.params$beta.4.4
+params$multi_betal <- multi.params$beta.5.4
 
-params$multi_beta11<-multi.params$beta.1.1
-params$multi_beta12<-multi.params$beta.1.2
-params$multi_beta13<-multi.params$beta.1.3
-params$multi_beta14<-multi.params$beta.1.4
-params$multi_beta21<-multi.params$beta.2.1
-params$multi_beta22<-multi.params$beta.2.2
-params$multi_beta23<-multi.params$beta.2.3
-params$multi_beta24<-multi.params$beta.2.4
-params$multi_beta31<-multi.params$beta.3.1
-params$multi_beta32<-multi.params$beta.3.2
-params$multi_beta33<-multi.params$beta.3.3
-params$multi_beta34<-multi.params$beta.3.4
-params$multi_beta41<-multi.params$beta.4.1
-params$multi_beta42<-multi.params$beta.4.2
-params$multi_beta43<-multi.params$beta.4.3
-params$multi_beta44<-multi.params$beta.4.4
-params$multi_beta51<-multi.params$beta.5.1
-params$multi_beta52<-multi.params$beta.5.2
-params$multi_beta53<-multi.params$beta.5.3
-params$multi_beta54<-multi.params$beta.5.4
-
-## Calculate the probabilities of being tended by each ant species
-size_dummy_real <- seq(min((cactus_real$logsize_t)), max((cactus_real$logsize_t)), by=0.1)
-## Previously tended by none
-d_vac <- exp(mean(params$multi_beta11) + size_dummy_real*mean(params$multi_beta51)) + 
-  exp(mean(params$multi_beta12) + size_dummy_real*mean(params$multi_beta52)) + 
-  exp(mean(params$multi_beta13) + size_dummy_real*mean(params$multi_beta53)) + 
-  exp(mean(params$multi_beta14) + size_dummy_real*mean(params$multi_beta54))
-pred_vac<-cbind(
-  ##pr(vac)
-  exp(mean(params$multi_beta11) + size_dummy_real*mean(params$multi_beta51))/d_vac,
-  ##pr(other)
-  exp(mean(params$multi_beta12) + size_dummy_real*mean(params$multi_beta52))/d_vac,
-  ##pr(crem)
-  exp(mean(params$multi_beta13) + size_dummy_real*mean(params$multi_beta53))/d_vac,
-  ##pr(liom)
-  exp(mean(params$multi_beta14) + size_dummy_real*mean(params$multi_beta54))/d_vac
-)
-a<-vector()
-for(i in 1:Ndraws){
-  a[i]<-sum(pred_vac[i,])
-}
-a
-## Previously tended by Other
-d_other <- exp(mean(params$multi_beta21) + size_dummy_real*mean(params$multi_beta51)) + 
-  exp(mean(params$multi_beta22) + size_dummy_real*mean(params$multi_beta52)) + 
-  exp(mean(params$multi_beta23) + size_dummy_real*mean(params$multi_beta53)) + 
-  exp(mean(params$multi_beta24) + size_dummy_real*mean(params$multi_beta54))
-pred_other<-cbind(
-  ##pr(vac)
-  exp(mean(params$multi_beta21) + size_dummy_real*mean(params$multi_beta51))/d_other,
-  ##pr(other)
-  exp(mean(params$multi_beta22) + size_dummy_real*mean(params$multi_beta52))/d_other,
-  ##pr(crem)
-  exp(mean(params$multi_beta23) + size_dummy_real*mean(params$multi_beta53))/d_other,
-  ##pr(liom)
-  exp(mean(params$multi_beta24) + size_dummy_real*mean(params$multi_beta54))/d_other
-)
-for(i in 1:Ndraws){
-  a[i]<-sum(pred_other[i,])
-  print(a[i])
-}
-## Previously tended by other
-d_crem <- exp(mean(params$multi_beta31) + size_dummy_real*mean(params$multi_beta51)) + 
-  exp(mean(params$multi_beta32) + size_dummy_real*mean(params$multi_beta52)) + 
-  exp(mean(params$multi_beta33) + size_dummy_real*mean(params$multi_beta53)) + 
-  exp(mean(params$multi_beta34) + size_dummy_real*mean(params$multi_beta54))
-pred_crem<-cbind(
-  ##pr(vac)
-  exp(mean(params$multi_beta31) + size_dummy_real*mean(params$multi_beta51))/d_crem,
-  ##pr(other)
-  exp(mean(params$multi_beta32) + size_dummy_real*mean(params$multi_beta52))/d_crem,
-  ##pr(crem)
-  exp(mean(params$multi_beta33) + size_dummy_real*mean(params$multi_beta53))/d_crem,
-  ##pr(liom)
-  exp(mean(params$multi_beta34) + size_dummy_real*mean(params$multi_beta54))/d_crem
-)
-for(i in 1:Ndraws){
-  a[i]<-sum(pred_crem[i,])
-  print(a[i])
-}
-## Previously tended by Liom
-d_liom <- exp(mean(params$multi_beta41) + size_dummy_real*mean(params$multi_beta51)) + 
-  exp(mean(params$multi_beta42) + size_dummy_real*mean(params$multi_beta52)) + 
-  exp(mean(params$multi_beta43) + size_dummy_real*mean(params$multi_beta53)) + 
-  exp(mean(params$multi_beta44) + size_dummy_real*mean(params$multi_beta54))
-pred_liom<-cbind(
-  ##pr(vac)
-  exp(mean(params$multi_beta41) + size_dummy_real*mean(params$multi_beta51))/d_liom,
-  ##pr(other)
-  exp(mean(params$multi_beta42) + size_dummy_real*mean(params$multi_beta52))/d_liom,
-  ##pr(crem)
-  exp(mean(params$multi_beta43) + size_dummy_real*mean(params$multi_beta53))/d_liom,
-  ##pr(liom)
-  exp(mean(params$multi_beta44) + size_dummy_real*mean(params$multi_beta54))/d_liom
-)
-for(i in 1:Ndraws){
-  a[i]<-sum(pred_liom[i,])
-  print(a[i])
-}
-                      ## vac -> vac       vac -> other    vac -> crem       vac -> liom
-pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
-                      ## other-> vac        other -> other    other -> crem       other -> liom
-pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]) , (pred_other[,3]) , (pred_other[,4]))
-                      ## crem-> vac       crem -> other    crem -> crem      crem -> liom
-pred_probs_crem <- cbind((pred_crem[,1]) , (pred_crem[,2]) , (pred_crem[,3]) , (pred_crem[,4]))
-                      ## liom-> vac       liom -> other    liom -> crem       liom -> liom
-pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]) , (pred_liom[,3]) , (pred_liom[,4]))
-
-# params$multi_beta11<-pred_probs_vac[,1] ## vac -> vac
-# params$multi_beta12<-pred_probs_vac[,2] ## vac -> other
-# params$multi_beta13<-pred_probs_vac[,3] ## vac -> crem
-# params$multi_beta14<-pred_probs_vac[,4] ## vac -> liom
-# params$multi_beta21<-pred_probs_other[,1] ## other -> vac
-# params$multi_beta22<-pred_probs_other[,2] ## other -> other
-# params$multi_beta23<-pred_probs_other[,3] ## other -> crem
-# params$multi_beta24<-pred_probs_other[,4] ## other -> liom
-# params$multi_beta31<-pred_probs_crem[,1] ## crem -> vac
-# params$multi_beta32<-pred_probs_crem[,2] ## crem -> other
-# params$multi_beta33<-pred_probs_crem[,3] ## crem -> crem
-# params$multi_beta34<-pred_probs_crem[,4] ## crem -> liom
-# params$multi_beta41<-pred_probs_liom[,1] ## liom -> vac
-# params$multi_beta42<-pred_probs_liom[,2] ## liom -> other
-# params$multi_beta43<-pred_probs_liom[,3] ## liom -> crem
-# params$multi_beta44<-pred_probs_liom[,4] ## liom -> liom
-# 
-# ############### 2 ant combos
-# ##total proportion that becomes liom by size
-# pred_vac[,4] + pred_other[,4] + pred_crem[,4] + pred_liom[,4]
-# 
-# ## total proportion that becomes vac by size
-# pred_vac[,1] + pred_other[,1] + pred_crem[,1] + pred_liom[,1]
-# 
-# ## total proportion that becomes crem by size
-# pred_vac[,3] + pred_other[,3] + pred_crem[,3] + pred_liom[,3]
-# 
-# ## total proportion that becomes other by size
-# pred_vac[,2] + pred_other[,2] + pred_crem[,2] + pred_liom[,2]
-# 
-# ## total proportion that goes from vacant by size
-# rowSums(pred_probs_vac)
-# 
 
 
   
