@@ -194,11 +194,11 @@ table(cactus_real$ant_t1_relevel)/nrow(cactus_real)
 # ###### now include categroical as the only predictor ########################################
 # ###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan ###############################
 # #############################################################################################
-multi_dat_real <- list(K = length(unique(cactus_real$ant_t1_relevel)), #number of possible ant species
+multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 4, #number of predictors
-                       y = as.integer(as.factor(cactus_real$ant_t1_relevel)), #observations
-                       x = model.matrix(~ 0 + (as.factor(ant_t_relevel)), cactus_real)) #design matrix
+                       y = as.integer(as.factor(cactus_real$ant_t1)), #observations
+                       x = model.matrix(~ 0 + (as.factor(ant_t)), cactus_real)) #design matrix
 ## Run the model & save the results
 real_ant_noint <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan", 
                   data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
