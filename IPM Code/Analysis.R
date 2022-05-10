@@ -86,9 +86,35 @@ for(n in 1:length(i)){
 lambda1
 ## 
 
+#### Visualize the Growth Model
+min.size=min(c(cactus$logsize_t,cactus$logsize_t1),na.rm = T)
+max.size=max(c(cactus$logsize_t,cactus$logsize_t1),na.rm = T)
+# number of cells in the discretized kernel
+n=100 
+# boundary points (the edges of the cells defining the kernel)
+b=min.size+c(0:n)*(max.size-min.size)/n 
+# mesh points (midpoints of the cells)
+y=0.5*(b[1:n]+b[2:(n+1)])
+# width of the cells
+h=y[2]-y[1]
 
 
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("growth_heat.png")
+par(mfrow=c(2,2)) 
+G=h*outer(y,y,gxy,i = "crem",params=params)  # growth kernel
+image(y,y,t(G),main='Crem Tended')        # plot it
 
+G=h*outer(y,y,gxy,i = "liom",params=params)  # growth kernel
+image(y,y,t(G),main='Liom Tended')        # plot it
+
+G=h*outer(y,y,gxy,i = "other",params=params)  # growth kernel
+image(y,y,t(G),main='Other Tended')        # plot it
+
+G=h*outer(y,y,gxy,i = "vacant",params=params)  # growth kernel
+image(y,y,t(G),main='Not Tended')        # plot it
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
 
 
