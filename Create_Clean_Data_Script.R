@@ -12,6 +12,9 @@ library(brms)  # for models
 library(tidyverse)
 library(boot)
 library(rstan)
+library(moments)
+require(tidyverse)
+require(patchwork)
 library(StanHeaders)
 library(shinystan)
 library(devtools)
@@ -252,16 +255,92 @@ cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$Survival_t1[cactus$Recruit == 1] <- NA
 cactus$Survival_t1[cactus$Newplant == 1] <- NA
 
+cactus_herb <- cactus[, c("NP_adult","NP_juv","MA","ant_t","WVL","CV","Damage", "Survival_t1","logsize_t1","Year_t")]
+cactus_herb <- subset(cactus_herb, cactus_herb$Survival_t1 == 1)
+for(i in 1:nrow(cactus_herb)){
+  if(is.na(cactus_herb$NP_adult[i]) == TRUE){cactus_herb$NP_adult[i] <- 0}
+  if(is.na(cactus_herb$NP_juv[i]) == TRUE){cactus_herb$NP_juv[i] <- 0}
+  if(is.na(cactus_herb$MA[i]) == TRUE){cactus_herb$MA[i] <- 0}
+  if(is.na(cactus_herb$WVL[i]) == TRUE){cactus_herb$WVL[i] <- 0}
+  if(is.na(cactus_herb$Damage[i]) == TRUE){cactus_herb$Damage[i] <- 0}
+  if(is.na(cactus_herb$CV[i]) == TRUE){cactus_herb$CV[i] <- 0}
+}
+cactus_herb$herb_YN <- 0
+for(i in 1:nrow(cactus_herb)){
+  if(cactus_herb$NP_adult[i] > 0 | cactus_herb$NP_juv[i] > 0 | cactus_herb$MA[i] > 0 | cactus_herb$WVL[i] > 0 | cactus_herb$CV[i] > 0 | cactus_herb$Damage[i] > 0){cactus_herb$herb_YN[i] <- 1}
+}
+         
+summary(cactus_herb$herb_YN)
+
 ## Remove extra columns
 cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1","ant_t","ant_t1",
                       "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1","Antcount_t1",
                       "occ_t","occ_t1","flower1_YN", "ant_t_relevel","ant_t1_relevel")]
 
-cactus_herb <- cactus[, c("NP_adult","NP_juv","MA","ant_t")]
-cactus_herb$NP_adult[cactus_herb$NP_adult == "dead"] <- NA
-str(cactus_herb)
+
 ## Export cactus to a csv
 write.csv(cactus, "cholla_demography_20042019_cleaned.csv")
 
 
+## Set up some extra functions
+
+######### Skew Kurtosis ETC.
+## Make sure length of sim data = length of real data
+
+library(moments)
+#### Skew, Kurtosis, etc. 
+Lkurtosis=function(x) log(kurtosis(x)); 
+size_moments_ppc <- function(data,y_name,sim, n_bins, title = NA){
+  require(tidyverse)
+  require(patchwork)
+  data$y_name <- data[[y_name]]
+  bins <- data %>%
+    ungroup() %>% 
+    arrange(logsize_t) %>% 
+    mutate(size_bin = cut_number(logsize_t, n_bins)) %>% 
+    group_by(size_bin)  %>% 
+    dplyr::summarize(mean_t1 = mean(y_name),
+                     sd_t1 = sd(y_name),
+                     skew_t1 = skewness(y_name),
+                     kurt_t1 = Lkurtosis(y_name),
+                     bin_mean = mean(logsize_t),
+                     bin_n = n())
+  sim_moments <- bind_cols(enframe(data$logsize_t), as_tibble(t(sim))) %>%
+    rename(logsize_t = value) %>%
+    arrange(logsize_t) %>%
+    mutate(size_bin = cut_number(logsize_t, n_bins)) %>%
+    pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "sim") %>%
+    group_by(size_bin, post_draw) %>%
+    summarize( mean_sim = mean((sim)),
+               sd_sim = sd((sim)),
+               skew_sim = skewness((sim)),
+               kurt_sim = Lkurtosis((sim)),
+               bin_mean = mean(logsize_t),
+               bin_n = n())
+  sim_medians <- sim_moments %>%
+    group_by(size_bin, bin_mean) %>%
+    summarize(median_mean_sim = median(mean_sim),
+              median_sd_sim = median(sd_sim),
+              median_skew_sim = median(skew_sim),
+              median_kurt_sim = median(kurt_sim))
+  meanplot <-  ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = mean_sim), color = "gray72") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_mean_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = mean_t1), shape = 1, color = "firebrick2") +
+    theme_classic()
+  sdplot <-  ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = sd_sim), color = "gray72") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_sd_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = sd_t1), shape = 1, color = "firebrick2") + theme_classic()
+  skewplot <-  ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = skew_sim), color = "gray72") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_skew_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = skew_t1), shape = 1, color = "firebrick2") + theme_classic()
+  kurtplot <- ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = kurt_sim), color = "gray72") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_kurt_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = kurt_t1), shape = 1, color = "firebrick2") + theme_classic()
+  size_ppc_plot <- meanplot+ sdplot+skewplot+ kurtplot+plot_annotation(title = title)
+  return(size_ppc_plot)
+}
 
