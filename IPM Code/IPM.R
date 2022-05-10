@@ -637,8 +637,7 @@ pt
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
 ##################################################################################################
-
-bigmatrix.1 <- function(x,y,lower,upper,matsize,num_ants,i,params){
+bigmatrix.1 <- function(x,y,params,lower,upper,matsize,num_ants){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -672,9 +671,11 @@ bigmatrix.1 <- function(x,y,lower,upper,matsize,num_ants,i,params){
   # Put it all together
   IPMmat<-Fmat+Tmat  
   return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
+  lambda = Re(eigen(IPMmat)$values[1])
+  return(lambda)
 }
 
-bigmatrix.1(2,4,lower,upper,matsize,1,"vacant",params)
+bigmatrix.1(5,4,params,lower,upper,matsize,1)
 
 ## Check that it works
 i = c("vacant","vacant")
@@ -1150,23 +1151,34 @@ bigmatrix<-function(x,y,params,lower,upper,matsize,num_ants,i,j,scenario){
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
   if(num_ants == 1){
-    return(num_ants)
-    bigmatrix.1(x,y,lower,upper,matsize,num_ants,i,params)
+    lambda = bigmatrix.1(x,y,params,lower,upper,matsize,num_ants)
+    return(lambda)
   }
   if(num_ants == 2){
-    return(num_ants)
-    bigmatrix.2(x,y,params,lower,upper,matsize,num_ants,i,j,scenario)
+    lambda = bigmatrix.2(x,y,params,lower,upper,matsize,num_ants,i,j,scenario)
+    return(lambda)
   }
   if(num_ants == 3){
-    return(num_ants)
-    bigmatrix.3(x,y,params,lower,upper,matsize,num_ants,i,j,scenario)
+    lambda = bigmatrix.3(x,y,params,lower,upper,matsize,num_ants,i,j,scenario)
+    return(lambda)
   }
   if(num_ants == 4){
-    return(num_ants)
-    bigmatrix.4(x,y,params,lower,upper,matsize,num_ants,i,j,scenario)
+    lambda = bigmatrix.4(x,y,params,lower,upper,matsize,num_ants,i,j,scenario)
+    return(lambda)
   }
 } 
+## One ant option
+bigmatrix(4,5,params, lower, upper, matsize, 1,"vacant","vacant","none")
+bigmatrix.1(4,5,params, lower, upper, matsize, 1)
+## 2 ant options
+bigmatrix(4,5,params,lower,upper,matsize,2,"crem","vacant","cremvac")
+bigmatrix.2(4,5,params,lower,upper,matsize,2,"crem","vacant","cremvac")
+## 3 ant options
+bigmatrix(4,5,params,lower,upper,matsize,3,"crem","vacant","liomcremvac")
+bigmatrix.3(4,5,params,lower,upper,matsize,3,"crem","vacant","liomcremvac")
+## all ant options
+bigmatrix(4,5,params,lower,upper,matsize,4,"crem","vacant","all")
+bigmatrix.4(4,5,params,lower,upper,matsize,4,"crem","vacant","all")
 
-(bigmatrix(4,5,params, lower, upper, matsize, 2,"crem","vacant", "cremvac"))
 
 
