@@ -11,8 +11,8 @@ data {
   int<lower=1, upper=N_Year> year[N]; // year
 }
 parameters {
-  real beta0;
-  //vector[K] beta0; // intercept of probability of viability for each bud
+  //real beta0;
+  vector[K] beta0; // intercept of probability of viability for each bud
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
   real < lower = 0 > sigma; // Error SD
@@ -23,7 +23,7 @@ transformed parameters{
   vector[N] mu; //linear predictor for the mean
     // Prediction for seed viability
   for(i in 1:N){
-    mu[i] = beta0;//[ant[i]];// + u[plot[i]] + w[year[i]];
+    mu[i] = beta0[ant[i]];// + u[plot[i]] + w[year[i]];
   }
 }
 model {
