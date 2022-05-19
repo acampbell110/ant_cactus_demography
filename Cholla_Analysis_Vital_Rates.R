@@ -34,12 +34,65 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
 ) 
 
-fit_grow <- stan(file = "Data Analysis/STAN Models/growth_code.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+fit_grow <- stan(file = "Data Analysis/STAN Models/growth_code.stan", data = stan_data_grow, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
 grow_outputs <- rstan::extract(fit_grow)
 write.csv(grow_outputs, "grow_outputs.csv")
 yrep_grow <- rstan::extract(fit_grow, pars = c("y_rep"))$y_rep
 write.csv(yrep_grow, "grow_ypred.csv")
 summary(fit_grow)
+
+freq <- glm(growth_data$logsize_t1 ~ growth_data$logsize_t + (as.factor(growth_data$ant_t)))
+summary(freq)
+## Compare Freq to Bayes
+vac_freq <- (coef(freq)[1] + coef(freq)[2]*size_vac) ## Vacant
+other_freq <- (coef(freq)[1] + coef(freq)[2]*size_other + coef(freq)[3]) ## Other
+crem_freq <- (coef(freq)[1] + coef(freq)[2]*size_crem + coef(freq)[4]) ## Crem
+liom_freq <- (coef(freq)[1] + coef(freq)[2]*size_liom + coef(freq)[5]) ## Liom
+vac_bayes <- quantile(grow_out$beta0.1,0.5) + size_vac * quantile(grow_out$beta1.1,0.5)
+other_bayes <- quantile(grow_out$beta0.2,0.5) + size_other * quantile(grow_out$beta1.2,0.5)
+crem_bayes <- quantile(grow_out$beta0.3,0.5) + size_crem * quantile(grow_out$beta1.3,0.5)
+liom_bayes <- quantile(grow_out$beta0.4,0.5) + size_liom * quantile(grow_out$beta1.4,0.5)
+## Vacant -- very good
+plot(size_vac, vac_freq, col = vaccol)
+lines(size_vac, vac_bayes, col = vaccol, lwd = 3) 
+## Other -- very good
+plot(size_other, other_freq, col = othercol)
+lines(size_other, other_bayes, col = othercol, lwd = 3)
+## Crem -- very good
+plot(size_crem, crem_freq, col = cremcol)
+lines(size_crem, crem_bayes, col = cremcol, lwd = 3)
+## Liom -- very good
+plot(size_liom, liom_freq, col = liomcol)
+lines(size_liom, liom_bayes, col = liomcol, lwd = 3)
+
+## Check this against real data -- which beta corresponds to each ant?
+## Crem
+crem_pred <- dnorm(quantile(grow_out$beta0.3,0.5) + size_crem * quantile(grow_out$beta1.3,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "crem"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "crem"]))
+plot(size_crem, crem_pred)
+lines(density(growth_data$logsize_t[growth_data$ant_t == "crem"])) ## Pretty Good
+## Liom
+liom_pred <- dnorm(quantile(grow_out$beta0.4,0.5) + size_liom * quantile(grow_out$beta1.4,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "liom"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "liom"]))
+plot(size_liom, liom_pred)
+lines(density(growth_data$logsize_t[growth_data$ant_t == "liom"])) ## Pretty Good
+## Other
+other_pred <- dnorm(quantile(grow_out$beta0.2,0.5) + size_other * quantile(grow_out$beta1.2,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "other"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "other"]))
+plot(size_other, other_pred)
+lines(density(growth_data$logsize_t[growth_data$ant_t == "other"])) ## Not that bad
+## Vacant
+vac_pred <- dnorm(quantile(grow_out$beta0.1,0.5) + size_vac * quantile(grow_out$beta1.1,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "vacant"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "vacant"]))
+plot(size_vac, vac_pred)
+lines(density(growth_data$logsize_t[growth_data$ant_t == "vacant"])) ## Pretty Good
+## These all look pretty good. I am fairly confident in 
+plot(size_crem, crem_pred, col = cremcol, ylim = c(0,0.25))
+lines(density(growth_data$logsize_t[growth_data$ant_t == "crem"]), col = cremcol)
+points(size_liom, liom_pred, col = liomcol)
+lines(density(growth_data$logsize_t[growth_data$ant_t == "liom"]), col = liomcol)
+points(size_other, other_pred, col = othercol)
+lines(density(growth_data$logsize_t[growth_data$ant_t == "other"]), col = othercol)
+points(size_vac, vac_pred, col = vaccol)
+lines(density(growth_data$logsize_t[growth_data$ant_t == "vacant"]), col = vaccol)
+
+
 
 ## Check the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
@@ -165,6 +218,30 @@ yrep_surv <- rstan::extract(fit_surv, pars = c("y_rep"))$y_rep
 write.csv(surv_outputs, "surv_outputs.csv")
 write.csv(yrep_surv, "surv_yrep.csv")
 
+freq <- glm(survival_data$Survival_t1 ~ survival_data$logsize_t + (as.factor(survival_data$ant_t)), family = "binomial")
+summary(freq)
+## Compare Freq to Bayes
+vac_freq <- (coef(freq)[1] + coef(freq)[2]*size_vac) ## Vacant
+other_freq <- (coef(freq)[1] + coef(freq)[2]*size_other + coef(freq)[3]) ## Other
+crem_freq <- (coef(freq)[1] + coef(freq)[2]*size_crem + coef(freq)[4]) ## Crem
+liom_freq <- (coef(freq)[1] + coef(freq)[2]*size_liom + coef(freq)[5]) ## Liom
+vac_bayes <- quantile(surv_out$beta0.1,0.5) + size_vac * quantile(surv_out$beta1.1,0.5)
+other_bayes <- quantile(surv_out$beta0.2,0.5) + size_other * quantile(surv_out$beta1.2,0.5)
+crem_bayes <- quantile(surv_out$beta0.3,0.5) + size_crem * quantile(surv_out$beta1.3,0.5)
+liom_bayes <- quantile(surv_out$beta0.4,0.5) + size_liom * quantile(surv_out$beta1.4,0.5)
+## Vacant -- very good
+plot(size_vac, invlogit(vac_freq), col = vaccol, ylim = c(0,1))
+lines(size_vac, invlogit(vac_bayes), col = vaccol, lwd = 3) 
+## Other -- underestimating at small values
+points(size_other, invlogit(other_freq), col = othercol, ylim = c(0,1))
+lines(size_other, invlogit(other_bayes), col = othercol, lwd = 3)
+## Crem -- underestimating at small values
+points(size_crem, invlogit(crem_freq), col = cremcol, ylim = c(0,1))
+lines(size_crem, invlogit(crem_bayes), col = cremcol, lwd = 3)
+## Liom -- underestimating at small values
+points(size_liom, invlogit(liom_freq), col = liomcol, ylim = c(0,1))
+lines(size_liom, invlogit(liom_bayes), col = liomcol, lwd = 3)
+
 ## Visualize the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #overlay plot data
@@ -289,11 +366,34 @@ stan_data_viab <- list(N = nrow(viability_data), ## number of observations
 ) 
 ## Run the Model
 fit_viab <- stan(file = "Data Analysis/STAN Models/viab_code.stan", data = stan_data_viab, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-viab_yrep_null <- rstan::extract(fit_viab, pars = c("y_rep"))$y_rep
+viab_yrep <- rstan::extract(fit_viab, pars = c("y_rep"))$y_rep
 viab_outputs <- rstan::extract(fit_viab)
-write.csv(viab_outputs, "viab_outputs_null.csv")
-write.csv(viab_yrep_null, "viab_yrep_null.csv")
+write.csv(viab_outputs, "viab_outputs.csv")
+write.csv(viab_yrep_null, "viab_yrep.csv")
 summary(fit_viab)
+
+
+freq <- glm(cbind(Goodbuds_t,ABFlowerbuds_t) ~ ant_t ,family="binomial",data=cactus)
+summary(freq)
+## Compare Freq to Bayes
+vac_freq <- (coef(freq)[1]) ## Vacant
+other_freq <- (coef(freq)[1] + coef(freq)[2]) ## Other
+crem_freq <- (coef(freq)[1] + coef(freq)[3]) ## Crem
+liom_freq <- (coef(freq)[1] + coef(freq)[4]) ## Liom
+liom_bayes <- invlogit(mean(viab_out$beta0.4))
+crem_bayes <- invlogit(mean(viab_out$beta0.3))
+vac_bayes <- invlogit(mean(viab_out$beta0.1))
+other_bayes <- invlogit(mean(viab_out$beta0.2))
+viability_data$viab <- viability_data$Goodbuds_t1/viability_data$TotFlowerbuds_t1
+vac_real <- viability_data$viab[viability_data$ant_t == "vacant"]
+other_real <- viability_data$viab[viability_data$ant_t == "other"]
+crem_real <- viability_data$viab[viability_data$ant_t == "crem"]
+liom_real <- viability_data$viab[viability_data$ant_t == "liom"]
+par(mfrow = c(1,3))
+barplot(c(invlogit(vac_freq), invlogit(other_freq), invlogit(crem_freq), invlogit(liom_freq)), col = c(vaccol, othercol, cremcol, liomcol), ylim = c(0,1))
+barplot(c(vac_bayes,other_bayes,crem_bayes,liom_bayes), col = c(vaccol, othercol, cremcol, liomcol))
+barplot(c(mean(vac_real), mean(other_real), mean(crem_real), mean(liom_real)),col = c(vaccol,othercol,cremcol,liomcol))
+
 
 ## Check the Posterior Distribution
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
@@ -319,19 +419,6 @@ bayesplot::ppc_dens_overlay_grouped(y, yrep_viab[samp100,],group = as.integer(as
 dev.off()
 ## Convergence Plots
 png(file = "viab_conv_rand.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
-dev.off()
-png(file = "viab_null.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
-dev.off()
-png(file = "viab_post_null.png")
-bayesplot::ppc_dens_overlay(y, yrep_viab[samp100,])
-dev.off()
-png(file = "viab_ant_post_null.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_viab[samp100,],group = as.integer(as.factor(viability_data$ant)))
-dev.off()
-## Convergence Plots
-png(file = "viab_conv_null.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
@@ -416,8 +503,6 @@ for(i in 1:nrow(seed)){
   }
 }
 
-boxplot(seed$seed_count~seed$ant_state)
-
 seed_data <- seed
 seed_data <- na.omit(seed_data)
 seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
@@ -440,6 +525,16 @@ fit_seed <- stan(file = "Data Analysis/STAN Models/seed_code.stan", data = stan_
 seed_outputs <- rstan::extract(fit_seed)
 write.csv(seed_outputs, "seed_outputs.csv")
 seed_yrep <- rstan::extract(fit_seed, pars = c("y_rep"))$y_rep
+
+## Compare to Real and Bayes
+crem_bayes <- exp(quantile(seed_out$beta0.1,0.5))
+liom_bayes <- quantile(seed_out$beta0.2,0.5)
+vac_bayes <- quantile(seed_out$beta0.3,0.5)
+crem_real <- mean(seed$seed_count[seed$ant_state == "Crem"])
+liom_real <- mean(seed$seed_count[seed$ant_state == "Liom"])
+vac_real <- mean(seed$seed_count[seed$ant_state == "Vacant"])
+barplot(c(crem_real,liom_real,vac_real), col = c(cremcol, liomcol, vaccol))
+barplot(c(exp(vac_bayes),exp(crem_bayes),exp(liom_bayes)), col = c(cremcol, liomcol, vaccol))
 
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
