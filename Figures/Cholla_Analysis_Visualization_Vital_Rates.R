@@ -64,17 +64,30 @@ summary(cactus_herb$herb_YN[cactus_herb$ant_t == "crem" & cactus_herb$Year_t >= 
 ## 0.1265
 summary(cactus_herb$herb_YN[cactus_herb$ant_t == "other" & cactus_herb$Year_t >= 2013 & cactus_herb$Year_t <=2018])
 ## 0.09043
+## Now break this further into flowering and not flowering
+cactus_herb_flow <- subset(cactus_herb, cactus_herb$TotFlowerbuds_t1 > 0 | cactus_herb$Goodbuds_t1 > 0 | cactus_herb$ABFlowerbuds_t1 > 0)
+summary(cactus_herb_flow$herb_YN[cactus_herb_flow$ant_t == "liom"])
+## 0.1284
+summary(cactus_herb_flow$herb_YN[cactus_herb_flow$ant_t == "vacant"])
+## 0.2048
+summary(cactus_herb_flow$herb_YN[cactus_herb_flow$ant_t == "crem"])
+## 0.1532
+summary(cactus_herb_flow$herb_YN[cactus_herb_flow$ant_t == "other"])
+## 0.1216
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+## All plants -- flowering and non
 png("herb_ant_only.png")
-plot(c(1,2,3,4),c(0.1014,0.06296,0.1265,0.09043),col = c(liomcol, vaccol, cremcol, othercol), pch = 20, 
-     xlab = "Ant Species", ylab = "Herbivory Prob.", main = "Proportion of Plants with Evidence of Herbivory", cex = 2)
-legend("topright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
+barplot(c(0.1014,0.06296,0.1265,0.09043), col = c(othercol, cremcol, liomcol, vaccol), names.arg = c("Other","Crem.","Liom.","Vacant"),
+        ylab = "Herbivory Prob.", main = "Proportion of Plants with Evidence of Herbivory")
+dev.off()
+## Flowering plants only
+png("herb_ant_only_flow.png")
+barplot(c(0.1216, 0.1532, 0.1284, 0.2048), col = c(othercol, cremcol, liomcol, vaccol), names.arg = c("Other","Crem.","Liom.","Vacant"),
+        ylab = "Herbivory Prob.", main = "Proportion of Plants with Evidence of Herbivory")
 dev.off()
 
-
-
-
+#### All plants -- including flowering and non
 ## Bin the data to get the probability of herbivory based on the size and ant species
 herb_crem <- subset(cactus_herb, cactus_herb$ant_t == "crem")
 herb_liom <- subset(cactus_herb, cactus_herb$ant_t == "liom")
@@ -162,9 +175,93 @@ mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.1)
 mtext("Probability of Herbivory",side=2,line=0,outer=TRUE,cex=1.1,las=0)
 dev.off()
 
-## Break the data down by species
-table(cactus_herb$NP_adult, cactus_herb$ant_t)
-hist(cactus_herb$NP_adult[cactus_herb$ant_t == "vacant"])
+#### Flowering plants only
+## Bin the data to get the probability of herbivory based on the size and ant species
+herb_crem <- subset(cactus_herb_flow, cactus_herb_flow$ant_t == "crem")
+herb_liom <- subset(cactus_herb_flow, cactus_herb_flow$ant_t == "liom")
+herb_other <- subset(cactus_herb_flow, cactus_herb_flow$ant_t == "other")
+herb_vac <- subset(cactus_herb_flow, cactus_herb_flow$ant_t == "vacant")
+
+## Bin the size data
+## Crem
+herb_plot_crem <- herb_crem %>% 
+  mutate(size_bin = cut_interval((logsize_t1),10)) %>%
+  group_by(size_bin) %>%
+  summarise(mean_size = mean((logsize_t1),na.rm=T),
+            surv = mean(herb_YN,na.rm=T),
+            N = length(logsize_t1))
+herb_plot_crem$N_mod <- log(herb_plot_crem$N)
+## Liom
+herb_plot_liom <- herb_liom %>% 
+  mutate(size_bin = cut_interval((logsize_t1),10)) %>%
+  group_by(size_bin) %>%
+  summarise(mean_size = mean((logsize_t1),na.rm=T),
+            surv = mean(herb_YN,na.rm=T),
+            N = length(logsize_t1))
+herb_plot_liom$N_mod <- log(herb_plot_liom$N)
+## Other
+herb_plot_other <- herb_other %>% 
+  mutate(size_bin = cut_interval((logsize_t1),10)) %>%
+  group_by(size_bin) %>%
+  summarise(mean_size = mean((logsize_t1),na.rm=T),
+            surv = mean(herb_YN,na.rm=T),
+            N = length(logsize_t1))
+herb_plot_other$N_mod <- log(herb_plot_other$N)
+## Vac
+herb_plot_vac <- herb_vac %>% 
+  mutate(size_bin = cut_interval((logsize_t1),10)) %>%
+  group_by(size_bin) %>%
+  summarise(mean_size = mean((logsize_t1),na.rm=T),
+            surv = mean(herb_YN,na.rm=T),
+            N = length(logsize_t1))
+herb_plot_vac$N_mod <- log(herb_plot_vac$N)
+
+## Plot the proportion of plants that have evidence of herbivory by ant species
+prop <- c(0.1284, 0.2048, 0.1532, 0.1216)
+ant <- c("liom","vacant","crem","other")
+plot(c(1,2,3,4),prop)
+
+## Look at the relationship between size, ant state, and herbivory
+mod2 <- glm(cactus_herb_flow$herb_YN ~ cactus_herb_flow$ant_t + cactus_herb_flow$logsize_t1, family = "binomial", data = cactus_herb_flow)
+coef(mod2)
+## Calculate the probabilities of herbivory based on size data
+size_vac <- seq(min(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "vacant"],na.rm = T), max(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "vacant"],na.rm = T), by = 0.1)
+vac_prob <- coef(mod2)[1] + coef(mod2)[5]*size_vac
+size_liom <- seq(min(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "liom"],na.rm = T), max(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "liom"],na.rm = T), by = 0.1)
+liom_prob <- coef(mod2)[1] + coef(mod2)[4] + coef(mod2)[5]*size_liom
+size_crem <- seq(min(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "crem"],na.rm = T), max(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "crem"],na.rm = T), by = 0.1)
+crem_prob <- coef(mod2)[1] + coef(mod2)[3] + coef(mod2)[5]*size_crem
+size_other <- seq(min(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "other"],na.rm = T), max(cactus_herb_flow$logsize_t1[cactus_herb_flow$ant_t == "other"],na.rm = T), by = 0.1)
+other_prob <- coef(mod2)[1] + coef(mod2)[2] + coef(mod2)[5]*size_other
+## Plot it
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("herb_ant_size_flow.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,1,1,2,3,4,5,6,6),
+              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
+plot.new()
+text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
+# Other 
+plot(herb_other$logsize_t1,herb_other$herb_YN)
+lines(size_other, invlogit(other_prob), col = othercol, lwd = 2)
+# Liom
+plot(herb_liom$logsize_t1,herb_liom$herb_YN)
+lines(size_liom, invlogit(liom_prob), col = liomcol, lwd = 2)
+# Crem 
+plot(herb_crem$logsize_t1,herb_crem$herb_YN)
+lines(size_crem, invlogit(crem_prob), col = cremcol, lwd = 2)
+# Vac 
+plot(herb_vac$logsize_t1,herb_vac$herb_YN)
+lines(size_vac, invlogit(vac_prob), col = vaccol, lwd = 2)
+## All together
+plot(size_other, invlogit(other_prob), col = othercol, lwd = 2, type = "l", ylim = c(0.05,0.3))
+lines(size_liom, invlogit(liom_prob), col = liomcol, lwd = 2)
+lines(size_crem, invlogit(crem_prob), col = cremcol, lwd = 2)
+lines(size_vac, invlogit(vac_prob), col = vaccol, lwd = 2)
+legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.1)
+mtext("Probability of Herbivory",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+dev.off()
 
 #########################################################################################################################
 #### Growth Visuals #####################################################################################################
