@@ -255,7 +255,7 @@ cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$Survival_t1[cactus$Recruit == 1] <- NA
 cactus$Survival_t1[cactus$Newplant == 1] <- NA
 
-cactus_herb <- cactus[, c("NP_adult","NP_juv","MA","ant_t","WVL","CV","Damage", "Survival_t1","logsize_t1","Year_t")]
+cactus_herb <- cactus[, c("NP_adult","NP_juv","MA","ant_t","WVL","CV","Damage", "Survival_t1","logsize_t1","Year_t","TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1")]
 cactus_herb <- subset(cactus_herb, cactus_herb$Survival_t1 == 1)
 for(i in 1:nrow(cactus_herb)){
   if(is.na(cactus_herb$NP_adult[i]) == TRUE){cactus_herb$NP_adult[i] <- 0}
