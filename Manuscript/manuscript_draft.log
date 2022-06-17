@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 21.1) (preloaded format=pdflatex 2021.2.5)  11 MAY 2022 12:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 21.1) (preloaded format=pdflatex 2021.2.5)  17 JUN 2022 14:39
 entering extended mode
 **./manuscript_draft.tex
 (manuscript_draft.tex
@@ -1214,7 +1214,7 @@ File: biblatex.cfg
 ))
 \@quotelevel=\count472
 \@quotereset=\count473
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 33
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 36
 .
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
@@ -1223,22 +1223,22 @@ File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 (manuscript_draft.aux)
 \openout1 = `manuscript_draft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1300,7 +1300,7 @@ Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 33.
+Package hyperref Info: Link coloring OFF on input line 36.
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -1314,9 +1314,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count480
 )
-LaTeX Info: Redefining \ref on input line 33.
-LaTeX Info: Redefining \pageref on input line 33.
-LaTeX Info: Redefining \nameref on input line 33.
+LaTeX Info: Redefining \ref on input line 36.
+LaTeX Info: Redefining \pageref on input line 36.
+LaTeX Info: Redefining \nameref on input line 36.
  (manuscript_draft.out) (manuscript_draft.out)
 \@outlinefile=\write5
 \openout5 = `manuscript_draft.out'.
@@ -1345,245 +1345,254 @@ Package: blx-case-expl3 2020/12/31 v3.16 expl3 case changing code for biblatex
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'manuscript_draft.bbl' found.
  (manuscript_draft.bbl)
-Package biblatex Info: Reference section=0 on input line 33.
-Package biblatex Info: Reference segment=0 on input line 33.
+Package biblatex Info: Reference section=0 on input line 36.
+Package biblatex Info: Reference segment=0 on input line 36.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
-5.
+8.
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
-5.
+8.
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-35.
+38.
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-35.
+38.
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 35.
+(Font)              <14.4> on input line 38.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 35.
+(Font)              <10> on input line 38.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 35.
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 35
+(Font)              <7> on input line 38.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 38
 .
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 35.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
 
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 35.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
 
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-
-LaTeX Warning: Citation 'Chamberlain2014' on page 1 undefined on input line 45.
-
-
-
-LaTeX Warning: Citation 'Stachowicz2005' on page 1 undefined on input line 45.
-
-
-LaTeX Warning: Citation 'BoucherDouglasH.1985' on page 1 undefined on input lin
-e 45.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 41.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 41.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 41.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 41.
 
 [1
 
 {C:/Users/tm9/AppData/Local/MiKTeX/pdftex/config/pdftex.map}]
 
-LaTeX Warning: Citation 'Bronstein2001a' on page 2 undefined on input line 47.
-
-
-LaTeX Warning: Citation 'Bronstein2001' on page 2 undefined on input line 47.
-
-
-LaTeX Warning: Citation 'Bronstein2001' on page 2 undefined on input line 47.
-
-
-LaTeX Warning: Citation 'Bronstein2001a' on page 2 undefined on input line 47.
-
-
-LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 49.
-
-
-LaTeX Warning: Citation 'Waser1996' on page 2 undefined on input line 49.
-
-
-LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 49.
-
-
-LaTeX Warning: Citation 'Palmer2010' on page 2 undefined on input line 49.
-
-
-LaTeX Warning: Citation 'Chamberlain2014' on page 2 undefined on input line 49.
+LaTeX Warning: Citation 'Chamberlain2014' on page 2 undefined on input line 59.
 
 
 
-LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 49.
+LaTeX Warning: Citation 'Stachowicz2005' on page 2 undefined on input line 59.
 
 
-LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 49.
+LaTeX Warning: Citation 'BoucherDouglasH.1985' on page 2 undefined on input lin
+e 59.
 
 
-LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 49.
+LaTeX Warning: Citation 'Bronstein2001a' on page 2 undefined on input line 63.
 
 
-LaTeX Warning: Citation 'Boucher1982' on page 2 undefined on input line 49.
+LaTeX Warning: Citation 'Bronstein2001' on page 2 undefined on input line 66.
 
 
-LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 52.
+LaTeX Warning: Citation 'Bronstein2001' on page 2 undefined on input line 68.
 
 
-LaTeX Warning: Citation 'Palmer2010' on page 2 undefined on input line 52.
+LaTeX Warning: Citation 'Bronstein2001a' on page 2 undefined on input line 68.
 
 
-LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 52.
+LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 70.
 
 
-LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 54.
+LaTeX Warning: Citation 'Waser1996' on page 2 undefined on input line 71.
 
 
-LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 54.
+LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 73.
 
 
-LaTeX Warning: Citation 'West2007' on page 2 undefined on input line 54.
+LaTeX Warning: Citation 'Palmer2010' on page 2 undefined on input line 73.
 
 
-LaTeX Warning: Citation 'Frederickson2013' on page 2 undefined on input line 54
-.
-
-
-LaTeX Warning: Citation 'Amarasekare2003' on page 2 undefined on input line 54.
+LaTeX Warning: Citation 'Chamberlain2014' on page 2 undefined on input line 74.
 
 
 
-LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 54.
+LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 74.
 
 
-LaTeX Warning: Citation 'Frederickson2013' on page 2 undefined on input line 54
-.
+LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 75.
 
 
-LaTeX Warning: Citation 'Bronstein1994' on page 2 undefined on input line 54.
+LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 77.
 
 
-LaTeX Warning: Citation 'Jones2015' on page 2 undefined on input line 54.
-
-
-LaTeX Warning: Citation 'Batstone2018' on page 2 undefined on input line 56.
-
-
-LaTeX Warning: Citation 'Hooper2005' on page 2 undefined on input line 56.
+LaTeX Warning: Citation 'Boucher1982' on page 2 undefined on input line 78.
 
 [2]
 
-LaTeX Warning: Citation 'Afkhami2014' on page 3 undefined on input line 58.
+LaTeX Warning: Citation 'Stanton2013' on page 3 undefined on input line 83.
 
 
-LaTeX Warning: Citation 'Winfree2020' on page 3 undefined on input line 60.
+LaTeX Warning: Citation 'Palmer2010' on page 3 undefined on input line 83.
 
 
-LaTeX Warning: Citation 'Winfree2020' on page 3 undefined on input line 62.
+LaTeX Warning: Citation 'Song2020' on page 3 undefined on input line 83.
 
 
-LaTeX Warning: Citation 'Afkhami2014' on page 3 undefined on input line 64.
+LaTeX Warning: Citation 'Afkhami2014' on page 3 undefined on input line 86.
 
 
-LaTeX Warning: Citation 'Boege2005' on page 3 undefined on input line 64.
+LaTeX Warning: Citation 'Song2020' on page 3 undefined on input line 87.
 
 
-LaTeX Warning: Citation 'Barton2010' on page 3 undefined on input line 64.
+LaTeX Warning: Citation 'West2007' on page 3 undefined on input line 87.
 
 
-LaTeX Warning: Citation 'Bronstein2006' on page 3 undefined on input line 64.
+LaTeX Warning: Citation 'Frederickson2013' on page 3 undefined on input line 87
+.
 
 
-LaTeX Warning: Citation 'Bronstein1998' on page 3 undefined on input line 64.
+LaTeX Warning: Citation 'Amarasekare2003' on page 3 undefined on input line 88.
 
 
-LaTeX Warning: Citation 'Miller2007' on page 3 undefined on input line 66.
+
+LaTeX Warning: Citation 'Afkhami2014' on page 3 undefined on input line 89.
+
+
+LaTeX Warning: Citation 'Frederickson2013' on page 3 undefined on input line 89
+.
+
+
+LaTeX Warning: Citation 'Bronstein1994' on page 3 undefined on input line 89.
+
+
+LaTeX Warning: Citation 'Jones2015' on page 3 undefined on input line 90.
 
 [3]
 
-LaTeX Warning: Citation 'Palmer2010' on page 4 undefined on input line 75.
+LaTeX Warning: Citation 'Batstone2018' on page 4 undefined on input line 92.
+
+
+LaTeX Warning: Citation 'Hooper2005' on page 4 undefined on input line 92.
+
+
+LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 94.
+
+
+Overfull \hbox (16.92473pt too wide) in paragraph at lines 94--97
+\T1/lmr/m/n/12 the part-ner com-mu-nity may be more likely to in-clude the most
+ ben-e-fi-cial one[[]].
+ []
+
+
+LaTeX Warning: Citation 'Winfree2020' on page 4 undefined on input line 98.
+
+
+LaTeX Warning: Citation 'Winfree2020' on page 4 undefined on input line 102.
+
+
+LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 106.
+
+
+LaTeX Warning: Citation 'Boege2005' on page 4 undefined on input line 108.
+
+
+LaTeX Warning: Citation 'Barton2010' on page 4 undefined on input line 108.
+
+
+LaTeX Warning: Citation 'Bronstein2006' on page 4 undefined on input line 109.
+
+
+LaTeX Warning: Citation 'Bronstein1998' on page 4 undefined on input line 110.
 
 [4]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 90.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 90.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 90.
- [5]
-<Figures/surv_panels_cropped.png, id=47, 481.8pt x 481.8pt>
+
+LaTeX Warning: Citation 'Miller2007' on page 5 undefined on input line 117.
+
+[5]
+
+LaTeX Warning: Citation 'Palmer2010' on page 6 undefined on input line 129.
+
+[6] [7] [8]
+<Figures/surv_panels_cropped.png, id=249, 481.8pt x 481.8pt>
 File: Figures/surv_panels_cropped.png Graphic file (type png)
 <use Figures/surv_panels_cropped.png>
-Package pdftex.def Info: Figures/surv_panels_cropped.png  used on input line 13
-3.
+Package pdftex.def Info: Figures/surv_panels_cropped.png  used on input line 18
+8.
 (pdftex.def)             Requested size: 385.02547pt x 385.03618pt.
- [6]
-<Figures/viab_hist.png, id=60, 481.8pt x 481.8pt>
+ [9 <./Figures/surv_panels_cropped.png>]
+<Figures/viab_hist.png, id=260, 481.8pt x 481.8pt>
 File: Figures/viab_hist.png Graphic file (type png)
 <use Figures/viab_hist.png>
-Package pdftex.def Info: Figures/viab_hist.png  used on input line 147.
+Package pdftex.def Info: Figures/viab_hist.png  used on input line 202.
 (pdftex.def)             Requested size: 481.79881pt x 481.79881pt.
 
-Overfull \hbox (28.83092pt too wide) in paragraph at lines 147--148
+Overfull \hbox (28.83092pt too wide) in paragraph at lines 202--203
  [][] 
  []
 
-[7 <./Figures/surv_panels_cropped.png>]
-<Figures/grow_panel.png, id=70, 481.8pt x 481.8pt>
+<Figures/grow_panel.png, id=262, 481.8pt x 481.8pt>
 File: Figures/grow_panel.png Graphic file (type png)
 <use Figures/grow_panel.png>
-Package pdftex.def Info: Figures/grow_panel.png  used on input line 156.
+Package pdftex.def Info: Figures/grow_panel.png  used on input line 211.
 (pdftex.def)             Requested size: 481.79881pt x 481.79881pt.
 
-Overfull \hbox (28.83092pt too wide) in paragraph at lines 156--157
+Overfull \hbox (28.83092pt too wide) in paragraph at lines 211--212
  [][] 
  []
 
-<Figures/grow_dist_panel2.png, id=71, 481.8pt x 481.8pt>
+<Figures/grow_dist_panel2.png, id=263, 481.8pt x 481.8pt>
 File: Figures/grow_dist_panel2.png Graphic file (type png)
 <use Figures/grow_dist_panel2.png>
-Package pdftex.def Info: Figures/grow_dist_panel2.png  used on input line 163.
+Package pdftex.def Info: Figures/grow_dist_panel2.png  used on input line 218.
 (pdftex.def)             Requested size: 481.79881pt x 481.79881pt.
 
-Overfull \hbox (28.83092pt too wide) in paragraph at lines 163--164
+Overfull \hbox (28.83092pt too wide) in paragraph at lines 218--219
  [][] 
  []
 
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 172.
+               Default added (so using `tbp') on input line 227.
 
 
-Underfull \hbox (badness 4765) in paragraph at lines 192--192
+Underfull \hbox (badness 4765) in paragraph at lines 247--247
 []|\T1/lmr/m/it/12 Liom.\T1/lmr/m/n/12 , \T1/lmr/m/it/12 Crem. \T1/lmr/m/n/12 &
 
  []
 
-[8 <./Figures/viab_hist.png>] [9 <./Figures/grow_panel.png>] [10 <./Figures/gro
-w_dist_panel2.png>] [11] (manuscript_draft.aux)
+[10] [11 <./Figures/viab_hist.png>] [12 <./Figures/grow_panel.png>] [13 <./Figu
+res/grow_dist_panel2.png>] (manuscript_draft.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -1599,13 +1608,13 @@ Package logreq Info: Writing requests to 'manuscript_draft.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 30734 strings out of 479618
- 618926 string characters out of 2865977
- 1433130 words of memory out of 3000000
- 47300 multiletter control sequences out of 15000+200000
- 455034 words of font info for 75 fonts, out of 3000000 for 9000
+ 30849 strings out of 479618
+ 620229 string characters out of 2865977
+ 1441162 words of memory out of 3000000
+ 47312 multiletter control sequences out of 15000+200000
+ 472376 words of font info for 85 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,13n,89p,1866b,1141s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 87i,13n,89p,1866b,1159s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/
 Users/tm9/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Us
 ers/tm9/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}{C:/User
@@ -1616,15 +1625,18 @@ ata/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/tm9/AppDat
 a/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/tm9/AppData/
 Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/tm9/AppData/Loc
 al/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/tm9/AppData/Local/
-Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/tm9/AppData/Local/Pro
-grams/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/tm9/AppData/Local/Progra
-ms/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/tm9/AppData/Local/Programs/M
-iKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTe
-X/fonts/type1/public/lm/lmri12.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/
-fonts/type1/public/lm/lmsy10.pfb>
-Output written on manuscript_draft.pdf (11 pages, 370684 bytes).
+Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/tm9/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/tm9/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/tm9/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/tm9/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/lm/lmr7.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/lm/lmr8.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/lm/lmri10.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/lm/lmri12.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/public/lm/lmsy10.pfb>
+Output written on manuscript_draft.pdf (13 pages, 482155 bytes).
 PDF statistics:
- 151 PDF objects out of 1000 (max. 8388607)
- 32 named destinations out of 1000 (max. 500000)
+ 375 PDF objects out of 1000 (max. 8388607)
+ 125 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
