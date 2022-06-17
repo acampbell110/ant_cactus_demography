@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 21.1) (preloaded format=pdflatex 2021.2.5)  17 JUN 2022 14:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 21.1) (preloaded format=pdflatex 2021.2.5)  17 JUN 2022 17:17
 entering extended mode
 **./manuscript_draft.tex
 (manuscript_draft.tex
@@ -1544,55 +1544,56 @@ LaTeX Warning: Citation 'Miller2007' on page 5 undefined on input line 117.
 LaTeX Warning: Citation 'Palmer2010' on page 6 undefined on input line 129.
 
 [6] [7] [8]
-<Figures/surv_panels_cropped.png, id=249, 481.8pt x 481.8pt>
+<Figures/surv_panels_cropped.png, id=303, 481.8pt x 481.8pt>
 File: Figures/surv_panels_cropped.png Graphic file (type png)
 <use Figures/surv_panels_cropped.png>
-Package pdftex.def Info: Figures/surv_panels_cropped.png  used on input line 18
-8.
+Package pdftex.def Info: Figures/surv_panels_cropped.png  used on input line 22
+7.
 (pdftex.def)             Requested size: 385.02547pt x 385.03618pt.
- [9 <./Figures/surv_panels_cropped.png>]
-<Figures/viab_hist.png, id=260, 481.8pt x 481.8pt>
+ [9]
+<Figures/viab_hist.png, id=317, 481.8pt x 481.8pt>
 File: Figures/viab_hist.png Graphic file (type png)
 <use Figures/viab_hist.png>
-Package pdftex.def Info: Figures/viab_hist.png  used on input line 202.
+Package pdftex.def Info: Figures/viab_hist.png  used on input line 241.
 (pdftex.def)             Requested size: 481.79881pt x 481.79881pt.
 
-Overfull \hbox (28.83092pt too wide) in paragraph at lines 202--203
+Overfull \hbox (28.83092pt too wide) in paragraph at lines 241--242
  [][] 
  []
 
-<Figures/grow_panel.png, id=262, 481.8pt x 481.8pt>
+[10 <./Figures/surv_panels_cropped.png>]
+<Figures/grow_panel.png, id=325, 481.8pt x 481.8pt>
 File: Figures/grow_panel.png Graphic file (type png)
 <use Figures/grow_panel.png>
-Package pdftex.def Info: Figures/grow_panel.png  used on input line 211.
+Package pdftex.def Info: Figures/grow_panel.png  used on input line 250.
 (pdftex.def)             Requested size: 481.79881pt x 481.79881pt.
 
-Overfull \hbox (28.83092pt too wide) in paragraph at lines 211--212
+Overfull \hbox (28.83092pt too wide) in paragraph at lines 250--251
  [][] 
  []
 
-<Figures/grow_dist_panel2.png, id=263, 481.8pt x 481.8pt>
+<Figures/grow_dist_panel2.png, id=326, 481.8pt x 481.8pt>
 File: Figures/grow_dist_panel2.png Graphic file (type png)
 <use Figures/grow_dist_panel2.png>
-Package pdftex.def Info: Figures/grow_dist_panel2.png  used on input line 218.
+Package pdftex.def Info: Figures/grow_dist_panel2.png  used on input line 257.
 (pdftex.def)             Requested size: 481.79881pt x 481.79881pt.
 
-Overfull \hbox (28.83092pt too wide) in paragraph at lines 218--219
+Overfull \hbox (28.83092pt too wide) in paragraph at lines 257--258
  [][] 
  []
 
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 227.
+               Default added (so using `tbp') on input line 266.
 
 
-Underfull \hbox (badness 4765) in paragraph at lines 247--247
+Underfull \hbox (badness 4765) in paragraph at lines 286--286
 []|\T1/lmr/m/it/12 Liom.\T1/lmr/m/n/12 , \T1/lmr/m/it/12 Crem. \T1/lmr/m/n/12 &
 
  []
 
-[10] [11 <./Figures/viab_hist.png>] [12 <./Figures/grow_panel.png>] [13 <./Figu
-res/grow_dist_panel2.png>] (manuscript_draft.aux)
+[11 <./Figures/viab_hist.png>] [12 <./Figures/grow_panel.png>] [13 <./Figures/g
+row_dist_panel2.png>] [14] (manuscript_draft.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -1608,9 +1609,9 @@ Package logreq Info: Writing requests to 'manuscript_draft.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 30849 strings out of 479618
- 620229 string characters out of 2865977
- 1441162 words of memory out of 3000000
+ 30879 strings out of 479618
+ 620605 string characters out of 2865977
+ 1441163 words of memory out of 3000000
  47312 multiletter control sequences out of 15000+200000
  472376 words of font info for 85 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1634,9 +1635,9 @@ onts/type1/public/lm/lmr8.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts
 /type1/public/lm/lmri10.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/public/lm/lmri12.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/typ
 e1/public/lm/lmsy10.pfb>
-Output written on manuscript_draft.pdf (13 pages, 482155 bytes).
+Output written on manuscript_draft.pdf (14 pages, 495817 bytes).
 PDF statistics:
- 375 PDF objects out of 1000 (max. 8388607)
- 125 named destinations out of 1000 (max. 500000)
+ 443 PDF objects out of 1000 (max. 8388607)
+ 155 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
