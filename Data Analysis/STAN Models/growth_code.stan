@@ -33,6 +33,7 @@ model {
  w ~ normal(0, sigma_w); // year random effects
  beta0 ~ normal(0,100); // ant beta
  beta1 ~ normal(0,100); // size & ant beta
+ sigma ~ normal(0, 100);    
  //Model
  for(i in 1:N){
  y_grow[i] ~ normal(mu[i],sigma);
@@ -40,7 +41,7 @@ model {
 }
 generated quantities {
   real y_rep[N] = normal_rng(mu, sigma);
-  real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
+  real mean_y_rep = mean(to_vector(y_rep));
   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
 }
 
