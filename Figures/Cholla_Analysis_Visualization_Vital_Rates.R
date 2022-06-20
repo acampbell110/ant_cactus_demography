@@ -8,41 +8,11 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 source( "/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Cholla_Analysis_Vital_Rates.R")
 
 ## Color Codes
-## Bright Pink ish colors
-cremcol <- "#D53DD0"
-liomcol <- "#9B6BF2"
-othercol <- "#B31166"
-vaccol <- "#E45F3C"
-## Muted very different colors
-cremcol <- "#E28394"
-liomcol <- "#77A2BB"
-othercol <- "#8DAB8E"
-vaccol <- "#E6C069"
-## Muted bright pink-blue
-cremcol <- "#B71E42"
-liomcol <- "#BC72F0"
-othercol <- "#6892A0"
-vaccol <- "#795FAF"
 ## Retro bright
 cremcol <- "#9239F6"
 liomcol <- "#00A08A"
 othercol <- "#FF0076"
 vaccol <- "#F8B660"
-## Darjeeling wes
-cremcol <- "#5BBCD6"
-liomcol <- "#F98400"
-othercol <- "#FF0000"
-vaccol <- "#015202"
-## Grand Budapest wes
-cremcol <- "#D67236"
-liomcol <- "#5B1A18"
-othercol <- "#FD6467"
-vaccol <- "#F1BB7B"
-##
-cremcol <- ""
-liomcol <- ""
-othercol <- ""
-vaccol <- ""
 
 str(cactus)
 ##### Size variable used in most visualizations
