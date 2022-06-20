@@ -1,7 +1,7 @@
 functions {
   real sgt_log(real x, real mu, real s, real l, real p, real q) {
     // Skewed generalised t
-        // Accounts for: Skew (s), (l), (p), (q)
+        // Accounts for: Sigma (s),  Lambda (l), (p), (q)
     //int N;
     real lz1;
     real lz2;
@@ -56,7 +56,7 @@ transformed parameters{
   real<lower=0> sigma[N];
   for(i in 1:N){
     mu[i] = b_0; // + b_size * vol[i] + plot_rfx[plot[i]] + year_rfx[year[i]];
-    sigma[i] = exp(d_0 + d_size * vol[i]);
+    sigma[i] = exp(d_0);// + d_size * vol[i]);
   }
 }
 model {
