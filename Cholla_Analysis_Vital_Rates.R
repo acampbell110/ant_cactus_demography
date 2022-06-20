@@ -33,67 +33,13 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
 ) 
-
-fit_grow <- stan(file = "Data Analysis/STAN Models/growth_code.stan", data = stan_data_grow, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+########## No sd size or ant deviation ##############################################################
+fit_grow <- stan(file = "Data Analysis/STAN Models/growth_code.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
 grow_outputs <- rstan::extract(fit_grow)
 write.csv(grow_outputs, "grow_outputs.csv")
 yrep_grow <- rstan::extract(fit_grow, pars = c("y_rep"))$y_rep
 write.csv(yrep_grow, "grow_ypred.csv")
 summary(fit_grow)
-
-freq <- glm(growth_data$logsize_t1 ~ growth_data$logsize_t + (as.factor(growth_data$ant_t)))
-summary(freq)
-## Compare Freq to Bayes
-vac_freq <- (coef(freq)[1] + coef(freq)[2]*size_vac) ## Vacant
-other_freq <- (coef(freq)[1] + coef(freq)[2]*size_other + coef(freq)[3]) ## Other
-crem_freq <- (coef(freq)[1] + coef(freq)[2]*size_crem + coef(freq)[4]) ## Crem
-liom_freq <- (coef(freq)[1] + coef(freq)[2]*size_liom + coef(freq)[5]) ## Liom
-vac_bayes <- quantile(grow_out$beta0.1,0.5) + size_vac * quantile(grow_out$beta1.1,0.5)
-other_bayes <- quantile(grow_out$beta0.2,0.5) + size_other * quantile(grow_out$beta1.2,0.5)
-crem_bayes <- quantile(grow_out$beta0.3,0.5) + size_crem * quantile(grow_out$beta1.3,0.5)
-liom_bayes <- quantile(grow_out$beta0.4,0.5) + size_liom * quantile(grow_out$beta1.4,0.5)
-## Vacant -- very good
-plot(size_vac, vac_freq, col = vaccol)
-lines(size_vac, vac_bayes, col = vaccol, lwd = 3) 
-## Other -- very good
-plot(size_other, other_freq, col = othercol)
-lines(size_other, other_bayes, col = othercol, lwd = 3)
-## Crem -- very good
-plot(size_crem, crem_freq, col = cremcol)
-lines(size_crem, crem_bayes, col = cremcol, lwd = 3)
-## Liom -- very good
-plot(size_liom, liom_freq, col = liomcol)
-lines(size_liom, liom_bayes, col = liomcol, lwd = 3)
-
-## Check this against real data -- which beta corresponds to each ant?
-## Crem
-crem_pred <- dnorm(quantile(grow_out$beta0.3,0.5) + size_crem * quantile(grow_out$beta1.3,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "crem"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "crem"]))
-plot(size_crem, crem_pred)
-lines(density(growth_data$logsize_t[growth_data$ant_t == "crem"])) ## Pretty Good
-## Liom
-liom_pred <- dnorm(quantile(grow_out$beta0.4,0.5) + size_liom * quantile(grow_out$beta1.4,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "liom"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "liom"]))
-plot(size_liom, liom_pred)
-lines(density(growth_data$logsize_t[growth_data$ant_t == "liom"])) ## Pretty Good
-## Other
-other_pred <- dnorm(quantile(grow_out$beta0.2,0.5) + size_other * quantile(grow_out$beta1.2,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "other"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "other"]))
-plot(size_other, other_pred)
-lines(density(growth_data$logsize_t[growth_data$ant_t == "other"])) ## Not that bad
-## Vacant
-vac_pred <- dnorm(quantile(grow_out$beta0.1,0.5) + size_vac * quantile(grow_out$beta1.1,0.5), mean = mean(growth_data$logsize_t1[growth_data$ant_t == "vacant"]), sd = sd(growth_data$logsize_t1[growth_data$ant_t == "vacant"]))
-plot(size_vac, vac_pred)
-lines(density(growth_data$logsize_t[growth_data$ant_t == "vacant"])) ## Pretty Good
-## These all look pretty good. I am fairly confident in 
-plot(size_crem, crem_pred, col = cremcol, ylim = c(0,0.25))
-lines(density(growth_data$logsize_t[growth_data$ant_t == "crem"]), col = cremcol)
-points(size_liom, liom_pred, col = liomcol)
-lines(density(growth_data$logsize_t[growth_data$ant_t == "liom"]), col = liomcol)
-points(size_other, other_pred, col = othercol)
-lines(density(growth_data$logsize_t[growth_data$ant_t == "other"]), col = othercol)
-points(size_vac, vac_pred, col = vaccol)
-lines(density(growth_data$logsize_t[growth_data$ant_t == "vacant"]), col = vaccol)
-
-
-
 ## Check the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
@@ -106,7 +52,7 @@ bayesplot::ppc_dens_overlay_grouped(y, yrep_grow[samp100,], group = ant)
 dev.off()
 ## Convergence Plots
 png("grow_conv.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow, pars=c("beta0", "beta1")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow, pars=c("beta0", "beta1","sigma")))
 dev.off()
 ## They all converge
 ## Histograms
@@ -122,70 +68,147 @@ size_moments_ppc(growth_data,
                  "Growth")
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-
-
-##############################################################################################
-#### Growth SGT Model -- What size will the cacti be next time step? #############################
-##############################################################################################
-growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
-growth_data <- na.omit(growth_data_orig)
-## Lose 2032 rows (due to plant death & recruit status)
-nrow(growth_data_orig)
-nrow(growth_data)
-# check that you are happy with the subsetting
-plot(growth_data$logsize_t, growth_data$logsize_t1)
-points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
-# Create delta size variable
-growth_data$delta_size <- growth_data$logsize_t1 - growth_data$logsize_t
-## Create Stan Data for all ant states
-stan_data_grow <- list(N = nrow(growth_data), ## number of observations
-                       vol = (growth_data$logsize_t), ## predictors volume
-                       delta_size = growth_data$delta_size, ## Change in volume year to year
-                       y_grow = (growth_data$logsize_t1), ## response survival next year
-                       ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
-                       K = 4, ## number of ant states
-                       N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
-                       N_Plot = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
-                       plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
-                       year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
-) 
-
-fit_grow_stg <- stan(file = "Data Analysis/STAN Models/growth_stg_code.stan", data = stan_data_grow, warmup = 150, iter = 10000, chains = 3, cores = 3, thin = 1)
-grow_stg_outputs <- rstan::extract(fit_grow)
-write.csv(grow_stg_outputs, "grow_stg_outputs.csv")
-yrep_grow_stg <- rstan::extract(fit_grow_stg, pars = c("y_rep"))$y_rep
-write.csv(yrep_grow_stg, "grow_stg_yrep.csv")
-summary(fit_grow_stg)
-fit_grow_stg@model_pars
+########## sd size deviation ##############################################################
+fit_grow_sd_size <- stan(file = "Data Analysis/STAN Models/growth_code_sd.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+grow_outputs <- rstan::extract(fit_grow_sd_size)
+write.csv(grow_outputs, "grow_outputs_sd_size.csv")
+yrep_grow_sd_size <- rstan::extract(fit_grow_sd_size, pars = c("mu"))$mu
+sigma_grow_sd_size <- rstan::extract(fit_grow_sd_size, pars = c("sigma"))$sigma
+write.csv(yrep_grow_sd_size, "grow_ypred_sd_size.csv")
+summary(fit_grow_sd_size)
+## Check the posterior distributions
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+#For overlay plots
+#draw 500 random samples from the joint posterior
+n_post_draws <- 100
+post_draws <- sample.int(dim(fit_grow_sd_size)[1], n_post_draws)
+y <- stan_data_grow$y_grow
+ant <- stan_data_grow$ant
+y_sim <- matrix(NA, n_post_draws,length(y))
+for(i in 1:n_post_draws){
+  #for(j in 1:length(y)){
+    #y_sim[i,] <- rnorm(n_post_draws, mean = yrep_grow_sd_size[i,], sd = sigma_grow_sd_size[i,])
+    y_sim[i,] <- rnorm(n=length(y), mean = yrep_grow_sd_size[i,], sd = sigma_grow_sd_size[i,])
+  #}
+}
+samp100 <- sample(nrow(y_sim), 100)
+## Overlay Plots
+png(file = "grow_post_sd_size.png")
+bayesplot::ppc_dens_overlay(y, y_sim[samp100,])
+dev.off()
+png(file = "grow_post_sd_size_group.png")
+bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant)
+dev.off()
+## Convergence Plots
+png("grow_conv_sd_size.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_sd_size, pars=c("beta0", "beta1")))
+dev.off()
+## They all converge
+## Histograms
+png("grow_hist_post_sd_size.png")
+bayesplot::ppc_stat_grouped(y, y_sim[samp100,], stat = "mean",group = ant)
+dev.off()
+#### Skew, Kurtosis, ETC.
+png("grow_skew_kurt_sd_size.png")
+size_moments_ppc(growth_data, 
+                 "logsize_t1", 
+                 y_sim, 
+                 n_bins = 30,
+                 "Growth")
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+########## sd size and ant deviation ##############################################################
+fit_grow_size_ant <- stan(file = "Data Analysis/STAN Models/growth_code_sd_size_ant.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+grow_outputs_size_ant <- rstan::extract(fit_grow_size_ant)
+write.csv(grow_outputs_size_ant, "grow_outputs_size_ant.csv")
+yrep_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("mu"))$mu
+sigma_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("sigma"))$sigma
+summary(fit_grow_size_ant)
 
 ## Check the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
 y <- stan_data_grow$y_grow
 ant <- stan_data_grow$ant
-samp500 <- sample(nrow(yrep_grow), 500)
+#draw 500 random samples from the joint posterior
+n_post_draws <- 100
+post_draws <- sample.int(dim(fit_grow_size_ant)[1], n_post_draws)
+y_sim <- matrix(NA, n_post_draws,length(y))
+for(i in 1:n_post_draws){
+  #for(j in 1:length(y)){
+  y_sim[i,] <- rnorm(n=length(y), mean = yrep_grow_size_ant[i,], sd = sigma_grow_size_ant[i,])
+  #}
+}
+samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
-png(file = "grow_post.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_grow[samp100,], group = ant)
+png(file = "grow_post_size_ant.png")
+bayesplot::ppc_dens_overlay_grouped(y, yrep_grow_size_ant[samp100,], group = ant)
 dev.off()
 ## Convergence Plots
-png("grow_conv.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow_stg, pars = c("b_0","b_size","d_0","d_size")))
+png("grow_conv_size_ant.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_size_ant, pars=c("beta0", "beta1")))
 dev.off()
 ## They all converge
 ## Histograms
-png("grow_hist_post.png")
-bayesplot::ppc_stat_grouped(y, yrep_grow[samp100,], stat = "mean",group = ant)
+png("grow_hist_post_size_ant.png")
+bayesplot::ppc_stat_grouped(y, yrep_grow_size_ant[samp100,], stat = "mean",group = ant)
 dev.off()
 #### Skew, Kurtosis, ETC.
-png("grow_skew_kurt.png")
+png("grow_skew_kurt_size_ant.png")
 size_moments_ppc(growth_data, 
                  "logsize_t1", 
-                 yrep_grow, 
+                 yrep_grow_size_ant, 
                  n_bins = 10,
                  "Growth")
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+
+########## add in the year as a random effect w an ant factor ##############################################################
+fit_grow_size_ant <- stan(file = "Data Analysis/STAN Models/growth_code_sd_size_ant.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+grow_outputs_size_ant <- rstan::extract(fit_grow_size_ant)
+write.csv(grow_outputs_size_ant, "grow_outputs_size_ant.csv")
+yrep_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("mu"))$mu
+sigma_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("sigma"))$sigma
+summary(fit_grow_size_ant)
+
+## Check the posterior distributions
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+#For overlay plots
+y <- stan_data_grow$y_grow
+ant <- stan_data_grow$ant
+#draw 500 random samples from the joint posterior
+n_post_draws <- 100
+post_draws <- sample.int(dim(fit_grow_size_ant)[1], n_post_draws)
+y_sim <- matrix(NA, n_post_draws,length(y))
+for(i in 1:n_post_draws){
+  #for(j in 1:length(y)){
+  y_sim[i,] <- rnorm(n=length(y), mean = yrep_grow_size_ant[i,], sd = sigma_grow_size_ant[i,])
+  #}
+}
+samp100 <- sample(nrow(y_sim), 100)
+## Overlay Plots
+png(file = "grow_post_size_ant.png")
+bayesplot::ppc_dens_overlay_grouped(y, yrep_grow_size_ant[samp100,], group = ant)
+dev.off()
+## Convergence Plots
+png("grow_conv_size_ant.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_size_ant, pars=c("beta0", "beta1")))
+dev.off()
+## They all converge
+## Histograms
+png("grow_hist_post_size_ant.png")
+bayesplot::ppc_stat_grouped(y, yrep_grow_size_ant[samp100,], stat = "mean",group = ant)
+dev.off()
+#### Skew, Kurtosis, ETC.
+png("grow_skew_kurt_size_ant.png")
+size_moments_ppc(growth_data, 
+                 "logsize_t1", 
+                 yrep_grow_size_ant, 
+                 n_bins = 10,
+                 "Growth")
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+
 
 #######################################################################################################
 #### Survival Model -- What is the probability of surviving to the next time step?  ###################
