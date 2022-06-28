@@ -163,9 +163,9 @@ size_moments_ppc(growth_data,
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
-########## add in the year as a random effect w an ant factor ##############################################################
-fit_grow_size_ant <- stan(file = "Data Analysis/STAN Models/growth_code_sd_size_ant.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs_size_ant <- rstan::extract(fit_grow_size_ant)
+########## TRY 1: add in the year as a random effect w an ant factor ##############################################################
+fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 15, iter = 100, chains = 3, cores = 3, thin = 1)
+grow <- rstan::extract(fit_grow_size_ant)
 write.csv(grow_outputs_size_ant, "grow_outputs_size_ant.csv")
 yrep_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("mu"))$mu
 sigma_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("sigma"))$sigma
@@ -209,6 +209,17 @@ size_moments_ppc(growth_data,
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
+
+## TRY 2: Trying to figure out how to have year and ant as a factor
+grow_dat <- list(K = length(unique(growth_data$ant_t)), #number of possible ant species
+                       N = dim(growth_data)[1], #number of observations
+                       D = 17, #number of predictors
+                       y = (growth_data$logsize_t1), #observations
+                       x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t + as.factor(Year_t), growth_data)) #design matrix
+## Run the model & save the results
+fit_multi <- stan(file = "Data Analysis/STAN Models/grow2.stan", 
+                  data = grow_dat, warmup = 15, iter = 100, chains = 3)
+grow <- rstan::extract(fit_multi)
 
 #######################################################################################################
 #### Survival Model -- What is the probability of surviving to the next time step?  ###################
