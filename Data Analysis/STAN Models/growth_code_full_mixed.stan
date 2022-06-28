@@ -17,24 +17,39 @@ parameters {
   vector[K] beta0;                           //ant beta
   vector[K] beta1;                           //interaction beta
   // sd variation
-  vector[K] d_0;                             // Error intercept
-  vector[K] d_size;                          // Error size
+  real d_0;                             // Error intercept
+  real d_size;                          // Error size
   // random effect params
   vector[N_Plot] u;                          //subject intercepts
   vector[N_Year] w;                          //item intercepts
+  matrix[K,N_Year] beta_yr;
   real < lower = 0 > sigma_u;                // plot SD
   real < lower = 0 > sigma_w;                // year SD
 }
 
 transformed parameters{
   vector[N] mu;                             //linear predictor for the mean
+  matrix[N,N_Year] mu_year;
   vector[N] sigma;                          // linear predictor for the sd
   // Predictor Equations
-  for(i in 1:N){
-    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[year[ant[i]]];
-    sigma[i] = exp(d_0[ant[i]] + d_size[ant[i]] * vol[i]);
+  //for(i in 1:N){
+  //  mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[year[ant[i]]];
+  //  sigma[i] = exp(d_0 + d_size * vol[i]);
+  //}
+  for(a in 1:K){
+    for(b in 1:N_Year){
+      beta_yr[a,b] = 
+    }
+  }
+  for(i in 1:N){ ## Cycle through each individual
+    for(j in 1:N_Year){ ## Cycle through each year -> Expect a year output for every ant species
+      mu_year[i,j] = beta0[ant[i]] + beta1[ant[i]]*vol[i] + u[plot[i]];
+    }
   }
 }
+
+
+
 model {
 //Priors
  u ~ normal(0, sigma_u);                   // plot random effects
