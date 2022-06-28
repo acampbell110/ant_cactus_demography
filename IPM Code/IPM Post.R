@@ -27,7 +27,7 @@ gxy(3,3,"vacant",params[m,])
 i = c("vacant","crem","liom","other")
 x = c(-1,-5,3,4)
 y = c(-1,-4,3,4)
-i = "vacant"
+i = "crem"
 x = 1
 y = 3
 g <- matrix(NA,ncol = length(i), nrow = 100)
@@ -525,8 +525,32 @@ bigmatrix.1 <- function(params,lower,upper,matsize,num_ants,i){
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i,params))*h 
   # Put it all together
   IPMmat<-Fmat+Tmat  
-  return(IPMmat)
+  #return(IPMmat)
+  lambda <- Re(eigen(IPMmat)$values[1])
+  return(lambda)
 }
+n<-matsize
+L<-lower; U<-upper
+h<-(U-L)/n                   #Bin size
+b<-L+c(0:n)*h;               #Lower boundaries of bins 
+y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
+i = c("liom")
+a <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+b <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+for(m in seq(1:nrow(params))){
+  for(n in seq(1:length(i))){
+    f[m,n] <- fx(x[n],i[n],params[m,])
+  }
+}
+f
+for(m in 1:10){
+  for(n in 1:length(i)){
+    a[m,n] <- fx(x[n],i[n],params[m,]) 
+    b[m,n] <- bigmatrix.1(params[m,],lower,upper,matsize,num_ants,i[n])
+  }
+}
+a
+b
 
 bigmatrix.1(params[1,],lower,upper,matsize,1,"vacant")
 
@@ -546,6 +570,12 @@ for(m in 1:nrow(params)){
     lambda[m,n] <- Re(eigen(big1[[m]])$values[1])
   }
 }
+for(m in seq(1:nrow(params))){
+  for(n in seq(1:length(i))){
+    f[m,n] <- fx(x[n],i[n],params[m,])
+  }
+}
+f
 big1[[2]]
 
 
