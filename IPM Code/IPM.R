@@ -47,11 +47,10 @@ sx<-function(x,i,params){
   if(i == "other"){ return(s_other)}
   if(i == "vacant"){ return(s_vac)}
 }
-
-##Check that it works properly
+sx(2,"crem",params)
+##Check that it works properly <---it does not
 i = c("liom","vacant","crem","other")
 x = c(5,5,5,5)
-y = c(6,6,6,6)
 s <- matrix(NA,ncol = length(i), nrow = 100)
 s<- vector()
   for(n in seq(1:length(i))){
