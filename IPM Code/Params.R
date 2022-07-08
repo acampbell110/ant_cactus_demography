@@ -176,10 +176,7 @@ params$rec_beta0<-rec.params$beta0        ## Rec intercept
 params$rec_sig<-rec.params$sigma         ## Rec error
 
 ##-------------------------Transition Parameters-------------------##
-multi.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/multi_outputs.csv", header = TRUE,stringsAsFactors=T)
-## Pull the random draws from all posterior distributions
-multi.params<-multi.params[1:Ndraws,]
-##########################################
+
 ## Prev Vac
 params$multi_betavv <- multi.params$beta.1.1
 params$multi_betavo <- multi.params$beta.1.2
