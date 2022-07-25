@@ -5,10 +5,9 @@
 ##                          save the outputs, and check the posterior distributions 
 ##
 #######################################################################################################
-options(mc.cores = parallel::detectCores())
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Setup_Script.R")
-cactus <- read.csv("cholla_demography_20042019_cleaned.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 ##############################################################################################
 #### Growth Model -- What size will the cacti be next time step? #############################
@@ -32,194 +31,53 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        N_Plot = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
                        plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
-) 
-########## No sd size or ant deviation ##############################################################
-fit_grow <- stan(file = "Data Analysis/STAN Models/growth_code.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs <- rstan::extract(fit_grow)
+)
+########## growth model includes sd variance across size and year as a random effect
+fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
+grow_yrep <- rstan::extract(fit_grow, pars = c("mu"))$mu
+grow_sigma <- rstan::extract(fit_grow, pars = c("sigma"))$sigma
 write.csv(grow_outputs, "grow_outputs.csv")
-yrep_grow <- rstan::extract(fit_grow, pars = c("y_rep"))$y_rep
-write.csv(yrep_grow, "grow_ypred.csv")
+write.csv(grow_yrep, "grow_yrep.csv")
+write.csv(grow_sigma, "grow_sigma.csv")
 summary(fit_grow)
 ## Check the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
-y <- stan_data_grow$y_grow
-ant <- stan_data_grow$ant
-samp500 <- sample(nrow(yrep_grow), 500)
-## Overlay Plots
-png(file = "grow_post.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_grow[samp100,], group = ant)
-dev.off()
-## Convergence Plots
-png("grow_conv.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow, pars=c("beta0", "beta1","sigma")))
-dev.off()
-## They all converge
-## Histograms
-png("grow_hist_post.png")
-bayesplot::ppc_stat_grouped(y, yrep_grow[samp100,], stat = "mean",group = ant)
-dev.off()
-#### Skew, Kurtosis, ETC.
-png("grow_skew_kurt.png")
-size_moments_ppc(growth_data, 
-                 "logsize_t1", 
-                 yrep_grow, 
-                 n_bins = 10,
-                 "Growth")
-dev.off()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-########## sd size deviation ##############################################################
-fit_grow_sd_size <- stan(file = "Data Analysis/STAN Models/growth_code_sd.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs <- rstan::extract(fit_grow_sd_size)
-write.csv(grow_outputs, "grow_outputs_sd_size.csv")
-yrep_grow_sd_size <- rstan::extract(fit_grow_sd_size, pars = c("mu"))$mu
-sigma_grow_sd_size <- rstan::extract(fit_grow_sd_size, pars = c("sigma"))$sigma
-write.csv(yrep_grow_sd_size, "grow_ypred_sd_size.csv")
-summary(fit_grow_sd_size)
-## Check the posterior distributions
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-#For overlay plots
-#draw 500 random samples from the joint posterior
 n_post_draws <- 100
-post_draws <- sample.int(dim(fit_grow_sd_size)[1], n_post_draws)
+post_draws <- sample.int(dim(fit_grow)[1], n_post_draws)
 y <- stan_data_grow$y_grow
 ant <- stan_data_grow$ant
+grow_outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs.csv", header = TRUE,stringsAsFactors=T)
+grow_yrep <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_yrep.csv", header = TRUE,stringsAsFactors=T)
+grow_sigma <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_sigma.csv", header = TRUE,stringsAsFactors=T)
 y_sim <- matrix(NA, n_post_draws,length(y))
 for(i in 1:n_post_draws){
-  #for(j in 1:length(y)){
-    #y_sim[i,] <- rnorm(n_post_draws, mean = yrep_grow_sd_size[i,], sd = sigma_grow_sd_size[i,])
-    y_sim[i,] <- rnorm(n=length(y), mean = yrep_grow_sd_size[i,], sd = sigma_grow_sd_size[i,])
-  #}
+  y_sim[i,] <- rnorm(n=length(y), mean = mean(grow_yrep[i,]), sd = grow_sigma[i,])
 }
 samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
-png(file = "grow_post_sd_size.png")
-bayesplot::ppc_dens_overlay(y, y_sim[samp100,])
-dev.off()
-png(file = "grow_post_sd_size_group.png")
+png(file = "grow_post_full.png")
 bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant)
 dev.off()
 ## Convergence Plots
-png("grow_conv_sd_size.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow_sd_size, pars=c("beta0", "beta1")))
+png("grow_conv_full.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow, pars=c("beta0", "beta1")))
 dev.off()
 ## They all converge
 ## Histograms
-png("grow_hist_post_sd_size.png")
+png("grow_hist_post_full.png")
 bayesplot::ppc_stat_grouped(y, y_sim[samp100,], stat = "mean",group = ant)
 dev.off()
 #### Skew, Kurtosis, ETC.
-png("grow_skew_kurt_sd_size.png")
+png("grow_skew_kurt_full.png")
 size_moments_ppc(growth_data, 
                  "logsize_t1", 
                  y_sim, 
-                 n_bins = 30,
-                 "Growth")
-dev.off()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-########## sd size and ant deviation ##############################################################
-fit_grow_size_ant <- stan(file = "Data Analysis/STAN Models/growth_code_sd_size_ant.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs_size_ant <- rstan::extract(fit_grow_size_ant)
-write.csv(grow_outputs_size_ant, "grow_outputs_size_ant.csv")
-yrep_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("mu"))$mu
-sigma_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("sigma"))$sigma
-summary(fit_grow_size_ant)
-
-## Check the posterior distributions
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-#For overlay plots
-y <- stan_data_grow$y_grow
-ant <- stan_data_grow$ant
-#draw 500 random samples from the joint posterior
-n_post_draws <- 100
-post_draws <- sample.int(dim(fit_grow_size_ant)[1], n_post_draws)
-y_sim <- matrix(NA, n_post_draws,length(y))
-for(i in 1:n_post_draws){
-  #for(j in 1:length(y)){
-  y_sim[i,] <- rnorm(n=length(y), mean = yrep_grow_size_ant[i,], sd = sigma_grow_size_ant[i,])
-  #}
-}
-samp100 <- sample(nrow(y_sim), 100)
-## Overlay Plots
-png(file = "grow_post_size_ant.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_grow_size_ant[samp100,], group = ant)
-dev.off()
-## Convergence Plots
-png("grow_conv_size_ant.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow_size_ant, pars=c("beta0", "beta1")))
-dev.off()
-## They all converge
-## Histograms
-png("grow_hist_post_size_ant.png")
-bayesplot::ppc_stat_grouped(y, yrep_grow_size_ant[samp100,], stat = "mean",group = ant)
-dev.off()
-#### Skew, Kurtosis, ETC.
-png("grow_skew_kurt_size_ant.png")
-size_moments_ppc(growth_data, 
-                 "logsize_t1", 
-                 yrep_grow_size_ant, 
                  n_bins = 10,
                  "Growth")
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-
-########## TRY 1: add in the year as a random effect w an ant factor ##############################################################
-fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 15, iter = 100, chains = 3, cores = 3, thin = 1)
-grow <- rstan::extract(fit_grow_size_ant)
-write.csv(grow_outputs_size_ant, "grow_outputs_size_ant.csv")
-yrep_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("mu"))$mu
-sigma_grow_size_ant <- rstan::extract(fit_grow_size_ant, pars = c("sigma"))$sigma
-summary(fit_grow_size_ant)
-
-## Check the posterior distributions
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-#For overlay plots
-y <- stan_data_grow$y_grow
-ant <- stan_data_grow$ant
-#draw 500 random samples from the joint posterior
-n_post_draws <- 100
-post_draws <- sample.int(dim(fit_grow_size_ant)[1], n_post_draws)
-y_sim <- matrix(NA, n_post_draws,length(y))
-for(i in 1:n_post_draws){
-  #for(j in 1:length(y)){
-  y_sim[i,] <- rnorm(n=length(y), mean = yrep_grow_size_ant[i,], sd = sigma_grow_size_ant[i,])
-  #}
-}
-samp100 <- sample(nrow(y_sim), 100)
-## Overlay Plots
-png(file = "grow_post_size_ant.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_grow_size_ant[samp100,], group = ant)
-dev.off()
-## Convergence Plots
-png("grow_conv_size_ant.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow_size_ant, pars=c("beta0", "beta1")))
-dev.off()
-## They all converge
-## Histograms
-png("grow_hist_post_size_ant.png")
-bayesplot::ppc_stat_grouped(y, yrep_grow_size_ant[samp100,], stat = "mean",group = ant)
-dev.off()
-#### Skew, Kurtosis, ETC.
-png("grow_skew_kurt_size_ant.png")
-size_moments_ppc(growth_data, 
-                 "logsize_t1", 
-                 yrep_grow_size_ant, 
-                 n_bins = 10,
-                 "Growth")
-dev.off()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-
-
-## TRY 2: Trying to figure out how to have year and ant as a factor
-grow_dat <- list(K = length(unique(growth_data$ant_t)), #number of possible ant species
-                       N = dim(growth_data)[1], #number of observations
-                       D = 17, #number of predictors
-                       y = (growth_data$logsize_t1), #observations
-                       x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t + as.factor(Year_t), growth_data)) #design matrix
-## Run the model & save the results
-fit_multi <- stan(file = "Data Analysis/STAN Models/grow2.stan", 
-                  data = grow_dat, warmup = 15, iter = 100, chains = 3)
-grow <- rstan::extract(fit_multi)
 
 #######################################################################################################
 #### Survival Model -- What is the probability of surviving to the next time step?  ###################
@@ -227,6 +85,7 @@ grow <- rstan::extract(fit_multi)
 survival_data_orig <- subset(cactus, is.na(Survival_t1) == FALSE,c("Plot","Year_t","Survival_t1","ant_t","logsize_t"))
 survival_data_orig <- cactus[,c("Plot","Year_t","Survival_t1","ant_t","logsize_t")]
 survival_data <- na.omit(survival_data_orig)
+survival_data <- subset(survival_data, survival_data$Survival_t1 != 2)
 levels(survival_data$ant_t)
 ## Lose 1619 rows due to recruit status 
 nrow(survival_data_orig)
@@ -245,12 +104,14 @@ stan_data_surv <- list(N = nrow(survival_data), ## number of observations
 
 ## Run the Model
 fit_surv <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_data_surv, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-fit_surv_rand <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_data_surv, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-fit_surv_ant_only <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_data_surv, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-surv_outputs <- rstan::extract(fit_surv)
-yrep_surv <- rstan::extract(fit_surv, pars = c("y_rep"))$y_rep
+
+
+surv_outputs <- rstan::extract(fit_surv, pars = c("w","beta0","beta1","u","sigma_u","sigma_w"))
+surv_yrep <- rstan::extract(fit_surv, pars = c("mu"))$mu
+surv_sigma <- rstan::extract(fit_surv, pars = c("sigma"))$sigma
 write.csv(surv_outputs, "surv_outputs.csv")
-write.csv(yrep_surv, "surv_yrep.csv")
+write.csv(surv_yrep, "surv_yrep")
+write.csv(surv_sigma, "surv_sigma.csv")
 
 freq <- glm(survival_data$Survival_t1 ~ survival_data$logsize_t + (as.factor(survival_data$ant_t)), family = "binomial")
 summary(freq)
@@ -281,25 +142,23 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #overlay plot data
 y <- survival_data$Survival_t1
 surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_outputs.csv", header = TRUE,stringsAsFactors=T)
-samp100 <- sample(nrow(yrep_surv), 500)
+surv_yrep <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_yrep.csv", header = TRUE,stringsAsFactors=T)
+y_sim <- matrix(NA, n_post_draws,length(y))
+for(i in 1:n_post_draws){
+  #y_sim[i,] <- rbinom(n=length(y), mean = surv_yrep[i,], sd = surv_sigma[i,])
+  y_sim[i,] <- rbinom(n=length(y), size=1, prob = invlogit(mean(surv_yrep[i,])))
+}
+samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
 png(file = "surv_ant_post.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_surv[samp100,],group = as.integer(as.factor(survival_data$ant_t)))
+bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,],group = as.integer(as.factor(survival_data$ant_t)))
 dev.off()
 ## Convergence Plots
 png(file = "surv_conv.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))
 dev.off()
 png("surv_hist_post.png")
-bayesplot::ppc_stat_grouped(y, yrep_grow[samp100,], stat = "mean",group = ant)
-dev.off()
-#### Skew, Kurtosis, ETC.
-png("surv_skew_kurt.png")
-size_moments_ppc(survival_data, 
-                 "Survival_t1", 
-                 yrep_surv, 
-                 n_bins = 10,
-                 "Survival")
+bayesplot::ppc_stat_grouped(y, y_sim[samp100,], stat = "mean",group = ant)
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
@@ -327,17 +186,18 @@ stan_data_flow_trunc <- list(N = nrow(flower_data), ## number of observations
 ) 
 ## Run the Model
 fit_flow_trunc <- stan(file = "Data Analysis/STAN Models/flower_trunc_code.stan", data = stan_data_flow_trunc, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-flow_trunc_outputs <- rstan::extract(fit_flow_trunc)
+flow_trunc_outputs <- rstan::extract(fit_flow_trunc, pars = c("beta0","beta1","u","w","sigma_u","sigma_w"))
 write.csv(flow_trunc_outputs, "flow_trunc_outputs.csv")
 flow_yrep <- rstan::extract(fit_flow_trunc, pars = c("mu"))$mu
 write.csv(flow_yrep, "flow_yrep.csv")
 flow_phi <- rstan::extract(fit_flow_trunc, pars = c("phi"))$phi
+write.csv(flow_phi, "flow_phi.csv")
 
 ## Check the posterior distributions
 y <- flower_data$TotFlowerbuds_t
 flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_trunc_outputs.csv", header = TRUE,stringsAsFactors=T)
 # Create the y rep (needs to be done outside of STAN because of the 0 truncation)
-n_post_draws <- 500
+n_post_draws <- 100
 post_draws <- sample.int(dim(flow_yrep)[1], n_post_draws)
 y_sim <- matrix(NA,n_post_draws,length(y))
 for(i in 1:n_post_draws){
@@ -400,10 +260,12 @@ stan_data_viab <- list(N = nrow(viability_data), ## number of observations
 ) 
 ## Run the Model
 fit_viab <- stan(file = "Data Analysis/STAN Models/viab_code.stan", data = stan_data_viab, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-viab_yrep <- rstan::extract(fit_viab, pars = c("y_rep"))$y_rep
-viab_outputs <- rstan::extract(fit_viab)
+viab_yrep <- rstan::extract(fit_viab, pars = c("mu"))$mu
+viab_outputs <- rstan::extract(fit_viab, pars = c("w","beta0","u","sigma_u","sigma_w"))
+viab_sigma <- rstan::extract(fit_viab, pars = c("sigma"))$sigma
 write.csv(viab_outputs, "viab_outputs.csv")
-write.csv(viab_yrep_null, "viab_yrep.csv")
+write.csv(viab_yrep, "viab_yrep.csv")
+write.csv(viab_sigma, "viab_sigma.csv")
 summary(fit_viab)
 
 
@@ -430,29 +292,24 @@ barplot(c(mean(vac_real), mean(other_real), mean(crem_real), mean(liom_real)),co
 
 
 ## Check the Posterior Distribution
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+n_post_draws <- 100
+post_draws <- sample.int(dim(viab_yrep)[1], n_post_draws)
 y <- viability_data$Goodbuds_t1
-yrep_viab <- viab_yrep
-samp100 <- sample(nrow(yrep_viab), 500)
+y_sim <- matrix(NA,n_post_draws,length(y))
+for(i in 1:n_post_draws){
+    y_sim[i,] <- rbern(n = length(y), prob = invlogit(mean(viab_yrep[i,])))
+}
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
 png(file = "viab_post.png")
-bayesplot::ppc_dens_overlay(y, yrep_viab[samp100,])
+bayesplot::ppc_dens_overlay(y, y_sim[samp100,])
 dev.off()
 png(file = "viab_ant_post.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_viab[samp100,],group = as.integer(as.factor(viability_data$ant)))
+bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,],group = as.integer(as.factor(viability_data$ant)))
 dev.off()
 ## Convergence Plots
 png(file = "viab_conv.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
-dev.off()
-png(file = "viab_post_rand.png")
-bayesplot::ppc_dens_overlay(y, yrep_viab[samp100,])
-dev.off()
-png(file = "viab_ant_post_rand.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_viab[samp100,],group = as.integer(as.factor(viability_data$ant)))
-dev.off()
-## Convergence Plots
-png(file = "viab_conv_rand.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
@@ -488,19 +345,25 @@ lines(-5:15,exp(coef(flow)[1]+coef(flow)[2]*-5:15)/(1+exp(coef(flow)[1]+coef(flo
 #Check if the model is written to the right place
 #stanc("STAN Models/repro_mix_ant.stan")
 fit_repro <- stan(file = "Data Analysis/STAN Models/repro_code.stan", data = stan_data_repro, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-repro_outputs <- rstan::extract(fit_repro)
-repro_yrep <- rstan::extract(fit_repro, pars = c("y_rep"))$y_rep
+repro_outputs <- rstan::extract(fit_repro, pars = c("beta0","u","w","sigma_u","sigma_w","beta1"))
+repro_yrep <- rstan::extract(fit_repro, pars = c("mu"))$mu
+repro_sigma <- rstan::extract(fit_repro, pars = c("sigma"))$sigma
 write.csv(repro_outputs, "repro_outputs.csv")
+write.csv(repro_yrep, "repro_yrep.csv")
+write.csv(repro_sigma, "repro_sigma.csv")
 
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro_outputs.csv", header = TRUE,stringsAsFactors=T)
 y <- as.numeric(reproductive_data$flower1_YN)
-yrep_repro <- repro_yrep
-samp100 <- sample(nrow(yrep_repro), 500)
+y_sim <- matrix(NA,n_post_draws,length(y))
+for(i in 1:n_post_draws){
+  y_sim[i,] <- rbern(n = length(y), prob = invlogit(mean(repro_yrep[i,])))
+}
+samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
 png(file = "repro_post.png")
-bayesplot::ppc_dens_overlay(y, yrep_repro[samp100,])
+bayesplot::ppc_dens_overlay(y, y_sim[samp100,])
 dev.off()
 ## Convergence Plots
 png(file = "repro_conv.png")
@@ -556,9 +419,10 @@ stan_data_seed <- list(N = nrow(seed_data),
 
 ## Run the model
 fit_seed <- stan(file = "Data Analysis/STAN Models/seed_code.stan", data = stan_data_seed, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-seed_outputs <- rstan::extract(fit_seed)
-write.csv(seed_outputs, "seed_outputs.csv")
+seed_outputs <- rstan::extract(fit_seed, pars = c("beta0"))
 seed_yrep <- rstan::extract(fit_seed, pars = c("y_rep"))$y_rep
+write.csv(seed_outputs, "seed_outputs.csv")
+write.csv(seed_yrep, "seed_yrep.csv")
 
 ## Compare to Real and Bayes
 crem_bayes <- exp(quantile(seed_out$beta0.1,0.5))
@@ -573,14 +437,13 @@ barplot(c(exp(vac_bayes),exp(crem_bayes),exp(liom_bayes)), col = c(cremcol, liom
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 y <- seed_data$seed_count
-yrep_seed <- seed_yrep
-samp100 <- sample(nrow(yrep_seed), 500)
+samp100 <- sample(nrow(seed_yrep), 500)
 ## Overlay Plots
 png(file = "seed_post.png")
-bayesplot::ppc_dens_overlay(y, yrep_seed[samp100,])
+bayesplot::ppc_dens_overlay(y, seed_yrep[samp100,])
 dev.off()
 png(file = "seed_ant_post.png")
-bayesplot::ppc_dens_overlay_grouped(y, yrep_seed[samp100,],group = as.integer(as.factor(seed_data$ant)))
+bayesplot::ppc_dens_overlay_grouped(y, seed_yrep[samp100,],group = as.integer(as.factor(seed_data$ant)))
 dev.off()
 ## Convergence Plots
 png(file = "seed_conv.png")
@@ -608,15 +471,16 @@ stan_data_seed_surv <- list(N = nrow(precensus.dat),
 
 ## Run the model
 fit_seed_surv <- stan(file = "Data Analysis/STAN Models/seed_surv_code.stan", data = stan_data_seed_surv, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-seed_surv_outputs <- rstan::extract(fit_seed_surv)
-write.csv(seed_surv_outputs, "seed_surv_outputs.csv")
+seed_surv_outputs <- rstan::extract(fit_seed_surv, pars = c("beta0","w","sigma_w","sigma"))
 seed_surv_yrep <- rstan::extract(fit_seed_surv, pars = c("y_rep"))$y_rep
+write.csv(seed_surv_outputs, "seed_surv_outputs.csv")
+write.csv(seed_surv_yrep, "seed_surv_yrep.csv")
 
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 y <- precensus.dat$survive0405
 yrep_seed_surv <- seed_surv_yrep
-samp100 <- sample(nrow(yrep_seed_surv), 500)
+samp100 <- sample(nrow(yrep_seed_surv), 100)
 ## Overlay Plots
 png(file = "seed_surv_post.png")
 bayesplot::ppc_dens_overlay(y, yrep_seed_surv[samp100,])
@@ -656,10 +520,10 @@ stan_data_germ2 <- list(N = nrow(germ.dat),
                        trials = germ.dat$Input-germ.dat$Seedlings04)
 
 ## Run a model 
-fit_germ1 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ1, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-fit_germ2 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ2, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
-germ1_outputs <- rstan::extract(fit_germ1)
-germ2_outputs <- rstan::extract(fit_germ2)
+fit_germ1 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ1, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+fit_germ2 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ2, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+germ1_outputs <- rstan::extract(fit_germ1, pars = c("beta0","sigma","phi"))
+germ2_outputs <- rstan::extract(fit_germ2, pars = c("beta0","sigma","phi"))
 write.csv(germ1_outputs, "germ1_outputs.csv")
 write.csv(germ2_outputs, "germ2_outputs.csv")
 germ1_yrep <- rstan::extract(fit_germ1, pars = c("y_rep"))$y_rep
@@ -670,7 +534,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 ## Germ yr 1
 y <- germ.dat$Seedlings04/germ.dat$Input
 yrep_germ1 <- germ1_yrep
-samp100 <- sample(nrow(yrep_germ1), 500)
+samp100 <- sample(nrow(yrep_germ1), 100)
 ## Overlay Plots
 png(file = "germ1_post.png")
 p<-bayesplot::ppc_dens_overlay(y, yrep_germ1[samp100,])
@@ -682,7 +546,7 @@ dev.off()
 ## Germ yr 2
 y <- germ.dat$Seedlings05/(germ.dat$Input - germ.dat$Seedlings04)
 yrep_germ2 <- germ2_yrep
-samp100 <- sample(nrow(yrep_germ2), 500)
+samp100 <- sample(nrow(yrep_germ2), 100)
 ## Overlay Plots
 png(file = "germ2_post.png")
 bayesplot::ppc_dens_overlay(y, yrep_germ2[samp100,])
@@ -711,15 +575,15 @@ stan_data_rec <- list(N = length(seedling.dat$logsize_t1),
 
 ## Run the model 
 fit_rec <- stan(file = "Data Analysis/STAN Models/rec_code.stan",data = stan_data_rec, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-rec_outputs <- rstan::extract(fit_rec)
+rec_outputs <- rstan::extract(fit_rec, pars = c("beta0","sigma"))
 write.csv(rec_outputs,"rec_outputs.csv")
 rec_yrep <- rstan::extract(fit_rec,pars = c("y_rep"))$y_rep
-
+write.csv(rec_yrep, "rec_yrep.csv")
 ## Check Posterior Dist
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 y <- seedling.dat$logsize_t1
 yrep_rec <- rec_yrep
-samp100 <- sample(nrow(yrep_rec), 500)
+samp100 <- sample(nrow(yrep_rec), 100)
 ## Overlay Plots
 png(file = "rec_post.png")
 bayesplot::ppc_dens_overlay(y, yrep_rec[samp100,])
@@ -747,12 +611,12 @@ multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possib
                        x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real)) #design matrix
 ## Run the model & save the results
 fit_multi <- stan(file = "Data Analysis/STAN Models/multi_code.stan", 
-                      data = multi_dat_real, warmup = 100, iter = 1000, chains = 3)
-multi_out <- rstan::extract(fit_multi)
-multi_yrep <- rstan::extract(x_beta)$x_beta
+                      data = multi_dat_real, warmup = 150, iter = 1000, chains = 3)
+multi_out <- rstan::extract(fit_multi, pars = c("beta","beta_raw"))
+multi_yrep <- rstan::extract(fit_multi, x_beta)$x_beta
 write.csv(multi_out, "multi_outputs.csv")
 ## Simulate Multinomial Yreps
-n_post_draws <- 500
+n_post_draws <- 100
 post_draws <- sample.int(dim(flow_yrep)[1], n_post_draws)
 y_sim <- matrix(NA,n_post_draws,length(y))
 for(i in 1:n_post_draws){
@@ -867,6 +731,12 @@ crem_prob <- c(mean(pred_crem[,1]),mean(pred_crem[,3]), mean(pred_crem[,4]), mea
 crem_multi_yrep <- rmultinom(x, length(cactus_real$ant_t1[cactus_real$ant_t == "crem"]),crem_prob)
 
 #### Plot the simulated counts of the model compared to the real data
+## Color Codes
+## Retro bright
+cremcol <- "#9239F6"
+liomcol <- "#00A08A"
+othercol <- "#FF0076"
+vaccol <- "#F8B660"
 ## Prev Vacant
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("multi_yrep.png")
