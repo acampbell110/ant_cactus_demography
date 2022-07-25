@@ -18,6 +18,35 @@ str(cactus)
 ##### Size variable used in most visualizations
 size_dummy <- seq(min(cactus$logsize_t, na.rm = TRUE), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
 
+#######################################################################################################
+#### Hypotheses #######################################################################################
+#######################################################################################################
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+
+barplot(c(0.1014,0.06296,0.1265,0.09043), col = c(othercol, cremcol, liomcol, vaccol), names.arg = c("Other","Crem.","Liom.","Vacant"),
+        ylab = "Herbivory Prob.", main = "Proportion of Plants with Evidence of Herbivory")
+#### Sampling Effect
+heights <- c(0.9,1.2,1.2)
+png("Sampling_Effect.png")
+barplot(heights, col = c("Chartreuse4","Pink", "Purple"),names.arg = c("A","B","A & B"), ylab = "Lambda (Fitness)", main = "Sampling Effect")
+dev.off()
+
+#### Complementarity
+heights <- c(0.9,1.2,1.6)
+png("Complementarity.png")
+barplot(heights, col = c("Chartreuse4","Pink", "Purple"),names.arg = c("A","B","A & B"), ylab = "Lambda (Fitness)", main = "Complementarity")
+dev.off()
+
+#### Portfolio Effect
+yr <- seq(2000,2010,by = 1)
+yr1 <- c(1,1.5,.2,0,.5,.7,.6,1.2,1.3,1.8,1)
+yr2 <- c(1,.2,1.2,1.7,1.5,1.1,.9,.5,.5,.6,0.8)
+png("Portfolio_Effect.png")
+plot(x = yr, y = yr1, type = "l", col = "Chartreuse4", xlab = "Year", ylab = "Lambda (Fitness)", main = "Portfolio Effect", lwd = 2)
+lines(x = yr, y = yr2, col = "Pink", lwd = 2)
+legend("bottomright", legend = c("A","B"), fill = c("Chartreuse4","Pink"))
+dev.off()
+
 ########################################################################################################
 #### Herbivores Visuals ################################################################################
 ########################################################################################################
@@ -618,6 +647,42 @@ ggplot(cactus_grow, aes(x = logsize_t, y = logsize_t1, col = c_prob)) +
   geom_tile() + 
   facet_grid(cactus_grow$ant_t)
 
+## Show the correlation between ant and year -- from growth model random effects
+vac_vec <- (colMeans(grow_outputs$w[,1,]))
+liom_vec <- colMeans(grow_outputs$w[,4,])
+other_vec <- colMeans(grow_outputs$w[,2,])
+crem_vec <- colMeans(grow_outputs$w[,3,])
+
+png("year_ant_grow1.png")
+pairs(data.frame(cbind(vac_vec,liom_vec,other_vec,crem_vec)))
+dev.off()
+
+png("year_ant_grow2.png")
+corrplot(cor(cbind(vac_vec,liom_vec,other_vec,crem_vec)), method = "color", 
+         main = "Correlation of Ant and Year Effects")
+dev.off()
+
+png("year_ant_grow3.png")
+corrplot(cor(cbind(vac_vec,liom_vec,other_vec,crem_vec)), method = "color", main = "Correlation of Ant and Year Effects", diag = F)
+dev.off()
+
+png("year_ant.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,1,2,3,4,5),
+              ncol = 2, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9))
+plot.new()
+text(0.5,0.5,"Interaction of Ant State and Year",cex=2,font=2)
+barplot(vac_vec,
+        main = "Vacant Cacti", xlab = "Year", ylab = "Year-Ant Factor")
+barplot(liom_vec,
+        main = "Liom. Tended Cacti", xlab = "Year", ylab = "Year-Ant Factor")
+barplot(crem_vec,
+        main = "Crem. Tended Cacti", xlab = "Year", ylab = "Year-Ant Factor")
+barplot(other_vec,
+        main = "Other Tended Cacti", xlab = "Year", ylab = "Year-Ant Factor")
+mtext("Year",side=1,line=0,outer=TRUE,cex=1.0)
+mtext("Year-Ant Factor",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+dev.off()
 ###########################################################################################################################
 #### Survival Visuals #####################################################################################################
 #########################################################################################################################
@@ -983,14 +1048,14 @@ mtext("Density",side=2,line=0,outer=TRUE,cex=1.3,las=0)
 dev.off()
 
 png("viab_bars.png")
-barplot(invlogit(means), ylim = c(0,1.1), col = c(cremcol,liomcol,othercol,vaccol),xlab = "Ant Partner", ylab = "Viability Rate",
-        main = "Proportion of Viable Flowerbuds \n by Ant Species", names.arg = c("Crem.","Liom.","Other","Vacant"))
+barplot(invlogit(means), ylim = c(0,1.1), col = c(vaccol,othercol,cremcol,liomcol),xlab = "Ant Partner", ylab = "Viability Rate",
+        main = "Proportion of Viable Flowerbuds \n by Ant Species", names.arg = c("Vacant","Other","Crem.","Liom."))
 dev.off()
 
 list <- cbind(invlogit(viab_out$beta0.1),invlogit(viab_out$beta0.2),invlogit(viab_out$beta0.3),invlogit(viab_out$beta0.4))
 png("viab_box.png")
-boxplot((list), ylim = c(0,1),
-        col = c(othercol,vaccol,cremcol,liomcol), names.arg = c("Crem.","Liom.","Other","Vacant"),
+boxplot((list), ylim = c(0.65,0.9),
+        col = c(vaccol,othercol,cremcol,liomcol), names.arg = c("Vacant","Other","Crem.","Liom."),
         xlab = "Ant Partner", ylab = "Viability Rate", main = "Proportion of Viable Flowerbuds \n by Ant Species"
 )
 dev.off()
@@ -998,7 +1063,7 @@ dev.off()
 
 list <- cbind(as.numeric(crem_subset$viab),as.numeric(liom_subset$viab),as.numeric(other_subset$viab),as.numeric(vac_subset$viab))
 boxplot((list), ylim = c(0,1),
-        col = c("red","blue","black","pink"), names.arg = c("Crem.","Liom.","Other","Vacant"),
+        col = c("cremcol","liomcol","othercol","vaccol"), names.arg = c("Crem.","Liom.","Other","Vacant"),
         xlab = "Ant Partner", ylab = "Viability Rate", main = "Proportion of Viable Flowerbuds \n by Ant Species"
 )
 barplot(c(mean(list[,1]),mean(list[,2]),mean(list[,3]),mean(list[,4])),col = c("red","blue","black","pink"), names.arg = c("Crem.","Liom.","Other","Vacant"))

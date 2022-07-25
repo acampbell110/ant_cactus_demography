@@ -2,7 +2,8 @@
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
-
+## load in the cleaned data product created by Create_Clean_Data_Script.R
+cactus<-read.csv("Data Analysis/cholla_demography_20042019_cleaned.csv")
 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
@@ -24,36 +25,41 @@ y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
 
 
 ## -------- read in MCMC output ---------------------- ##
+#Ali
+mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#Tom
+mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 
 ##These files contain all draws from the posterior distributions of all parameters
-grow.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs.csv", header = TRUE,stringsAsFactors=T)    
-surv.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_outputs.csv", header = TRUE,stringsAsFactors=T)    
-flow.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_trunc_outputs.csv", header = TRUE,stringsAsFactors=T)    
-viab.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab_outputs.csv", header = TRUE,stringsAsFactors=T)    
-repro.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro_outputs.csv", header = TRUE,stringsAsFactors=T)    
-seed.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_outputs.csv", header = TRUE,stringsAsFactors=T)    
-pre.seed.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed_surv_outputs.csv", header = TRUE,stringsAsFactors=T)    
-germ1.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ1_outputs.csv", header = TRUE,stringsAsFactors=T)    
-germ2.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ2_outputs.csv", header = TRUE,stringsAsFactors=T)    
-rec.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/rec_outputs.csv", header = TRUE,stringsAsFactors=T)    
+grow.params <- read.csv(paste0(mcmc_dir,"grow_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+surv.params <- read.csv(paste0(mcmc_dir,"surv_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+flow.params <- read.csv(paste0(mcmc_dir,"flow_trunc_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+viab.params <- read.csv(paste0(mcmc_dir,"viab_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+repro.params <- read.csv(paste0(mcmc_dir,"repro_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+seed.params <- read.csv(paste0(mcmc_dir,"seed_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+pre.seed.params <- read.csv(paste0(mcmc_dir,"seed_surv_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+germ1.params <- read.csv(paste0(mcmc_dir,"germ1_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+germ2.params <- read.csv(paste0(mcmc_dir,"germ2_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+rec.params <- read.csv(paste0(mcmc_dir,"rec_outputs.csv"), header = TRUE,stringsAsFactors=T)    
 Ndraws<-min(100,nrow(grow.params))
+draws<-sample(nrow(grow.params),Ndraws)
 
 ## Pull the random draws from all posterior distributions
-grow.params<-grow.params[1:Ndraws,]
-surv.params<-surv.params[1:Ndraws,]
-flow.params<-flow.params[1:Ndraws,]
-viab.params<-viab.params[1:Ndraws,]
-repro.params<-repro.params[1:Ndraws,]
-seed.params<-seed.params[1:Ndraws,]
-pre.seed.params<-pre.seed.params[1:Ndraws,]
-germ1.params<-germ1.params[1:Ndraws,]
-germ2.params<-germ2.params[1:Ndraws,]
-rec.params<-rec.params[1:Ndraws,]
+grow.params<-grow.params[draws,]
+surv.params<-surv.params[draws,]
+flow.params<-flow.params[draws,]
+viab.params<-viab.params[draws,]
+repro.params<-repro.params[draws,]
+seed.params<-seed.params[draws,]
+pre.seed.params<-pre.seed.params[draws,]
+germ1.params<-germ1.params[draws,]
+germ2.params<-germ2.params[draws,]
+rec.params<-rec.params[draws,]
 
 ##This file contains random draws from the posterior distributions of the transition models 
-multi.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/multi_outputs.csv", header = TRUE,stringsAsFactors=T)
+multi.params <- read.csv(paste0(mcmc_dir,"multi_outputs.csv"), header = TRUE,stringsAsFactors=T)
 ## Pull the random draws from all posterior distributions
-multi.params<-multi.params[1:Ndraws,]
+multi.params<-multi.params[draws,]
 
 ## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
 ## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
@@ -170,10 +176,7 @@ params$rec_beta0<-rec.params$beta0        ## Rec intercept
 params$rec_sig<-rec.params$sigma         ## Rec error
 
 ##-------------------------Transition Parameters-------------------##
-multi.params <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/multi_outputs.csv", header = TRUE,stringsAsFactors=T)
-## Pull the random draws from all posterior distributions
-multi.params<-multi.params[1:Ndraws,]
-##########################################
+
 ## Prev Vac
 params$multi_betavv <- multi.params$beta.1.1
 params$multi_betavo <- multi.params$beta.1.2

@@ -67,9 +67,30 @@ lams$scenario <- c("No Ants","Crem & Vacant","Liom & Vacant","Other & Vacant",
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_means.png")
 plot(lams$means, col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"), 
-     pch = 20, cex = 3, xlim = c(0,20),
+     pch = 20, cex = 4,
+     xaxt = "n",
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Lambdas by Ant Scenario")
-legend("topright",legend = lams$scenario, fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"))
+#legend("topright",legend = lams$scenario, fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"))
+#axis(1, at = c(1,2,3,4,5,6,7,8),labels = lams$scenario, srt = 45)
+#axis(side = 1, labels = FALSE)
+# text(seq(1, 8, by=1), par("usr")[3] - 0.2, labels = lams$scenario, srt = 45, pos = 1, xpd = TRUE)
+text(x = 1:length(lams$scenario),
+     ## Move labels to just below bottom of chart.
+     y = par("usr")[3],
+     ## Use names from the data list.
+     labels = (lams$scenario),
+     ## Change the clipping region.
+     xpd = NA,
+     ## Rotate the labels by 35 degrees.
+     srt = 35,
+     ## Adjust the labels to almost 100% right-justified.
+     adj = 0.965,
+     ## Increase label size.
+     cex = 1.2)
+dev.off()
+
+png("lambda_means.png")
+  ggplot(data = lams)
 dev.off()
 
 
