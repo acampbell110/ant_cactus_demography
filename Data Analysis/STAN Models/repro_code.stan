@@ -21,7 +21,7 @@ parameters {
 transformed parameters{
   vector[N] mu; //linear predictor for the mean
   for(i in 1:N){
-    mu[i] = beta0 + beta1 * vol[i];// + u[plot[i]] + w[year[i]];
+    mu[i] = beta0 + beta1 * vol[i] + u[plot[i]] + w[year[i]];
   }
 }
 model {

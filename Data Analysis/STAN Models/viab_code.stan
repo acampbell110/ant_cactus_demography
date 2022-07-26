@@ -11,10 +11,9 @@ data {
   int<lower=1, upper=N_Year> year[N]; // year
 }
 parameters {
-  //real beta0;
+  matrix[K,N_Year] w; 
   vector[K] beta0; // intercept of probability of viability for each bud
   vector[N_Plot] u; //subject intercepts
-  vector[N_Year] w; //item intercepts
   real < lower = 0 > sigma; // Error SD
   real < lower = 0 > sigma_u; // plot SD
   real < lower = 0 > sigma_w; // year SD
@@ -23,20 +22,22 @@ transformed parameters{
   vector[N] mu; //linear predictor for the mean
     // Prediction for seed viability
   for(i in 1:N){
-    mu[i] = beta0[ant[i]];// + u[plot[i]] + w[year[i]];
+    mu[i] = beta0[ant[i]] + u[plot[i]] + w[ant[i],year[i]];
   }
 }
 model {
-  // Priors
-  beta0 ~ normal(0,100); // intercept distribution
-  //Model Statements
-  u ~ normal(0, sigma_u); // plot random effects
-  w ~ normal(0, sigma_w); // year random effects
-  
+  //Priors
+ u ~ normal(0, sigma_u); // plot random effects
+ for(i in 1:K){
+   w[i,] ~ normal(0,sigma_w);
+ } 
+ sigma ~ normal(0,1);
+ beta0 ~ normal(0,sigma); // intercept distribution
+
   good ~ binomial_logit(tot, mu);
 }
-generated quantities {
-  int<lower = 0> y_rep[N] = binomial_rng(tot , inv_logit(mu));
-  real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
-  real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
-}
+// generated quantities {
+//   int<lower = 0> y_rep[N] = binomial_rng(tot , inv_logit(mu));
+//   real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
+//   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
+// }

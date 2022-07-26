@@ -16,6 +16,7 @@ parameters {
   vector[K] beta1; //interaction beta
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
+  matrix[K,N_Year] w; 
   //real < lower = 0 > sigma; // Error SD
   real d_0; // Error intercept
   real d_size; // Error size
