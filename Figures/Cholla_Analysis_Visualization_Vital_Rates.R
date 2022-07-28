@@ -16,13 +16,11 @@ vaccol <- "#F8B660"
 
 str(cactus)
 ##### Size variable used in most visualizations
-size_dummy <- seq(min(cactus$logsize_t, na.rm = TRUE), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
+size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
 
 #######################################################################################################
 #### Hypotheses #######################################################################################
 #######################################################################################################
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-
 barplot(c(0.1014,0.06296,0.1265,0.09043), col = c(othercol, cremcol, liomcol, vaccol), names.arg = c("Other","Crem.","Liom.","Vacant"),
         ylab = "Herbivory Prob.", main = "Proportion of Plants with Evidence of Herbivory")
 #### Sampling Effect
@@ -693,7 +691,6 @@ survival_data_orig <- cactus[,c("Plot","Year_t","Survival_t1","ant_t","logsize_t
 survival_data <- na.omit(survival_data_orig)
 #extract from original ddata
 surv_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_outputs.csv", header = TRUE,stringsAsFactors=T)
-surv_out_ant <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_outputs_ant_only.csv", header = TRUE,stringsAsFactors=T)
 ## Create subsets for each ant species
 y_crem_subset_surv <- subset(survival_data, ant_t == "crem")
 y_liom_subset_surv <- subset(survival_data, ant_t == "liom")
@@ -771,9 +768,9 @@ mean(invlogit(surv_out_ant$beta0.3)) ## Crem
 mean(invlogit(surv_out_ant$beta0.4)) ## Liom
 ## Panel Plots
 png("surv_panels.png")
-par(mar=c(2,2,2,2))
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(1.2,2,2), widths = c(4,4,4))
+              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
 plot.new()
 text(0.5,0.25,"Survival Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
 # Crem
@@ -819,9 +816,9 @@ mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.1,las=0)
 dev.off()
 
 png("surv_panels_cropped.png")
-par(mar=c(2,2,2,2))
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(1.2,2,2), widths = c(4,4,4))
+              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
 plot.new()
 text(0.5,0.25,"Survival Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
 # Crem
