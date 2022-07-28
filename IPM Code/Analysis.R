@@ -63,22 +63,25 @@ lams <- as.data.frame(rep(NA,8))
 lams$means <- c(0.9344461,0.9369948,0.9348296,0.9361773,0.9369632,0.9365571,0.9382092,0.9388964)
 lams$scenario <- c("No Ants","Crem & Vacant","Liom & Vacant","Other & Vacant",
                     "Liom & Crem & Vacant", "Liom & Other & Vacant", "Other & Crem & Vacant", "All Ants")
-
+lams$scenario_abv <- c("V","C,V","L,V","O,V","L,C,V","L,O,V","O,C,V","All")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_means.png")
 plot(lams$means, col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"), 
-     pch = 20, cex = 4,
+     pch = 20, cex = 4, ylim = c(0.933,0.94), xlim = c(0.5,length(lams$scenario)),
      xaxt = "n",
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Lambdas by Ant Scenario")
-#legend("topright",legend = lams$scenario, fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"))
-#axis(1, at = c(1,2,3,4,5,6,7,8),labels = lams$scenario, srt = 45)
-#axis(side = 1, labels = FALSE)
+# text(x = 1:length(lams$scenario)-0.2, y = lams$means +.0006, 
+#      labels = lams$scenario_abv,
+#      srt = 35)
+# legend("topright",legend = lams$scenario, fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"))
+# axis(1, at = c(1,2,3,4,5,6,7,8),labels = lams$scenario, srt = 45)
+# axis(side = 1, labels = FALSE)
 # text(seq(1, 8, by=1), par("usr")[3] - 0.2, labels = lams$scenario, srt = 45, pos = 1, xpd = TRUE)
 text(x = 1:length(lams$scenario),
      ## Move labels to just below bottom of chart.
-     y = par("usr")[3],
+     y = 0.932,#par("usr")[3]-0.1,
      ## Use names from the data list.
-     labels = (lams$scenario),
+     labels = (lams$scenario_abv),
      ## Change the clipping region.
      xpd = NA,
      ## Rotate the labels by 35 degrees.
@@ -89,9 +92,7 @@ text(x = 1:length(lams$scenario),
      cex = 1.2)
 dev.off()
 
-png("lambda_means.png")
-  ggplot(data = lams)
-dev.off()
+
 
 
 

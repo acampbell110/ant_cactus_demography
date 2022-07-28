@@ -1,9 +1,10 @@
 ## -------- set working directory ---------------------- ##
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
 ## load in the cleaned data product created by Create_Clean_Data_Script.R
-cactus<-read.csv("Data Analysis/cholla_demography_20042019_cleaned.csv")
+cactus<-read.csv("Data Analysis/cholla_demography_20042021_cleaned.csv")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
