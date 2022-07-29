@@ -70,7 +70,8 @@ params<-params[,-1]
 ## Check the names of the parameters
 #head(grow.params)
 #### No specific ant
-params$grow_sig<-grow.params$sigma			    ## growth error
+params$grow_sig0 <- grow.params$d_0           ## growth error intercept
+params$grow_sig1 <- grow.params$d_size        ## ## growth error size
 params$grow_sig_u<-grow.params$sigma_u
 params$grow_sig_w<-grow.params$sigma_w
 ####Ant 1 (vacant)
