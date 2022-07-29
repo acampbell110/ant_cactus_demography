@@ -11,21 +11,21 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 #GROWTH FROM SIZE X TO Y
 gxy<-function(x,y,i,params){
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb,sd=mean(params$grow_sig))
-  g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb,sd=mean(params$grow_sig))
-  g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb,sd=mean(params$grow_sig))
-  g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb,sd=mean(params$grow_sig))
+  g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
   if(i == "other"){ return(g_other)}
   if(i == "vacant"){ return(g_vac)}
 }
 
+
 ##Check that it works properly
 i = c("vacant","crem","liom","other")
-x = c(10,10,10,10)
-y = c(11,11,11,11)
-g <- matrix(NA,ncol = length(i), nrow = 100)
+x = c(1,1,1,1)
+y = c(1,1,1,1)
 g <- vector()
   for(n in seq(1:length(i))){
     g[n] <- gxy(x[n],y[n],i[n],params)
@@ -47,7 +47,7 @@ sx<-function(x,i,params){
   if(i == "other"){ return(s_other)}
   if(i == "vacant"){ return(s_vac)}
 }
-sx(2,"crem",params)
+
 ##Check that it works properly <---it does not
 i = c("liom","vacant","crem","other")
 x = c(5,5,5,5)
@@ -72,14 +72,19 @@ pxy<-function(x,y,i,params){
 i = c("liom","vacant","crem","other")
 x = c(5,5,5,5)
 y = c(6,6,6,6)
-p <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-px <- matrix(NA,ncol = length(i), nrow = (Ndraws))
 p<- vector()
+g <- vector()
+s <- vector()
   for(n in 1:length(i)){
+    xb = pmin(pmax(x[n],cholla_min),cholla_max)
+    s[n] <- sx(x[n], i[n], params)
+    g[n] <- gxy(x[n], y[n], i[n], params)
     p[n] <- pxy(x[n],y[n],i[n], params)
-    }
-
+  }
+g
+s
 p
+
 
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
@@ -326,18 +331,17 @@ transition.2<-function(x, i, j, params,scenario){
 
 ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
 
-transition.3(2,"liom","vacant",params,"liomvacother")
 ## Check if it works
 i = c("liom","vacant","other","other")
 j = c("vacant","liom","other","liom")
 x = c(15,15,15,15)
 y = c(-1,-4,4.5,3.01)
 scenario = "liomvacother"
-t3 <- vector()
+t2 <- vector()
 for(n in 1:length(i)){
-  t3[n] <- transition.3(x[n],i[n],j[n],params,scenario)
+  t2[n] <- transition.2(x[n],i[n],j[n],params,scenario)
 }
-t3
+t2
 
 
 #######################################################
@@ -415,26 +419,45 @@ t3
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE 
 transition.x <- function(x,i,j,num_ants,params,scenario){
-  ifelse(num_ants == 2, transition.2(x,i,j,params,scenario),
-        ifelse(num_ants == 3, transition.3(x,i,j,params,scenario),
-                transition.4(x,i,j,params)))
+  ifelse( num_ants == 1, transition.1(x,i,j,params,scenario), 
+          ifelse( num_ants == 2, transition.2(x,i,j,params,scenario),
+                  transition.3(x,i,j,params)))
 }
 
-transition.x(2,"crem","liom",4,params,"all")
-transition.4(2,"crem","liom",params)
 ## Check if it works
-i = c("liom","vacant","crem","other")
-j = c("vacant","crem","crem","liom")
+i = c("liom","vacant","liom","vacant")
+j = c("vacant","liom","liom","liom")
 x = c(-1,-5,4,3)
 y = c(-1,-4,4.5,3.01)
 scenario = "all"
-num_ants = length(unique(i))
+num_ants = 3
 t <- vector()
 for(n in 1:length(i)){
-  t[n] <- transition.x(x[n],i[n],j[n],4,params,"all")
+  t[n] <- transition.x(x[n],i[n],j[n],3,params,scenario)
 }
 t
-
+i = c("liom","vacant","liom","vacant")
+j = c("vacant","liom","liom","liom")
+x = c(-1,-5,4,3)
+y = c(-1,-4,4.5,3.01)
+scenario = "liomcremvac"
+num_ants = 2
+t <- vector()
+for(n in 1:length(i)){
+  t[n] <- transition.x(x[n],i[n],j[n],3,params,scenario)
+}
+t
+i = c("liom","vacant","liom","vacant")
+j = c("vacant","liom","liom","liom")
+x = c(-1,-5,4,3)
+y = c(-1,-4,4.5,3.01)
+scenario = "liomvac"
+num_ants = 1
+t <- vector()
+for(n in 1:length(i)){
+  t[n] <- transition.x(x[n],i[n],j[n],3,params,scenario)
+}
+t
 
 #####################################################
 #GROWTH*SURVIVAL*ANT PROBABILITIES
@@ -447,33 +470,17 @@ ptxy <- function(x,y,i,j,num_ants,params,scenario){
   return(p)
 }
 
-ptxy(2,4,"crem","vacant",2,params,"cremvac")
-
-outer(
-  y,y,
-  ptxy, "crem","vacant",2,params,"cremvac"
-)
-
 ## Check if it works
 i = c("liom","vacant","crem","other")
 j = c("vacant","crem","crem","liom")
 x = c(-1,-5,4,3)
 y = c(-1,-4,4.5,3.01)
-num_ants = length(unique(i))
+num_ants = 3
 scenario = "all"
 pt <- vector()
-s <- vector()
-g <- vector()
-t <- vector()
 for(n in 1:length(i)){
-  s[n] <- sx(x[n],i[n],params)
-  g[n] <- gxy(x[n],y[n],i[n],params)
-  t[n] <- transition.x(x[n],i[n],j[n],num_ants,params,scenario)
-  pt[n] <- ptxy(x[n],y[n],i[n],j[n],4,params,scenario)
+  pt[n] <- ptxy(x[n],y[n],i[n],j[n],num_ants,params,scenario)
 }
-s
-g
-t
 pt
 
 
@@ -525,7 +532,7 @@ i = c("vacant","vacant")
 j = c("vacant","vacant")
 big1 <- list()
 for(n in 1:length(i)){
-  big1[[n]] <- bigmatrix.1(params,lower,upper,matsize,1)
+  big1[[n]] <- bigmatrix.1(params,lower,upper,matsize,1,"vacant")
 }
 big1
 
@@ -629,10 +636,10 @@ bigmatrix.2 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
       }
 }
 
-bigmatrix.2(params,lower,upper,matsize,2,"liom","vacant","liomvac")
+bigmatrix.2(params,lower,upper,matsize,1,"liom","vacant","liomvac")
 
 
-num_ants = 2
+num_ants = 1
 i = c("liom","vacant","other","crem")
 j = c("vacant","other","vacant","vacant")
 scenario <- c("liomvac","othervac","othervac","cremvac")
@@ -773,9 +780,9 @@ bigmatrix.3 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
 ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
 
 
-bigmatrix.3(params,lower,upper,matsize,3,"liom","liom","liomcremvac")
-bigmatrix.3(params,lower,upper,matsize,3,"vacant","vacant","liomvacother")
-bigmatrix.3(params,lower,upper,matsize,3,"other","crem","othercremvac")
+bigmatrix.3(params,lower,upper,matsize,2,"liom","liom","liomcremvac")
+bigmatrix.3(params,lower,upper,matsize,2,"vacant","vacant","liomvacother")
+bigmatrix.3(params,lower,upper,matsize,2,"other","crem","othercremvac")
 
 
 
@@ -863,7 +870,7 @@ bigmatrix.4 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
     return(lambda)
 }
 
-bigmatrix.4(params,lower,upper,matsize,4,"vacant","vacant","all")
+bigmatrix.4(params,lower,upper,matsize,3,"vacant","vacant","all")
 
 
 
@@ -880,35 +887,40 @@ bigmatrix<-function(params,lower,upper,matsize,num_ants,i,j,scenario){
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
-  if(num_ants == 1){
-    lambda = bigmatrix.1(params,lower,upper,matsize,num_ants)
+  if(num_ants == 0){
+    lambda = bigmatrix.1(params,lower,upper,matsize,num_ants,i)
     return(lambda)
   }
-  if(num_ants == 2){
+  if(num_ants == 1){
     lambda = bigmatrix.2(params,lower,upper,matsize,num_ants,i,j,scenario)
     return(lambda)
   }
-  if(num_ants == 3){
+  if(num_ants == 2){
     lambda = bigmatrix.3(params,lower,upper,matsize,num_ants,i,j,scenario)
     return(lambda)
   }
-  if(num_ants == 4){
+  if(num_ants == 3){
     lambda = bigmatrix.4(params,lower,upper,matsize,num_ants,i,j,scenario)
     return(lambda)
   }
 } 
 ## One ant option
-bigmatrix(params, lower, upper, matsize, 1,"vacant","vacant","none")
-bigmatrix.1(params, lower, upper, matsize, 1)
+bigmatrix(params,lower,upper,matsize,0,i = "vacant",j = "vacant","none")
+bigmatrix.1(params,lower,upper,matsize,0,"vacant")
 ## 2 ant options
-bigmatrix(params,lower,upper,matsize,2,"crem","vacant","cremvac")
-bigmatrix.2(params,lower,upper,matsize,2,"crem","vacant","cremvac")
+bigmatrix(params,lower,upper,matsize,1,"crem","vacant","cremvac")
+bigmatrix.2(params,lower,upper,matsize,1,"liom","vacant","liomvac")
 ## 3 ant options
-bigmatrix(params,lower,upper,matsize,3,"crem","vacant","liomcremvac")
-bigmatrix.3(params,lower,upper,matsize,3,"crem","vacant","liomcremvac")
+bigmatrix(params,lower,upper,matsize,2,"crem","vacant","liomcremvac")
+bigmatrix.3(params,lower,upper,matsize,2,"crem","vacant","liomcremvac")
 ## all ant options
-bigmatrix(params,lower,upper,matsize,4,"crem","vacant","all")
-bigmatrix.4(params,lower,upper,matsize,4,"crem","vacant","all")
+bigmatrix(params,lower,upper,matsize,3,"crem","vacant","all")
+bigmatrix.4(params,lower,upper,matsize,3,"crem","vacant","all")
+
+## num_ants = 0 ----> no transitions (associated with bigmatrix1)
+## num_ants = 1 ----> one transition (one ant and vacant) (associated with bigmatrix2)
+## num_ants = 2 ----> two transitions (two ants and vacant) (associated with bigmatrix3)
+## num_ants = 3 ----> three transitions (three ants and vacant) (associated with bigmatrix4)
 
 
 
