@@ -34,7 +34,7 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
 )
 ########## growth model includes sd variance across size and year as a random effect
 fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
+grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u","sigma"))
 grow_yrep <- rstan::extract(fit_grow, pars = c("mu"))$mu
 grow_sigma <- rstan::extract(fit_grow, pars = c("sigma"))$sigma
 write.csv(grow_outputs, "grow_outputs.csv")
