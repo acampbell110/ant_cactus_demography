@@ -562,6 +562,9 @@ filled.contour(x,y,other, xlab = "",ylab = "", main = "Other Tended",col = gray.
 ## Vacant
 filled.contour(x,y,crem, xlab = "",ylab = "", main = " Not Tended",col = gray.colors(24, start =1, end = 0))
 
+
+x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
+y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), length = 25); # five rows
 ## Contour plots
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("grow_contour_lines.png")
@@ -575,6 +578,7 @@ contour(x,y,crem, nlevels = 7
         , xlim = c(2,10), ylim = c(0,10)
         , col = gray.colors(10, start =1, end = 0))
 lines(size_crem, y_crem_mean_grow, col = cremcol, lwd = 3)
+points(y_crem_subset_grow$logsize_t,y_crem_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
 ## Liom
 contour(x,y,liom, nlevels = 8
         , xlim = c(2,10), ylim = c(0,10)
