@@ -8,13 +8,16 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 
 ## ----------- Vital rate functions. Parameter indices are hard-coded and must correspond to rows of MCMC matrix ------------- ##
 ##############################################
-#GROWTH FROM SIZE X TO Y
+#GROWTH FROM SIZE X TO Y. Returns the probability of growth from size x to y based on ant state
 gxy<-function(x,y,i,params){
-  xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+  xb=pmin(pmax(x,cholla_min),cholla_max) 
+  #Density probability function which uses the parameters that are ant specific 
   g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
   g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
   g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
   g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb,sd=abs(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
   if(i == "other"){ return(g_other)}
@@ -30,18 +33,20 @@ g <- vector()
   for(n in seq(1:length(i))){
     g[n] <- gxy(x[n],y[n],i[n],params)
   }
-
 g
 
 
 #################################################
-#SURVIVAL AT SIZE X.
+#SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state
 sx<-function(x,i,params){
+  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
+  #Transform the ant specific parameters to the probability of survival
   s_crem = invlogit(mean(params$surv_beta03) + mean(params$surv_beta13)*xb)
   s_vac = invlogit(mean(params$surv_beta01) + mean(params$surv_beta11)*xb)
   s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb)
   s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb)
+  #Return the survival probabilities
   if(i == "crem"){ return(s_crem)}
   if(i == "liom"){ return(s_liom)}
   if(i == "other"){ return(s_other)}
@@ -56,13 +61,13 @@ s<- vector()
   for(n in seq(1:length(i))){
     s[n] <- sx(x[n],i[n],params)
   }
-
 s
 
 
 #################################################
-#SURVIVAL*GROWTH
+#SURVIVAL*GROWTH. Combine the survival and growth probabilities
 pxy<-function(x,y,i,params){
+  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
   pxy = sx(xb,i,params)*gxy(xb,y,i,params)
   return(pxy)
@@ -89,17 +94,19 @@ p
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
 fx<-function(x,i,params){
+  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
-  p.flow<-invlogit(mean(repro.params$beta0) + mean(repro.params$beta1)*xb)    ## Probability of Reproducing
-  nflow<-exp(mean(params$flow_beta0) + mean(params$flow_beta1)*xb)          ## Number of FLowers produced
-  flow.surv_crem<-invlogit(mean(params$viab_beta01)) ## Proportion of Flowers survive to fruit
-  flow.surv_vac<-invlogit(mean(params$viab_beta04)) ## Proportion of Flowers survive to fruit
-  flow.surv_other<-invlogit(mean(params$viab_beta03)) ## Proportion of Flowers survive to fruit
-  flow.surv_liom<-invlogit(mean(params$viab_beta02)) ## Proportion of Flowers survive to fruit
-  seeds.per.fruit_crem<-mean(params$seed_beta01)                     ## Number of Seeds per Fruit
-  seeds.per.fruit_liom<-mean(params$seed_beta02)                     ## Number of Seeds per Fruit
-  seeds.per.fruit_vac<-mean(params$seed_beta03)                     ## Number of Seeds per Fruit
-  seed.survival<-invlogit(mean(params$preseed_beta0))^2           ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
+  p.flow<-invlogit(mean(params$repro_beta0) + mean(params$repro_beta1)*xb)      ## Probability of Reproducing
+  nflow<-exp(mean(params$flow_beta0) + mean(params$flow_beta1)*xb)      ## Number of FLowers produced
+  flow.surv_crem<-invlogit(mean(params$viab_beta01))      ## Proportion of Flowers survive to fruit
+  flow.surv_vac<-invlogit(mean(params$viab_beta04))       ## Proportion of Flowers survive to fruit
+  flow.surv_other<-invlogit(mean(params$viab_beta03))       ## Proportion of Flowers survive to fruit
+  flow.surv_liom<-invlogit(mean(params$viab_beta02))      ## Proportion of Flowers survive to fruit
+  seeds.per.fruit_crem<-mean(params$seed_beta01)      ## Number of Seeds per Fruit
+  seeds.per.fruit_liom<-mean(params$seed_beta02)      ## Number of Seeds per Fruit
+  seeds.per.fruit_vac<-mean(params$seed_beta03)     ## Number of Seeds per Fruit
+  seed.survival<-invlogit(mean(params$preseed_beta0))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
+  #Calculate the fecundity probabilities by ant species
   f_crem = p.flow*nflow*flow.surv_crem*seeds.per.fruit_crem*seed.survival
   f_vac = p.flow*nflow*flow.surv_vac*seeds.per.fruit_vac*seed.survival
   f_other = p.flow*nflow*flow.surv_other*seeds.per.fruit_vac*seed.survival
@@ -123,9 +130,11 @@ f
 
 
 #####################################################
-#### Recruitment
+#### Recruitment. Calculate the probability of a recruit being a certain size y
 recruits<-function(y,params){
+  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   yb=pmin(pmax(y,cholla_min),cholla_max)
+  ## Calculate the probability and return it
   dnorm(yb, mean(params$rec_beta0),mean(params$rec_sig))
 }
 ## Check if it works
@@ -140,33 +149,26 @@ for(n in 1:length(i)){
 r
 
 
-
-####################################################
-beta<-function(vac_rec){
-  ifelse(vac_rec == TRUE, return(0), return(1))
-}
-
-## Check if it works
-beta(FALSE)
-
-
-
 ######################################################
-#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (OCC VS VAC)
+#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE. One ant option
 transition.1<-function(x, i, j,params, scenario){
+  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
   ## Crem and Vac
   if(scenario == "cremvac"){
-    ## Previously tended by None
+    #Denom of previously tended by None
     Denominator_vac <- exp(mean(params$multi_betavv) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betavc) + xb*mean(params$multi_betac))
+    #Calculate the probabilities by next ant state
     vac_vac = exp(mean(params$multi_betavv) + xb*mean(params$multi_betav))/Denominator_vac
     vac_crem = exp(mean(params$multi_betavc) + xb*mean(params$multi_betac))/Denominator_vac
-    ## Previously tended by Crem
+    #Denom of previously tended by Crem
     Denominator_crem <- exp(mean(params$multi_betacv) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betacc) + xb*mean(params$multi_betac))
+    #Calculate the probabilities by next ant state
     crem_vac = exp(mean(params$multi_betacv) + xb*mean(params$multi_betav))/Denominator_crem
     crem_crem = exp(mean(params$multi_betacc) + xb*mean(params$multi_betac))/Denominator_crem
+    #Return them
     if(i == "crem" & j == "crem"){return(crem_crem)}
     if(i == "crem" & j == "vacant"){return(crem_vac)}
     if(i == "vacant" & j == "crem"){return(vac_crem)}
@@ -174,16 +176,19 @@ transition.1<-function(x, i, j,params, scenario){
   }
   ## Liom and Vac
   if(scenario == "liomvac"){
-    ## Previously tended by None
+    #Denom of previously tended by None
     Denominator_vac <- exp(mean(params$multi_betavv) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betavl) + xb*mean(params$multi_betal))
+    #Calculate the probabilities by next ant state
     vac_vac = exp(mean(params$multi_betavv) + xb*mean(params$multi_betav))/Denominator_vac
     vac_liom = exp(mean(params$multi_betavl) + xb*mean(params$multi_betal))/Denominator_vac
-    ## Previously tended by Liom
+    #Denom of previously tended by Liom
     Denominator_liom <- exp(mean(params$multi_betalv) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betall) + xb*mean(params$multi_betal))
+    #Calculate the probabilities by next ant state
     liom_vac = exp(mean(params$multi_betalv) + xb*mean(params$multi_betav))/Denominator_liom
     liom_liom = exp(mean(params$multi_betall) + xb*mean(params$multi_betal))/Denominator_liom
+    #Return the probabilities
     if(i == "liom" & j == "liom"){return(liom_liom)}
     if(i == "liom" & j == "vacant"){return(liom_vac)}
     if(i == "vacant" & j == "liom"){return(vac_liom)}
@@ -191,16 +196,19 @@ transition.1<-function(x, i, j,params, scenario){
   }
   ## Other and Vac
   if(scenario == "othervac"){
-    ## Previously tended by None
+    #Denom of previously tended by None
     Denominator_vac <- exp(mean(params$multi_betavv) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betavo) + xb*mean(params$multi_betao))
+    #Calculate the probabilities by next ant state
     vac_vac = exp(mean(params$multi_betavv) + xb*mean(params$multi_betav))/Denominator_vac
     vac_other = exp(mean(params$multi_betavo) + xb*mean(params$multi_betao))/Denominator_vac
-    ## Previously tended by Liom
+    #Denom of previously tended by Liom
     Denominator_other <- exp(mean(params$multi_betaov) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betaoo) + xb*mean(params$multi_betao))
+    #Calculate the probabilities by next ant state
     other_vac = exp(mean(params$multi_betaov) + xb*mean(params$multi_betav))/Denominator_other
     other_other = exp(mean(params$multi_betaoo) + xb*mean(params$multi_betao))/Denominator_other
+    #Return the probabilities
     if(i == "other" & j == "other"){return(other_other)}
     if(i == "other" & j == "vacant"){return(other_vac)}
     if(i == "vacant" & j == "other"){return(vac_other)}
@@ -209,8 +217,10 @@ transition.1<-function(x, i, j,params, scenario){
 }
 
 ## Scenario options == "othervac", "liomvac", "cremvac"
-
 transition.1(15,"vacant","liom",params,scenario = "liomvac")
+transition.1(15,"vacant","other",params,scenario = "othervac")
+transition.1(15,"vacant","crem",params,scenario = "cremvac")
+
 ## Check if it works
 i = c("liom","vacant")
 j = c("vacant","vacant")
@@ -229,21 +239,23 @@ t1
 transition.2<-function(x, i, j, params,scenario){
   xb=pmin(pmax(x,cholla_min),cholla_max)
   ## Liom, Vac, Other
-  ## Previously tended by None
+  #Denom of previously tended by None
   if(scenario == "liomvacother"){
     Denominator_vac <- exp(mean(params$multi_betavv) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betavl) + xb*mean(params$multi_betal)) + 
       exp(mean(params$multi_betavo) + xb*mean(params$multi_betao))
+    #Calculate the probabilities by next ant state
     vac_vac = exp(mean(params$multi_betavv) + xb*mean(params$multi_betav))/Denominator_vac
     vac_liom = exp(mean(params$multi_betavl) + xb*mean(params$multi_betal))/Denominator_vac
     vac_other = exp(mean(params$multi_betavo) + xb*mean(params$multi_betao))/Denominator_vac
-    ## Previously tended by Liom
+    #Denom of previously tended by Liom
     Denominator_liom <- exp(mean(params$multi_betalv) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betall) + xb*mean(params$multi_betal)) + 
       exp(mean(params$multi_betalo) + xb*mean(params$multi_betao))
-      liom_vac = exp(mean(params$multi_betalv) + xb*mean(params$multi_betav))/Denominator_liom
-      liom_liom = exp(mean(params$multi_betall) + xb*mean(params$multi_betal))/Denominator_liom
-      liom_other = exp(mean(params$multi_betalo) + xb*mean(params$multi_betao))/Denominator_liom
+    #
+    liom_vac = exp(mean(params$multi_betalv) + xb*mean(params$multi_betav))/Denominator_liom
+    liom_liom = exp(mean(params$multi_betall) + xb*mean(params$multi_betal))/Denominator_liom
+    liom_other = exp(mean(params$multi_betalo) + xb*mean(params$multi_betao))/Denominator_liom
     ## Previously tended by Other
     Denominator_other <- exp(mean(params$multi_betaov) + xb*mean(params$multi_betav)) + 
       exp(mean(params$multi_betaol) + xb*mean(params$multi_betal)) + 
@@ -495,6 +507,7 @@ bigmatrix.1 <- function(params,lower,upper,matsize,num_ants,i){
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
+  #Applying the midpoint rule
   n<-matsize
   L<-lower; U<-upper
   h<-(U-L)/n                   #Bin size
@@ -520,16 +533,15 @@ bigmatrix.1 <- function(params,lower,upper,matsize,num_ants,i){
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i,params))*h 
   # Put it all together
   IPMmat<-Fmat+Tmat  
-  #return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
-  lambda = Re(eigen(IPMmat)$values[1])
-  return(lambda)
+  return(list(IPMmat=IPMmat, Fmat=Fmat, Tmat=Tmat))
+  #lambda = Re(eigen(IPMmat)$values[1])
+  #return(lambda)
 }
 
 bigmatrix.1(params,lower,upper,matsize,1,"vacant")
 
 ## Check that it works
 i = c("vacant","vacant")
-j = c("vacant","vacant")
 big1 <- list()
 for(n in 1:length(i)){
   big1[[n]] <- bigmatrix.1(params,lower,upper,matsize,1,"vacant")
