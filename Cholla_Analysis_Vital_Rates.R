@@ -34,7 +34,7 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
 )
 ########## growth model includes sd variance across size and year as a random effect
 fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u","sigma"))
+grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
 grow_yrep <- rstan::extract(fit_grow, pars = c("mu"))$mu
 grow_sigma <- rstan::extract(fit_grow, pars = c("sigma"))$sigma
 write.csv(grow_outputs, "grow_outputs.csv")
@@ -470,7 +470,7 @@ stan_data_seed_surv <- list(N = nrow(precensus.dat),
                             y = precensus.dat$survive0405)
 
 ## Run the model
-fit_seed_surv <- stan(file = "Data Analysis/STAN Models/seed_surv_code.stan", data = stan_data_seed_surv, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
+fit_seed_surv <- stan(file = "Data Analysis/STAN Models/seed_surv_code.stan", data = stan_data_seed_surv, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
 seed_surv_outputs <- rstan::extract(fit_seed_surv, pars = c("beta0","w","sigma_w","sigma"))
 seed_surv_yrep <- rstan::extract(fit_seed_surv, pars = c("y_rep"))$y_rep
 write.csv(seed_surv_outputs, "seed_surv_outputs.csv")
