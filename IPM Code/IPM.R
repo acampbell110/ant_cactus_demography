@@ -36,10 +36,10 @@ sx<-function(x,i,params){
   s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb)
   s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb)
   #Return the survival probabilities
-  if(i == "crem"){ return(s_crem)}
-  if(i == "liom"){ return(s_liom)}
-  if(i == "other"){ return(s_other)}
-  if(i == "vacant"){ return(s_vac)}
+  if(i == "crem"){ return(1)}
+  if(i == "liom"){ return(1)}
+  if(i == "other"){ return(1)}
+  if(i == "vacant"){ return(1)}
 }
 
 
@@ -84,9 +84,10 @@ fx<-function(x,i,params){
 #### Recruitment. Calculate the probability of a recruit being a certain size y
 recruits<-function(y,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  yb=pmin(pmax(y,cholla_min),cholla_max)
+  #yb=pmin(pmax(y,cholla_min),cholla_max)
   ## Calculate the probability and return it
-  dnorm(yb, mean(params$rec_beta0),mean(params$rec_sig))
+  #dnorm(yb, mean(params$rec_beta0),mean(params$rec_sig))
+  dtnorm(y,mean(params$rec_beta0),mean(params$rec_sig),left=cholla_min)
 }
 
 
@@ -449,9 +450,9 @@ bigmatrix.1 <- function(params,lower,upper,matsize,num_ants,i){
   # Banked seeds go in top row
   Fmat[1,3:(n+2)]<-fx(y,i,params) 
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-  Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0)) 
+  Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
   # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-  Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))   
+  Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))   
   # Growth/survival transitions among cts sizes
@@ -469,10 +470,15 @@ View(bigmatrix.1(params,lower,upper,matsize,1,"vacant")$IPMmat)
 i = c("vacant","vacant")
 big1 <- list()
 for(n in 1:length(i)){
-  big1[[n]] <- lambda(bigmatrix.1(params,lower,upper,matsize,1,"vacant")$IPMmat)
+  big1[[n]] <- lambda(bigmatrix.1(params,lower=cholla_min-0,upper=cholla_max+0,matsize,1,"vacant")$IPMmat)
 }
 big1
 
+## diagnostics:
+# This diagnostic shows that the columns should sum to the survival function of the vacant
+testmat <- bigmatrix.1(params,lower=cholla_min-15,upper=cholla_max+2,matsize,1,"vacant")$Tmat
+surv <- colSums(testmat)
+plot(surv,ylim=c(0,1))
 
 
 
