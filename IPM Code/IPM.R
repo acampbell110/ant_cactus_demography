@@ -86,8 +86,8 @@ recruits<-function(y,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   #yb=pmin(pmax(y,cholla_min),cholla_max)
   ## Calculate the probability and return it
-  #dnorm(yb, mean(params$rec_beta0),mean(params$rec_sig))
-  dtnorm(y,mean(params$rec_beta0),mean(params$rec_sig),left=cholla_min)
+  dnorm(y, mean(params$rec_beta0),mean(params$rec_sig))
+  #dtnorm(y,mean(params$rec_beta0),mean(params$rec_sig),left=cholla_min)
 }
 
 
