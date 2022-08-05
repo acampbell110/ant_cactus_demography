@@ -7,6 +7,75 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/IPM.R")
 
+
+##################################################################################
+## Check that all functions written in the IPM source code 
+## run properly and the outputs make sense
+##################################################################################
+################################
+## Survival and Growth Kernel
+##Check if it runs properly properly with fake data 
+i = c("liom","vacant","crem","other")
+x = c(5,5,5,5)
+y = c(6,6,6,6)
+p<- vector()
+g <- vector()
+s <- vector()
+for(n in 1:length(i)){
+  xb = pmin(pmax(x[n],cholla_min),cholla_max)
+  s[n] <- sx(x[n], i[n], params)
+  g[n] <- gxy(x[n], y[n], i[n], params)
+  p[n] <- pxy(x[n],y[n],i[n], params)
+}
+g
+s
+p
+## Check that the outputs make sense
+################################
+## Fecundity Function
+## Check if it runs properly with fake data
+i = c("liom","vacant","crem","other")
+x = c(13,13,13,13)
+y = c(14,14,14,14)
+f <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+f<-vector()
+for(n in 1:length(i)){
+  f[n] <- fx(x[n],i[n],params)
+}
+f
+## Check that the outputs make sense
+#################################
+## Recruit Size Distribution Function
+## Check if it runs properly with fake data
+i = c("liom","vacant","crem","other")
+x = c(13,13,13,13)
+y = c(14,14,14,14)
+r <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+r<-vector()
+for(n in 1:length(i)){
+  r[n] <- recruits(y[n],params)
+}
+r
+## Check that the outputs make sense
+################################
+## Transition between occupied and vacancy
+## Scenario options == "othervac", "liomvac", "cremvac"
+transition.1(15,"vacant","liom",params,scenario = "liomvac")
+transition.1(15,"vacant","other",params,scenario = "othervac")
+transition.1(15,"vacant","crem",params,scenario = "cremvac")
+
+## Check if it works
+i = c("liom","vacant","other")
+j = c("vacant","vacant","vacant")
+x = c(-1,2,3)
+scenario = c("liomvac","othervac","cremvac")
+t1 <- vector()
+for(n in 1:length(i)){
+  t1[n] <- transition.1(x[n],i[n],j[n],params,scenario[n])
+}
+t1
+
+
 lams <- as.data.frame(rep(NA,8))
 
 ######## No Ants ####
