@@ -169,8 +169,9 @@ bmat
 ## Check that the outputs make sense
 # This diagnostic shows that the columsn should sum to the survival function of the vacant 
 testmat <- bigmatrix.2(params,lower=cholla_min-20,upper=cholla_max+20,matsize,"vacant","liom","liomvac")$Tmat
-surv <- colSums(testmat)
+surv <- colSums(testmat[3:(n+2),3:(n+2)])
 plot(surv,ylim = c(0,1))
+transition.x(14, "liom","liom",params,"liomvac")
 #################################
 ## Calculate Matrix for two ants and vacant
 ## Check that it works
