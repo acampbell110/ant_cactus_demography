@@ -57,13 +57,15 @@ for(n in 1:length(i)){
 }
 r
 ## Check that the outputs make sense
+## We expect to see a truncated normal distribution here 
+plot(recruits(y,params))
+
 ################################
 ## Transition between occupied and vacancy
 ## Scenario options == "othervac", "liomvac", "cremvac"
 transition.1(15,"vacant","liom",params,scenario = "liomvac")
 transition.1(15,"vacant","other",params,scenario = "othervac")
 transition.1(15,"vacant","crem",params,scenario = "cremvac")
-
 ## Check if it works
 i = c("liom","vacant","other")
 j = c("vacant","vacant","vacant")
@@ -74,6 +76,107 @@ for(n in 1:length(i)){
   t1[n] <- transition.1(x[n],i[n],j[n],params,scenario[n])
 }
 t1
+## Check that the outputs make sense
+#################################
+## Transition between vacancy and two ant species
+## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
+transition.2(14,"liom","other",params,"liomvacother")
+transition.2(14,"liom","vacant",params,"liomcremvac")
+transition.2(14,"crem","other",params,"othercremvac")
+## Check if it works
+i = c("liom","vacant","other","other")
+j = c("vacant","liom","other","liom")
+x = c(15,15,15,15)
+y = c(-1,-4,4.5,3.01)
+scenario = "liomvacother"
+t2 <- vector()
+for(n in 1:length(i)){
+  t2[n] <- transition.2(x[n],i[n],j[n],params,scenario)
+}
+t2
+## Check that the outputs make sense
+#################################
+## Transition between vacancy and all ants
+transition.3(2,"crem","liom",params)
+## Chekc if it works
+i = c("liom","liom")
+j = c("vacant","vacant")
+x = c(-1,-5)
+y = c(-1,-5)
+t3 <- vector()
+for(n in 1:length(i)){
+  t3[n] <- transition.3(x[n],i[n],j[n],params)
+}
+t3
+## Check that the outputs make sense
+#################################
+## Choose between all of the transition 
+## Scenario options are "liomvacother", "liomcremvac", "othercremvac", 
+## "othervac", "liomvac", "cremvac", "all", "none"
+transition.x(14,"crem","other",params,"othercremvac")
+## Check if it works
+i = c("liom","vacant","liom","vacant")
+j = c("vacant","liom","liom","vacant")
+x = c(-1,-5,4,3)
+y = c(-1,-4,4.5,3.01)
+scenario = c("all","liomvac","liomvacother","none")
+t <- vector()
+for(n in 1:length(i)){
+  t[n] <- transition.x(x[n],i[n],j[n],params,scenario[n])
+}
+t
+## Check that the outputs make sense
+#################################
+## Growth Survival Transition Kernel
+## Check if it works
+i = c("liom","vacant","crem","vacant")
+j = c("vacant","crem","crem","vacant")
+x = c(-1,-5,4,3)
+y = c(-1,-4,4.5,3.01)
+scenario = c("all","cremvac","othercremvac","none")
+pt <- vector()
+for(n in 1:length(i)){
+  pt[n] <- ptxy(x[n],y[n],i[n],j[n],params,scenario[n])
+}
+pt
+## Check that the outputs make sense
+#################################
+## Calculate Matrix for no ant species -- vacant
+## Check that it works
+i = c("vacant","vacant")
+big1 <- list()
+for(n in 1:length(i)){
+  big1[[n]] <- lambda(bigmatrix.1(params,lower=cholla_min-0,upper=cholla_max+0,matsize,1,"vacant")$IPMmat)
+}
+big1
+## Check that the outputs make sense
+# This diagnostic shows that the columns should sum to the survival function of the vacant
+testmat <- bigmatrix.1(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"vacant")$Tmat
+surv <- colSums(testmat)
+plot(surv,ylim=c(0,1))
+# This looks pretty reasonable
+#################################
+## Calculate Matrix for one ant and vacant
+## Check that it works
+i = c("liom","vacant","other","crem")
+j = c("vacant","other","vacant","vacant")
+scenario <- c("liomvac","othervac","othervac","cremvac")
+bmat <- vector()
+for(n in 1:length(i)){
+  bmat[n] <- lambda(bigmatrix.2(params,lower,upper,matsize,i[n],j[n],scenario[n])$IPMmat)
+}
+bmat
+## Check that the outputs make sense
+# This diagnostic shows that the columsn should sum to the survival function of the vacant 
+testmat <- bigmatrix.2(params,lower=cholla_min-20,upper=cholla_max+20,matsize,"vacant","liom","liomvac")$Tmat
+surv <- colSums(testmat)
+plot(surv,ylim = c(0,1))
+#################################
+## Calculate Matrix for two ants and vacant
+## Check that it works
+
+
+
 
 
 lams <- as.data.frame(rep(NA,8))
