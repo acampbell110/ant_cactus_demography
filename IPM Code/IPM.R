@@ -267,20 +267,6 @@ transition.2<-function(x, i, j, params,scenario){
   }
 }
 
-## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-
-## Check if it works
-i = c("liom","vacant","other","other")
-j = c("vacant","liom","other","liom")
-x = c(15,15,15,15)
-y = c(-1,-4,4.5,3.01)
-scenario = "liomvacother"
-t2 <- vector()
-for(n in 1:length(i)){
-  t2[n] <- transition.2(x[n],i[n],j[n],params,scenario)
-}
-t2
-
 
 #######################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)
@@ -339,93 +325,32 @@ transition.3<-function(x, i, j,params){
     if(i == "vacant" & j == "crem"){return(vac_crem)}
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
 }
-transition.3(2,"crem","liom",params)
-
-## Chekc if it works
-i = c("liom","liom")
-j = c("vacant","vacant")
-x = c(-1,-5)
-y = c(-1,-5)
-t3 <- vector()
-for(n in 1:length(i)){
-  t3[n] <- transition.3(x[n],i[n],j[n],params)
-}
-t3
-
 
 
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE 
-transition.x <- function(x,i,j,num_ants,params,scenario){
-  ifelse( num_ants == 1, transition.1(x,i,j,params,scenario), 
-          ifelse( num_ants == 2, transition.2(x,i,j,params,scenario),
-                  transition.3(x,i,j,params)))
+transition.x <- function(x,i,j,params,scenario){
+  ifelse(scenario == "cremvac" | scenario == "liomvac" | scenario == "othervac", transition.1(x,i,j,params,scenario),
+         ifelse(scenario == "liomvacother" | scenario ==  "liomcremvac" | scenario == "othercremvac", transition.2(x,i,j,params,scenario),
+                transition.3(x,i,j,params)))
 }
-
-## Check if it works
-i = c("liom","vacant","liom","vacant")
-j = c("vacant","liom","liom","liom")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-scenario = "all"
-num_ants = 3
-t <- vector()
-for(n in 1:length(i)){
-  t[n] <- transition.x(x[n],i[n],j[n],3,params,scenario)
-}
-t
-i = c("liom","vacant","liom","vacant")
-j = c("vacant","liom","liom","liom")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-scenario = "liomcremvac"
-num_ants = 2
-t <- vector()
-for(n in 1:length(i)){
-  t[n] <- transition.x(x[n],i[n],j[n],3,params,scenario)
-}
-t
-i = c("liom","vacant","liom","vacant")
-j = c("vacant","liom","liom","liom")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-scenario = "liomvac"
-num_ants = 1
-t <- vector()
-for(n in 1:length(i)){
-  t[n] <- transition.x(x[n],i[n],j[n],3,params,scenario)
-}
-t
 
 #####################################################
 #GROWTH*SURVIVAL*ANT PROBABILITIES
-ptxy <- function(x,y,i,j,num_ants,params,scenario){
+ptxy <- function(x,y,i,j,params,scenario){
   xb=pmin(pmax(x,cholla_min),cholla_max)
   g = gxy(xb,y,i,params)
   s = sx(xb,i,params)
-  t = transition.x(xb,i,j,num_ants,params,scenario)
+  t = transition.x(xb,i,j,params,scenario)
   p = g*s*t
   return(p)
 }
-
-## Check if it works
-i = c("liom","vacant","crem","other")
-j = c("vacant","crem","crem","liom")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-num_ants = 3
-scenario = "all"
-pt <- vector()
-for(n in 1:length(i)){
-  pt[n] <- ptxy(x[n],y[n],i[n],j[n],num_ants,params,scenario)
-}
-pt
 
 
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
 ##################################################################################################
-bigmatrix.1 <- function(params,lower,upper,matsize,num_ants,i){
+bigmatrix.1 <- function(params,lower,upper,matsize,i){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -464,28 +389,12 @@ bigmatrix.1 <- function(params,lower,upper,matsize,num_ants,i){
   #return(lambda)
 }
 
-View(bigmatrix.1(params,lower,upper,matsize,1,"vacant")$IPMmat)
-
-## Check that it works
-i = c("vacant","vacant")
-big1 <- list()
-for(n in 1:length(i)){
-  big1[[n]] <- lambda(bigmatrix.1(params,lower=cholla_min-0,upper=cholla_max+0,matsize,1,"vacant")$IPMmat)
-}
-big1
-
-## diagnostics:
-# This diagnostic shows that the columns should sum to the survival function of the vacant
-testmat <- bigmatrix.1(params,lower=cholla_min-15,upper=cholla_max+2,matsize,1,"vacant")$Tmat
-surv <- colSums(testmat)
-plot(surv,ylim=c(0,1))
-
 
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
-bigmatrix.2 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
+bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -511,18 +420,23 @@ bigmatrix.2 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
     Fmat[1,3:(n+2)]<-fx(y,"liom",params)
     Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-    Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
+#    Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
+    Tmat[2,1]<-1-1
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+#    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+#    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[3:(n+2),1]<-1*recruits(y,params)*h*1
+    Tmat[(n+3):(2*n+2),1]<-1*recruits(y,params)*h*1
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+#    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+#    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[3:(n+2),2]<-1*recruits(y,params)*h*1
+    Tmat[(n+3):(2*n+2),2]<-1*recruits(y,params)*h*1
     # Growth/survival transitions among cts sizes
-    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,i = "liom",j = "liom",num_ants,params,"liomvac"))*h
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,i = "liom",j = "vacant",num_ants,params,"liomvac"))*h
-    Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,ptxy,i = "vacant",j = "liom",num_ants,params,"liomvac"))*h
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,i = "vacant",j = "vacant",num_ants,params,"liomvac"))*h
+    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,i = "liom",j = "liom",params,"liomvac"))*h
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,i = "liom",j = "vacant",params,"liomvac"))*h
+    Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,ptxy,i = "vacant",j = "liom",params,"liomvac"))*h
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,i = "vacant",j = "vacant",params,"liomvac"))*h
     # Put it all together
     IPMmat<-Fmat+Tmat
     # Calculate the lambda
@@ -544,10 +458,10 @@ bigmatrix.2 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
       Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
       Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
       # Growth/survival transitions among cts sizes
-      Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,"crem","crem",num_ants,params,scenario))*h
-      Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"crem","vacant",num_ants,params,scenario))*h
-      Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,ptxy,"vacant","crem",num_ants,params,scenario))*h
-      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"vacant","vacant",num_ants,params,scenario))*h
+      Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,"crem","crem",params,scenario))*h
+      Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"crem","vacant",params,scenario))*h
+      Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,ptxy,"vacant","crem",params,scenario))*h
+      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"vacant","vacant",params,scenario))*h
       # Put it all together
       IPMmat<-Fmat+Tmat# Calculate the lambda
       # lambda = Re(eigen(IPMmat)$values[1])
@@ -568,10 +482,10 @@ bigmatrix.2 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
       Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
       Tmat[(n+3):(2*n+2)]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
       # Growth/survival transitions among cts sizes
-      Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,"other","other",num_ants,params,scenario))*h
-      Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"other","vacant",num_ants,params,scenario))*h
-      Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,ptxy,"vacant","other",num_ants,params,scenario))*h
-      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"vacant","vacant",num_ants,params,scenario))*h
+      Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,"other","other",params,scenario))*h
+      Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"other","vacant",params,scenario))*h
+      Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,ptxy,"vacant","other",params,scenario))*h
+      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"vacant","vacant",params,scenario))*h
       # Put it all together
       IPMmat<-Fmat+Tmat
       # Calculate the lambda
@@ -580,19 +494,6 @@ bigmatrix.2 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
       return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
       }
 }
-
-bigmatrix.2(params,lower,upper,matsize,1,"crem","vacant","cremvac")$IPMmat
-
-
-num_ants = 1
-i = c("liom","vacant","other","crem")
-j = c("vacant","other","vacant","vacant")
-scenario <- c("liomvac","othervac","othervac","cremvac")
-bmat <- vector()
-for(n in 1:length(i)){
-  bmat[n] <- lambda(bigmatrix.2(params,lower,upper,matsize,num_ants,i[n],j[n],scenario[n])$IPMmat)
-}
-bmat
 
 
 #################################################################################################
