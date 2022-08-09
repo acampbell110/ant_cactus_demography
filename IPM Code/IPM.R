@@ -1,7 +1,7 @@
 #########################################################################################################
 ##            This will be an IPM which allows you to choose how many ants are present
 #########################################################################################################
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
+#setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 #source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/Params.R")
 ## ----------- Miscellany...we'll need an inverse logit functions ------------- ##
 invlogit<-function(x){exp(x)/(1+exp(x))}
