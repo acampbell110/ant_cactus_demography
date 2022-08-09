@@ -354,144 +354,6 @@ mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.1)
 mtext("Log(Volume) year t+1",side=2,line=0,outer=TRUE,cex=1.1,las=0)
 dev.off()
 
-
-
-#### Plot the growth distributions at year t1 -- Using previous size mean and all betas
-dist_other <- (grow_out$beta0.2) + mean(size_other) * (grow_out$beta1.2)
-dist_crem <- (grow_out$beta0.3) + mean(size_crem) * (grow_out$beta1.3)
-dist_liom <- (grow_out$beta0.4) + mean(size_liom) * (grow_out$beta1.4)
-dist_vac <- (grow_out$beta0.1) + mean(size_vac) * (grow_out$beta1.1)
-
-png("grow_dist_panel1.png")
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
-plot.new()
-text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
-## Crem
-hist(y_crem_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_crem, dnorm(x = size_crem, mean = mean(dist_crem), sd = mean(grow_out$sigma)), col = cremcol)
-## Liom
-hist(y_liom_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_liom, dnorm(x = size_liom, mean = mean(dist_liom), sd = mean(grow_out$sigma)), col = liomcol)
-## Other
-hist(y_other_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_other, dnorm(x = size_other, mean = mean(dist_other), sd = mean(grow_out$sigma)), col = othercol)
-## Vac
-hist(y_vac_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_vac, dnorm(x = size_vac, mean = mean(dist_vac), sd = mean(grow_out$sigma)), col = vaccol)
-## Plot all densities together
-plot(size_vac, dnorm(x = size_vac, mean = mean(dist_vac), sd = mean(grow_out$sigma)), col = vaccol, type = "l")
-lines(size_other, dnorm(x = size_other, mean = mean(dist_other), sd = mean(grow_out$sigma)), col = othercol)
-lines(size_liom, dnorm(x = size_liom, mean = mean(dist_liom), sd = mean(grow_out$sigma)), col = liomcol)
-lines(size_crem, dnorm(x = size_crem, mean = mean(dist_crem), sd = mean(grow_out$sigma)), col = cremcol)
-legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
-mtext("Log(Volume) year t+1",side=1,line=0,outer=TRUE,cex=1.1)
-mtext("Density",side=2,line=0,outer=TRUE,cex=1.1,las=0)
-dev.off()
-
-png("grow_dist_panel2.png")
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
-plot.new()
-text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
-## Crem
-hist(y_crem_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(density(y_crem_mean_grow), col = cremcol)
-## Liom
-hist(y_liom_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(density(y_liom_mean_grow), col = liomcol)
-## Other
-hist(y_other_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(x = density(x = y_other_mean_grow), col = othercol)
-## Vac
-hist(y_vac_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(density(y_vac_mean_grow), col = vaccol)
-## Plot all densities together
-plot(density(y_vac_mean_grow), col = vaccol, type= "l", ylim = c(0,.13), xlab = "", ylab = "", main = "")
-lines(density(y_crem_mean_grow), col = cremcol)
-lines(density(y_liom_mean_grow), col = liomcol)
-lines(density(y_other_mean_grow), col = othercol)
-mtext("Log(Volume) year t+1",side=1,line=0,outer=TRUE,cex=1.1)
-mtext("Density",side=2,line=0,outer=TRUE,cex=1.1,las=0)
-dev.off()
-
-png("grow_dist_panel3.png")
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
-plot.new()
-text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
-## Crem
-hist(y_crem_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_crem, dnorm(x = size_crem, mean = mean(y_crem_mean_grow), sd = mean(grow_out$sigma)), col = cremcol)
-## Liom
-hist(y_liom_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_liom, dnorm(x = size_liom, mean = mean(y_liom_mean_grow), sd = mean(grow_out$sigma)), col = liomcol)
-## Other
-hist(y_other_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_other, dnorm(x = size_other, mean = mean(y_other_mean_grow), sd = mean(grow_out$sigma)), col = othercol)
-## Vac
-hist(y_vac_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), ylim = c(0,.5), xlab = "", ylab = "", main = "")
-lines(size_vac, dnorm(x = size_vac, mean = mean(y_vac_mean_grow), sd = mean(grow_out$sigma)), col = vaccol)
-## Plot all densities together
-plot(size_vac, dnorm(x = size_vac, mean = mean(y_vac_mean_grow), sd = mean(grow_out$sigma)), col = vaccol, type = "l")
-lines(size_other, dnorm(x = size_other, mean = mean(y_other_mean_grow), sd = mean(grow_out$sigma)), col = othercol)
-lines(size_liom, dnorm(x = size_liom, mean = mean(y_liom_mean_grow), sd = mean(grow_out$sigma)), col = liomcol)
-lines(size_crem, dnorm(x = size_crem, mean = mean(y_crem_mean_grow), sd = mean(grow_out$sigma)), col = cremcol)
-legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
-mtext("Log(Volume) year t+1",side=1,line=0,outer=TRUE,cex=1.1)
-mtext("Density",side=2,line=0,outer=TRUE,cex=1.1,las=0)
-dev.off()
-
-
-png("grow_dist.png")
-par(mar=c(2,2,2,2),oma=c(2,2,0,0))
-layout(matrix(c(1,2,3,4),
-              ncol = 1, byrow = TRUE), heights = c(0.8,1,1,1), widths = c(4))
-plot.new()
-text(0.5,0.1,"Mean Size in Year t1 by Ant Partner",cex=2,font=2)
-#par(mfrow = c(1,3))
-plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other_l, sd = mean(grow_out$sigma)), col = othercol,type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(-2,5))
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem_l, sd = mean(grow_out$sigma)), col = cremcol, lwd = 2)
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_l, sd = mean(grow_out$sigma)), col = liomcol, lwd = 2)
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_l, sd = mean(grow_out$sigma)), col = vaccol, lwd = 2)
-abline(v = quantile(size_dummy, 0.25), col = "grey", lty = 2, lwd = 2)
-legend("topright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
-plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other, sd = mean(grow_out$sigma)), col= othercol, type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(3,8))
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem, sd = mean(grow_out$sigma)), col = cremcol, lwd = 2)
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom, sd = mean(grow_out$sigma)), col = liomcol, lwd = 2)
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac, sd = mean(grow_out$sigma)), col = vaccol, lwd = 2)
-abline(v = quantile(size_dummy, 0.5), col = "grey", lty = 2, lwd = 2)
-plot(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other_h, sd = mean(grow_out$sigma)), col= othercol, type = "l", xlab = "Medium Cacti",ylab = "", main = "", xlim = c(8,12))
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem_h, sd = mean(grow_out$sigma)), col = cremcol, lwd = 2)
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_h, sd = mean(grow_out$sigma)), col = liomcol, lwd = 2)
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_h, sd = mean(grow_out$sigma)), col = vaccol, lwd = 2)
-abline(v = quantile(size_dummy, 0.75), col = "grey", lty = 2, lwd = 2)
-mtext("Log(Volume) year 1",side=1,line=0,outer=TRUE,cex=1.1)
-mtext("Probability based on Ant Partner",side=2,line=0,outer=TRUE,cex=1.1,las=0)
-dev.off()
-
-## Mean dist w data
-hist(y_other_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_other_h, sd = mean(grow_out$sigma)), col = othercol, lwd = 2)
-
-hist(y_crem_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_crem_h, sd = mean(grow_out$sigma)), col = cremcol, lwd = 2)
-
-hist(y_liom_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_liom_h, sd = mean(grow_out$sigma)), col = liomcol, lwd = 2)
-
-hist(y_vac_subset_grow$logsize_t1, freq = FALSE, xlim = c(-5,15), xlab = "", ylab = "", main = "")
-lines(x = size_dummy, y = dnorm(x = size_dummy, mean = dist_vac_h, sd = mean(grow_out$sigma)), col = vaccol, lwd = 2)
-
-
-hist(y_crem_subset_grow$logsize_t1)
-abline(v = skewness(y_vac_mean_grow))
-qqnorm(y_vac_mean_grow)
-qqline(y_vac_mean_grow)
-
 ## Contour plot ###############################################
 ## Try 1
 x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
@@ -505,7 +367,7 @@ rand <- function(x,y,z){
 crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.3,0.5) + x * quantile(grow_out$beta1.3,0.5), sd = quantile(grow_out$sigma,0.5))
+  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.3,0.5) + x * quantile(grow_out$beta1.3,0.5), sd = mean(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)))
 );
 
 outer(
@@ -516,17 +378,17 @@ outer(
 liom <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.4,0.5) + x * quantile(grow_out$beta1.4,0.5), sd = quantile(grow_out$sigma,0.5))
+  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.4,0.5) + x * quantile(grow_out$beta1.4,0.5), sd = mean(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)))
 );
 other <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.2,0.5) + x * quantile(grow_out$beta1.2,0.5), sd = quantile(grow_out$sigma,0.5))
+  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.2,0.5) + x * quantile(grow_out$beta1.2,0.5), sd = mean(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)))
 );
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.1,0.5) + x * quantile(grow_out$beta1.1,0.5), sd = quantile(grow_out$sigma,0.5))
+  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.1,0.5) + x * quantile(grow_out$beta1.1,0.5), sd = mean(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)))
 );
 
 
@@ -577,22 +439,25 @@ text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
 contour(x,y,crem, nlevels = 7
         , xlim = c(2,10), ylim = c(0,10)
         , col = gray.colors(10, start =1, end = 0))
-lines(size_crem, y_crem_mean_grow, col = cremcol, lwd = 3)
 points(y_crem_subset_grow$logsize_t,y_crem_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
+lines(size_crem, y_crem_mean_grow, col = othercol, lwd = 3)
 ## Liom
 contour(x,y,liom, nlevels = 8
         , xlim = c(2,10), ylim = c(0,10)
         , col = gray.colors(10, start =1, end = 0))
+points(y_liom_subset_grow$logsize_t,y_liom_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
 lines(size_liom, y_liom_mean_grow, col = liomcol, lwd = 3)
 ## Other
 contour(x,y,crem, nlevels = 8
         , xlim = c(2,10), ylim = c(0,10)
         , col = gray.colors(10, start =1, end = 0))
+points(y_other_subset_grow$logsize_t,y_other_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
 lines(size_other, y_other_mean_grow, col = othercol, lwd = 3)
 ## Vacant
 contour(x,y,crem, nlevels = 8
         , xlim = c(2,10), ylim = c(0,10)
         , col = gray.colors(10, start =1, end = 0))
+points(y_vac_subset_grow$logsize_t,y_vac_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
 lines(size_vac, y_vac_mean_grow, col = vaccol, lwd = 3)
 ## All together
 plot(size_crem, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(5,6), ylim = c(5.3,6.5))
