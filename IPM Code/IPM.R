@@ -46,6 +46,10 @@ sx<-function(x,i,params){
   s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb)
   s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb)
   #Return the survival probabilities
+  # if(i == "crem"){ return(s_crem)}
+  # if(i == "liom"){ return(s_vac)}
+  # if(i == "other"){ return(s_other)}
+  # if(i == "vacant"){ return(s_liom)}
   if(i == "crem"){ return(1)}
   if(i == "liom"){ return(1)}
   if(i == "other"){ return(1)}
