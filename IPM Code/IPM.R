@@ -7,8 +7,13 @@
 invlogit<-function(x){exp(x)/(1+exp(x))}
 
 ## ----------- Vital rate functions. Parameter indices are hard-coded and must correspond to rows of MCMC matrix ------------- ##
-##############################################
-#GROWTH FROM SIZE X TO Y. Returns the probability of growth from size x to y based on ant state
+#########################################################################################################
+## GROWTH FROM SIZE X TO Y. Returns the probability of growth from size x to y based on ant state    ####
+## This model accepts the input of previous size and ant state to determine the probability of being ####
+## y size in the next year.                                                                          ####
+## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
+## will get a vector of probabilities.                                                               ####
+#########################################################################################################
 gxy<-function(x,y,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) 
@@ -25,8 +30,13 @@ gxy<-function(x,y,i,params){
 }
 
 
-#################################################
-#SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state
+#########################################################################################################
+## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
+## You input the size of the cactus and ant state and in return you get the probability of surviving ####
+## to the next year.                                                                                 ####
+## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
+## will get a vector of probabilities.                                                               ####
+#########################################################################################################
 sx<-function(x,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
