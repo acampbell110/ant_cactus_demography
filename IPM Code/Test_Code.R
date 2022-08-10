@@ -38,12 +38,12 @@ bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
   IPMmat <- matrix()
   ############################################# LIOM ############################################
   if(scenario == "liomvac"){
-    # Banked seeds go in top row (1 == liom, 2 == vacant)
+    # Banked seeds go in top row -- measure of fecundity
     Fmat[1,3:(n+2)]<-fx(y,"liom",params)
     Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     #    Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
-    Tmat[2,1]<-1-1
+    Tmat[2,1]<-1-1 # everything germinates in year 1
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
     #    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
