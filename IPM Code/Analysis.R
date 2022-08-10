@@ -15,6 +15,7 @@ source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/IPM.R
 ################################
 ## Survival and Growth Kernel
 ##Check if it runs properly properly with fake data 
+pxy(x=c(1,2,3),y=c(1,2,3),i="liom",params)
 i = c("liom","vacant","crem","other")
 x = c(5,5,5,5)
 y = c(6,6,6,6)
@@ -31,6 +32,15 @@ g
 s
 p
 ## Check that the outputs make sense
+# The sum of all future sizes from all previous sizes should sum to 1
+x = rep(1,25)
+y = seq(cholla_min,cholla_max,length = 25)
+sum(gxy(x,y,"other",params))
+# This is not summing to 1. I would have assumed it would sum to less than 1 and get closer and closer as 
+# the number increased. If I set it at 20, it is less than 1, but more values does not do that
+integrate(gxy(x,y,"liom",params),lower=cholla_min,upper=cholla_max)
+sum(pxy(x,y,"liom",params))
+# This is also not summing to 1, but I am not actually sure that it should?
 ################################
 ## Fecundity Function
 ## Check if it runs properly with fake data
@@ -63,9 +73,11 @@ plot(recruits(y,params))
 ################################
 ## Transition between occupied and vacancy
 ## Scenario options == "othervac", "liomvac", "cremvac"
-transition.1(15,"vacant","liom",params,scenario = "liomvac")
-transition.1(15,"vacant","other",params,scenario = "othervac")
-transition.1(15,"vacant","crem",params,scenario = "cremvac")
+x = seq(cholla_min,cholla_max,length=20)
+y = seq(cholla_min,cholla_max,length=20)
+transition.1(x,"vacant","liom",params,scenario = "liomvac")
+transition.1(x,"vacant","other",params,scenario = "othervac")
+transition.1(x,"vacant","crem",params,scenario = "cremvac")
 ## Check if it works
 i = c("liom","vacant","other")
 j = c("vacant","vacant","vacant")
@@ -80,9 +92,9 @@ t1
 #################################
 ## Transition between vacancy and two ant species
 ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
-transition.2(14,"liom","other",params,"liomvacother")
-transition.2(14,"liom","vacant",params,"liomcremvac")
-transition.2(14,"crem","other",params,"othercremvac")
+transition.2(x,"liom","other",params,"liomvacother")
+transition.2(x,"liom","vacant",params,"liomcremvac")
+transition.2(x,"crem","other",params,"othercremvac")
 ## Check if it works
 i = c("liom","vacant","other","other")
 j = c("vacant","liom","other","liom")
@@ -97,7 +109,7 @@ t2
 ## Check that the outputs make sense
 #################################
 ## Transition between vacancy and all ants
-transition.3(2,"crem","liom",params)
+transition.3(x,"crem","liom",params)
 ## Chekc if it works
 i = c("liom","liom")
 j = c("vacant","vacant")
@@ -113,7 +125,7 @@ t3
 ## Choose between all of the transition 
 ## Scenario options are "liomvacother", "liomcremvac", "othercremvac", 
 ## "othervac", "liomvac", "cremvac", "all", "none"
-transition.x(14,"crem","other",params,"othercremvac")
+transition.x(x,"liom","vacant",params,"liomvac")
 ## Check if it works
 i = c("liom","vacant","liom","vacant")
 j = c("vacant","liom","liom","vacant")
@@ -146,7 +158,7 @@ pt
 i = c("vacant","vacant")
 big1 <- list()
 for(n in 1:length(i)){
-  big1[[n]] <- lambda(bigmatrix.1(params,lower=cholla_min-0,upper=cholla_max+0,matsize,1,"vacant")$IPMmat)
+  big1[[n]] <- lambda(bigmatrix.1(params,lower=cholla_min-0,upper=cholla_max+0,matsize,"vacant")$IPMmat)
 }
 big1
 ## Check that the outputs make sense
@@ -154,7 +166,9 @@ big1
 testmat <- bigmatrix.1(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"vacant")$Tmat
 surv <- colSums(testmat)
 plot(surv,ylim=c(0,1))
-# This looks pretty reasonable
+# A second test is to change all survival rates in the bigmatrix.1 function to 100% and 
+# then run this and everything should be near 1
+# This looks good
 #################################
 ## Calculate Matrix for one ant and vacant
 ## Check that it works
@@ -171,13 +185,12 @@ bmat
 testmat <- bigmatrix.2(params,lower=cholla_min-20,upper=cholla_max+20,matsize,"vacant","liom","liomvac")$Tmat
 surv <- colSums(testmat[3:(n+2),3:(n+2)])
 plot(surv,ylim = c(0,1))
-transition.x(14, "liom","liom",params,"liomvac")
 #################################
 ## Calculate Matrix for two ants and vacant
 ## Check that it works
 
-
-
+## Check that the outputs make sense
+#################################
 
 
 lams <- as.data.frame(rep(NA,8))
