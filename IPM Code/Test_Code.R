@@ -1,3 +1,20 @@
+##########Fake transition function
+transition <- function(x,i,j,params,scenario){
+  occ_occ <- rep(0.5,length(x))
+  occ_vac <- rep(0.5,length(x))
+  vac_occ <- rep(0.5,length(x))
+  vac_vac <- rep(0.5,length(x))
+  #Return them
+  if(i == "occ" & j == "occ"){return(occ_occ)}
+  if(i == "occ" & j == "vacant"){return(occ_vac)}
+  if(i == "vacant" & j == "occ"){return(vac_occ)}
+  if(i == "vacant" & j == "vacant"){return(vac_vac)}
+}
+
+transition(c(1,2,3,4,5),"occ","vacant",params,"liomvac")
+
+
+
 ########## Try with a more basic bigmat 2 to get the survival to plot right
 bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
   ###################################################################################################
@@ -41,10 +58,10 @@ bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
     Tmat[(n+3):(2*n+2),2]<-1*recruits(y,params)*h*1 ## size distribution of vacant recruits
     # Growth/survival transitions among cts sizes
     #    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,i = "liom",j = "liom",params,"liomvac"))*h
-    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) ## but will only work if transition.x is vectorized
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
-    Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "vacant",params))*h*diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,pxy,i = "vacant",params))*h*diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition(y,"occ","occ",params,"liomvac")) ## but will only work if transition.x is vectorized
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition(y,i = "occ",j = "vacant",params,"liomvac"))
+    Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "vacant",params))*h*diag(transition(y,i = "vacant",j = "occ",params,"liomvac"))
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,pxy,i = "vacant",params))*h*diag(transition(y,i = "vacant",j = "vacant",params,"liomvac"))
     # Put it all together
     IPMmat<-Fmat+Tmat
     # Calculate the lambda
@@ -56,17 +73,9 @@ bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
 ## liom liom
 testmat <- bigmatrix.2(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"vacant","liom","liomvac")$Tmat
 surva <- colSums(testmat[3:(n+2),3:(n+2)])
-plot(1:200,surva,ylim = c(0,1), type = "l",xlim =c(1,400 ))
-## liom vacant
-survb <- colSums(testmat[3:(n+2),(n+3):(2*n+2)])
-lines(1:200,survb,ylim = c(0,1))
-## vacant liom
-survc <- colSums(testmat[(n+3):(2*n+2),3:(n+2)])
-lines(survc,ylim = c(0,1))
-## vacant vacant
-survd <- colSums(testmat[(n+3):(2*n+2),(n+3):(2*n+2)])
-lines(survd,ylim = c(0,1))
+plot(surva,ylim = c(0,1), type = "l")
 ## All together
 surv <- colSums(testmat)
-lines(surv,ylim = c(0,10), col )
+plot(surv,ylim = c(0,1))
+
 
