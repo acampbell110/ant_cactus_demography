@@ -7,7 +7,38 @@ plot(colSums(Tmat.1),ylim=c(0,1))
 colSums(Tmat.1)[2];invlogit(mean(params$germ2_beta0))*invlogit(mean(params$preseed_beta0))
 
 ## two-ant matrix (liom-vacant)
-testmat <- bigmatrix.2(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"vacant","liom","liomvac")$Tmat
+Tmat.2 <- bigmatrix.2(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"vacant","liom","liomvac")$Tmat
+colSums(Tmat.2)
+plot(colSums(Tmat.2))
+
+plot(transition.x(y,i = "liom",j = "liom",params,"liomvac"))
+plot(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+plot(transition.x(y,i = "liom",j = "liom",params,"liomvac")+
+       transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+
+plot(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
+plot(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+plot(transition.x(y,i = "vacant",j = "liom",params,"liomvac")+
+       transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+
+n<-matsize
+L<-lower; U<-upper
+h<-(U-L)/n                   #Bin size
+b<-L+c(0:n)*h;               #Lower boundaries of bins 
+y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
+# Growth/survival transition matricies -- Two Ant
+Tmat <- matrix(0,(2*n+2),(2*n+2))
+# i=liom
+Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h) %*% diag(rep(0.75,n)) #%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) ## but will only work if transition.x is vectorized
+Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h) %*% diag(rep(0.25,n)) #%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+#i=vac
+Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h) %*% diag(rep(0.75,n)) #%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
+Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h) %*% diag(rep(0.25,n)) #%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+
+colSums(Tmat)
+
+
+
 
 matrix(1:4,2,2)*t(c(0.1,0.9))
 

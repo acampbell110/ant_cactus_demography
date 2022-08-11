@@ -445,16 +445,20 @@ bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
     Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(n+3):(2*n+2),1]<-0#invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
     Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(n+3):(2*n+2),2]<-0#invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Growth/survival transitions among cts sizes
-    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) ## but will only work if transition.x is vectorized
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
-    Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "vacant",params))*h*diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-t(outer(y,y,pxy,i = "vacant",params))*h*diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+    ## liom-liom
+    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) ## but will only work if transition.x is vectorized
+    ## liom-vacant
+    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+    ## vacant-liom
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
+    ## vacant-vacant
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
     # Put it all together
     IPMmat<-Fmat+Tmat
     # Calculate the lambda
