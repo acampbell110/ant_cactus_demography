@@ -174,11 +174,11 @@ params$rec_sig<-rec.params$sigma         ## Rec error
 ##-------------------------Transition Parameters-------------------##
 
 ## Prev Vac
-params$multi_betavv <- multi.params$beta.1.1      
-params$multi_betavo <- multi.params$beta.1.2
-params$multi_betavc <- multi.params$beta.1.3
-params$multi_betavl <- multi.params$beta.1.4
-params$multi_betav <- multi.params$beta.5.1
+params$multi_betavv <- multi.params$beta.1.1 ## intercept for vacant to vacant  
+params$multi_betavo <- multi.params$beta.1.2 ## intercept for vacant to other
+params$multi_betavc <- multi.params$beta.1.3 ## intercept for vacant to crem
+params$multi_betavl <- multi.params$beta.1.4 ## intercept for vacant to liom
+params$multi_betav <- multi.params$beta.5.1 ## Size specific vacant slope
 ## Prev Other
 params$multi_betaov <- multi.params$beta.2.1
 params$multi_betaoo <- multi.params$beta.2.2
