@@ -441,22 +441,16 @@ bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
     Fmat[1,3:(n+2)]<-fx(y,"liom",params)
     Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-#    Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
-    Tmat[2,1]<-1-1
+    Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-#    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-#    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-    Tmat[3:(n+2),1]<-0
-    Tmat[(n+3):(2*n+2),1]<-1*recruits(y,params)*h*1
+    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-#    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-#    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
-    Tmat[3:(n+2),2]<-0 ## size distribution of non-vacant recruits
-    Tmat[(n+3):(2*n+2),2]<-1*recruits(y,params)*h*1 ## size distribution of vacant recruits
+    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Growth/survival transitions among cts sizes
-#    Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,ptxy,i = "liom",j = "liom",params,"liomvac"))*h
     Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) ## but will only work if transition.x is vectorized
     Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,pxy,i = "liom",params))*h*diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
     Tmat[(n+3):(2*n+2),3:(n+2)]<-t(outer(y,y,pxy,i = "vacant",params))*h*diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
