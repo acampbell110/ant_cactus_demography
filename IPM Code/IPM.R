@@ -586,13 +586,13 @@ bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(2*n+3):(3*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
+    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(n+3):(2*n+2),1]<-0
+    Tmat[(2*n+3):(3*n+2),1]<-0
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(2*n+3):(3*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
+    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(n+3):(2*n+2),2]<-0
+    Tmat[(2*n+3):(3*n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ##Top Row
     Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"vacant","vacant",params,scenario))*h   ## Top First
@@ -621,13 +621,13 @@ bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(2*n+3):(3*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
+    Tmat[3:(n+2),1]<-0
+    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(2*n+3):(3*n+2),1]<-0
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(2*n+3):(3*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
+    Tmat[3:(n+2),2]<-0
+    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+    Tmat[(2*n+3):(3*n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ##Top Row
     Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",params,scenario))*h   ## Top First
@@ -651,7 +651,7 @@ bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
 ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
 
 
-bigmatrix.3(params,lower,upper,matsize,"liom","liom","liomcremvac")
+lambda(bigmatrix.3(params,lower,upper,matsize,"liom","liom","liomcremvac")$IPMmat)
 bigmatrix.3(params,lower,upper,matsize,"vacant","vacant","liomvacother")
 bigmatrix.3(params,lower,upper,matsize,"other","crem","othercremvac")
 
@@ -694,8 +694,6 @@ bigmatrix.4 <- function(params,lower,upper,matsize,i,j,scenario){
   # Growth/survival transitions among cts sizes
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i,params))*h 
   
-  
-  
   ############################################# LIOM & CREM & OTHER & VAC ############################################
     ## Fecundity of plants
     Fmat[1,3:(n+2)]<-fx(y,params=params,"crem") ## Production of seeds from x sized mom with no ant visitor
@@ -705,15 +703,15 @@ bigmatrix.4 <- function(params,lower,upper,matsize,i,j,scenario){
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(n+3):(2*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(2*n+3):(3*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(TRUE)
+    Tmat[3:(n+2),1]<-0
+    Tmat[(n+3):(2*n+2),1]<-0
+    Tmat[(2*n+3):(3*n+2),1]<-0
+    Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
-    Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(2*n+3):(3*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
-    Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(TRUE)
+    Tmat[3:(n+2),2]<-0
+    Tmat[(n+3):(2*n+2),2]<-0
+    Tmat[(2*n+3):(3*n+2),2]<-0
+    Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Growth/survival transitions among cts sizes
     ##Top Row
     Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",params,scenario))*h   ## Top First
@@ -759,21 +757,40 @@ bigmatrix<-function(params,lower,upper,matsize,i,j,scenario){
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
-  if(num_ants == 0){
-    lambda = bigmatrix.1(params,lower,upper,matsize,i)
-    return(lambda)
+  ## Scenario options are "liomvacother", "liomcremvac", "othercremvac", 
+  ## "othervac", "liomvac", "cremvac", "all", "none"
+  
+  if(scenario == "none"){
+    list = (bigmatrix.1(params,lower,upper,matsize,i))
+    return(list)
   }
-  if(num_ants == 1){
-    lambda = bigmatrix.2(params,lower,upper,matsize,i,j,scenario)
-    return(lambda)
+  if(scenario == "liomvac"){
+    list = (bigmatrix.2(params,lower,upper,matsize,i,j,scenario))
+    return(list)
   }
-  if(num_ants == 2){
-    lambda = bigmatrix.3(params,lower,upper,matsize,i,j,scenario)
-    return(lambda)
+  if(scenario == "cremvac"){
+    list = (bigmatrix.2(params,lower,upper,matsize,i,j,scenario))
+    return(list)
   }
-  if(num_ants == 3){
-    lambda = bigmatrix.4(params,lower,upper,matsize,i,j,scenario)
-    return(lambda)
+  if(scenario == "othervac"){
+    list = (bigmatrix.2(params,lower,upper,matsize,i,j,scenario))
+    return(list)
+  }
+  if(scenario == "liomvacother"){
+    list = (bigmatrix.3(params,lower,upper,matsize,i,j,scenario))
+    return(list)
+  }
+  if(scenario == "liomcremvac"){
+    list = (bigmatrix.3(params,lower,upper,matsize,i,j,scenario))
+    return(list)
+  }
+  if(scenario == "othercremvac"){
+    list = (bigmatrix.3(params,lower,upper,matsize,i,j,scenario))
+    return(list)
+  }
+  if(scenario == "all"){
+    list = (bigmatrix.4(params,lower,upper,matsize,i,j,scenario))
+    return(list)
   }
 } 
 ## One ant option
