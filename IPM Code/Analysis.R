@@ -8,10 +8,10 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/IPM.R")
 
 
-##################################################################################
-## Check that all functions written in the IPM source code 
-## run properly and the outputs make sense
-##################################################################################
+##########################################################################################################
+## Check that every function written in the IPM source code runs properly and that all of the outputs   ##
+## make sense.                                                                                          ##
+##########################################################################################################
 ################################
 ## Survival and Growth Kernel
 ##Check if it runs properly properly with fake data 
@@ -44,6 +44,14 @@ integrate(gxy(x,y,"liom",params),lower=cholla_min,upper=cholla_max)
 integrate(dnorm(y,x,sd = 0),lower = cholla_min, upper = cholla_max)
 sum(pxy(x,y,"liom",params))
 # This is also not summing to 1, but I am not actually sure that it should?
+G=h*outer(y,y,gxy,i = "crem",params=params)  # growth kernel
+image(y,y,t(G),main='Crem Tended')        # plot it
+G=h*outer(y,y,gxy,i = "liom",params=params)  # growth kernel
+image(y,y,t(G),main='Liom Tended')        # plot it
+G=h*outer(y,y,gxy,i = "other",params=params)  # growth kernel
+image(y,y,t(G),main='Other Tended')        # plot it
+G=h*outer(y,y,gxy,i = "vacant",params=params)  # growth kernel
+image(y,y,t(G),main='Not Tended')        # plot it
 ################################
 ## Fecundity Function
 ## Check if it runs properly with fake data
@@ -92,6 +100,17 @@ for(n in 1:length(i)){
 }
 t1
 ## Check that the outputs make sense
+x = c(1,1)
+i = c("crem","crem")
+j = c("crem","vacant")
+scenario = "cremvac"
+t1 <- vector()
+for(n in 1:length(i)){
+  t1[n] <- transition.1(x[n],i[n],j[n],params,scenario)
+}
+t1
+sum(t1)
+## This code works properly
 #################################
 ## Transition between vacancy and two ant species
 ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
@@ -110,6 +129,17 @@ for(n in 1:length(i)){
 }
 t2
 ## Check that the outputs make sense
+# All transition rates from crem should sum to 1
+x = c(1,1,1)
+i = c("crem","crem","crem")
+j = c("crem","liom","vacant")
+scenario = "liomcremvac"
+t2 <- vector()
+for(n in 1:length(i)){
+  t2[n] <- transition.2(x[n],i[n],j[n],params,scenario)
+}
+t2
+sum(t2)
 #################################
 ## Transition between vacancy and all ants
 transition.3(x,"crem","liom",params)
@@ -124,6 +154,18 @@ for(n in 1:length(i)){
 }
 t3
 ## Check that the outputs make sense
+# All transition rates from crem should sum to 1
+x = c(1,1,1,1)
+i = c("other","other","other","other")
+j = c("crem","liom","vacant","other")
+scenario = "all"
+t3 <- vector()
+for(n in 1:length(i)){
+  t3[n] <- transition.3(x[n],i[n],j[n],params)
+}
+t3
+sum(t3)
+## All good
 #################################
 ## Choose between all of the transition 
 ## Scenario options are "liomvacother", "liomcremvac", "othercremvac", 
@@ -140,21 +182,6 @@ for(n in 1:length(i)){
   t[n] <- transition.x(x[n],i[n],j[n],params,scenario[n])
 }
 t
-## Check that the outputs make sense
-#################################
-## Growth Survival Transition Kernel
-## Check if it works
-i = c("liom","vacant","crem","vacant")
-j = c("vacant","crem","crem","vacant")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-scenario = c("all","cremvac","othercremvac","none")
-pt <- vector()
-for(n in 1:length(i)){
-  pt[n] <- ptxy(x[n],y[n],i[n],j[n],params,scenario[n])
-}
-pt
-## Check that the outputs make sense
 #################################
 ## Calculate Matrix for no ant species -- vacant
 ## Check that it works
@@ -175,6 +202,7 @@ plot(surv,ylim=c(0,1))
 #################################
 ## Calculate Matrix for one ant and vacant
 ## Check that it works
+## Scenario options are "liomvac","cremvac","othervac"
 i = c("liom","vacant","other","crem")
 j = c("vacant","other","vacant","vacant")
 scenario <- c("liomvac","othervac","othervac","cremvac")
@@ -191,116 +219,98 @@ plot(surv,ylim = c(0,1))
 #################################
 ## Calculate Matrix for two ants and vacant
 ## Check that it works
-
+bigmatrix.3(params,lower=cholla_min-0,upper=cholla_max+0,matsize,"other","vacant","othercremvac")
+## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
+i = c("liom","vacant","crem")
+j = c("other","crem","vacant")
+scenario <- c("liomvacother","liomcremvac","othercremvac")
+bmat <- vector()
+for(n in 1:length(i)){
+  bmat[n] <- lambda(bigmatrix.3(params,lower,upper,matsize,i[n],j[n],scenario[n])$IPMmat)
+}
+bmat
 ## Check that the outputs make sense
+# This diagnostic shows that the columns should sum to the survival function
+testmat <- bigmatrix.3(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"liom","liom","liomcremvac")$Tmat
+surv <- colSums(testmat)
+plot(surv,ylim = c(0,1))
+## This looks good!
 #################################
+## Calculate Matrix for three ants and vacant (real life scenario)
+lambda(bigmatrix.4(params,lower,upper,matsize,"vacant","vacant","all")$IPMmat)
+## Check that the outputs make sense
+# This diagnostic shows that the columns should sum to the survival function
+testmat <- bigmatrix.4(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"liom","crem",scenario="all")$Tmat
+surv <- colSums(testmat)
+plot(surv,ylim = c(0,1))
+## This looks good!
+#################################
+## Choose the proper bigmatrix based on ant scenario
+
+## Check that the outputs are right
+## One ant option
+lambda(bigmatrix(params,lower,upper,matsize,i = "vacant",j = "vacant","none")$IPMmat)
+lambda(bigmatrix.1(params,lower,upper,matsize,"vacant")$IPMmat)
+## 2 ant options
+lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","cremvac")$IPMmat)
+lambda(bigmatrix.2(params,lower,upper,matsize,"crem","vacant","cremvac")$IPMmat)
+## 3 ant options
+lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","liomcremvac")$IPMmat)
+lambda(bigmatrix.3(params,lower,upper,matsize,"crem","vacant","liomcremvac")$IPMmat)
+## all ant options
+lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","all")$IPMmat)
+lambda(bigmatrix.4(params,lower,upper,matsize,"crem","vacant","all")$IPMmat)
+## These all match!
 
 
+
+#######################################################################################################
+## Calculate the fitness for each of the different diversity scenarios                               ##
+## This will allow me to compare the effects of diversity on the fitness of the tree cholla          ##
+#######################################################################################################
+# Create an empty data frame to store the lambdas
 lams <- as.data.frame(rep(NA,8))
-
-######## No Ants ####
-lams$means[1] <- lambda(bigmatrix.1(params,lower,upper,matsize,"vacant")$IPMmat)
-## Vacant = 0.9344461
-
-
-######## One Ant Results ####
-#### Deterministic
+######## calculate fitness of tree cholla with no ant partners ########
+lams$means[1] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"vacant","vacant","none")$IPMmat)
+######## caclulate fitness of tree cholla with one ant partner possible ########
 i <- c("crem","liom","other")
 i <- c("crem","liom","other")
 scenario = c("cremvac","liomvac","othervac")
 bmat <- vector()
 for(n in 1:length(i)){
-  bmat[n] <- lambda(bigmatrix(params,lower,upper,matsize,i[n],j[n],scenario[n])$IPMmat)
+  bmat[n] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,i[n],j[n],scenario[n])$IPMmat)
 }
 lams$means[2:4] <- bmat
-lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","cremvac")$IPMmat)
-## Crem & Vacant =  0.9369948
-## Liom & Vacant = 0.9348296
-## Other & Vacant = 0.9361773
-#### W Posterior
-
-######## Two Ant ####
-######## One Ant Results ####
-#### Deterministic
+######## calculate fitness of tree cholla with two ant partners possible ########
 i <- c("liom","other","vacant")
 j <- c("liom","other", "vacant")
 scenario = c("liomcremvac","liomvacother", "othercremvac" )
 bmat <- vector()
 for(n in 1:length(i)){
-  bmat[n] <- bigmatrix(params,lower,upper,matsize,2,i[n],j[n],scenario[n])
+  bmat[n] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,i[n],j[n],scenario[n])$IPMmat)
 }
 lams$means[5:7]<-bmat
-## Liom & Crem & Vacant = 0.9369632
-## Liom & Other & Vacant = 0.9365571
-## Other & Crem & Vacant = 0.9382092
+######## calculate fitness of tree cholla with all ant partners possible ########
+lams$means[8]<-lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"crem","other","all")$IPMmat)
 
-#### W Posterior
-
-######## All Ant ####
-######## One Ant Results ####
-#### Deterministic
-lams$means[8]<-bigmatrix(params,lower,upper,matsize,3,"crem","other","all")
-## All = 0.9388964
-#### W Posterior
-
-## Visualize the Deterministic Mean Lambdas
-## Vacant = 0.9344461
-## Crem & Vacant =  0.9369948
-## Liom & Vacant = 0.9348296
-## Other & Vacant = 0.9361773
-## Liom & Crem & Vacant = 0.9369632
-## Liom & Other & Vacant = 0.9365571
-## Other & Crem & Vacant = 0.9382092
-## All = 0.9388964
+######## Visualize the Deterministic Mean Lambdas
 lams$scenario <- c("No Ants","Crem.","Liom.","Oth.",
                     "Liom. & Crem.", "Liom. & Oth.", "Oth. & Crem.", "All Ants")
 lams$scenario_abv <- c("None","C","L","O","L,C","L,O","O,C","All")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_means3.png")
-plot(lams$means, col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"), 
-     pch = 20, cex = 4, xlim = c(0.5,length(lams$scenario)), ylim = c(0.9740,0.9756),
+plot(1:8,lams$means, col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"), 
+     pch = 20, cex = 4, ylim=c(0.9,1.6),xlim = c(0,9),
      xaxt = "n",
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Lambdas by Ant Scenario")
- text(x = 1:length(lams$scenario)-0.2, y = lams$means +.00015,
-      labels = lams$scenario,
+ text(x = 1:8-0.2, y = lams$means+0.06,
+      labels = lams$scenario_abv,
       srt = 35)
- legend("bottomright",legend = c("L = Liom.","C = Crem.","O = Other"))
-# text(x = 1:length(lams$scenario),
-#      ## Move labels to just below bottom of chart.
-#      y = 0.9738,#par("usr")[3]-0.1,
-#      ## Use names from the data list.
-#      labels = (lams$scenario),
-#      ## Change the clipping region.
-#      xpd = NA,
-#      ## Rotate the labels by 35 degrees.
-#      srt = 20,
-#      ## Adjust the labels to almost 100% right-justified.
-#      adj = 0.965,
-#      ## Increase label size.
-#      cex = 1)
+ legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"))
 dev.off()
-
-
-
-
-
-## A visual of the growth kernel
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("growth_heat.png")
-par(mfrow=c(2,2)) 
-G=h*outer(y,y,gxy,i = "crem",params=params)  # growth kernel
-image(y,y,t(G),main='Crem Tended')        # plot it
-
-G=h*outer(y,y,gxy,i = "liom",params=params)  # growth kernel
-image(y,y,t(G),main='Liom Tended')        # plot it
-
-G=h*outer(y,y,gxy,i = "other",params=params)  # growth kernel
-image(y,y,t(G),main='Other Tended')        # plot it
-
-G=h*outer(y,y,gxy,i = "vacant",params=params)  # growth kernel
-image(y,y,t(G),main='Not Tended')        # plot it
-dev.off()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
+#### One problem here is that I thiiiiink this is wrong. It may not be, but LO is 
+#### sooo much higher than any other scenario that it seems incorrect. I have not 
+#### yet figured out what could be causing this?
 
 
 
