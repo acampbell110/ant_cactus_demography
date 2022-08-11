@@ -522,7 +522,7 @@ bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
 ###################################### THREE ANTS ###############################################
 #################################################################################################
 
-bigmatrix.3 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
+bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -560,17 +560,17 @@ bigmatrix.3 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
     Tmat[(2*n+3):(3*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",num_ants,params,scenario))*h   ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"liom","crem",num_ants,params,scenario))*h   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"vacant","crem",num_ants,params,scenario))*h   ## Top Third
+    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",params,scenario))*h   ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"liom","crem",params,scenario))*h   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"vacant","crem",params,scenario))*h   ## Top Third
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","liom",num_ants,params,scenario))*h   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","liom",num_ants,params,scenario))*h   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"vacant","liom",num_ants,params,scenario))*h   ## Middle Third
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","liom",params,scenario))*h   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","liom",params,scenario))*h   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"vacant","liom",params,scenario))*h   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","vacant",num_ants,params,scenario))*h   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","vacant",num_ants,params,scenario))*h   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"vacant","vacant",num_ants,params,scenario))*h   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","vacant",params,scenario))*h   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","vacant",params,scenario))*h   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"vacant","vacant",params,scenario))*h   ## Bottom Third
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -595,17 +595,17 @@ bigmatrix.3 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
     Tmat[(2*n+3):(3*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"vacant","vacant",num_ants,params,scenario))*h   ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"liom","vacant",num_ants,params,scenario))*h   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"other","vacant",num_ants,params,scenario))*h   ## Top Third
+    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"vacant","vacant",params,scenario))*h   ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"liom","vacant",params,scenario))*h   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"other","vacant",params,scenario))*h   ## Top Third
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"vacant","liom",num_ants,params,scenario))*h   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","liom",num_ants,params,scenario))*h   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","liom",num_ants,params,scenario))*h   ## Middle Third
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"vacant","liom",params,scenario))*h   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","liom",params,scenario))*h   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","liom",params,scenario))*h   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"vacant","other",num_ants,params,scenario))*h   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","other",num_ants,params,scenario))*h   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","other",num_ants,params,scenario))*h   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"vacant","other",params,scenario))*h   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","other",params,scenario))*h   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","other",params,scenario))*h   ## Bottom Third
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -630,17 +630,17 @@ bigmatrix.3 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
     Tmat[(2*n+3):(3*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(FALSE)
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",num_ants,params,scenario))*h   ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"vacant","crem",num_ants,params,scenario))*h   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"other","crem",num_ants,params,scenario))*h   ## Top Third
+    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",params,scenario))*h   ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"vacant","crem",params,scenario))*h   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"other","crem",params,scenario))*h   ## Top Third
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","vacant",num_ants,params,scenario))*h   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"vacant","vacant",num_ants,params,scenario))*h   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","vacant",num_ants,params,scenario))*h   ## Middle Third
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","vacant",params,scenario))*h   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"vacant","vacant",params,scenario))*h   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","vacant",params,scenario))*h   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","other",num_ants,params,scenario))*h   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"vacant","other",num_ants,params,scenario))*h   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","other",num_ants,params,scenario))*h   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","other",params,scenario))*h   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"vacant","other",params,scenario))*h   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","other",params,scenario))*h   ## Bottom Third
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -651,9 +651,9 @@ bigmatrix.3 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
 ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
 
 
-bigmatrix.3(params,lower,upper,matsize,2,"liom","liom","liomcremvac")
-bigmatrix.3(params,lower,upper,matsize,2,"vacant","vacant","liomvacother")
-bigmatrix.3(params,lower,upper,matsize,2,"other","crem","othercremvac")
+bigmatrix.3(params,lower,upper,matsize,"liom","liom","liomcremvac")
+bigmatrix.3(params,lower,upper,matsize,"vacant","vacant","liomvacother")
+bigmatrix.3(params,lower,upper,matsize,"other","crem","othercremvac")
 
 
 
@@ -662,7 +662,7 @@ bigmatrix.3(params,lower,upper,matsize,2,"other","crem","othercremvac")
 ######################################### ALL ANTS PRESENT #######################################
 ##################################################################################################
 
-bigmatrix.4 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
+bigmatrix.4 <- function(params,lower,upper,matsize,i,j,scenario){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -716,25 +716,25 @@ bigmatrix.4 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
     Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))*beta(TRUE)
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",4,params,scenario))*h   ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"liom","crem",4,params,scenario))*h   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"other","crem",4,params,scenario))*h   ## Top Third
-    Tmat[3:(n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","crem",4,params,scenario))*h   ## Top Fourth
+    Tmat[3:(n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","crem",params,scenario))*h   ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-t(outer(y,y,ptxy,"liom","crem",params,scenario))*h   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-t(outer(y,y,ptxy,"other","crem",params,scenario))*h   ## Top Third
+    Tmat[3:(n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","crem",params,scenario))*h   ## Top Fourth
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","liom",4,params,scenario))*h   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","liom",4,params,scenario))*h   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","liom",4,params,scenario))*h   ## Middle Third
-    Tmat[(n+3):(2*n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","liom",4,params,scenario))*h ## Middle Fourth
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","liom",params,scenario))*h   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","liom",params,scenario))*h   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","liom",params,scenario))*h   ## Middle Third
+    Tmat[(n+3):(2*n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","liom",params,scenario))*h ## Middle Fourth
     ##Middle 2 Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","other",4,params,scenario))*h   ## Middle 2 First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","other",4,params,scenario))*h   ## Middle 2 Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","other",4,params,scenario))*h   ## Middle 2 Third
-    Tmat[(2*n+3):(3*n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","other",4,params,scenario))*h   ## Middle 2 Fourth
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","other",params,scenario))*h   ## Middle 2 First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","other",params,scenario))*h   ## Middle 2 Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","other",params,scenario))*h   ## Middle 2 Third
+    Tmat[(2*n+3):(3*n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","other",params,scenario))*h   ## Middle 2 Fourth
     #Bottom Row
-    Tmat[(3*n+3):(4*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","vacant",4,params,scenario))*h   ## Bottom First
-    Tmat[(3*n+3):(4*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","vacant",4,params,scenario))*h   ## Bottom Second
-    Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","vacant",4,params,scenario))*h   ## Bottom Third
-    Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","vacant",4,params,scenario))*h   ## Bottom Fourth
+    Tmat[(3*n+3):(4*n+2),3:(n+2)]<- t(outer(y,y,ptxy,"crem","vacant",params,scenario))*h   ## Bottom First
+    Tmat[(3*n+3):(4*n+2),(n+3):(2*n+2)]<- t(outer(y,y,ptxy,"liom","vacant",params,scenario))*h   ## Bottom Second
+    Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<- t(outer(y,y,ptxy,"other","vacant",params,scenario))*h   ## Bottom Third
+    Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-t(outer(y,y,ptxy,"vacant","vacant",params,scenario))*h   ## Bottom Fourth
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -742,7 +742,7 @@ bigmatrix.4 <- function(params,lower,upper,matsize,num_ants,i,j,scenario){
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
 }
 
-bigmatrix.4(params,lower,upper,matsize,3,"vacant","vacant","all")
+bigmatrix.4(params,lower,upper,matsize,"vacant","vacant","all")
 
 
 
@@ -751,7 +751,7 @@ bigmatrix.4(params,lower,upper,matsize,3,"vacant","vacant","all")
 ############################ CHOOSE WHICH SCENARIO (COMBO OF ANTS) ##############################
 #################################################################################################
 
-bigmatrix<-function(params,lower,upper,matsize,num_ants,i,j,scenario){  
+bigmatrix<-function(params,lower,upper,matsize,i,j,scenario){  
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -760,39 +760,32 @@ bigmatrix<-function(params,lower,upper,matsize,num_ants,i,j,scenario){
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
   if(num_ants == 0){
-    lambda = bigmatrix.1(params,lower,upper,matsize,num_ants,i)
+    lambda = bigmatrix.1(params,lower,upper,matsize,i)
     return(lambda)
   }
   if(num_ants == 1){
-    lambda = bigmatrix.2(params,lower,upper,matsize,num_ants,i,j,scenario)
+    lambda = bigmatrix.2(params,lower,upper,matsize,i,j,scenario)
     return(lambda)
   }
   if(num_ants == 2){
-    lambda = bigmatrix.3(params,lower,upper,matsize,num_ants,i,j,scenario)
+    lambda = bigmatrix.3(params,lower,upper,matsize,i,j,scenario)
     return(lambda)
   }
   if(num_ants == 3){
-    lambda = bigmatrix.4(params,lower,upper,matsize,num_ants,i,j,scenario)
+    lambda = bigmatrix.4(params,lower,upper,matsize,i,j,scenario)
     return(lambda)
   }
 } 
 ## One ant option
-bigmatrix(params,lower,upper,matsize,0,i = "vacant",j = "vacant","none")
-bigmatrix.1(params,lower,upper,matsize,0,"vacant")
+bigmatrix(params,lower,upper,matsize,i = "vacant",j = "vacant","none")
+bigmatrix.1(params,lower,upper,matsize,"vacant")
 ## 2 ant options
-bigmatrix(params,lower,upper,matsize,1,"crem","vacant","cremvac")
-bigmatrix.2(params,lower,upper,matsize,1,"liom","vacant","liomvac")
+bigmatrix(params,lower,upper,matsize,"crem","vacant","cremvac")
+bigmatrix.2(params,lower,upper,matsize,"liom","vacant","liomvac")
 ## 3 ant options
-bigmatrix(params,lower,upper,matsize,2,"crem","vacant","liomcremvac")
-bigmatrix.3(params,lower,upper,matsize,2,"crem","vacant","liomcremvac")
+bigmatrix(params,lower,upper,matsize,"crem","vacant","liomcremvac")
+bigmatrix.3(params,lower,upper,matsize,"crem","vacant","liomcremvac")
 ## all ant options
-bigmatrix(params,lower,upper,matsize,3,"crem","vacant","all")
-bigmatrix.4(params,lower,upper,matsize,3,"crem","vacant","all")
-
-## num_ants = 0 ----> no transitions (associated with bigmatrix1)
-## num_ants = 1 ----> one transition (one ant and vacant) (associated with bigmatrix2)
-## num_ants = 2 ----> two transitions (two ants and vacant) (associated with bigmatrix3)
-## num_ants = 3 ----> three transitions (three ants and vacant) (associated with bigmatrix4)
-
-
+bigmatrix(params,lower,upper,matsize,"crem","vacant","all")
+bigmatrix.4(params,lower,upper,matsize,"crem","vacant","all")
 
