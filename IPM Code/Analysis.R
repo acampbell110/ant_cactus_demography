@@ -35,10 +35,13 @@ p
 # The sum of all future sizes from all previous sizes should sum to 1
 x = rep(1,25)
 y = seq(cholla_min,cholla_max,length = 25)
-sum(gxy(x,y,"other",params))
+outer(x,y,
+      dnorm(y,x,sd = 0))
+sum(gxy(x,y,"vacant",params))
 # This is not summing to 1. I would have assumed it would sum to less than 1 and get closer and closer as 
 # the number increased. If I set it at 20, it is less than 1, but more values does not do that
 integrate(gxy(x,y,"liom",params),lower=cholla_min,upper=cholla_max)
+integrate(dnorm(y,x,sd = 0),lower = cholla_min, upper = cholla_max)
 sum(pxy(x,y,"liom",params))
 # This is also not summing to 1, but I am not actually sure that it should?
 ################################
@@ -196,7 +199,7 @@ plot(surv,ylim = c(0,1))
 lams <- as.data.frame(rep(NA,8))
 
 ######## No Ants ####
-lams$means[1] <- bigmatrix.1(params,lower,upper,matsize,0,"vacant")
+lams$means[1] <- lambda(bigmatrix.1(params,lower,upper,matsize,"vacant")$IPMmat)
 ## Vacant = 0.9344461
 
 
@@ -207,9 +210,10 @@ i <- c("crem","liom","other")
 scenario = c("cremvac","liomvac","othervac")
 bmat <- vector()
 for(n in 1:length(i)){
-  bmat[n] <- bigmatrix(params,lower,upper,matsize,1,i[n],j[n],scenario[n])
+  bmat[n] <- lambda(bigmatrix(params,lower,upper,matsize,i[n],j[n],scenario[n])$IPMmat)
 }
 lams$means[2:4] <- bmat
+lambda(bigmatrix)
 ## Crem & Vacant =  0.9369948
 ## Liom & Vacant = 0.9348296
 ## Other & Vacant = 0.9361773
