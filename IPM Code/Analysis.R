@@ -213,7 +213,7 @@ for(n in 1:length(i)){
   bmat[n] <- lambda(bigmatrix(params,lower,upper,matsize,i[n],j[n],scenario[n])$IPMmat)
 }
 lams$means[2:4] <- bmat
-lambda(bigmatrix)
+lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","cremvac")$IPMmat)
 ## Crem & Vacant =  0.9369948
 ## Liom & Vacant = 0.9348296
 ## Other & Vacant = 0.9361773
