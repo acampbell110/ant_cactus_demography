@@ -203,44 +203,40 @@ plot(surv,ylim=c(0,1))
 ## Calculate Matrix for one ant and vacant
 ## Check that it works
 ## Scenario options are "liomvac","cremvac","othervac"
-i = c("liom","vacant","other","crem")
-j = c("vacant","other","vacant","vacant")
 scenario <- c("liomvac","othervac","othervac","cremvac")
 bmat <- vector()
-for(n in 1:length(i)){
-  bmat[n] <- lambda(bigmatrix.2(params,lower,upper,matsize,i[n],j[n],scenario[n])$IPMmat)
+for(n in 1:length(scenario)){
+  bmat[n] <- lambda(bigmatrix.2(params,lower,upper,matsize,scenario[n])$IPMmat)
 }
 bmat
 ## Check that the outputs make sense
 # This diagnostic shows that the columsn should sum to the survival function of the vacant 
-testmat <- bigmatrix.2(params,lower=cholla_min-20,upper=cholla_max+20,matsize,"vacant","liom","liomvac")$Tmat
+testmat <- bigmatrix.2(params,lower=cholla_min-20,upper=cholla_max+20,matsize,"liomvac")$Tmat
 surv <- colSums(testmat)
 plot(surv,ylim = c(0,1))
 #################################
 ## Calculate Matrix for two ants and vacant
 ## Check that it works
-bigmatrix.3(params,lower=cholla_min-0,upper=cholla_max+0,matsize,"other","vacant","othercremvac")
+bigmatrix.3(params,lower=cholla_min-0,upper=cholla_max+0,matsize,"othercremvac")
 ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
-i = c("liom","vacant","crem")
-j = c("other","crem","vacant")
 scenario <- c("liomvacother","liomcremvac","othercremvac")
 bmat <- vector()
 for(n in 1:length(i)){
-  bmat[n] <- lambda(bigmatrix.3(params,lower,upper,matsize,i[n],j[n],scenario[n])$IPMmat)
+  bmat[n] <- lambda(bigmatrix.3(params,lower,upper,matsize,scenario[n])$IPMmat)
 }
 bmat
 ## Check that the outputs make sense
 # This diagnostic shows that the columns should sum to the survival function
-testmat <- bigmatrix.3(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"liom","liom","liomcremvac")$Tmat
+testmat <- bigmatrix.3(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"liomvacother")$Tmat
 surv <- colSums(testmat)
 plot(surv,ylim = c(0,1))
 ## This looks good!
 #################################
 ## Calculate Matrix for three ants and vacant (real life scenario)
-lambda(bigmatrix.4(params,lower,upper,matsize,"vacant","vacant","all")$IPMmat)
+lambda(bigmatrix.4(params,lower,upper,matsize,"all")$IPMmat)
 ## Check that the outputs make sense
 # This diagnostic shows that the columns should sum to the survival function
-testmat <- bigmatrix.4(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"liom","crem",scenario="all")$Tmat
+testmat <- bigmatrix.4(params,lower=cholla_min-15,upper=cholla_max+2,matsize,scenario="all")$Tmat
 surv <- colSums(testmat)
 plot(surv,ylim = c(0,1))
 ## This looks good!
@@ -249,17 +245,17 @@ plot(surv,ylim = c(0,1))
 
 ## Check that the outputs are right
 ## One ant option
-lambda(bigmatrix(params,lower,upper,matsize,i = "vacant",j = "vacant","none")$IPMmat)
-lambda(bigmatrix.1(params,lower,upper,matsize,"vacant")$IPMmat)
+lambda(bigmatrix(params,lower,upper,matsize,"none")$IPMmat)
+lambda(bigmatrix.1(params,lower,upper,matsize)$IPMmat)
 ## 2 ant options
-lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","cremvac")$IPMmat)
-lambda(bigmatrix.2(params,lower,upper,matsize,"crem","vacant","cremvac")$IPMmat)
+lambda(bigmatrix(params,lower,upper,matsize,"cremvac")$IPMmat)
+lambda(bigmatrix.2(params,lower,upper,matsize,"cremvac")$IPMmat)
 ## 3 ant options
-lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","liomcremvac")$IPMmat)
-lambda(bigmatrix.3(params,lower,upper,matsize,"crem","vacant","liomcremvac")$IPMmat)
+lambda(bigmatrix(params,lower,upper,matsize,"liomcremvac")$IPMmat)
+lambda(bigmatrix.3(params,lower,upper,matsize,"liomcremvac")$IPMmat)
 ## all ant options
-lambda(bigmatrix(params,lower,upper,matsize,"crem","vacant","all")$IPMmat)
-lambda(bigmatrix.4(params,lower,upper,matsize,"crem","vacant","all")$IPMmat)
+lambda(bigmatrix(params,lower,upper,matsize,"all")$IPMmat)
+lambda(bigmatrix.4(params,lower,upper,matsize,"all")$IPMmat)
 ## These all match!
 
 
@@ -271,14 +267,12 @@ lambda(bigmatrix.4(params,lower,upper,matsize,"crem","vacant","all")$IPMmat)
 # Create an empty data frame to store the lambdas
 lams <- as.data.frame(rep(NA,8))
 ######## calculate fitness of tree cholla with no ant partners ########
-lams$means[1] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"vacant","vacant","none")$IPMmat)
+lams$means[1] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"none")$IPMmat)
 ######## caclulate fitness of tree cholla with one ant partner possible ########
-i <- c("crem","liom","other")
-i <- c("crem","liom","other")
 scenario = c("cremvac","liomvac","othervac")
 bmat <- vector()
 for(n in 1:length(i)){
-  bmat[n] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,i[n],j[n],scenario[n])$IPMmat)
+  bmat[n] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,scenario[n])$IPMmat)
 }
 lams$means[2:4] <- bmat
 ######## calculate fitness of tree cholla with two ant partners possible ########
@@ -287,11 +281,11 @@ j <- c("liom","other", "vacant")
 scenario = c("liomcremvac","liomvacother", "othercremvac" )
 bmat <- vector()
 for(n in 1:length(i)){
-  bmat[n] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,i[n],j[n],scenario[n])$IPMmat)
+  bmat[n] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,scenario[n])$IPMmat)
 }
 lams$means[5:7]<-bmat
 ######## calculate fitness of tree cholla with all ant partners possible ########
-lams$means[8]<-lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"crem","other","all")$IPMmat)
+lams$means[8]<-lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"all")$IPMmat)
 
 ######## Visualize the Deterministic Mean Lambdas
 lams$scenario <- c("No Ants","Crem.","Liom.","Oth.",
@@ -300,13 +294,14 @@ lams$scenario_abv <- c("None","C","L","O","L,C","L,O","O,C","All")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_means3.png")
 plot(1:8,lams$means, col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"), 
-     pch = 20, cex = 4, ylim=c(0.9,1.6),xlim = c(0,9),
-     xaxt = "n",
-     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Lambdas by Ant Scenario")
- text(x = 1:8-0.2, y = lams$means+0.06,
+     pch = 20, cex = 6,xlim = c(0,9),ylim = c(0.975,1.015),cex.main = 2.3,
+     xaxt = "n",cex.lab = 2,
+     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
+ text(x = 1:8-0.2, y = lams$means+0.004,cex = 2,
       labels = lams$scenario_abv,
       srt = 35)
- legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"))
+ legend("bottomright",legend = c("L = Liom.","C = Crem.","O = Other"),
+        cex = 1.5)
 dev.off()
 #### One problem here is that I thiiiiink this is wrong. It may not be, but LO is 
 #### sooo much higher than any other scenario that it seems incorrect. I have not 
