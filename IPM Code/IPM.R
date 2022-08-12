@@ -46,14 +46,10 @@ sx<-function(x,i,params){
   s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb)
   s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb)
   #Return the survival probabilities
-  # if(i == "crem"){ return(s_crem)}
-  # if(i == "liom"){ return(s_vac)}
-  # if(i == "other"){ return(s_other)}
-  # if(i == "vacant"){ return(s_liom)}
-  if(i == "crem"){ return(1)}
-  if(i == "liom"){ return(1)}
-  if(i == "other"){ return(1)}
-  if(i == "vacant"){ return(1)}
+   if(i == "crem"){ return(s_crem)}
+   if(i == "liom"){ return(s_vac)}
+   if(i == "other"){ return(s_other)}
+   if(i == "vacant"){ return(s_liom)}
 }
 
 
@@ -371,7 +367,7 @@ transition.x <- function(x,i,j,params,scenario){
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
 ##################################################################################################
-bigmatrix.1 <- function(params,lower,upper,matsize,i){
+bigmatrix.1 <- function(params,lower,upper,matsize){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -394,7 +390,7 @@ bigmatrix.1 <- function(params,lower,upper,matsize,i){
   IPMmat <- matrix()
   
   # Banked seeds go in top row
-  Fmat[1,3:(n+2)]<-fx(y,i,params) 
+  Fmat[1,3:(n+2)]<-fx(y,"vacant",params) 
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
   Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
   # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -402,7 +398,7 @@ bigmatrix.1 <- function(params,lower,upper,matsize,i){
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))   
   # Growth/survival transitions among cts sizes
-  Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,i,params))*h 
+  Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params))*h 
   # Put it all together
   IPMmat<-Fmat+Tmat  
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
@@ -415,7 +411,7 @@ bigmatrix.1 <- function(params,lower,upper,matsize,i){
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
-bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
+bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -526,7 +522,7 @@ bigmatrix.2 <- function(params,lower,upper,matsize,i,j,scenario){
 ###################################### THREE ANTS ###############################################
 #################################################################################################
 
-bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
+bigmatrix.3 <- function(params,lower,upper,matsize,scenario){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -553,8 +549,7 @@ bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
     Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom") ## Production of seeds from x sized mom with ant visitor
     Fmat[1,(2*n+3):(3*n+2)]<-fx(y,params=params,"vacant")
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-    #Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
-    Tmat[2,1]<-1-1
+    Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     Tmat[3:(n+2),1]<-0
     Tmat[(n+3):(2*n+2),1]<-0
@@ -589,8 +584,7 @@ bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
     Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom") ## Production of seeds from x sized mom with ant visitor
     Fmat[1,(2*n+3):(3*n+2)]<-fx(y,params=params,"other")
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-    #Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
-    Tmat[2,1]<-1-1
+    Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     Tmat[3:(n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     Tmat[(n+3):(2*n+2),1]<-0
@@ -601,17 +595,26 @@ bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
     Tmat[(2*n+3):(3*n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ##Top Row
+    ## vacant-vacant
     Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother"))   ## Top First
+    #liom-vacant
     Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother"))   ## Top Second
+    #other-vacant
     Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother"))   ## Top Third
     ##Middle Row
+    #vacant-liom
     Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother"))   ## Middle First
+    #liom-liom
     Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother"))   ## Middle Second
+    #other-liom
     Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother"))   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother"))   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother"))   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother"))   ## Bottom Third
+    #vacant-other
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother"))   ## Bottom First
+    #liom-other
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother"))   ## Bottom Second
+    #other-other
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother"))   ## Bottom Third
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -660,7 +663,7 @@ bigmatrix.3 <- function(params,lower,upper,matsize,i,j,scenario){
 ######################################### ALL ANTS PRESENT #######################################
 ##################################################################################################
 
-bigmatrix.4 <- function(params,lower,upper,matsize,i,j,scenario){
+bigmatrix.4 <- function(params,lower,upper,matsize,scenario){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -735,7 +738,7 @@ bigmatrix.4 <- function(params,lower,upper,matsize,i,j,scenario){
 ############################ CHOOSE WHICH SCENARIO (COMBO OF ANTS) ##############################
 #################################################################################################
 
-bigmatrix<-function(params,lower,upper,matsize,i,j,scenario){  
+bigmatrix<-function(params,lower,upper,matsize,scenario){  
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -747,35 +750,36 @@ bigmatrix<-function(params,lower,upper,matsize,i,j,scenario){
   ## "othervac", "liomvac", "cremvac", "all", "none"
   
   if(scenario == "none"){
-    list = (bigmatrix.1(params,lower,upper,matsize,i))
+    list = (bigmatrix.1(params,lower,upper,matsize))
     return(list)
   }
   if(scenario == "liomvac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,i,j,scenario))
+    list = (bigmatrix.2(params,lower,upper,matsize,scenario))
     return(list)
   }
   if(scenario == "cremvac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,i,j,scenario))
+    list = (bigmatrix.2(params,lower,upper,matsize,scenario))
     return(list)
   }
   if(scenario == "othervac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,i,j,scenario))
+    list = (bigmatrix.2(params,lower,upper,matsize,scenario))
     return(list)
   }
   if(scenario == "liomvacother"){
-    list = (bigmatrix.3(params,lower,upper,matsize,i,j,scenario))
+    list = (bigmatrix.3(params,lower,upper,matsize,scenario))
     return(list)
   }
   if(scenario == "liomcremvac"){
-    list = (bigmatrix.3(params,lower,upper,matsize,i,j,scenario))
+    list = (bigmatrix.3(params,lower,upper,matsize,scenario))
     return(list)
   }
   if(scenario == "othercremvac"){
-    list = (bigmatrix.3(params,lower,upper,matsize,i,j,scenario))
+    list = (bigmatrix.3(params,lower,upper,matsize,scenario))
     return(list)
   }
   if(scenario == "all"){
-    list = (bigmatrix.4(params,lower,upper,matsize,i,j,scenario))
+    list = (bigmatrix.4(params,lower,upper,matsize,scenario))
     return(list)
   }
 } 
+
