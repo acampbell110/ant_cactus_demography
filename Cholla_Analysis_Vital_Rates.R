@@ -912,11 +912,12 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("Ant_Size_Multi.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,2,3,4,5),
-              ncol = 2, nrow = 3, byrow = TRUE), heights = c(0.6,1.4,1.4), widths = c(3.9,3.9))
+              ncol = 2, nrow = 3, byrow = TRUE), heights = c(1,1.4,1.4), widths = c(3.9,3.9))
 plot.new()
-text(0.5,0.5,"Ant States",cex=2,font=2)
+text(0.5,0.5,"Large Plants are Most Likely \n to be Liom. Tended",cex=4,font=2)
 ## Prev Vac
-plot(size_dummy_real, pred_vac[,1], type = "l", col = vaccol,main = "Previously Vacant", ylim = c(0,1), xlab = "", ylab = "")
+plot(size_dummy_real, pred_vac[,1], type = "l", col = vaccol,main = "Previously Vacant", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 2)
 lines(size_dummy_real, pred_vac[,2], col = othercol)
 lines(size_dummy_real, pred_vac[,3], col = cremcol)
 lines(size_dummy_real, pred_vac[,4], col = liomcol)
@@ -925,7 +926,8 @@ points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_liom,pch=16,cex=multi_plot
 points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_other,pch=16,cex=multi_plot_vac$N_mod,col= alpha(othercol, 0.4))
 points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_vac,pch=16,cex=multi_plot_vac$N_mod,col= alpha(vaccol, 0.4))
 ## Prev Other
-plot(size_dummy_real, pred_other[,1], type = "l", col = vaccol,main = "Previously Other", ylim = c(0,1), xlab = "", ylab = "")
+plot(size_dummy_real, pred_other[,1], type = "l", col = vaccol,main = "Previously Other", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 2)
 lines(size_dummy_real, pred_other[,2], col = othercol)
 lines(size_dummy_real, pred_other[,3], col = cremcol)
 lines(size_dummy_real, pred_other[,4], col = liomcol)
@@ -935,7 +937,8 @@ points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
 legend("topright",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol))
 ## Prev Crem
-plot(size_dummy_real, pred_crem[,1], type = "l", col = vaccol,main = "Previously Crem", ylim = c(0,1), xlab = "", ylab = "")
+plot(size_dummy_real, pred_crem[,1], type = "l", col = vaccol,main = "Previously Crem", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 2)
 lines(size_dummy_real, pred_crem[,2], col = othercol)
 lines(size_dummy_real, pred_crem[,3], col = cremcol)
 lines(size_dummy_real, pred_crem[,4], col = liomcol)
@@ -944,7 +947,8 @@ points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_pl
 points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
 points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
 ## Prev Liom
-plot(size_dummy_real, pred_liom[,1], type = "l", col = vaccol,main = "Previously Liom", ylim = c(0,1), xlab = "", ylab = "")
+plot(size_dummy_real, pred_liom[,1], type = "l", col = vaccol,main = "Previously Liom", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 2)
 lines(size_dummy_real, pred_liom[,2], col = othercol)
 lines(size_dummy_real, pred_liom[,3], col = cremcol)
 lines(size_dummy_real, pred_liom[,4], col = liomcol)
@@ -952,8 +956,8 @@ points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_pl
 points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
 points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
 points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_vac,pch=16,cex=multi_plot_liom$N_mod,col= alpha(vaccol, 0.4))
-mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.1)
-mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
+mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.5,las=0)
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
