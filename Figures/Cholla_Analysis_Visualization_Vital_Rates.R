@@ -303,13 +303,14 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("grow_panel.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
+              ncol = 3, byrow = TRUE), heights = c(1,1.4,1.4), widths = c(3.9,3.9,3.9))
 plot.new()
-text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
+text(0.5,0.3,"Crem. Offer Higher Growth \n Rates for Small Cacti
+",cex=4,font=2)
 # Other (2)
 samp <- sample(nrow(grow_out), 50)
 plot(x = size_other  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4,
-     xlab = "", ylab = "") 
+     main = "Other",cex.main = 2) 
 for(i in 1:samp){
   lines(x = size_other, y = (grow_out$beta0.2[i] + size_other * grow_out$beta1.2[i]),col = "lightgrey", alpha = 0.1)
 }
@@ -317,7 +318,7 @@ points(y_other_subset_grow$logsize_t,y_other_subset_grow$logsize_t1,pch=16,col= 
 lines(x = size_other  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4)
 # Crem (3)
 plot(x = size_crem  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4,
-     xlab = "", ylab = "") 
+     main = "Crem.",cex.main = 2) 
 for(i in 1:samp){
   lines(x = size_crem, y = (grow_out$beta0.3[i] + size_crem * grow_out$beta1.3[i]),col = "lightgrey", alpha = 0.1)
 }
@@ -325,7 +326,7 @@ points(y_crem_subset_grow$logsize_t,y_crem_subset_grow$logsize_t1,pch=16,col= al
 lines(x = size_crem  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4)
 # Liom (4)
 plot(x = size_liom  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4,
-     xlab = "", ylab = "")
+     main = "Liom.",cex.main = 2)
 for(i in 1:samp){
   lines(x = size_liom, y = (grow_out$beta0.4[i] + size_liom * grow_out$beta1.4[i]),col = "lightgrey", alpha = 0.1)
 }
@@ -333,7 +334,7 @@ points(y_liom_subset_grow$logsize_t,y_liom_subset_grow$logsize_t1,pch=16,col= al
 lines(x = size_liom  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4)
 # Vacant (1)s
 plot(x = size_vac  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4,
-     xlab = "", ylab = "") 
+     main = "Vacant",cex.main=2) 
 for(i in 1:samp){
   lines(x = size_vac, y = (grow_out$beta0.1[i] + size_vac * grow_out$beta1.1[i]),col = "lightgrey", alpha = 0.1)
 }
@@ -342,16 +343,17 @@ lines(x = size_vac  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4)
 
 # All together
 plot(x = size_other  ,y = y_other_mean_grow, type = "l",lwd = 2,col = othercol,
-     xlab = "", ylab = "",
+     main = "All Ants",cex.main = 2,
      ylim = c(8.8,9.5), xlim = c(8.8,9.2))  
   lines(x = size_crem, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 2) 
   lines(x = size_liom, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 2) 
   lines(x = size_vac, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 2) 
   lines(x = size_dummy, y = size_dummy, type= "l", col = "darkgrey", lwd = 2, lty = 2)
   abline(a = 1, b = 1, col = "darkgrey", lty = 20)
-legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
-mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.1)
-mtext("Log(Volume) year t+1",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
+       cex=1.6)
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
+mtext("Log(Volume) year t+1",side=2,line=0,outer=TRUE,cex=1.5,las=0)
 dev.off()
 
 ## Contour plot ###############################################
@@ -519,6 +521,7 @@ vac_vec <- (colMeans(grow_outputs$w[,1,]))
 liom_vec <- colMeans(grow_outputs$w[,4,])
 other_vec <- colMeans(grow_outputs$w[,2,])
 crem_vec <- colMeans(grow_outputs$w[,3,])
+years <- c(2004,2005,2006,2007,2009,2010,2011,2012,2013,2014,2015,2016,2017,2019)
 
 png("year_ant_grow1.png")
 pairs(data.frame(cbind(vac_vec,liom_vec,other_vec,crem_vec)))
@@ -549,6 +552,14 @@ barplot(other_vec,
         main = "Other Tended Cacti", xlab = "Year", ylab = "Year-Ant Factor")
 mtext("Year",side=1,line=0,outer=TRUE,cex=1.0)
 mtext("Year-Ant Factor",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+dev.off()
+
+png("year_ant_timeseries.png")
+plot(years,liom_vec,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+     main = "Liom. and Crem. Effects on Growth are \n Decoupled Across Time",
+     ylim = c(-0.4,0.4), xlab = "Years",ylab = "Year-Ant Effect on Growth",cex.lab = 1.5)
+lines(years, crem_vec, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+legend("topright",legend = c("Liom.","Crem."),fill = c(liomcol,cremcol))
 dev.off()
 ###########################################################################################################################
 #### Survival Visuals #####################################################################################################
@@ -641,37 +652,42 @@ par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
               ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
 plot.new()
-text(0.5,0.25,"Survival Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
+text(0.5,0.25,"Crem. Offer Higher Survival \n Rates for Small Cacti",cex=4,font=2)
 # Crem
-plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = cremcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15))
+plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = cremcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),
+     cex.main = 2, main = "Crem.")
 points(surv_plot_crem$mean_size,surv_plot_crem$surv,pch=16,cex=surv_plot_crem$N_mod,col= alpha(cremcol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_crem_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_crem_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c(size_crem,rev(size_crem)),c(invlogit(y_crem_high_surv), rev(invlogit(y_crem_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Liom
-plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = liomcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15))
+plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = liomcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),
+     cex.main = 2, main = "Liom.")
 points(surv_plot_liom$mean_size,surv_plot_liom$surv,pch=16,cex=surv_plot_liom$N_mod,col= alpha(liomcol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_liom_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_liom_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)# Vacant
 polygon(c(size_liom,rev(size_liom)),c(invlogit(y_liom_high_surv), rev(invlogit(y_liom_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Other
-plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = othercol, lwd = 4, ylim = c(0.3,1), xlim = c(-5,15))
+plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = othercol, lwd = 4, ylim = c(0.3,1), xlim = c(-5,15),
+     cex.main = 2, main = "Other")
 points(surv_plot_other$mean_size,surv_plot_other$surv,pch=16,cex=surv_plot_other$N_mod,col= alpha(othercol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_other_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_other_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c(size_other,rev(size_other)),c(invlogit(y_other_high_surv), rev(invlogit(y_other_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Vac
-plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = vaccol, lwd = 4, ylim = c(0,1), xlim = c(-5,15))
+plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = vaccol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),
+     cex.main = 2, main = "Vacant")
 points(surv_plot_vac$mean_size,surv_plot_vac$surv,pch=16,cex=surv_plot_vac$N_mod,col= alpha(vaccol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_vac_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_vac_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c(size_vac,rev(size_vac)),c(invlogit(y_vac_high_surv), rev(invlogit(y_vac_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # All Together
-plot(x = size_dummy, y = invlogit(other_extr), type = "l", col = othercol, lwd = 2, ylim = c(0,1), lty = 2, xlim = c(-5,15))
+plot(x = size_dummy, y = invlogit(other_extr), type = "l", col = othercol, lwd = 2, ylim = c(0,1), lty = 2, xlim = c(-5,15),
+     cex.main = 2,main = "All Ants")
 lines(x = size_dummy, y = invlogit(crem_extr), col = cremcol,lwd = 2, lty = 2)
 lines(x = size_dummy, y = invlogit(liom_extr), col = liomcol, lwd = 2, lty = 2)
 lines(x = size_dummy, y = invlogit(vac_extr), col = vaccol, lwd = 2, lty = 2)
@@ -679,7 +695,8 @@ lines(x = size_other, y = invlogit(y_other_surv), col = othercol, lwd = 2)
 lines(x = size_crem, y = invlogit(y_crem_surv), col = cremcol, lwd = 2)
 lines(x = size_liom, y = invlogit(y_liom_surv), col = liomcol, lwd = 2)
 lines(x = size_vac, y = invlogit(y_vac_surv), col = vaccol, lwd = 2)
-legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
+       cex = 2)
 mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=1.0)
 mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.1,las=0)
 dev.off()
@@ -687,39 +704,44 @@ dev.off()
 png("surv_panels_cropped.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
+              ncol = 3, byrow = TRUE), heights = c(1,1.4,1.4), widths = c(3.9,3.9,3.9))
 plot.new()
-text(0.5,0.25,"Survival Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
+text(0.5,0.5,"Crem. Offer Higher Survival \n Rates for Small Cacti",cex=4,font=2)
 # Crem
-plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = cremcol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15))
+plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = cremcol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15),
+     cex.main = 2, main = "Crem.")
 points(surv_plot_crem$mean_size,surv_plot_crem$surv,pch=16,cex=surv_plot_crem$N_mod,col= alpha(cremcol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_crem_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_crem_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c(size_crem,rev(size_crem)),c(invlogit(y_crem_high_surv), rev(invlogit(y_crem_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Liom
-plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = liomcol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15))
+plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = liomcol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15),
+     cex.main = 2, main = "Liom.")
 points(surv_plot_liom$mean_size,surv_plot_liom$surv,pch=16,cex=surv_plot_liom$N_mod,col= alpha(liomcol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_liom_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_liom_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)# Vacant
 polygon(c(size_liom,rev(size_liom)),c(invlogit(y_liom_high_surv), rev(invlogit(y_liom_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Other
-plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = othercol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15))
+plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = othercol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15),
+     cex.main = 2, main = "Other")
 points(surv_plot_other$mean_size,surv_plot_other$surv,pch=16,cex=surv_plot_other$N_mod,col= alpha(othercol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_other_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_other_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c(size_other,rev(size_other)),c(invlogit(y_other_high_surv), rev(invlogit(y_other_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Vac
-plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = vaccol, lwd = 4, ylim = c(0.2,1), xlim = c(-5,15))
+plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = vaccol, lwd = 4, ylim = c(0.2,1), xlim = c(-5,15),
+     cex.main = 2, main = "Vacant")
 points(surv_plot_vac$mean_size,surv_plot_vac$surv,pch=16,cex=surv_plot_vac$N_mod,col= alpha(vaccol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_vac_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_vac_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c(size_vac,rev(size_vac)),c(invlogit(y_vac_high_surv), rev(invlogit(y_vac_low_surv))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # All Together
-plot(x = size_dummy, y = invlogit(other_extr), type = "l", col = othercol, lwd = 2, ylim = c(0.6,1), lty = 2, xlim = c(1,15))
+plot(x = size_dummy, y = invlogit(other_extr), type = "l", col = othercol, lwd = 2, ylim = c(0.6,1), lty = 2, xlim = c(1,15),
+     cex.main = 2, main = "All Ants")
 lines(x = size_dummy, y = invlogit(crem_extr), col = cremcol,lwd = 2, lty = 2)
 lines(x = size_dummy, y = invlogit(liom_extr), col = liomcol, lwd = 2, lty = 2)
 lines(x = size_dummy, y = invlogit(vac_extr), col = vaccol, lwd = 2, lty = 2)
@@ -727,9 +749,10 @@ lines(x = size_other, y = invlogit(y_other_surv), col = othercol, lwd = 2)
 lines(x = size_crem, y = invlogit(y_crem_surv), col = cremcol, lwd = 2)
 lines(x = size_liom, y = invlogit(y_liom_surv), col = liomcol, lwd = 2)
 lines(x = size_vac, y = invlogit(y_vac_surv), col = vaccol, lwd = 2)
-legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
-mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=1.0)
-mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
+       cex = 1.6)
+mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=1.7)
+mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.7,las=0)
 dev.off()
 
 ## Panels 2
@@ -863,7 +886,7 @@ y_crem_viab = invlogit(viab_out$beta0.1)
 y_crem_low_viab = quantile(viab_out$beta0.1,0.05)
 y_crem_high_viab = quantile(viab_out$beta0.1,0.95)
 y_liom_viab = invlogit(viab_out$beta0.2) 
-y_liom_low_viab = quantile(viab_data$beta0.2,0.05)
+y_liom_low_viab = quantile(viab_out$beta0.2,0.05)
 y_liom_high_viab = quantile(viab_out$beta0.2,0.95)
 y_vac_viab = invlogit(viab_out$beta0.4)
 y_vac_low_viab = quantile(viab_out$beta0.4,0.05)
@@ -890,7 +913,7 @@ par(mar=c(5,5,0,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
               ncol = 3, byrow = TRUE), heights = c(1,2,2), widths = c(4,4,4))
 plot.new()
-text(0.5,0.5,"Viability Rates of Cacti \n by Ant State",cex=2,font=2)
+text(0.5,0.5,"Viability Rates of Cacti \n by Ant State",cex=4,font=2)
 ## Crem
 hist(crem_subset$viab, freq = F, ylim = c(0,40), main = "", xlab = "", ylab = "")
 lines(density(y_crem_viab), col = cremcol, lwd = 2)
@@ -908,14 +931,15 @@ plot(density(y_other_viab), col = othercol, lwd = 2, xlim = c(0.6,0.9), ylim = c
 lines(density(y_crem_viab), col = cremcol, lwd = 2)
 lines(density(y_liom_viab), col = liomcol, lwd = 2)
 lines(density(y_vac_viab), col = vaccol, lwd = 2)
-legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
+legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,cex = 1.7)
 mtext("Proportion of Viable Fruits",side=1,line=0,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=0,outer=TRUE,cex=1.3,las=0)
 dev.off()
 
 png("viab_bars.png")
 barplot(invlogit(means), ylim = c(0,1.1), col = c(vaccol,othercol,cremcol,liomcol),xlab = "Ant Partner", ylab = "Viability Rate",
-        main = "Proportion of Viable Flowerbuds \n by Ant Species", names.arg = c("Vacant","Other","Crem.","Liom."))
+        main = "Liom. Offers Higher Viability \nRates for Flowerbuds", names.arg = c("Vacant","Other","Crem.","Liom."),
+        cex.main = 2.6, cex.lab = 1.5)
 dev.off()
 
 list <- cbind(invlogit(viab_out$beta0.1),invlogit(viab_out$beta0.2),invlogit(viab_out$beta0.3),invlogit(viab_out$beta0.4))
