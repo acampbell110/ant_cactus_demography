@@ -32,6 +32,8 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
 )
+freq <- glm(growth_data$logsize_t1 ~ growth_data$logsize_t + growth_data$ant_t)
+summary(freq)
 ########## growth model includes sd variance across size and year as a random effect
 fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
 grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
@@ -80,6 +82,106 @@ dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 #######################################################################################################
+#### Skewed Growth Model -- THis is using a skewed normal distribution ################################
+#######################################################################################################
+growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
+growth_data <- na.omit(growth_data_orig)
+## Lose 2032 rows (due to plant death & recruit status)
+nrow(growth_data_orig)
+nrow(growth_data)
+# check that you are happy with the subsetting
+plot(growth_data$logsize_t, growth_data$logsize_t1)
+points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
+levels(growth_data$ant_t)
+## Create Stan Data for all ant states
+stan_data_grow <- list(N = nrow(growth_data), ## number of observations
+                       vol = (growth_data$logsize_t), ## predictors volume
+                       y_grow = (growth_data$logsize_t1), ## response survival next year
+                       ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
+                       K = 4, ## number of ant states
+                       N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
+                       N_Plot = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
+                       plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
+                       year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
+)
+########## growth model includes sd variance across size and year as a random effect
+fit_grow_skew <- stan(file = "Data Analysis/STAN Models/skew_grow.stan", data = stan_data_grow, warmup = 150, iter = 500, chains = 3, cores = 3, thin = 1)
+grow_skew_outputs <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
+grow_skew_yrep <- rstan::extract(fit_grow_skew, pars = c("y_rep"))$y_rep
+grow_skew_sigma <- rstan::extract(fit_grow_skew, pars = c("sigma"))$sigma
+grow_skew_alpha <- rstan::extract(fit_grow_skew, pars = c("skew"))$skew
+write.csv(grow_skew_outputs, "grow_skew_outputs.csv")
+write.csv(grow_skew_yrep, "grow_skew_yrep.csv")
+write.csv(grow_skew_sigma, "grow_skew_sigma.csv")
+summary(fit_skew_grow)
+## Check the posterior distributions
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+#For overlay plots
+n_post_draws <- 100
+post_draws <- sample.int(dim(fit_grow_skew)[1], n_post_draws)
+y <- stan_data_grow$y_grow
+ant <- stan_data_grow$ant
+grow_skew_outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_skew_outputs.csv", header = TRUE,stringsAsFactors=T)
+grow_skew_yrep <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_skew_yrep.csv", header = TRUE,stringsAsFactors=T)
+grow_skew_sigma <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_skew_sigma.csv", header = TRUE,stringsAsFactors=T)
+grow_skew_sigma <- grow_skew_sigma[,-1]
+grow_skew_yrep <- grow_skew_yrep[,-1]
+grow_skew_outputs <- grow_skew_outputs[,-1]
+y_sim <- matrix(NA, n_post_draws,length(y))
+for(i in 1:n_post_draws){
+  y_sim[i,] <- rsn(n=length(y), xi = mean(grow_skew_yrep[,i]), alpha = mean(grow_skew_alpha), tau = mean(grow_skew_sigma[,i]) )
+}
+samp100 <- sample(nrow(y_sim), 100)
+## Overlay Plots
+png(file = "grow_skew_post_full.png")
+bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant,xlim = c(0,100))
+dev.off()
+## Convergence Plots
+png("grow_skew_conv_full.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow, pars=c("beta0", "beta1")))
+dev.off()
+## They all converge
+#### Skew, Kurtosis, ETC.
+png("grow_skew_skew_kurt_full.png")
+size_moments_ppc(growth_data, 
+                 "logsize_t1", 
+                 y_sim, 
+                 n_bins = 10,
+                 "Growth")
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+
+######################################################################################################
+stan_data_grow <- list(N = nrow(growth_data), ## number of observations
+                       vol = (growth_data$logsize_t), ## predictors volume
+                       y = (growth_data$logsize_t1), ## response survival next year
+                       ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
+                       K = 4, ## number of ant states
+                       N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
+                       N_Plot = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
+                       plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
+                       year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
+)
+fit_grow_sgt <- stan(file = "Data Analysis/STAN Models/sgt.stan", data = stan_data_grow, warmup = 150, iter = 500, chains = 3, cores = 3, thin = 1)
+grow_sgt_mu <- rstan::extract(fit_grow_sgt, pars = c("mu"))$mu
+grow_sgt_sigma <- rstan::extract(fit_grow_sgt, pars = c("s"))$s
+grow_sgt_l <- rstan::extract(fit_grow_sgt, pars = c("l"))$l
+grow_sgt_p <- rstan::extract(fit_grow_sgt, pars = c("p"))$p
+grow_sgt_q <- rstan::extract(fit_grow_sgt, pars = c("q"))$q
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("grow_sgt_conv_full.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_sgt, pars=c("s", "l","p","q")))
+dev.off()
+#### Skew, Kurtosis, ETC.
+png("grow_sgt_skew_kurt_full.png")
+size_moments_ppc(growth_data, 
+                 "logsize_t1", 
+                 y_sim, 
+                 n_bins = 10,
+                 "Growth")
+dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+#######################################################################################################
 #### Survival Model -- What is the probability of surviving to the next time step?  ###################
 #######################################################################################################
 survival_data_orig <- subset(cactus, is.na(Survival_t1) == FALSE,c("Plot","Year_t","Survival_t1","ant_t","logsize_t"))
@@ -104,8 +206,7 @@ stan_data_surv <- list(N = nrow(survival_data), ## number of observations
 
 ## Run the Model
 fit_surv <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_data_surv, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-
-
+summary(fit_surv)
 surv_outputs <- rstan::extract(fit_surv, pars = c("w","beta0","beta1","u","sigma_u","sigma_w"))
 surv_yrep <- rstan::extract(fit_surv, pars = c("mu"))$mu
 surv_sigma <- rstan::extract(fit_surv, pars = c("sigma"))$sigma
@@ -222,7 +323,6 @@ dev.off()
 png(file = "flow_trunc_conv.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_flow_trunc, pars=c("beta0", "beta1")))
 dev.off()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #### Skew, Kurtosis, ETC.
 png("surv_skew_kurt.png")
 size_moments_ppc(survival_data, 
@@ -231,6 +331,7 @@ size_moments_ppc(survival_data,
                  n_bins = 10,
                  "Growth")
 dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 #######################################################################################################
 #### Viability Model -- What proportion of fruit are viable? ##########################################
