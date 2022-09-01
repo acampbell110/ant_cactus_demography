@@ -47,9 +47,9 @@ sx<-function(x,i,params){
   s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb)
   #Return the survival probabilities
    if(i == "crem"){ return(s_crem)}
-   if(i == "liom"){ return(s_vac)}
+   if(i == "liom"){ return(s_liom)}
    if(i == "other"){ return(s_other)}
-   if(i == "vacant"){ return(s_liom)}
+   if(i == "vacant"){ return(s_vac)}
 }
 
 
@@ -71,13 +71,13 @@ fx<-function(x,i,params){
   xb=pmin(pmax(x,cholla_min),cholla_max)
   p.flow<-invlogit(mean(params$repro_beta0) + mean(params$repro_beta1)*xb)      ## Probability of Reproducing
   nflow<-exp(mean(params$flow_beta0) + mean(params$flow_beta1)*xb)      ## Number of FLowers produced
-  flow.surv_crem<-invlogit(mean(params$viab_beta01))      ## Proportion of Flowers survive to fruit
-  flow.surv_vac<-invlogit(mean(params$viab_beta04))       ## Proportion of Flowers survive to fruit
-  flow.surv_other<-invlogit(mean(params$viab_beta03))       ## Proportion of Flowers survive to fruit
-  flow.surv_liom<-invlogit(mean(params$viab_beta02))      ## Proportion of Flowers survive to fruit
+  flow.surv_crem<-invlogit(mean(params$viab_beta03))      ## Proportion of Flowers survive to fruit
+  flow.surv_vac<-invlogit(mean(params$viab_beta01))       ## Proportion of Flowers survive to fruit
+  flow.surv_other<-invlogit(mean(params$viab_beta02))       ## Proportion of Flowers survive to fruit
+  flow.surv_liom<-invlogit(mean(params$viab_beta04))      ## Proportion of Flowers survive to fruit
   seeds.per.fruit_crem<-mean(params$seed_beta01)      ## Number of Seeds per Fruit
-  seeds.per.fruit_liom<-mean(params$seed_beta02)      ## Number of Seeds per Fruit
-  seeds.per.fruit_vac<-mean(params$seed_beta03)     ## Number of Seeds per Fruit
+  seeds.per.fruit_liom<-mean(params$seed_beta03)      ## Number of Seeds per Fruit
+  seeds.per.fruit_vac<-mean(params$seed_beta02)     ## Number of Seeds per Fruit
   seed.survival<-invlogit(mean(params$preseed_beta0))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
   #Calculate the fecundity probabilities by ant species
   f_crem = p.flow*nflow*flow.surv_crem*seeds.per.fruit_crem*seed.survival
