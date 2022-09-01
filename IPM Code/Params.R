@@ -124,13 +124,13 @@ params$viab_sig<-viab.params$sigma              ## viab sigma
 params$viab_sig_u<-viab.params$sigma_u          ## viab sigma u
 params$viab_sig_w<-viab.params$sigma_w          ## viab sigma w
 ####Ant 1 (vacant)
-params$viab_beta01<-viab.params$beta0.4     	  ## viab intercept
+params$viab_beta01<-viab.params$beta0.1     	  ## viab intercept
 ####Ant 2 (other)
-params$viab_beta02<-viab.params$beta0.3     	  ## viab intercept
+params$viab_beta02<-viab.params$beta0.2     	  ## viab intercept
 ####Ant 3 (crem)
-params$viab_beta03<-viab.params$beta0.1     	  ## viab intercept
+params$viab_beta03<-viab.params$beta0.3     	  ## viab intercept
 ####Ant 4 (liom)
-params$viab_beta04<-viab.params$beta0.2     	  ## viab intercept
+params$viab_beta04<-viab.params$beta0.4     	  ## viab intercept
 
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
