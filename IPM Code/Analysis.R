@@ -17,8 +17,8 @@ source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/IPM.R
 ##Check if it runs properly properly with fake data 
 pxy(x=c(1,2,3),y=c(1,2,3),i="liom",params)
 i = c("liom","vacant","crem","other")
-x = c(5,5,5,5)
-y = c(6,6,6,6)
+x = c(14,14,14,14)
+y = c(3,3,3,3)
 p<- vector()
 g <- vector()
 s <- vector()
@@ -269,12 +269,9 @@ lams <- as.data.frame(rep(NA,8))
 ######## calculate fitness of tree cholla with no ant partners ########
 lams$means[1] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,"none")$IPMmat)
 ######## caclulate fitness of tree cholla with one ant partner possible ########
-scenario = c("cremvac","liomvac","othervac")
-bmat <- vector()
-for(n in 1:length(i)){
-  bmat[n] <- lambda(bigmatrix(params,lower=cholla_min-15,upper=cholla_max+2,matsize,scenario[n])$IPMmat)
-}
-lams$means[2:4] <- bmat
+lams$means[2] <- lambda(bigmatrix(params, cholla_min-15,cholla_max+2,matsize,scenario = "cremvac")$IPMmat)
+lams$means[3] <- lambda(bigmatrix(params, cholla_min-15,cholla_max+2,matsize,scenario = "liomvac")$IPMmat)
+lams$means[4] <- lambda(bigmatrix(params, cholla_min-15,cholla_max+2,matsize,scenario = "othervac")$IPMmat)
 ######## calculate fitness of tree cholla with two ant partners possible ########
 i <- c("liom","other","vacant")
 j <- c("liom","other", "vacant")
@@ -294,18 +291,15 @@ lams$scenario_abv <- c("None","C","L","O","L,C","L,O","O,C","All")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_means3.png")
 plot(1:8,lams$means, col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"), 
-     pch = 20, cex = 6,xlim = c(0,9),ylim = c(0.975,1.015),cex.main = 2.3,
+     pch = 20, cex = 6,xlim = c(0,9),ylim = c(0.950,1.015),cex.main = 2.3,
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
  text(x = 1:8-0.2, y = lams$means+0.004,cex = 2,
       labels = lams$scenario_abv,
       srt = 35)
- legend("bottomright",legend = c("L = Liom.","C = Crem.","O = Other"),
+ legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),
         cex = 1.5)
 dev.off()
-#### One problem here is that I thiiiiink this is wrong. It may not be, but LO is 
-#### sooo much higher than any other scenario that it seems incorrect. I have not 
-#### yet figured out what could be causing this?
 
 
 
