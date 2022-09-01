@@ -40,7 +40,8 @@ parameters {
   real<lower=2/p> q; 
 }
 model {
-
-  y ~ sgt(mu, s, l, p, q)
+  for(i in 1:N){
+  y[i] ~ sgt(mu, s, l, p, q);
+  }
 
 }
