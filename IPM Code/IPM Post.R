@@ -11,17 +11,15 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 #GROWTH FROM SIZE X TO Y
 gxy<-function(x,y,i,params){
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  g_vac = dnorm(y,mean=(params$grow_beta01) + (params$grow_beta11)*xb,sd=(params$grow_sig))
-  g_liom = dnorm(y,mean=(params$grow_beta04) + (params$grow_beta14)*xb,sd=(params$grow_sig))
-  g_crem = dnorm(y,mean=(params$grow_beta03) + (params$grow_beta13)*xb,sd=(params$grow_sig))
-  g_other = dnorm(y,mean=(params$grow_beta02) + (params$grow_beta12)*xb,sd=(params$grow_sig))
+  g_vac = dnorm(y,mean=(params$grow_beta01) + (params$grow_beta11)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+  g_liom = dnorm(y,mean=(params$grow_beta04) + (params$grow_beta14)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+  g_crem = dnorm(y,mean=(params$grow_beta03) + (params$grow_beta13)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+  g_other = dnorm(y,mean=(params$grow_beta02) + (params$grow_beta12)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
   if(i == "other"){ return(g_other)}
   if(i == "vacant"){ return(g_vac)}
 }
-gxy(3,3,"vacant",params[m,])
-
 
 ##Check that it works properly
 i = c("vacant","crem","liom","other")
