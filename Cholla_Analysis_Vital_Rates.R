@@ -162,7 +162,9 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
 )
-fit_grow_sgt <- stan(file = "Data Analysis/STAN Models/sgt.stan", data = stan_data_grow, warmup = 150, iter = 500, chains = 3, cores = 3, thin = 1)
+## Run this with simulated data
+
+fit_grow_sgt <- stan(file = "Data Analysis/STAN Models/sgt.stan", data = stan_data_grow, warmup = 150, iter = 500, chains = 3, cores = 3, thin = 4)
 grow_sgt_mu <- rstan::extract(fit_grow_sgt, pars = c("mu"))$mu
 grow_sgt_sigma <- rstan::extract(fit_grow_sgt, pars = c("s"))$s
 grow_sgt_l <- rstan::extract(fit_grow_sgt, pars = c("l"))$l
@@ -170,7 +172,7 @@ grow_sgt_p <- rstan::extract(fit_grow_sgt, pars = c("p"))$p
 grow_sgt_q <- rstan::extract(fit_grow_sgt, pars = c("q"))$q
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("grow_sgt_conv_full.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow_sgt, pars=c("s", "l","p","q")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_sgt, pars=c("s", "l","p","q","mu")))
 dev.off()
 #### Skew, Kurtosis, ETC.
 png("grow_sgt_skew_kurt_full.png")
