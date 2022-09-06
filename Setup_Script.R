@@ -17,6 +17,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 library(brms)  
 library(rstan)
 library(sn)
+library(sgt)
 # ipm analysis
 library(popbio)
 # max likelihood models
