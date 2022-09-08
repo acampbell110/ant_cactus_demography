@@ -9,6 +9,7 @@ source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/IPM.R
 
 
 ##########################################################################################################
+####################### DETERMINISTIC MEAN IPM    ########################################################
 ## Check that every function written in the IPM source code runs properly and that all of the outputs   ##
 ## make sense.                                                                                          ##
 ##########################################################################################################
@@ -300,6 +301,46 @@ plot(1:8,lams$means, col = c("Red","Blue","Green","Yellow","Orange","Brown","Bla
  legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),
         cex = 1.5)
 dev.off()
+
+##########################################################################################################
+####################### DETERMINISTIC POST IPM    ########################################################
+## Plot the lambda posterior distributions                                                              ##                                                                                  ##
+##########################################################################################################
+lams <- matrix(rep(NA, 100*8), nrow = 100, ncol = 8)
+bigmatrix(params,lower,upper,matsize,scenario)
+scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+for(z in 1:length(scenario)){
+  for(m in 1:100){
+    lams[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
+  }
+}
+lams
+colnames(lams) <- scenario
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("lambda_post.png")
+plot(density(lams[,1]), col = "Red",lwd = 2, 
+     cex.main = 2.3, xlim = c(0.91,1.05), ylim = c(0,100), cex.lab = 2,
+     xlab = "Lambda Values", ylab = "Density Probability", main = "Fitness of Ants")
+lines(density(lams[,2]), col = "Blue", lwd = 2)
+lines(density(lams[,3]), col = "Green", lwd = 2)
+lines(density(lams[,4]), col = "Yellow", lwd = 2)
+lines(density(lams[,5]), col = "Orange", lwd = 2)
+lines(density(lams[,6]), col = "Brown", lwd = 2)
+lines(density(lams[,7]), col = "Black", lwd = 2)
+lines(density(lams[,8]), col = "Grey", lwd = 2)
+legend("topleft",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"),
+       cex = 1.5)
+dev.off()
+
+png("lambda_post2.png")
+boxplot(lams, xlim = c(-2,12),ylim = c(0.9, 1.1),
+        main = "Fitness of Ants", ylab = "Lambda Values", xaxt = "n",
+        at = c(1,4,5,6,8,8,10,12),
+        col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"))
+legend("topleft",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"),
+       cex = 1.5)
+dev.off()
+
 
 
 
