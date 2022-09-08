@@ -152,6 +152,7 @@ dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 ######################################################################################################
+## Load data properly
 stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        vol = (growth_data$logsize_t), ## predictors volume
                        y = (growth_data$logsize_t1), ## response survival next year
@@ -163,8 +164,13 @@ stan_data_grow <- list(N = nrow(growth_data), ## number of observations
                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
 )
 ## Run this with simulated data
-
-fit_grow_sgt <- stan(file = "Data Analysis/STAN Models/sgt.stan", data = stan_data_grow, warmup = 150, iter = 500, chains = 3, cores = 3, thin = 4)
+## Simulate data with sgt distribution -- -1<lambda<1, p>0, q>0
+sgt_data <- rsgt(100,mu = 100, sigma = 1, lambda = 0.99, p = 2, q = 100)
+## Load data properly
+stan_sgt_data <- list(N = 100,
+                      y = sgt_data)
+## Run model
+fit_grow_sgt <- stan(file = "Data Analysis/STAN Models/sgt.stan", data = stan_sgt_data, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
 grow_sgt_mu <- rstan::extract(fit_grow_sgt, pars = c("mu"))$mu
 grow_sgt_sigma <- rstan::extract(fit_grow_sgt, pars = c("s"))$s
 grow_sgt_l <- rstan::extract(fit_grow_sgt, pars = c("l"))$l
