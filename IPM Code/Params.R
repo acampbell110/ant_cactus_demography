@@ -80,6 +80,28 @@ params$grow_beta13<-grow.params$beta1.3				## growth slope
 ####Ant 4 (liom)
 params$grow_beta04<-grow.params$beta0.4     	## growth intercept
 params$grow_beta14<-grow.params$beta1.4				## growth slope
+#### --- Year Random Effects --- ####
+####Ant 1 (prev vacant)
+grow_rfx1 <- cbind(grow.params$w.1.1,grow.params$w.1.2,grow.params$w.1.3,grow.params$w.1.4,
+                         grow.params$w.1.5,grow.params$w.1.6,grow.params$w.1.7,grow.params$w.1.8,
+                         grow.params$w.1.9,grow.params$w.1.10,grow.params$w.1.11,grow.params$w.1.12,
+                         grow.params$w.1.13,grow.params$w.1.14)
+####Ant 2 (prev other)
+grow_rfx2 <- cbind(grow.params$w.2.1,grow.params$w.2.2,grow.params$w.2.3,grow.params$w.2.4,
+                   grow.params$w.2.5,grow.params$w.2.6,grow.params$w.2.7,grow.params$w.2.8,
+                   grow.params$w.2.9,grow.params$w.2.10,grow.params$w.2.11,grow.params$w.2.12,
+                   grow.params$w.2.13,grow.params$w.2.14)
+####Ant 3 (prev crem)
+grow_rfx3 <- cbind(grow.params$w.3.1,grow.params$w.3.2,grow.params$w.3.3,grow.params$w.3.4,
+                   grow.params$w.3.5,grow.params$w.3.6,grow.params$w.3.7,grow.params$w.3.8,
+                   grow.params$w.3.9,grow.params$w.3.10,grow.params$w.3.11,grow.params$w.3.12,
+                   grow.params$w.3.13,grow.params$w.3.14)
+####Ant 4 (prev liom)
+grow_rfx4 <- cbind(grow.params$w.4.1,grow.params$w.4.2,grow.params$w.4.3,grow.params$w.4.4,
+                   grow.params$w.4.5,grow.params$w.4.6,grow.params$w.4.7,grow.params$w.4.8,
+                   grow.params$w.4.9,grow.params$w.4.10,grow.params$w.4.11,grow.params$w.4.12,
+                   grow.params$w.4.13,grow.params$w.4.14)
+
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -98,6 +120,27 @@ params$surv_beta13<-surv.params$beta1.3				## surv slope
 ####Ant 4 (liom)
 params$surv_beta04<-surv.params$beta0.4     	  ## surv intercept
 params$surv_beta14<-surv.params$beta1.4				## surv slope
+#### --- Year Random Effects --- ####
+####Ant 1 (prev vacant)
+surv_rfx1 <- cbind(surv.params$w.1.1,surv.params$w.1.2,surv.params$w.1.3,surv.params$w.1.4,
+                   surv.params$w.1.5,surv.params$w.1.6,surv.params$w.1.7,surv.params$w.1.8,
+                   surv.params$w.1.9,surv.params$w.1.10,surv.params$w.1.11,surv.params$w.1.12,
+                   surv.params$w.1.13,surv.params$w.1.14)
+####Ant 2 (prev other)
+surv_rfx2 <- cbind(surv.params$w.2.1,surv.params$w.2.2,surv.params$w.2.3,surv.params$w.2.4,
+                   surv.params$w.2.5,surv.params$w.2.6,surv.params$w.2.7,surv.params$w.2.8,
+                   surv.params$w.2.9,surv.params$w.2.10,surv.params$w.2.11,surv.params$w.2.12,
+                   surv.params$w.2.13,surv.params$w.2.14)
+####Ant 3 (prev crem)
+surv_rfx3 <- cbind(surv.params$w.3.1,surv.params$w.3.2,surv.params$w.3.3,surv.params$w.3.4,
+                   surv.params$w.3.5,surv.params$w.3.6,surv.params$w.3.7,surv.params$w.3.8,
+                   surv.params$w.3.9,surv.params$w.3.10,surv.params$w.3.11,surv.params$w.3.12,
+                   surv.params$w.3.13,surv.params$w.3.14)
+####Ant 4 (prev liom)
+surv_rfx4 <- cbind(surv.params$w.4.1,surv.params$w.4.2,surv.params$w.4.3,surv.params$w.4.4,
+                   surv.params$w.4.5,surv.params$w.4.6,surv.params$w.4.7,surv.params$w.4.8,
+                   surv.params$w.4.9,surv.params$w.4.10,surv.params$w.4.11,surv.params$w.4.12,
+                   surv.params$w.4.13,surv.params$w.4.14)
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
