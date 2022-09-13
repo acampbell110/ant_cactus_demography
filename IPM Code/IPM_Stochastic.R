@@ -18,17 +18,30 @@ gxy<-function(x,y,i,params,rfx){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) 
   #Density probability function which uses the parameters that are ant specific 
-  g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + rfx[1],sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-  g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb + rfx[1],sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-  g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb + rfx[1],sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-  g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb + rfx[1],sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
   #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
   if(i == "other"){ return(g_other)}
   if(i == "vacant"){ return(g_vac)}
 }
-
+vac <- vector()
+liom <- vector()
+other <- vector()
+crem <- vector()
+for(a in 1:14){
+  vac[a] <- gxy(1,1.2,"vacant",params,grow_rfx1[,a])
+  liom[a] <- gxy(1,1.2,"liom",params,grow_rfx4[,a])
+  other[a] <- gxy(1,1.2,"other",params,grow_rfx2[,a])
+  crem[a] <- gxy(1,1.2,"crem",params,grow_rfx3[,a])
+}
+vac
+liom
+other
+crem
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -41,17 +54,30 @@ sx<-function(x,i,params,rfx){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
   #Transform the ant specific parameters to the probability of survival
-  s_crem = invlogit(mean(params$surv_beta03) + mean(params$surv_beta13)*xb + rfx[2])
-  s_vac = invlogit(mean(params$surv_beta01) + mean(params$surv_beta11)*xb + rfx[2])
-  s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb + rfx[2])
-  s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb + rfx[2])
+  s_crem = invlogit(mean(params$surv_beta03) + mean(params$surv_beta13)*xb + mean(rfx))
+  s_vac = invlogit(mean(params$surv_beta01) + mean(params$surv_beta11)*xb + mean(rfx))
+  s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb + mean(rfx))
+  s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb + mean(rfx))
   #Return the survival probabilities
    if(i == "crem"){ return(s_crem)}
    if(i == "liom"){ return(s_liom)}
    if(i == "other"){ return(s_other)}
    if(i == "vacant"){ return(s_vac)}
 }
-
+vac <- vector()
+liom <- vector()
+other <- vector()
+crem <- vector()
+for(a in 1:14){
+  vac[a] <- sx(1,"vacant",params,surv_rfx1[,a])
+  liom[a] <- sx(1,"liom",params,surv_rfx4[,a])
+  other[a] <- sx(1,"other",params,surv_rfx2[,a])
+  crem[a] <- sx(1,"crem",params,surv_rfx3[,a])
+}
+vac
+liom
+other
+crem
 
 #################################################
 #SURVIVAL*GROWTH. Combine the survival and growth probabilities
@@ -392,7 +418,7 @@ bigmatrix.1 <- function(params,lower,upper,matsize,random){
   #Set year random effect to 0 by default, modify if random=T
   if(random==T){        
     set.seed(rand.seed)
-    rfx = rnorm(n=4, mean=0, sd=c(params$grow_sig_w,
+    rfx = rnorm(n=4, mean=0, sd=c(params$gr,
                                   params$surv_sig_w,
                                   params$flow_sig_w,
                                   params$viab_sig_w,
@@ -875,7 +901,7 @@ lambdaSim(params,random = F, 14, 200, lower, upper, extrap = T)
 # lambdaS Simulations for different Years Rands #########################################################
 # This is the original code as taken from the Climate IPM Online ########################################
 #########################################################################################################
-lambdaSim=function(params,climate_window,##c Climate_window is not something I will include
+lambdaSim=function(params,climate_window,## Climate_window is not something I will include
                    random=F,             ## I assume this value has to do with randomly selecting the year?
                                          ## but I have no idea how I use this?
                    max_yrs,mat_size,lower.extension,upper.extension,
@@ -908,10 +934,10 @@ lambdaSim=function(params,climate_window,##c Climate_window is not something I w
                       extrap=extrap)$IPMmat
     ## At each time step call the IPM for the proper Year
     
-    n0 <- K_t[,] %*% n0 ## This is scaling the Matrix to ...???
-    N  <- sum(n0) 
-    rtracker[t]<-log(N) ## Store the scaled value for each year in the r tracker vector?
-    n0 <-n0/N
+    n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
+    N  <- sum(n0) ## This gives the growth rate of the population
+    rtracker[t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
+    n0 <-n0/N ## Update scaling for next iteration
   }
   
   #discard initial values (to get rid of transient)
