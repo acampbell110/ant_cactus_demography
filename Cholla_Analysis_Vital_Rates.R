@@ -717,7 +717,7 @@ multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possib
                        N = dim(cactus_real)[1], #number of observations
                        D = 5, #number of predictors
                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
-                       x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real)) #design matrix
+                       x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t + as.factor(ant_t)*as.factor(Year_t), cactus_real)) #design matrix
 ## Run the model & save the results
 fit_multi <- stan(file = "Data Analysis/STAN Models/multi_code.stan", 
                       data = multi_dat_real, warmup = 150, iter = 1000, chains = 3)
