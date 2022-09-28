@@ -14,14 +14,14 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 ## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
 ## will get a vector of probabilities.                                                               ####
 #########################################################################################################
-gxy<-function(x,y,i,params,rfx){
+gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) 
   #Density probability function which uses the parameters that are ant specific 
-  g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-  g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-  g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-  g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb + mean(rfx),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(grow_rfx1),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb + mean(grow_rfx4),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb + mean(grow_rfx3),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+  g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb + mean(grow_rfx2),sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
   #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
@@ -29,19 +29,10 @@ gxy<-function(x,y,i,params,rfx){
   if(i == "vacant"){ return(g_vac)}
 }
 vac <- vector()
-liom <- vector()
-other <- vector()
-crem <- vector()
-for(a in 1:14){
-  vac[a] <- gxy(1,1.2,"vacant",params,grow_rfx1[,a])
-  liom[a] <- gxy(1,1.2,"liom",params,grow_rfx4[,a])
-  other[a] <- gxy(1,1.2,"other",params,grow_rfx2[,a])
-  crem[a] <- gxy(1,1.2,"crem",params,grow_rfx3[,a])
+for(a in 1:10){
+  vac[a] <- gxy(1,1.2,"crem",params,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a])
 }
 vac
-liom
-other
-crem
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -50,14 +41,14 @@ crem
 ## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
 ## will get a vector of probabilities.                                                               ####
 #########################################################################################################
-sx<-function(x,i,params,rfx){
+sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
   #Transform the ant specific parameters to the probability of survival
-  s_crem = invlogit(mean(params$surv_beta03) + mean(params$surv_beta13)*xb + mean(rfx))
-  s_vac = invlogit(mean(params$surv_beta01) + mean(params$surv_beta11)*xb + mean(rfx))
-  s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb + mean(rfx))
-  s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb + mean(rfx))
+  s_crem = invlogit(mean(params$surv_beta03) + mean(params$surv_beta13)*xb + mean(surv_rfx3))
+  s_vac = invlogit(mean(params$surv_beta01) + mean(params$surv_beta11)*xb + mean(surv_rfx1))
+  s_other = invlogit(mean(params$surv_beta02) + mean(params$surv_beta12)*xb + mean(surv_rfx2))
+  s_liom = invlogit(mean(params$surv_beta04) + mean(params$surv_beta14)*xb + mean(surv_rfx3))
   #Return the survival probabilities
    if(i == "crem"){ return(s_crem)}
    if(i == "liom"){ return(s_liom)}
@@ -65,46 +56,41 @@ sx<-function(x,i,params,rfx){
    if(i == "vacant"){ return(s_vac)}
 }
 vac <- vector()
-liom <- vector()
-other <- vector()
-crem <- vector()
-for(a in 1:14){
-  vac[a] <- sx(1,"vacant",params,surv_rfx1[,a])
-  liom[a] <- sx(1,"liom",params,surv_rfx4[,a])
-  other[a] <- sx(1,"other",params,surv_rfx2[,a])
-  crem[a] <- sx(1,"crem",params,surv_rfx3[,a])
+for(a in 1:10){
+  vac[a] <- sx(1,"liom",params,surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a])
 }
 vac
-liom
-other
-crem
 
 #################################################
 #SURVIVAL*GROWTH. Combine the survival and growth probabilities
-pxy<-function(x,y,i,params,rfx){
+pxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  xb=pmin(pmax(x,cholla_min),cholla_max,rfx)
+  xb=pmin(pmax(x,cholla_min),cholla_max)
   #Multiply the probabilities of survival and growth together to get the survival growth kernel
-  pxy = sx(xb,i,params)*gxy(xb,y,i,params,rfx)
+  pxy = sx(xb,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4)*gxy(xb,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4)
   return(pxy)
 }
-
+vac <- vector()
+for(a in 1:10){
+  vac[a] <- pxy(1,2,"vacant",params,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a])
+}
+vac
 
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
-fx<-function(x,i,params,rfx){
+fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
-  p.flow<-invlogit(mean(params$repro_beta0) + mean(params$repro_beta1)*xb + rfx[5])      ## Probability of Reproducing
-  nflow<-exp(mean(params$flow_beta0) + mean(params$flow_beta1)*xb + rfx[3])      ## Number of FLowers produced
-  flow.surv_crem<-invlogit(mean(params$viab_beta03 + rfx[4]))      ## Proportion of Flowers survive to fruit
-  flow.surv_vac<-invlogit(mean(params$viab_beta01 + rfx[4]))       ## Proportion of Flowers survive to fruit
-  flow.surv_other<-invlogit(mean(params$viab_beta02 + rfx[4]))       ## Proportion of Flowers survive to fruit
-  flow.surv_liom<-invlogit(mean(params$viab_beta04 + rfx[4]))      ## Proportion of Flowers survive to fruit
+  p.flow<-invlogit(mean(params$repro_beta0) + mean(params$repro_beta1)*xb + mean(repro_rfx))      ## Probability of Reproducing
+  nflow<-exp(mean(params$flow_beta0) + mean(params$flow_beta1)*xb + mean(flow_rfx))      ## Number of FLowers produced
+  flow.surv_crem<-invlogit(mean(params$viab_beta03 + mean(viab_rfx3)))      ## Proportion of Flowers survive to fruit
+  flow.surv_vac<-invlogit(mean(params$viab_beta01 + mean(viab_rfx1)))       ## Proportion of Flowers survive to fruit
+  flow.surv_other<-invlogit(mean(params$viab_beta02 + mean(viab_rfx2)))       ## Proportion of Flowers survive to fruit
+  flow.surv_liom<-invlogit(mean(params$viab_beta04 + mean(viab_rfx4)))      ## Proportion of Flowers survive to fruit
   seeds.per.fruit_crem<-mean(params$seed_beta01)      ## Number of Seeds per Fruit
   seeds.per.fruit_liom<-mean(params$seed_beta03)      ## Number of Seeds per Fruit
   seeds.per.fruit_vac<-mean(params$seed_beta02)     ## Number of Seeds per Fruit
-  seed.survival<-invlogit(mean(params$preseed_beta0 + rfx[6]))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
+  seed.survival<-invlogit(mean(params$preseed_beta0))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
   #Calculate the fecundity probabilities by ant species
   f_crem = p.flow*nflow*flow.surv_crem*seeds.per.fruit_crem*seed.survival
   f_vac = p.flow*nflow*flow.surv_vac*seeds.per.fruit_vac*seed.survival
@@ -116,7 +102,11 @@ fx<-function(x,i,params,rfx){
   if(i == "other"){ return(f_other)}
   if(i == "vacant"){ return(f_vac)}
 }
-
+vac <- vector()
+for(a in 1:10){
+  vac[a] <- fx(1,"vacant",params,flow_rfx[,a],repro_rfx[,a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])
+}
+vac
 
 #####################################################
 #### Recruitment. Calculate the probability of a recruit being a certain size y
@@ -393,7 +383,7 @@ transition.x <- function(x,i,j,params,scenario){
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
 ##################################################################################################
-bigmatrix.1 <- function(params,lower,upper,matsize,random){
+bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -415,19 +405,8 @@ bigmatrix.1 <- function(params,lower,upper,matsize,random){
   ## Full Matricies
   IPMmat <- matrix()
   
-  #Set year random effect to 0 by default, modify if random=T
-  if(random==T){        
-    set.seed(rand.seed)
-    rfx = rnorm(n=4, mean=0, sd=c(params$gr,
-                                  params$surv_sig_w,
-                                  params$flow_sig_w,
-                                  params$viab_sig_w,
-                                  params$repro_sig_w,
-                                  params$preseed_sig_w))
-  }
-  
   # Banked seeds go in top row
-  Fmat[1,3:(n+2)]<-fx(y,"vacant",params) 
+  Fmat[1,3:(n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) 
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
   Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
   # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -435,7 +414,7 @@ bigmatrix.1 <- function(params,lower,upper,matsize,random){
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))   
   # Growth/survival transitions among cts sizes
-  Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params))*h 
+  Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h 
   # Put it all together
   IPMmat<-Fmat+Tmat  
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
@@ -443,12 +422,16 @@ bigmatrix.1 <- function(params,lower,upper,matsize,random){
   #return(lambda)
 }
 
-
+big <- list()
+for(a in 1:10){
+  big[[a]] <- lambda(bigmatrix.1(params,lower,upper,matsize,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+}
+big
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
-bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
+bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -461,18 +444,7 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
-  
-  #Set year random effect to 0 by default, modify if random=T
-  if(random==T){        
-    set.seed(rand.seed)
-    rfx = rnorm(n=4, mean=0, sd=c(params$grow_sig_w,
-                                  params$surv_sig_w,
-                                  params$flow_sig_w,
-                                  params$viab_sig_w,
-                                  params$repro_sig_w,
-                                  params$preseed_sig_w))
-  }
-  
+
   # Fertility matricies -- Two Ant
   Fmat <- matrix(0,(2*n+2),(2*n+2))
   # Growth/survival transition matricies -- Two Ant
@@ -482,8 +454,8 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
   ############################################# LIOM ############################################
   if(scenario == "liomvac"){
     # Banked seeds go in top row (1 == liom, 2 == vacant)
-    Fmat[1,3:(n+2)]<-fx(y,"liom",params)
-    Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params)
+    Fmat[1,3:(n+2)]<-fx(y,"liom",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -496,13 +468,13 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
     Tmat[(n+3):(2*n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ## liom-liom
-    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) 
+    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) 
     ## liom-vacant
-    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
     ## vacant-liom
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
     ## vacant-vacant
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
     # Put it all together
     IPMmat<-Fmat+Tmat
     # Calculate the lambda
@@ -513,8 +485,8 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
     ############################################ CREM ###############################################
     if(scenario == "cremvac"){
       # Banked seeds go in top row (1 == crem, 2 == vacant)
-      Fmat[1,3:(n+2)]<-fx(y,"crem",params)
-      Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params)
+      Fmat[1,3:(n+2)]<-fx(y,"crem",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
+      Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
       # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
       Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
       # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -526,10 +498,10 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
       Tmat[3:(n+2),2]<-0
       Tmat[(n+3):(2*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
       # Growth/survival transitions among cts sizes
-      Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"cremvac"))
-      Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"cremvac"))
-      Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac"))
-      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac"))
+      Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"cremvac"))
+      Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"cremvac"))
+      Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac"))
+      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac"))
       # Put it all together
       IPMmat<-Fmat+Tmat# Calculate the lambda
       # lambda = Re(eigen(IPMmat)$values[1])
@@ -539,8 +511,8 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
     ############################################# OTHER ###########################################
     if(scenario == "othervac"){
       # Banked seeds go in top row (1 == other, 2 == vacant)
-      Fmat[1,3:(n+2)]<-fx(y,"other",params)
-      Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params)
+      Fmat[1,3:(n+2)]<-fx(y,"other",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
+      Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
       # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
       Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
       # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -552,10 +524,10 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
       Tmat[3:(n+2),2]<-0
       Tmat[(n+3):(2*n+2)]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
       # Growth/survival transitions among cts sizes
-      Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "other",params))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac"))
-      Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac"))
-      Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
-      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac"))
+      Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac"))
+      Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac"))
+      Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
+      Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac"))
       # Put it all together
       IPMmat<-Fmat+Tmat
       # Calculate the lambda
@@ -564,13 +536,17 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,random){
       return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
       }
 }
-
+big <- list()
+for(a in 1:10){
+  big[[a]] <- lambda(bigmatrix.2(params,lower,upper,matsize,"othervac",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+}
+big
 
 #################################################################################################
 ###################################### THREE ANTS ###############################################
 #################################################################################################
 
-bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
+bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -584,17 +560,6 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
   
-  #Set year random effect to 0 by default, modify if random=T
-  if(random==T){        
-    set.seed(rand.seed)
-    rfx = rnorm(n=4, mean=0, sd=c(params$grow_sig_w,
-                                  params$surv_sig_w,
-                                  params$flow_sig_w,
-                                  params$viab_sig_w,
-                                  params$repro_sig_w,
-                                  params$preseed_sig_w))
-  }
-  
   # Fertility matricies -- Two Ant
   Fmat <- matrix(0,(3*n+2),(3*n+2))
   # Growth/survival transition matricies -- Two Ant
@@ -604,9 +569,9 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
   ############################################# LIOM & CREM & VAC ###############################################
   if(scenario == "liomcremvac"){
     ## Fecundity of plants
-    Fmat[1,3:(n+2)]<-fx(y,params=params,"crem") ## Production of seeds from x sized mom with no ant visitor
-    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom") ## Production of seeds from x sized mom with ant visitor
-    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,params=params,"vacant")
+    Fmat[1,3:(n+2)]<-fx(y,"crem",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,"liom",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with ant visitor
+    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -619,17 +584,17 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
     Tmat[(2*n+3):(3*n+2),2]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"liomcremvac")) ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"liomcremvac"))   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"liomcremvac"))   ## Top Third
+    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"liomcremvac")) ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"liomcremvac"))   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"liomcremvac"))   ## Top Third
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"liomcremvac"))   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomcremvac"))   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomcremvac"))   ## Middle Third
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"liomcremvac"))   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomcremvac"))   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomcremvac"))   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"liomcremvac"))   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac"))   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac"))   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"liomcremvac"))   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac"))   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac"))   ## Bottom Third
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -639,9 +604,9 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
   ############################################# LIOM & OTHER & VAC ###########################################
   if(scenario == "liomvacother"){
     ## Fecundity of plants
-    Fmat[1,3:(n+2)]<-fx(y,params=params,"vacant") ## Production of seeds from x sized mom with no ant visitor
-    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom") ## Production of seeds from x sized mom with ant visitor
-    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,params=params,"other")
+    Fmat[1,3:(n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,"liom",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with ant visitor
+    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,"other",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -655,25 +620,25 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
     # Growth/survival transitions among cts sizes
     ##Top Row
     ## vacant-vacant
-    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother"))   ## Top First
+    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother"))   ## Top First
     #liom-vacant
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother"))   ## Top Second
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother"))   ## Top Second
     #other-vacant
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother"))   ## Top Third
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother"))   ## Top Third
     ##Middle Row
     #vacant-liom
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother"))   ## Middle First
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother"))   ## Middle First
     #liom-liom
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother"))   ## Middle Second
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother"))   ## Middle Second
     #other-liom
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother"))   ## Middle Third
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother"))   ## Middle Third
     ##Bottom Row
     #vacant-other
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother"))   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother"))   ## Bottom First
     #liom-other
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother"))   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother"))   ## Bottom Second
     #other-other
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother"))   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother"))   ## Bottom Third
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -683,9 +648,9 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
   ############################################# CREM & OTHER & VAC ############################################
   if(scenario == "othercremvac"){
     ## Fecundity of plants
-    Fmat[1,3:(n+2)]<-fx(y,params=params,"crem") ## Production of seeds from x sized mom with no ant visitor
-    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"vacant") ## Production of seeds from x sized mom with ant visitor
-    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,params=params,"other")
+    Fmat[1,3:(n+2)]<-fx(y,"crem",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with ant visitor
+    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,"other",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
@@ -698,17 +663,17 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
     Tmat[(2*n+3):(3*n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"othercremvac"))   ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"othercremvac"))   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"othercremvac"))   ## Top Third
+    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"othercremvac"))   ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"othercremvac"))   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"othercremvac"))   ## Top Third
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"othercremvac"))   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othercremvac"))   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othercremvac"))   ## Middle Third
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"othercremvac"))   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othercremvac"))   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othercremvac"))   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"othercremvac"))   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac"))   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac"))   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"othercremvac"))   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac"))   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac"))   ## Bottom Third
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -716,13 +681,17 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,random){
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
 }
-
+big <- list()
+for(a in 1:10){
+  big[[a]] <- lambda(bigmatrix.3(params,lower,upper,matsize,"othercremvac",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+}
+big
 
 ##################################################################################################
 ######################################### ALL ANTS PRESENT #######################################
 ##################################################################################################
 
-bigmatrix.4 <- function(params,lower,upper,matsize,scenario,random){
+bigmatrix.4 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -736,17 +705,6 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario,random){
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
   
-  #Set year random effect to 0 by default, modify if random=T
-  if(random==T){        
-    set.seed(rand.seed)
-    rfx = rnorm(n=4, mean=0, sd=c(params$grow_sig_w,
-                                  params$surv_sig_w,
-                                  params$flow_sig_w,
-                                  params$viab_sig_w,
-                                  params$repro_sig_w,
-                                  params$preseed_sig_w))
-  }
-  
   # Fertility matricies -- Two Ant
   Fmat <- matrix(0,(4*n+2),(4*n+2))
   # Growth/survival transition matricies -- Two Ant
@@ -758,10 +716,10 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario,random){
   #Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0)) 
 ############################################# LIOM & CREM & OTHER & VAC ############################################
     ## Fecundity of plants
-    Fmat[1,3:(n+2)]<-fx(y,params=params,"crem") ## Production of seeds from x sized mom with no ant visitor
-    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom") ## Production of seeds from x sized mom with ant visitor
-    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,params=params,"other")
-    Fmat[1,(3*n+3):(4*n+2)]<-fx(y,params=params,"vacant")
+    Fmat[1,3:(n+2)]<-fx(y,params=params,"crem",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with ant visitor
+    Fmat[1,(2*n+3):(3*n+2)]<-fx(y,params=params,"other",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
+    Fmat[1,(3*n+3):(4*n+2)]<-fx(y,params=params,"vacant",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     Tmat[3:(n+2),1]<-0
     Tmat[(n+3):(2*n+2),1]<-0
@@ -776,39 +734,43 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario,random){
     #Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))   ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"all"))   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all"))   ## Top Third
-    Tmat[3:(n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"all"))
+    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))   ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"all"))   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all"))   ## Top Third
+    Tmat[3:(n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"all"))
     ##Second Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"all"))   ## Top First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"all"))   ## Top Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"all"))   ## Top Third
-    Tmat[(n+3):(2*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all"))
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"all"))   ## Top First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"all"))   ## Top Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"all"))   ## Top Third
+    Tmat[(n+3):(2*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all"))
     ##Third Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"all"))   ## Top First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"all"))   ## Top Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all"))   ## Top Third
-    Tmat[(2*n+3):(3*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all"))
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"all"))   ## Top First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"all"))   ## Top Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all"))   ## Top Third
+    Tmat[(2*n+3):(3*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all"))
     ##Bottom Row
-    Tmat[(3*n+3):(4*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"all"))   ## Top First
-    Tmat[(3*n+3):(4*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"all"))   ## Top Second
-    Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))   ## Top Third
-    Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
+    Tmat[(3*n+3):(4*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"all"))   ## Top First
+    Tmat[(3*n+3):(4*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"all"))   ## Top Second
+    Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))   ## Top Third
+    Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
     # Put it all together
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
     # return(lambda)
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
 }
-
+big <- list()
+for(a in 1:10){
+  big[[a]] <- lambda(bigmatrix.4(params,lower,upper,matsize,"all",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+}
+big
 
 
 #################################################################################################
 ############################ CHOOSE WHICH SCENARIO (COMBO OF ANTS) ##############################
 #################################################################################################
 
-bigmatrix<-function(params,lower,upper,matsize,scenario,random){  
+bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){  
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -820,118 +782,83 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,random){
   ## "othervac", "liomvac", "cremvac", "all", "none"
   
   if(scenario == "none"){
-    list = (bigmatrix.1(params,lower,upper,matsize,random))
+    list = (bigmatrix.1(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "liomvac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,scenario,random))
+    list = (bigmatrix.2(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "cremvac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,scenario,random))
+    list = (bigmatrix.2(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "othervac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,scenario,random))
+    list = (bigmatrix.2(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "liomvacother"){
-    list = (bigmatrix.3(params,lower,upper,matsize,scenario,random))
+    list = (bigmatrix.3(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "liomcremvac"){
-    list = (bigmatrix.3(params,lower,upper,matsize,scenario,random))
+    list = (bigmatrix.3(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "othercremvac"){
-    list = (bigmatrix.3(params,lower,upper,matsize,scenario,random))
+    list = (bigmatrix.3(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "all"){
-    list = (bigmatrix.4(params,lower,upper,matsize,scenario,random))
+    list = (bigmatrix.4(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
 } 
-#########################################################################################################
-# lambdaS Simulations for different Years Rands #########################################################
-# This is my attempt to update this to my own code... think I am wrong ##################################
-#########################################################################################################
-lambdaSim=function(params,random=F,##climate_window is a subset of the PCclim data frame
-                   max_yrs,matsize,lower.extension,upper.extension,extrap=T){
-  
-  matdim<-matsize+2 ## The size of the IPM matricies should match the set matsize +2
-  K_t <- matrix(0,matdim,matdim) ## Creates an actual matrix filled with 0 of this size
-  
-  rtracker      <- rep(0,max_yrs) ## I am not sure I understand what this value is?? I know that it stores
-                                  ## the values for each year
-  n0            <- rep(1/matdim,matdim) ## Not sure what this is doing. It is scaling something but I 
-                                        ##don't know what
-  
-  for(t in 1:max_yrs){ #Start loop -- For each year create a separate IPM matrix and store some value??? 
-    ## Struggling to understand what value is stored
-    
-    #Store matrix
-    
-    K_t[,]<-bigmatrix(params = params,
-                                Lower = lower,
-                                upper = upper, 
-                                matsize = matsize, 
-                                scenario = scenario)$IPMmat ## At each time step call the IPM for the proper 
-                                                            ## Year
-    
-    n0 <- K_t[,] %*% n0 ## This is scaling the Matrix to ...???
-    N  <- sum(n0) 
-    rtracker[t]<-log(N) ## Store the scaled value for each year in the r tracker vector?
-    n0 <-n0/N
-  }
-  
-  #discard initial values (to get rid of transient)
-  burnin    <- round(max_yrs*0.1)
-  rtracker  <- rtracker[-c(1:burnin)]
-  
-  #Finish and return
-  #print(proc.time() - ptm)
-  lambdaS<-exp(mean(rtracker))
-  return(lambdaS)
+big <- list()
+for(a in 1:10){
+  big[[a]] <- lambda(bigmatrix(params,lower,upper,matsize,"all",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
 }
-lambdaSim()
-lambdaSim(params,random = F, 14, 200, lower, upper, extrap = T)
+big
 
 #########################################################################################################
 # lambdaS Simulations for different Years Rands #########################################################
 # This is the original code as taken from the Climate IPM Online ########################################
 #########################################################################################################
-lambdaSim=function(params,climate_window,## Climate_window is not something I will include
-                   random=F,             ## I assume this value has to do with randomly selecting the year?
-                                         ## but I have no idea how I use this?
-                   max_yrs,mat_size,lower.extension,upper.extension,
-                   extrap=T){           ## Does this allow you to extrapolate to years we don't ahve? 
-                                        ## if so I have no idea how to use this or include it into my own code. 
+lambdaSim=function(params,                                  ## parameters
+                   grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
+                   surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
+                   flow_rfx,                                ## flower model year rfx
+                   repro_rfx,                               ## repro model year rfx
+                   viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
+                   max_yrs,                                 ## the # years you want to iterate
+                   matsize,                                 ## size of transition matrix
+                   scenario,                                ## partner diversity scenario
+                   lower,upper                              ## extensions to avoid eviction
+                   ){           
+
+  ## Create an actual matrix filled with 0 of the right size based on scenarios
+  if(scenario == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
+  if(scenario == "cremvac"|scenario == "liomvac"|scenario == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
+  if(scenario == "liomcremvac"|scenario == "liomvacother"|scenario == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
+  if(scenario == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
+  matdim <- ncol(K_t)
+  rtracker      <- rep(0,max_yrs)   ## Empty vector to store growth rates in 
+  n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
   
-  matdim<-matsize+2 ## The size of the IPM matricies should match the set matsize +2
-  K_t <- matrix(0,matdim,matdim) ## Creates an actual matrix filled with 0 of this size
   
-  rtracker      <- rep(0,max_yrs) ## I am not sure I understand what this value is?? I know that it stores
-                                  ## the values for each year
-  n0            <- rep(1/matdim,matdim) ## Not sure what this is doing. It is scaling something but I 
-                                  ##don't know what
-  
-  
-  for(t in 1:max_yrs){ #Start loop -- For each year create a separate IPM matrix and store some value??? 
-    ## Struggling to understand what value is stored
-    ## sample a climate year from the window provided (actually an adjacent pair of climate years)
-    clim_yr <- sample(2:nrow(climate_window),size=1)## I don't need this
+  for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then 
+                       ## scale this to the stochastic growth rate
+    ## Randomly sample the years we have data for by calling column r in all matricies of 
+    ## the year random effects
+    r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
     
-    #Store matrix
-    K_t[,]<-bigmatrix(params=params,
-                      PC1=c(climate_window$PC1[clim_yr-1],climate_window$PC1[clim_yr]), ## Don't need these
-                      PC2=c(climate_window$PC2[clim_yr-1],climate_window$PC2[clim_yr]),
-                      PC3=c(climate_window$PC3[clim_yr-1],climate_window$PC3[clim_yr]),
-                      lower.extension = lower.extension, ## I'll need to extend lower and upper beyond true size limits
-                      upper.extension = upper.extension,
-                      mat.size=mat_size,
-                      random=random,
-                      extrap=extrap)$IPMmat
+    ## Create and store matrix
+    K_t[,]<-bigmatrix(params,lower,upper,matsize,scenario,
+                      grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
+                      surv_rfx1[,r],surv_rfx2[,r],surv_rfx3[,r],surv_rfx4[,r],
+                      flow_rfx[,r],
+                      repro_rfx[,r],
+                      viab_rfx1[,r],viab_rfx2[,r],viab_rfx3[,r],viab_rfx4[,r])$IPMmat
     ## At each time step call the IPM for the proper Year
     
     n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
@@ -949,6 +876,7 @@ lambdaSim=function(params,climate_window,## Climate_window is not something I wi
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
+
 
 
 
