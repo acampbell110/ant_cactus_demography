@@ -716,12 +716,15 @@ cactus_real <- cactus_real[,c("ant_t_relevel","ant_t1_relevel","logsize_t", "ant
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 5, #number of predictors
+                       P = 14, #number of random effect predictors
                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
-                       x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t + as.factor(ant_t)*as.factor(Year_t), cactus_real)) #design matrix
+                       x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real), #design matrix
+                       z = model.matrix(~0 + as.factor(Year_t), cactus_real)
+)
 ## Run the model & save the results
-fit_multi <- stan(file = "Data Analysis/STAN Models/multi_code.stan", 
-                      data = multi_dat_real, warmup = 150, iter = 1000, chains = 3)
-multi_out <- rstan::extract(fit_multi, pars = c("beta","beta_raw"))
+fit_multi <- stan(file = "Data Analysis/STAN Models/multi_mixed.stan", 
+                      data = multi_dat_real, warmup = 15, iter = 100, chains = 1)
+multi_out <- rstan::extract(fit_multi, pars = c("beta","beta_raw","theta","theta_raw"))
 multi_yrep <- rstan::extract(fit_multi, x_beta)$x_beta
 write.csv(multi_out, "multi_outputs.csv")
 ## Simulate Multinomial Yreps
@@ -737,8 +740,11 @@ for(i in 1:n_post_draws){
 ## P
 ## plot the chains
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("multi_conv.png")
-bayesplot::mcmc_trace(fit_multi)
+png("multi_conv_beta.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("beta")))
+dev.off()
+png("multi_conv_theta.png")
+bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("theta[1,1]")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
