@@ -341,6 +341,71 @@ legend("topleft",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orang
        cex = 1.5)
 dev.off()
 
+############################################################################################################
+################################### STOCHASTIC IPM MEAN ####################################################
+############################################################################################################
+#### Calculate the lambda value for each scenario in each year with random effects
+lams <- vector()
+scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+for(z in 1:length(scenario)){
+    lams[z] <- lambdaSim(params = params,
+                           grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                           surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                           flow_rfx,
+                           repro_rfx,
+                           viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,
+                           max_yrs = 100,
+                           matsize = matsize,
+                           scenario = scenario[z],
+                           lower = lower, upper = upper
+    )
+}
+lams
+
+yrs <- c("2004","2005","2006","2013","2014","2015","2016","2017","2018","2019")
+
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+
+png("lambda_stoch_means.png")
+plot(1:8,lams,col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"),pch = 20,cex = 3,
+     ylim = c(0.93,1),xlim = c(0,16),
+     xlab = "Partner Diversity Scenario", ylab = "Stochastic Lambda",
+     main = "Full Partner Diversity Leads to \n Increased Fitness",
+     #xaxt = "n",at = c(1,4,5,6,8,8,10,12)
+     )
+legend("bottomright",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"),
+       cex = 1.5)
+dev.off()
 
 
 
+
+
+
+
+#### GRAPH THE CHANGES IN LAMBDA ACROSS YEARS
+png("lambda_st_years.png")
+plot(yrs,lams[,1], col = "Red",pch = 20, cex = 2, xlim = c(2003,2020),ylim = c(0.86,1.07),type = "b")
+lines(yrs,lams[,2], col = "Blue",pch = 20, cex = 2, type = "b")
+lines(yrs,lams[,3], col = "Green",pch = 20, cex = 2, type = "b")
+lines(yrs,lams[,4], col = "Yellow",pch = 20, cex = 2, type = "b")
+lines(yrs,lams[,5], col = "Orange",pch = 20, cex = 2, type = "b")
+lines(yrs,lams[,6], col = "Brown",pch = 20, cex = 2, type = "b")
+lines(yrs,lams[,7], col = "Black",pch = 20, cex = 2, type = "b")
+lines(yrs,lams[,8], col = "Grey",pch = 20, cex = 2, type = "b")
+legend("bottomleft",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"),
+       cex = 1.5)
+dev.off()
+
+
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+#### GRAPH THE DISTRIBUTION OF LAMBDAS
+lams <- lams[,-9]
+png("lambda_st.png")
+boxplot(lams, xlim = c(-8,12),ylim = c(0.86,1.1),
+        main = "Fitness of Ants", ylab = "Lambda Values", xaxt = "n",
+        at = c(1,4,5,6,8,9,10,12),
+        col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"))
+legend("topleft",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"),
+       cex = 1.5)
+dev.off()
