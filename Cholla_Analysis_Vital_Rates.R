@@ -719,11 +719,12 @@ multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possib
                        P = 14, #number of random effect predictors
                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
                        x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real), #design matrix
-                       z = model.matrix(~0 + as.factor(Year_t), cactus_real)
+                       z = model.matrix(~0 + as.factor(Year_t), cactus_real),
+                       N_Year = as.integer(length(unique(cactus_real$Year_t)))
 )
 ## Run the model & save the results
 fit_multi <- stan(file = "Data Analysis/STAN Models/multi_mixed.stan", 
-                      data = multi_dat_real, warmup = 15, iter = 100, chains = 1)
+                      data = multi_dat_real, warmup = 150, iter = 1000, chains = 3)
 multi_out <- rstan::extract(fit_multi, pars = c("beta","beta_raw","theta","theta_raw"))
 multi_yrep <- rstan::extract(fit_multi, x_beta)$x_beta
 write.csv(multi_out, "multi_outputs.csv")
