@@ -302,6 +302,14 @@ cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","AB
 ## Export cactus to a csv
 write.csv(cactus, "cholla_demography_20042021_cleaned.csv")
 
+## How many plants do we survey annually (on average)
+yr <- vector()
+for(i in 1:length(unique(cactus$Year_t))){
+  yr[i] <- nrow(subset(cactus, cactus$Year_t == 2003+i))
+}
+yr
+mean(yr[1:17])
+
 ##########################################################################################
 ########          Set up functions and subsets of data          ##########################
 ##########################################################################################
