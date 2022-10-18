@@ -23,7 +23,7 @@ upper<- cholla_max + ceiling.extend
 #Ali
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
-mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 
 ##These files contain all draws from the posterior distributions of all parameters
 grow.params <- read.csv(paste0(mcmc_dir,"grow_outputs.csv"), header = TRUE,stringsAsFactors=T)    
