@@ -318,6 +318,9 @@ lams
 colnames(lams) <- scenario
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_post.png")
+par(mar=c(2,2,2,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4),
+              ncol = 3, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9,3.9))
 plot(density(lams[,1]), col = "Red",lwd = 2, 
      cex.main = 2.3, xlim = c(0.91,1.05), ylim = c(0,100), cex.lab = 2,
      xlab = "Lambda Values", ylab = "Density Probability", main = "Fitness of Ants")
@@ -361,6 +364,18 @@ for(z in 1:length(scenario)){
     )
 }
 lams
+
+lambdaSim(params = params,
+          matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),
+          matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),
+          matrix(rep(0,1700),ncol = 17),
+          matrix(rep(0,1700),ncol = 17),
+          matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),matrix(rep(0,1700),ncol = 17),
+          max_yrs = 100,
+          matsize = matsize,
+          scenario = scenario[z],
+          lower = lower, upper = upper
+)
 
 yrs <- c("2004","2005","2006","2013","2014","2015","2016","2017","2018","2019")
 
