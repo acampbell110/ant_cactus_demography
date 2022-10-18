@@ -34,9 +34,9 @@ model {
  for(i in 1:K){
    w[i,] ~ normal(0,sigma_w);
  } 
- sigma ~ normal(0,1);
- beta0 ~ normal(0,sigma); // intercept distribution
- beta1 ~ normal(0,sigma); // slope distribution
+ sigma ~ normal(0,100);
+ beta0 ~ normal(0,100); // intercept distribution
+ beta1 ~ normal(0,100); // slope distribution
  //Model
  for(i in 1:N){
  y_surv[i] ~ bernoulli_logit(mu[i]);
