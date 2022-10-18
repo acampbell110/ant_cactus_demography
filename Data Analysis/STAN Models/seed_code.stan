@@ -3,7 +3,7 @@ data{
   int <lower = 1> N; // number of observations
   int <lower = 2> K; // number of observations
   int <lower = 1, upper = K> ant[N]; // the list of ant species 
-  int <lower = 0> seed[N]; // survival in year t1
+  int <lower = 0> seed[N]; // 
 }
 parameters{
   real < lower = 0> phi;
