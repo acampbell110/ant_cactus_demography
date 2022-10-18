@@ -31,8 +31,8 @@ model {
  for(i in 1:K){
    w[i,] ~ normal(0,sigma_w);
  } 
- sigma ~ normal(0,1);
- beta0 ~ normal(0,sigma); // intercept distribution
+ sigma ~ normal(0,10);
+ beta0 ~ normal(0,10); // intercept distribution
 
   good ~ binomial_logit(tot, mu);
 }
