@@ -560,7 +560,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #######################################################################################################
 #### Recruits -- Size Distribution of  #########################################################################################
 #######################################################################################################
-seedling.dat_orig <- cactus[,c("logsize_t1","Recruit")]
+seedling.dat_orig <- cactus[,c("logsize_t1","Recruit","Year_t")]
 seedling.dat_orig <- filter(seedling.dat_orig, Recruit == 1)
 seedling.dat <- na.omit(seedling.dat_orig)
 nrow(seedling.dat_orig)
@@ -615,10 +615,13 @@ multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possib
 )
 ## Run the model & save the results
 fit_multi <- stan(file = "Data Analysis/STAN Models/multi_mixed.stan", 
-                      data = multi_dat_real, warmup = 150, iter = 1000, chains = 3)
+                      data = multi_dat_real, warmup = 15, iter = 100, chains = 3)
+fit_multi1 <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan",
+                   data = multi_dat_real, warmup = 150, iter = 1000, chains = 3)
 multi_out <- rstan::extract(fit_multi, pars = c("beta","beta_raw","theta","theta_raw"))
-multi_yrep <- rstan::extract(fit_multi, x_beta)$x_beta
 write.csv(multi_out, "multi_outputs.csv")
+multi_out1 <- rstan::extract(fit_multi1, pars = c("beta","beta_raw"))
+write.csv(multi_out1, "multi_outputs1.csv")
 ## Simulate Multinomial Yreps
 n_post_draws <- 100
 post_draws <- sample.int(dim(flow_yrep)[1], n_post_draws)
@@ -647,67 +650,67 @@ summary(fit_multi)
 ## Calculate the probabilities of being tended by each ant species
 size_dummy_real <- seq(min(cactus_real$logsize_t, na.rm = TRUE), max(cactus_real$logsize_t, na.rm = TRUE), by = 0.1)
 ## Previously tended by none
-Denominator_vac <- exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-  exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-  exp(mean(multi_out$beta[,1,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-  exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+Denominator_vac <- exp(mean(multi_out1$beta[,1,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
+  exp(mean(multi_out1$beta[,1,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
+  exp(mean(multi_out1$beta[,1,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
+  exp(mean(multi_out1$beta[,1,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
 pred_vac<-cbind(
   #pr(vacant)
-  exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_vac,
+  exp(mean(multi_out1$beta[,1,1]) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_vac,
   #pr(other)
-  exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_vac,
+  exp(mean(multi_out1$beta[,1,2]) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_vac,
   #pr(crem)
-  exp(mean(multi_out$beta[,1,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_vac,
+  exp(mean(multi_out1$beta[,1,3]) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_vac,
   #pr(liom)
-  exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_vac)
+  exp(mean(multi_out1$beta[,1,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_vac)
 sum(pred_vac[1,])
 
 ## Previously tended by Other
-Denominator_other <- exp(mean(multi_out$beta[,2,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-  exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-  exp(mean(multi_out$beta[,2,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-  exp(mean(multi_out$beta[,2,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+Denominator_other <- exp(mean(multi_out1$beta[,2,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
+  exp(mean(multi_out1$beta[,2,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
+  exp(mean(multi_out1$beta[,2,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
+  exp(mean(multi_out1$beta[,2,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
 pred_other<-cbind(
   #pr(vacant)
-  exp((mean(multi_out$beta[,2,1])) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_other,
+  exp((mean(multi_out1$beta[,2,1])) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_other,
   #pr(other)
-  exp((mean(multi_out$beta[,2,2])) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_other,
+  exp((mean(multi_out1$beta[,2,2])) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_other,
   #pr(crem)
-  exp((mean(multi_out$beta[,2,3])) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_other,
+  exp((mean(multi_out1$beta[,2,3])) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_other,
   #pr(liom)
-  exp((mean(multi_out$beta[,2,4])) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_other)
+  exp((mean(multi_out1$beta[,2,4])) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_other)
 sum(pred_other[1,])
 
 ## Previously tended by Crem
-Denominator_crem <- exp(mean(multi_out$beta[,3,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-  exp(mean(multi_out$beta[,3,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-  exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-  exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+Denominator_crem <- exp(mean(multi_out1$beta[,3,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
+  exp(mean(multi_out1$beta[,3,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
+  exp(mean(multi_out1$beta[,3,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
+  exp(mean(multi_out1$beta[,3,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
 pred_crem<-cbind(
   #pr(vacant)
-  exp(mean(multi_out$beta[,3,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_crem,
+  exp(mean(multi_out1$beta[,3,1]) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_crem,
   #pr(other)
-  exp(mean(multi_out$beta[,3,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_crem,
+  exp(mean(multi_out1$beta[,3,2]) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_crem,
   #pr(crem)
-  exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_crem,
+  exp(mean(multi_out1$beta[,3,3]) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_crem,
   #pr(liom)
-  exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_crem)
+  exp(mean(multi_out1$beta[,3,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_crem)
 sum(pred_crem[1,])
 
 ## Previously tended by Liom
-Denominator_liom <- exp(mean(multi_out$beta[,4,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-  exp(mean(multi_out$beta[,4,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-  exp(mean(multi_out$beta[,4,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-  exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+Denominator_liom <- exp(mean(multi_out1$beta[,4,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
+  exp(mean(multi_out1$beta[,4,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
+  exp(mean(multi_out1$beta[,4,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
+  exp(mean(multi_out1$beta[,4,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
 pred_liom<-cbind(
   #pr(vacant)
-  exp(mean(multi_out$beta[,4,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_liom,
+  exp(mean(multi_out1$beta[,4,1]) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_liom,
   #pr(other)
-  exp(mean(multi_out$beta[,4,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_liom,
+  exp(mean(multi_out1$beta[,4,2]) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_liom,
   #pr(crem)
-  exp(mean(multi_out$beta[,4,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_liom,
+  exp(mean(multi_out1$beta[,4,3]) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_liom,
   #pr(liom)
-  exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_liom)
+  exp(mean(multi_out1$beta[,4,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_liom)
 sum(pred_liom[1,])
                   ## vac -> vac       vac -> other    vac -> crem       vac -> liom
 pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
@@ -753,16 +756,16 @@ layout(matrix(c(1,1,2,3,4,5),
 plot.new()
 text(0.5,0.5,"Yrep for Multi Model",cex=2,font=2)
 ## Prev Vacant
-plot(x,vac_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "Prev. Vac.", pch = 20, cex = 2)
+plot(x,vac_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "a)            Prev. Vac.", pch = 20, cex = 2)
 points(c(1,4,2,3),tab[,1], col = c(vaccol, othercol, cremcol, liomcol), cex = 2)
 ## Prev Liom
-plot(x,liom_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "Prev. Liom.", pch = 20, cex = 2, ylim = c(0,2000))
+plot(x,liom_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "b)           Prev. Liom.", pch = 20, cex = 2, ylim = c(0,2000))
 points(c(4,3,2,1),tab[,4], col = c(othercol, liomcol, cremcol, vaccol), cex = 2)
 ## Prev Crem
-plot(x,crem_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "Prev. Crem.", pch = 20, cex = 2)
+plot(x,crem_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "c)           Prev. Crem.", pch = 20, cex = 2)
 points(c(1,4,2,3),tab[,3], col = c(vaccol, othercol, cremcol, liomcol), cex = 2)
 ## Prev Other
-plot(x,other_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "Prev. Other", pch = 20, cex = 2)
+plot(x,other_multi_yrep, col = c(vaccol, cremcol, liomcol, othercol), xlab = "", ylab = "", main = "d)          Prev. Other", pch = 20, cex = 2)
 points(c(1,4,2,3),tab[,2], col = c(vaccol, othercol, cremcol, liomcol), cex = 2)
 legend("topright",legend = c("Vacant","Crem.","Liom.","Other"), fill = c(vaccol, cremcol, liomcol, othercol))
 mtext("Ant Year t",side=1,line=0,outer=TRUE,cex=1.1)
@@ -916,7 +919,7 @@ multi_plot_vac$N_mod <- log(multi_plot_vac$N)
 
 ## Plot the probabilities
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("Ant_Size_Multi.png")
+png("Ant_Size_Multi_title.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,2,3,4,5),
               ncol = 2, nrow = 3, byrow = TRUE), heights = c(1,1.4,1.4), widths = c(3.9,3.9))
@@ -942,7 +945,7 @@ points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
-legend("topright",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol))
+legend("topright",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 2)
 ## Prev Crem
 plot(size_dummy_real, pred_crem[,1], type = "l", col = vaccol,main = "Previously Crem", ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 2)
@@ -956,6 +959,55 @@ points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plo
 ## Prev Liom
 plot(size_dummy_real, pred_liom[,1], type = "l", col = vaccol,main = "Previously Liom", ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 2)
+lines(size_dummy_real, pred_liom[,2], col = othercol)
+lines(size_dummy_real, pred_liom[,3], col = cremcol)
+lines(size_dummy_real, pred_liom[,4], col = liomcol)
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_plot_liom$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_vac,pch=16,cex=multi_plot_liom$N_mod,col= alpha(vaccol, 0.4))
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
+mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.5,las=0)
+dev.off()
+
+png("Ant_Size_Multi.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4),
+              ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
+## Prev Vac
+plot(size_dummy_real, pred_vac[,1], type = "l", col = vaccol,main = "a)              Prev. Vacant               ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy_real, pred_vac[,2], col = othercol)
+lines(size_dummy_real, pred_vac[,3], col = cremcol)
+lines(size_dummy_real, pred_vac[,4], col = liomcol)
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_crem,pch=16,cex=multi_plot_vac$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_liom,pch=16,cex=multi_plot_vac$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_other,pch=16,cex=multi_plot_vac$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_vac,pch=16,cex=multi_plot_vac$N_mod,col= alpha(vaccol, 0.4))
+## Prev Other
+plot(size_dummy_real, pred_other[,1], type = "l", col = vaccol,main = "b)              Prev. Other                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy_real, pred_other[,2], col = othercol)
+lines(size_dummy_real, pred_other[,3], col = cremcol)
+lines(size_dummy_real, pred_other[,4], col = liomcol)
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_plot_other$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
+legend("topleft",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1.5)
+## Prev Crem
+plot(size_dummy_real, pred_crem[,1], type = "l", col = vaccol,main = "c)              Prev. Crem.                ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy_real, pred_crem[,2], col = othercol)
+lines(size_dummy_real, pred_crem[,3], col = cremcol)
+lines(size_dummy_real, pred_crem[,4], col = liomcol)
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_crem,pch=16,cex=multi_plot_crem$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_plot_crem$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
+## Prev Liom
+plot(size_dummy_real, pred_liom[,1], type = "l", col = vaccol,main = "d)              Prev. Liom.                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
 lines(size_dummy_real, pred_liom[,2], col = othercol)
 lines(size_dummy_real, pred_liom[,3], col = cremcol)
 lines(size_dummy_real, pred_liom[,4], col = liomcol)
