@@ -2024,7 +2024,8 @@
     <bcf:citekey order="10">Heath2014</bcf:citekey>
     <bcf:citekey order="10">Grutter2003</bcf:citekey>
     <bcf:citekey order="11">Palmer2010</bcf:citekey>
-    <bcf:citekey order="11">Stanton2013. Chamberlain2014</bcf:citekey>
+    <bcf:citekey order="11">Stanton2013</bcf:citekey>
+    <bcf:citekey order="11">Chamberlain2014</bcf:citekey>
     <bcf:citekey order="11">Song2020</bcf:citekey>
     <bcf:citekey order="12">Bascompte2019</bcf:citekey>
     <bcf:citekey order="13">Bronstein1994</bcf:citekey>
@@ -2046,6 +2047,8 @@
     <bcf:citekey order="21">Batstone2018</bcf:citekey>
     <bcf:citekey order="21">Lazaro2022</bcf:citekey>
     <bcf:citekey order="22">Djieto-Lordon2005</bcf:citekey>
+    <bcf:citekey order="22">Ness2006</bcf:citekey>
+    <bcf:citekey order="22">Bruna2014</bcf:citekey>
     <bcf:citekey order="23">Oliveira1999</bcf:citekey>
     <bcf:citekey order="23">Horvitz1986</bcf:citekey>
     <bcf:citekey order="24">Hegland2009</bcf:citekey>
@@ -2065,9 +2068,12 @@
     <bcf:citekey order="34">Beattie1985</bcf:citekey>
     <bcf:citekey order="34">Schultheiss2022</bcf:citekey>
     <bcf:citekey order="35">Stanton2013</bcf:citekey>
+    <bcf:citekey order="36">Tr\IeC {\o }jelsgaard2015</bcf:citekey>
     <bcf:citekey order="37">Miller2009</bcf:citekey>
     <bcf:citekey order="38">Miller2007</bcf:citekey>
     <bcf:citekey order="39">Palmer2010</bcf:citekey>
+    <bcf:citekey order="39">Nishi2013</bcf:citekey>
+    <bcf:citekey order="39">Hussa2013</bcf:citekey>
     <bcf:citekey order="40">Benson1982</bcf:citekey>
     <bcf:citekey order="41">Ness2006</bcf:citekey>
     <bcf:citekey order="41">Oliveira1999</bcf:citekey>
