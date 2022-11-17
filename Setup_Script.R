@@ -36,6 +36,7 @@ library(magrittr)
 # graphics
 library(RColorBrewer)
 library(corrplot)
+library(ggpubr)
 
 
 #library(shinystan)
@@ -395,7 +396,7 @@ nrow(germ.dat_orig)
 ################        import the data -- Fruit Survival  (No ant state)      ########333#############
 #######################################################################################################
 seedling.dat_orig <- subset(cactus, cactus$Recruit == 1)
-seedling.dat_orig <- seedling.dat_orig[,c("logsize_t1","Recruit")]
+seedling.dat_orig <- seedling.dat_orig[,c("logsize_t1","Recruit","Year_t")]
 nrow(seedling.dat_orig)
 seedling.dat <- na.omit(seedling.dat_orig)
 nrow(seedling.dat)

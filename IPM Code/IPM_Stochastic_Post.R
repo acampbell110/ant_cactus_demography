@@ -29,24 +29,24 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "vacant"){ return(g_vac)}
 }
 
-##Check that it works properly
-i = c("vacant","crem","liom","other")
-x = c(-1,-5,3,4)
-y = c(-1,-4,3,4)
-g <- matrix(NA,ncol = length(i), nrow = 100)
-l <- list()
-
-for(a in 1:17){ ## year
-for(m in 1:nrow(params)){ ## iteration
-  for(n in seq(1:length(i))){ ## input info
-    g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-    }
-}
-  l[[a]] <- g
-}
-
-g
-l
+# ##Check that it works properly
+# i = c("vacant","crem","liom","other")
+# x = c(-1,-5,3,4)
+# y = c(-1,-4,3,4)
+# g <- matrix(NA,ncol = length(i), nrow = 100)
+# l <- list()
+# 
+# for(a in 1:17){ ## year
+# for(m in 1:nrow(params)){ ## iteration
+#   for(n in seq(1:length(i))){ ## input info
+#     g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
+#     }
+# }
+#   l[[a]] <- g
+# }
+# 
+# g
+# l
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -70,23 +70,23 @@ sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
   if(i == "vacant"){ return(s_vac)}
 }
 
-##Check that it works properly
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-s <- matrix(NA,ncol = length(i), nrow = 100)
-l <- list()
-
-for(a in 1:17){ ## year
-for(m in 1:nrow(params)){ ## iteration
-  for(n in seq(1:length(i))){ ## input info
-    s[m,n] <- sx(x[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a])
-    }
-}
-  l[[a]] <- s
-}
-
-s
-l
+# ##Check that it works properly
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# s <- matrix(NA,ncol = length(i), nrow = 100)
+# l <- list()
+# 
+# for(a in 1:17){ ## year
+# for(m in 1:nrow(params)){ ## iteration
+#   for(n in seq(1:length(i))){ ## input info
+#     s[m,n] <- sx(x[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a])
+#     }
+# }
+#   l[[a]] <- s
+# }
+# 
+# s
+# l
 
 #################################################
 #SURVIVAL*GROWTH. Combine the survival and growth probabilities
@@ -98,23 +98,23 @@ pxy<-function(x,y,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,gro
   return(pxy)
 }
 
-##Check that it works properly
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4,3)
-px <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-l <- list()
-for(a in 1:17){ ## year
-for(m in 1:Ndraws){ ## iteration
-  for(n in 1:length(i)){ ## input info
-    px[m,n] <- pxy(x[n],y[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-    }
-}
-  l[[a]] <- px
-}
-
-px
-l
+# ##Check that it works properly
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4,3)
+# px <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# l <- list()
+# for(a in 1:17){ ## year
+# for(m in 1:Ndraws){ ## iteration
+#   for(n in 1:length(i)){ ## input info
+#     px[m,n] <- pxy(x[n],y[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
+#     }
+# }
+#   l[[a]] <- px
+# }
+# 
+# px
+# l
 
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
@@ -142,22 +142,22 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
   if(i == "vacant"){ return(f_vac)}
 }
 
-## Check if it works
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-f <- matrix(NA,ncol = length(i), nrow = 100)
-l <- list()
-for(a in 1:17){ ## year
-for(m in seq(1:nrow(params))){ ## iteration
-  for(n in seq(1:length(i))){ ## input info
-    f[m,n] <- fx(x[n],i[n],params[m,],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])
-    }
-}
-  l[[a]] <- f
-}
-f
-l
+# ## Check if it works
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4.5,3.01)
+# f <- matrix(NA,ncol = length(i), nrow = 100)
+# l <- list()
+# for(a in 1:17){ ## year
+# for(m in seq(1:nrow(params))){ ## iteration
+#   for(n in seq(1:length(i))){ ## input info
+#     f[m,n] <- fx(x[n],i[n],params[m,],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])
+#     }
+# }
+#   l[[a]] <- f
+# }
+# f
+# l
 
 #####################################################
 #### Recruitment
@@ -166,17 +166,17 @@ recruits<-function(y,params){
   dnorm(yb, (params$rec_beta0),(params$rec_sig))
 }
 
-## Check if it works
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-r <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    r[m,n] <- recruits(y[n],params[m,])
-  }
-}
-r
+# ## Check if it works
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4.5,3.01)
+# r <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     r[m,n] <- recruits(y[n],params[m,])
+#   }
+# }
+# r
 
 
 ######################################################
@@ -246,20 +246,25 @@ transition.1<-function(x, i, j,params, scenario){
   }
 }
 
-## Scenario options == "othervac", "liomvac", "cremvac"
-## Check if it works
-i = c("liom","vacant","vacant")
-j = c("vacant","liom","vacant")
-x = c(-1,2,2)
-y = c(-1,2,3)
-scenario = c("liomvac")
-t1 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t1
+# ## Scenario options == "othervac", "liomvac", "cremvac"
+# ## Check if it works
+# i = c("liom","vacant","vacant")
+# j = c("vacant","liom","vacant")
+# x = c(-1,2,2)
+# y = c(-1,2,3)
+# scenario = c("liomvac")
+# l <- list()
+# t1 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# #for(a in 1:17){
+#   for(m in 1:nrow(params)){
+#     for(n in 1:length(i)){
+#     t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario)
+#     }
+#   }
+#  # l[[a]] <- t1
+# #}
+# t1
+# l
 
 ##########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (THREE STATES)
@@ -367,20 +372,25 @@ transition.2<-function(x, i, j, params,scenario){
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
   }
 }
-## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-## Check if it works
-i = c("liom","vacant","other","other")
-j = c("vacant","liom","other","liom")
-x = c(15,15,15,15)
-y = c(-1,-4,4.5,3.01)
-scenario = "liomvacother"
-t2 <- matrix(NA,ncol = length(i), nrow = (100))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t2[m,n] <- transition.2(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t2
+# ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
+# ## Check if it works
+# i = c("liom","vacant","other","other")
+# j = c("vacant","liom","other","liom")
+# x = c(15,15,15,15)
+# y = c(-1,-4,4.5,3.01)
+# scenario = "liomvacother"
+# t2 <- matrix(NA,ncol = length(i), nrow = (100))
+# l <- list()
+# #for(a in 1:17){
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t2[m,n] <- transition.2(x[n],i[n],j[n],params[m,],scenario)
+#   }
+# }
+# #  l[[1]] <- t2
+# #}
+# t2
+# l
 ######## OUT OF BOUNDS PROBLEM HERE
 
 #######################################################
@@ -440,18 +450,23 @@ transition.3<-function(x, i, j,params){
   if(i == "vacant" & j == "crem"){return(vac_crem)}
   if(i == "vacant" & j == "vacant"){return(vac_vac)}
 }
-## Chekc if it works
-i = c("liom","liom")
-j = c("vacant","vacant")
-x = c(-1,-5)
-y = c(-1,-5)
-t3 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
-  }
-}
-t3
+# ## Chekc if it works
+# i = c("liom","liom")
+# j = c("vacant","vacant")
+# x = c(-1,-5)
+# y = c(-1,-5)
+# t3 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# l <- list()
+# #for(a in 1:17){
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
+#   }
+# }
+# #  l[[a]] <- t3
+# #}
+# t3
+# l
 
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE 
@@ -467,20 +482,24 @@ transition.x <- function(x,i,j,params,scenario){
   if(scenario == "othercremvac"){return(two)}
   if(scenario == "all"){return(three)}
 }
-## Check if it works
-i = c("liom","vacant","crem","other")
-j = c("vacant","crem","crem","liom")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-scenario = "all"
-t <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t[m,n] <- transition.x(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t
-
+# ## Check if it works
+# i = c("liom","vacant","crem","other")
+# j = c("vacant","crem","crem","liom")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4.5,3.01)
+# scenario = "all"
+# t <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# l <- list()
+# #for(a in 1:17){
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t[m,n] <- transition.x(x[n],i[n],j[n],params[m,],scenario)
+#   }
+# }
+# #  l[[a]] <- t
+# #}
+# t
+# l
 
 
 
@@ -525,17 +544,16 @@ bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3
   #lambda = Re(eigen(IPMmat)$values[1])
   #return(lambda)
 }
-i = c("liom","vacant")
-x <- c(1,1)
-lam <- matrix(rep(NA,170), nrow = 10)
-for(a in 1:17){ ## years
-for(m in 1:10){ ## params
-  lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-}
-}
-lam
-colMeans(lam)
-
+ # i = c("liom","vacant")
+ # x <- c(1,1)
+ # lam <- matrix(rep(NA,120), nrow = 10)
+ # for(a in 1:12){ ## years
+ # for(m in 1:10){ ## params
+ #   lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+ # }
+ # }
+# lam # each row is different iteration and each column is a year
+# colMeans(lam)
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
@@ -647,22 +665,23 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
 }
 
 
-i = c("liom","vacant")
-x <- c(1,1)
-scenario = c("liomvac","othervac")
-lam <- matrix(rep(NA,20),nrow = 10,ncol = 2)
-big <- list()
-for(z in 1:length(i)){ ## input info
-  for(m in 1:10){ ## params
-    for(a in 1:17){ ## year
-      lam[m,a] <- lambda(bigmatrix.2(params[m,],lower,upper,matsize,scenario[z],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-    }
-  }
-  big[[z]] <- lam
-  
-}
-lambda
-big
+# i = c("liom","vacant")
+# x <- c(1,1)
+# scenario = c("liomvac","othervac")
+# lam <- matrix(rep(NA,20),nrow = 10,ncol = 2)
+# big <- list()
+# 
+#   for(a in 1:7){ ## year
+#     for(m in 1:1){ ## iter
+#       for(n in 1:length(i)){ ## input info
+#       lam[m,n] <- lambda(bigmatrix.2(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#     }
+#   }
+#   big[[a]] <- lam
+# 
+# }
+# lam
+# big
 
 #################################################################################################
 ###################################### THREE ANTS ###############################################
@@ -804,22 +823,21 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
   }
 }
 ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-i = c("liom","vacant")
-x <- c(1,1)
-scenario = c("liomvacother","liomcremvac")
-lam <- matrix(rep(NA,170),nrow = 10,ncol = 17)
-big <- list()
-for(z in 1:length(i)){ ## input info
-  for(m in 1:10){ ## params
-    for(a in 1:17){ ## year
-      lam[m,a] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[z],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-    }
-  }
-  big[[z]] <- lam
-  
-}
-lam
-big
+# i = c("liom","vacant")
+# x <- c(1,1)
+# scenario = c("liomvacother","liomcremvac")
+# lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
+# big <- list()
+# for(a in 1:2){ ## year
+#   for(m in 1:1){ ## iter
+#     for(n in 1:length(i)){ ## input info
+#       lam[m,n] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#     }
+#   }
+#   big[[a]] <- lam
+# }
+# lam
+# big
 
 
 ##################################################################################################
@@ -895,21 +913,21 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
 }
 
-i = c("liom","vacant")
-x <- c(1,1)
-scenario = c("all","all")
-lam <- matrix(rep(NA,70),nrow = 10,ncol = 7)
-big <- list()
-for(z in 1:length(i)){
-  for(m in 1:2){
-    for(a in 1:7){
-    lam[m,a] <- lambda(bigmatrix.4(params[m,],lower,upper,matsize,scenario[z],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-    }
-  }
-  big[[z]] <- lam
-}
-lam
-big
+# i = c("liom","vacant")
+# x <- c(1,1)
+# scenario = c("all","all")
+# lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
+# big <- list()
+# for(a in 1:17){ ## year
+#   for(m in 1:10){ ## iter
+#     for(n in 1:length(i)){ ## input info
+#       lam[m,n] <- lambda(bigmatrix.4(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#     }
+#   }
+#   big[[a]] <- lam
+# }
+# lam
+# big
 
 #################################################################################################
 ############################ CHOOSE WHICH SCENARIO (COMBO OF ANTS) ##############################
@@ -959,21 +977,21 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
     return(list)
   }
 } 
-i = c("liom","vacant","vacant","crem")
-x <- c(1,1,1,1)
-scenario = c("all","all","none","liomcremvac")
-lam <- matrix(rep(NA,70),nrow = 10,ncol = 7)
-big <- list()
-for(z in 1:length(i)){
-  for(m in 1:10){
-    for(a in 1:7){
-      lam[m,a] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-    }
-  }
-  big[[z]] <- lam
-}
-lam
-big
+# i = c("liom","vacant","vacant","crem")
+# x <- c(1,1,1,1)
+# scenario = c("all","all","none","liomcremvac")
+# lam <- matrix(rep(NA,70),nrow = 10,ncol = 7)
+# big <- list()
+# for(a in 1:2){ ## year
+#   for(m in 1:1){ ## iter
+#     for(n in 1:length(i)){ ## input info
+#       lam[m,n] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#     }
+#   }
+#   big[[a]] <- lam
+# }
+# lam
+# big
 
 
 #########################################################################################################
@@ -998,7 +1016,7 @@ lambdaSim=function(params,                                  ## parameters
   if(scenario == "liomcremvac"|scenario == "liomvacother"|scenario == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
   if(scenario == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
   matdim <- ncol(K_t)
-  rtracker      <- rep(0,max_yrs)   ## Empty vector to store growth rates in 
+  rtracker      <- matrix(rep(0,max_yrs*1),nrow = 1)  ## Empty vector to store growth rates in 
   n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
   
   
@@ -1009,7 +1027,7 @@ lambdaSim=function(params,                                  ## parameters
     r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
     
     ## Create and store matrix
-    K_t[,]<-bigmatrix(params,lower,upper,matsize,scenario,
+    K_t[,]<-bigmatrix(params[1,],lower,upper,matsize,scenario,
                       grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
                       surv_rfx1[,r],surv_rfx2[,r],surv_rfx3[,r],surv_rfx4[,r],
                       flow_rfx[,r],
@@ -1019,37 +1037,158 @@ lambdaSim=function(params,                                  ## parameters
     
     n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
     N  <- sum(n0) ## This gives the growth rate of the population
-    rtracker[t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
+    rtracker[m,t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
     n0 <-n0/N ## Update scaling for next iteration
   }
   
   #discard initial values (to get rid of transient)
   burnin    <- round(max_yrs*0.1)
-  rtracker  <- rtracker[-c(1:burnin)]
+  rtracker  <- rtracker[,-c(1:burnin)]
   
   #Finish and return
   #print(proc.time() - ptm)
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
-
+# lams[m,n] <- lambdaSim(params = params[m,],
+#                        grow_rfx1[m,],grow_rfx2[m,],grow_rfx3[m,],grow_rfx4[m,],
+#                        surv_rfx1[m,],surv_rfx2[m,],surv_rfx3[m,],surv_rfx4[m,],
+#                        flow_rfx[m,],
+#                        repro_rfx[m,],
+#                        viab_rfx1[m,],viab_rfx2[m,],viab_rfx3[m,],viab_rfx4[m,],
+#                      max_yrs = 5,
+#                      matsize = matsize,
+#                      scenario = scenario[n],
+#                      lower = lower, upper = upper
+# )
+nrw <- 3 ## The number or iterations I want to cycle through
 lams <- matrix(rep(NA,80),nrow = 10)
+lambdaS <- matrix(rep(NA,nrw*length(scenario)), nrow = nrw)
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-for(z in 1:length(scenario)){
-  for(m in 1:10){
-  lams[m,z] <- lambdaSim(params = params[m,],
-                       grow_rfx1[m,],grow_rfx2[m,],grow_rfx3[m,],grow_rfx4[m,],
-                       surv_rfx1[m,],surv_rfx2[m,],surv_rfx3[m,],surv_rfx4[m,],
-                       flow_rfx[m,],
-                       repro_rfx[m,],
-                       viab_rfx1[m,],viab_rfx2[m,],viab_rfx3[m,],viab_rfx4[m,],
-                       max_yrs = 100,
-                       matsize = matsize,
-                       scenario = scenario[z],
-                       lower = lower, upper = upper
-  )
+scenario = c("none","cremvac")
+for(n in 1:length(scenario)){
+  for(m in 1:nrw){
+  matdim <- ncol(K_t)
+    rtracker      <- matrix(rep(0,max_yrs*nrw),nrow = nrw)  ## Empty vector to store growth rates in 
+    n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
+    
+    for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then 
+      ## scale this to the stochastic growth rate
+      ## Randomly sample the years we have data for by calling column r in all matricies of 
+      ## the year random effects
+      r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
+      
+      ## Create and store matrix
+      K_t[,]<-bigmatrix(params[m,],lower,upper,matsize,scenario,
+                        grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
+                        surv_rfx1[,r],surv_rfx2[,r],surv_rfx3[,r],surv_rfx4[,r],
+                        flow_rfx[,r],
+                        repro_rfx[,r],
+                        viab_rfx1[,r],viab_rfx2[,r],viab_rfx3[,r],viab_rfx4[,r])$IPMmat[1,1]
+      ## At each time step call the IPM for the proper Year
+      
+      n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
+      N  <- sum(n0) ## This gives the growth rate of the population
+      rtracker[m,t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
+      n0 <-n0/N ## Update scaling for next iteration
+      #print(rtracker)
+    }
+    #discard initial values (to get rid of transient)
+    burnin    <- round(max_yrs*0.1)
+    rtracker  <- rtracker[,-c(1:burnin)]
+    
+    #Finish and return
+    #print(proc.time() - ptm)
+    lambdaS[m,n]<-exp(mean(rtracker))
   }
+  print(lambdaS)
 }
 lams
+
+nrw <- 3 ## The number or iterations I want to cycle through
+lams <- matrix(rep(NA,80),nrow = 10)
+lambdaS <- matrix(rep(NA,nrw*length(scenario)), nrow = nrw)
+scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+scenario = c("none","cremvac")
+for(n in 1:length(scenario)){
+  for(m in 1:nrw){
+    lams[m,n] <- lambdaSim(params[m,],)
+    }
+  }
+
+lambdaSim=function(params,                                  ## parameters
+                   grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
+                   surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
+                   flow_rfx,                                ## flower model year rfx
+                   repro_rfx,                               ## repro model year rfx
+                   viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
+                   max_yrs,                                 ## the # years you want to iterate
+                   matsize,                                 ## size of transition matrix
+                   scenario,                                ## partner diversity scenario
+                   lower,upper,                             ## extensions to avoid eviction
+                   nrw
+){           
+  
+  ## Create an actual matrix filled with 0 of the right size based on scenarios
+for(n in 1:length(scenario)){
+  ## must create kt matrix based on the scenario
+  if(scenario[n] == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
+  if(scenario[n] == "cremvac"|scenario[n] == "liomvac"|scenario[n] == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
+  if(scenario[n] == "liomcremvac"|scenario[n] == "liomvacother"|scenario[n] == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
+  if(scenario[n] == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
+  ## reinitialize matdim based on the new KT
+  matdim <- ncol(K_t)
+  for(m in 1:nrw){  
+    ## Must reinitialize rtracker and n0 for every iteration of parameters
+    rtracker      <- c(rep(0,max_yrs))  ## Empty vector to store growth rates in 
+    n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
+    for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then 
+      ## scale this to the stochastic growth rate
+      ## Randomly sample the years we have data for by calling column r in all matricies of 
+      ## the year random effects
+      ## Must sample a new r value for every year of the simulation we run
+      r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
+      ## Call and store matrix for every year of the simulation
+      K_t[,]<-bigmatrix(params[m,],lower,upper,matsize,scenario[n],
+                      grow_rfx1[m,r],grow_rfx2[m,r],grow_rfx3[m,r],grow_rfx4[m,r],
+                      surv_rfx1[m,r],surv_rfx2[m,r],surv_rfx3[m,r],surv_rfx4[m,r],
+                      flow_rfx[m,r],
+                      repro_rfx[m,r],
+                      viab_rfx1[m,r],viab_rfx2[m,r],viab_rfx3[m,r],viab_rfx4[m,r])$IPMmat
+      n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
+      N  <- sum(n0) ## This gives the growth rate of the population
+      rtracker[t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
+      n0 <-n0/N ## Update scaling for next iteration
+      }
+    #discard initial values (to get rid of transient)
+    #print(rtracker)
+    burnin    <- round(max_yrs*0.1)
+    rtracker  <- rtracker[-c(1:burnin)]
+    #Finish and return
+    #For every iteration of parameters and every scenario, save the geometric sum of the rtracker
+    lambdaS[m,n]<-exp(mean(rtracker))
+  }
+}
+  return(lambdaS)
+}
+
+scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+nrw = 100
+max_yrs = 100
+lambdaS <- matrix(rep(NA,nrw*length(scenario)), nrow = nrw)
+lams <- lambdaSim(params,                                  ## parameters
+          grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
+          surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
+          flow_rfx,                                ## flower model year rfx
+          repro_rfx,                               ## repro model year rfx
+          viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
+          max_yrs,                                 ## the # years you want to iterate
+          matsize,                                 ## size of transition matrix
+          scenario,                                ## partner diversity scenario
+          lower,upper, nrw   )
+
+
+
+
 
 

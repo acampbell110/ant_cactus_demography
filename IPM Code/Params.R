@@ -52,7 +52,7 @@ germ2.params<-germ2.params[draws,]
 rec.params<-rec.params[draws,]
 
 ##This file contains random draws from the posterior distributions of the transition models 
-multi.params <- read.csv(paste0(mcmc_dir,"multi_outputs.csv"), header = TRUE,stringsAsFactors=T)
+multi.params <- read.csv(paste0(mcmc_dir,"multi_outputs1.csv"), header = TRUE,stringsAsFactors=T)
 ## Pull the random draws from all posterior distributions
 multi.params<-multi.params[draws,]
 
@@ -286,6 +286,10 @@ params$multi_betalc <- multi.params$beta.4.3
 params$multi_betall <- multi.params$beta.4.4
 params$multi_betal <- multi.params$beta.5.4
 
-
+multi_rfx1 <- cbind(rep(0,100),rep(0,100),rep(0,100),rep(0,100),
+                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),
+                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),
+                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),
+                    rep(0,100))
 
   

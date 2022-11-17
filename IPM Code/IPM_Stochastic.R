@@ -28,11 +28,11 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "other"){ return(g_other)}
   if(i == "vacant"){ return(g_vac)}
 }
-vac <- vector()
-for(a in 1:10){
-  vac[a] <- gxy(1,1.2,"crem",params,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a])
-}
-vac
+# vac <- vector()
+# for(a in 1:10){
+#   vac[a] <- gxy(1,1.2,"crem",params,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a])
+# }
+# vac
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -55,11 +55,11 @@ sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
    if(i == "other"){ return(s_other)}
    if(i == "vacant"){ return(s_vac)}
 }
-vac <- vector()
-for(a in 1:10){
-  vac[a] <- sx(1,"liom",params,surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a])
-}
-vac
+# vac <- vector()
+# for(a in 1:10){
+#   vac[a] <- sx(1,"liom",params,surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a])
+# }
+# vac
 
 #################################################
 #SURVIVAL*GROWTH. Combine the survival and growth probabilities
@@ -70,11 +70,11 @@ pxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,sur
   pxy = sx(xb,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4)*gxy(xb,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4)
   return(pxy)
 }
-vac <- vector()
-for(a in 1:10){
-  vac[a] <- pxy(1,2,"vacant",params,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a])
-}
-vac
+# vac <- vector()
+# for(a in 1:10){
+#   vac[a] <- pxy(1,2,"vacant",params,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a])
+# }
+# vac
 
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
@@ -102,11 +102,11 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
   if(i == "other"){ return(f_other)}
   if(i == "vacant"){ return(f_vac)}
 }
-vac <- vector()
-for(a in 1:10){
-  vac[a] <- fx(1,"vacant",params,flow_rfx[,a],repro_rfx[,a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])
-}
-vac
+# vac <- vector()
+# for(a in 1:10){
+#   vac[a] <- fx(1,"vacant",params,flow_rfx[,a],repro_rfx[,a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])
+# }
+# vac
 
 #####################################################
 #### Recruitment. Calculate the probability of a recruit being a certain size y
@@ -422,11 +422,11 @@ bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3
   #return(lambda)
 }
 
-big <- list()
-for(a in 1:10){
-  big[[a]] <- lambda(bigmatrix.1(params,lower,upper,matsize,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
-}
-big
+# big <- list()
+# for(a in 1:10){
+#   big[[a]] <- lambda(bigmatrix.1(params,lower,upper,matsize,grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+# }
+# big
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
@@ -536,11 +536,11 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
       return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
       }
 }
-big <- list()
-for(a in 1:10){
-  big[[a]] <- lambda(bigmatrix.2(params,lower,upper,matsize,"othervac",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
-}
-big
+# big <- list()
+# for(a in 1:10){
+#   big[[a]] <- lambda(bigmatrix.2(params,lower,upper,matsize,"othervac",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+# }
+# big
 
 #################################################################################################
 ###################################### THREE ANTS ###############################################
@@ -681,11 +681,11 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
 }
-big <- list()
-for(a in 1:10){
-  big[[a]] <- lambda(bigmatrix.3(params,lower,upper,matsize,"othercremvac",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
-}
-big
+# big <- list()
+# for(a in 1:10){
+#   big[[a]] <- lambda(bigmatrix.3(params,lower,upper,matsize,"othercremvac",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+# }
+# big
 
 ##################################################################################################
 ######################################### ALL ANTS PRESENT #######################################
@@ -759,11 +759,11 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     # return(lambda)
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
 }
-big <- list()
-for(a in 1:10){
-  big[[a]] <- lambda(bigmatrix.4(params,lower,upper,matsize,"all",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
-}
-big
+# big <- list()
+# for(a in 1:10){
+#   big[[a]] <- lambda(bigmatrix.4(params,lower,upper,matsize,"all",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+# }
+# big
 
 
 #################################################################################################
@@ -814,11 +814,11 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
     return(list)
   }
 } 
-big <- list()
-for(a in 1:10){
-  big[[a]] <- lambda(bigmatrix(params,lower,upper,matsize,"all",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
-}
-big
+# big <- list()
+# for(a in 1:10){
+#   big[[a]] <- lambda(bigmatrix(params,lower,upper,matsize,"all",grow_rfx1[,a],grow_rfx2[,a],grow_rfx3[,a],grow_rfx4[,a],surv_rfx1[,a],surv_rfx2[,a],surv_rfx3[,a],surv_rfx4[,a],flow_rfx[a],repro_rfx[a],viab_rfx1[,a],viab_rfx2[,a],viab_rfx3[,a],viab_rfx4[,a])$IPMmat)
+# }
+# big
 
 #########################################################################################################
 # lambdaS Simulations for different Years Rands #########################################################
@@ -876,7 +876,23 @@ lambdaSim=function(params,                                  ## parameters
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
-
+#### Calculate the lambda value for each scenario in each year with random effects
+lams <- vector()
+scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+for(n in 1:length(scenario)){
+  lams[n] <- lambdaSim(params = params,
+                       grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                       surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                       flow_rfx,
+                       repro_rfx,
+                       viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,
+                       max_yrs = 100,
+                       matsize = matsize,
+                       scenario = scenario[z],
+                       lower = lower, upper = upper
+  )
+}
+lams
 
 
 
