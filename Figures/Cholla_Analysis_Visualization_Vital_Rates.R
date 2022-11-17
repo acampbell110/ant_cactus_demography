@@ -46,6 +46,31 @@ legend("bottomright", legend = c("A","B"), fill = c("Chartreuse4","Pink"))
 dev.off()
 
 ########################################################################################################
+#### Timeseries Visuals ################################################################################
+########################################################################################################
+##Number of Cacti by ant partners
+ant_freq_ts <- cactus %>% 
+  select(Year_t,ant_t) %>% 
+  drop_na() %>% 
+  group_by(Year_t,ant_t) %>% 
+  summarise(n = n()) %>% 
+  mutate(freq = n / sum(n))
+png("Timeseries.png")
+plot(ant_freq_ts$Year_t[ant_freq_ts$ant_t == "crem"], ant_freq_ts$freq[ant_freq_ts$ant_t == "crem"], 
+     type = "b",pch = 20, cex = 3,col = cremcol, ylim =c(0,1),
+     xlab = "", ylab = "")
+lines(ant_freq_ts$Year_t[ant_freq_ts$ant_t == "liom"], ant_freq_ts$freq[ant_freq_ts$ant_t == "liom"], 
+      type = "b",pch = 20, cex = 3,col = liomcol)
+lines(ant_freq_ts$Year_t[ant_freq_ts$ant_t == "vacant"], ant_freq_ts$freq[ant_freq_ts$ant_t == "vacant"], 
+      type = "b",pch = 20, cex = 3,col = vaccol)
+lines(ant_freq_ts$Year_t[ant_freq_ts$ant_t == "other"], ant_freq_ts$freq[ant_freq_ts$ant_t == "other"], 
+      type = "b",pch = 20, cex = 3,col = othercol)
+legend("topright", legend = c("Liom.","Crem.","Other","Vacant"), fill = c(liomcol,cremcol,othercol,vaccol),
+       cex = 1.5)
+mtext("Year",side=1,line=-1.5,outer=TRUE,cex=1.5)
+mtext("Frequency of Ant Species",side=2,line=-1.5,outer=TRUE,cex=1.5,las=0)
+dev.off()
+########################################################################################################
 #### Herbivores Visuals ################################################################################
 ########################################################################################################
 str(cactus_herb)
@@ -305,6 +330,20 @@ range(grow_sd)
 ## create the panel figure
 ## For posters
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("grow_all.png")
+par(mar=c(5,5,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1),
+              ncol = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9))
+plot(x = size_other  ,y = y_other_mean_grow, type = "l",lwd = 3,col = othercol,
+     main = "",cex.main = 1.5, xlab = "Log(Volume) year t", ylab = "Log(Volume) year t+1",
+     ylim = c(5,6), xlim = c(5,6), cex.lab = 2)  
+lines(x = size_crem, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 3) 
+lines(x = size_liom, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 3) 
+lines(x = size_vac, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 3) 
+lines(x = size_dummy, y = size_dummy, type= "l", col = "darkgrey", lwd = 2, lty = 2)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
+       cex=1.6)
+dev.off()
 png("grow_panel.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
@@ -474,10 +513,8 @@ y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), len
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("grow_contour_lines_title.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
-plot.new()
-text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
+layout(matrix(c(1,2,3,4,5,5),
+              ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
 ## Crem
 contour(x,y,crem, nlevels = 7
         , xlim = c(2,10), ylim = c(0,10)
@@ -514,83 +551,144 @@ mtext("Log(Volume) in Year t",side=1,line=0,outer=TRUE,cex=1.0)
 mtext("Log(Volume) in Year t+1",side=2,line=0,outer=TRUE,cex=1.1,las=0)
 dev.off()
 ## Now without the mean lines
+## For gray scale contour lines, col = gray.colors(10, start =1, end = 0)
 png("grow_contour_lines_color.png")
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,1,1,2,3,4,5,6,6),
-              ncol = 3, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9,3.9))
-plot.new()
-text(0.5,0.5,"Growth Rates of Cacti \nof by Ant State and Size",cex=2,font=2)
+par(mar=c(3,3,3,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4,5,5),
+              ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
 ## Crem
-contour(x,y,crem, nlevels = 10, col = gray.colors(10, start =1, end = 0), xlim = c(2,10), ylim = c(0,10)) 
+contour(x,y,crem, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
+        main = "a)       Crem.               ", cex.main = 2) 
+#points(growth_data$logsize_t[growth_data$ant_t == "crem"],growth_data$logsize_t1[growth_data$ant_t == "crem"],col = cremcol)
 lines(size_crem, y_crem_mean_grow, col = cremcol, lwd = 3)
 ## Liom
-contour(x,y,liom, nlevels = 10, col = gray.colors(10, start =1, end = 0), xlim = c(2,10), ylim = c(0,10))
+contour(x,y,liom, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
+        main = "b)      Liom.                ", cex.main = 2) 
 lines(size_liom, y_liom_mean_grow, col = liomcol, lwd = 3)
 ## Other
-contour(x,y,other, nlevels = 10, col = gray.colors(10, start =1, end = 0), xlim = c(2,10), ylim = c(0,10))
+contour(x,y,other, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
+        main = "c)       Other                ", cex.main = 2) 
 lines(size_other, y_other_mean_grow, col = othercol, lwd = 3)
 ## Vacant
-contour(x,y,vacant, nlevels = 10, col = gray.colors(10, start =1, end = 0), xlim = c(2,10), ylim = c(0,10))
+contour(x,y,vacant, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
+        main = "d)      Vacant                ", cex.main = 2) 
 lines(size_vac, y_vac_mean_grow, col = vaccol, lwd = 3)
 ## All together
-plot(size_crem, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(5,6), ylim = c(5.3,6.5))
+plot(size_crem, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(5,6), ylim = c(5.3,6.5), 
+     main = "e)                      All Ants                           ", cex.main = 2) 
 lines(size_liom, y_liom_mean_grow, col = liomcol, lwd = 3)
 lines(size_other, y_other_mean_grow, col = othercol, lwd = 3)
 lines(size_vac, y_vac_mean_grow, col = vaccol, lwd = 3)
 lines(size_vac, size_vac, col = "grey", lty = 2)
 legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
 legend("topleft", legend = c("1","0"), fill = c("black","white"))
-mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=1.0)
-mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.1,las=0)
+mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
+mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2,las=0)
 dev.off()
 
 ## Show the correlation between ant and year -- from growth model random effects
-vac_vec <- (colMeans(grow_outputs$w[,1,]))
-liom_vec <- colMeans(grow_outputs$w[,4,])
-other_vec <- colMeans(grow_outputs$w[,2,])
-crem_vec <- colMeans(grow_outputs$w[,3,])
-years <- c(2004,2005,2006,2007,2009,2010,2011,2012,2013,2014,2015,2016,2017,2019)
+g_vac_vec <- colMeans(cbind(grow_out$w.1.1,grow_out$w.1.2,grow_out$w.1.3,grow_out$w.1.4,grow_out$w.1.5,grow_out$w.1.6,
+               grow_out$w.1.7,grow_out$w.1.8,grow_out$w.1.9,grow_out$w.1.10,grow_out$w.1.11,grow_out$w.1.12,
+               grow_out$w.1.13,grow_out$w.1.14))
+g_liom_vec <- colMeans(cbind(grow_out$w.4.1,grow_out$w.4.2,grow_out$w.4.3,grow_out$w.4.4,grow_out$w.4.5,grow_out$w.4.6,
+               grow_out$w.4.7,grow_out$w.4.8,grow_out$w.4.9,grow_out$w.4.10,grow_out$w.4.11,grow_out$w.4.12,
+               grow_out$w.4.13,grow_out$w.4.14))
+g_other_vec <- colMeans(cbind(grow_out$w.2.1,grow_out$w.2.2,grow_out$w.2.3,grow_out$w.2.4,grow_out$w.2.5,grow_out$w.2.6,
+               grow_out$w.2.7,grow_out$w.2.8,grow_out$w.2.9,grow_out$w.2.10,grow_out$w.2.11,grow_out$w.2.12,
+               grow_out$w.2.13,grow_out$w.2.14))
+g_crem_vec <- colMeans(cbind(grow_out$w.3.1,grow_out$w.3.2,grow_out$w.3.3,grow_out$w.3.4,grow_out$w.3.5,grow_out$w.3.6,
+               grow_out$w.3.7,grow_out$w.3.8,grow_out$w.3.9,grow_out$w.3.10,grow_out$w.3.11,grow_out$w.3.12,
+               grow_out$w.3.13,grow_out$w.3.14))
+g_years <- c(2004,2005,2006,2007,2009,2010,2011,2012,2013,2014,2015,2016,2017,2019)
+## Show the correlation between ant and year -- from survival model random effects
+s_vac_vec <- colMeans(cbind(surv_out$w.1.1,surv_out$w.1.2,surv_out$w.1.3,surv_out$w.1.4,surv_out$w.1.5,surv_out$w.1.6,
+                            surv_out$w.1.7,surv_out$w.1.8,surv_out$w.1.9,surv_out$w.1.10,surv_out$w.1.11,surv_out$w.1.12,
+                            surv_out$w.1.13,surv_out$w.1.14))
+s_liom_vec <- colMeans(cbind(surv_out$w.4.1,surv_out$w.4.2,surv_out$w.4.3,surv_out$w.4.4,surv_out$w.4.5,surv_out$w.4.6,
+                             surv_out$w.4.7,surv_out$w.4.8,surv_out$w.4.9,surv_out$w.4.10,surv_out$w.4.11,surv_out$w.4.12,
+                             surv_out$w.4.13,surv_out$w.4.14))
+s_other_vec <- colMeans(cbind(surv_out$w.2.1,surv_out$w.2.2,surv_out$w.2.3,surv_out$w.2.4,surv_out$w.2.5,surv_out$w.2.6,
+                              surv_out$w.2.7,surv_out$w.2.8,surv_out$w.2.9,surv_out$w.2.10,surv_out$w.2.11,surv_out$w.2.12,
+                              surv_out$w.2.13,surv_out$w.2.14))
+s_crem_vec <- colMeans(cbind(surv_out$w.3.1,surv_out$w.3.2,surv_out$w.3.3,surv_out$w.3.4,surv_out$w.3.5,surv_out$w.3.6,
+                             surv_out$w.3.7,surv_out$w.3.8,surv_out$w.3.9,surv_out$w.3.10,surv_out$w.3.11,surv_out$w.3.12,
+                             surv_out$w.3.13,surv_out$w.3.14))
+s_years <- c(2004,2005,2006,2007,2009,2010,2011,2012,2013,2014,2015,2016,2017,2019)
+## Show the correlation between ant and year -- from growth model random effects
+v_vac_vec <- colMeans(cbind(viab_out$w.1.1,viab_out$w.1.2,viab_out$w.1.3,viab_out$w.1.4,viab_out$w.1.5,viab_out$w.1.6,
+                            viab_out$w.1.7,viab_out$w.1.8,viab_out$w.1.9,viab_out$w.1.10,viab_out$w.1.11,viab_out$w.1.12,
+                            viab_out$w.1.13,viab_out$w.1.14))
+v_liom_vec <- colMeans(cbind(viab_out$w.4.1,viab_out$w.4.2,viab_out$w.4.3,viab_out$w.4.4,viab_out$w.4.5,viab_out$w.4.6,
+                             viab_out$w.4.7,viab_out$w.4.8,viab_out$w.4.9,viab_out$w.4.10,viab_out$w.4.11,viab_out$w.4.12,
+                             viab_out$w.4.13,viab_out$w.4.14))
+v_other_vec <- colMeans(cbind(viab_out$w.2.1,viab_out$w.2.2,viab_out$w.2.3,viab_out$w.2.4,viab_out$w.2.5,viab_out$w.2.6,
+                              viab_out$w.2.7,viab_out$w.2.8,viab_out$w.2.9,viab_out$w.2.10,viab_out$w.2.11,viab_out$w.2.12,
+                              viab_out$w.2.13,viab_out$w.2.14))
+v_crem_vec <- colMeans(cbind(viab_out$w.3.1,viab_out$w.3.2,viab_out$w.3.3,viab_out$w.3.4,viab_out$w.3.5,viab_out$w.3.6,
+                             viab_out$w.3.7,viab_out$w.3.8,viab_out$w.3.9,viab_out$w.3.10,viab_out$w.3.11,viab_out$w.3.12,
+                             viab_out$w.3.13,viab_out$w.3.14))
+v_years <- c(2004,2005,2006,2012,2013,2014,2015,2016,2017,2018,2019)
 
-png("year_ant_grow1.png")
-pairs(data.frame(cbind(vac_vec,liom_vec,other_vec,crem_vec)))
+png("year_ant_timeseries.png")
+par(mar=c(4,2,2,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3),
+              ncol = 3, byrow = TRUE), heights = c(1), widths = c(4,4,4))
+## Growth Ant EEffects
+plot(g_years,g_liom_vec,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+     main = "a)                               ",
+     ylim = c(-1.5,2.1), xlab = " ",ylab = " ",cex.lab = 2)
+lines(g_years, g_crem_vec, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(g_years, g_vac_vec, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+lines(g_years, g_other_vec, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+legend("topleft",legend = c("Liom.","Crem.","Other","Vacant"),fill = c(liomcol,cremcol,othercol,vaccol),cex=1.8)
+## Survival ant effects
+plot(s_years,s_liom_vec,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+     main = "b)                                 ",
+     ylim = c(-1.5,2.1), xlab = "",ylab = " ",cex.lab = 1.5)
+lines(s_years, s_crem_vec, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(s_years, s_other_vec, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+lines(s_years, s_vac_vec, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+## Viability Ant Effects
+plot(v_years,v_liom_vec,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+     main = "c)                                ",
+     ylim = c(-1.5,2.1), xlab = " ",ylab = " ",cex.lab = 1.5)
+lines(v_years, v_crem_vec, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(v_years, v_other_vec, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+lines(v_years, v_vac_vec, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+mtext("Year",side=1,line=0,outer=TRUE,cex=1.7)
+mtext("Ant-Year Effects",side=2,line=0,outer=TRUE,cex=1.7,las=0)
 dev.off()
 
-png("year_ant_grow2.png")
-corrplot(cor(cbind(vac_vec,liom_vec,other_vec,crem_vec)), method = "color", 
-         main = "Correlation of Ant and Year Effects")
+
+fun_color_range <- colorRampPalette(c("white", "forestgreen")) 
+my_colors <- fun_color_range(1500)
+g_dat <- cbind(g_vac_vec,g_liom_vec,g_other_vec,g_crem_vec)
+colnames(g_dat) <- c("Vacant","Liom.","Other","Crem.")
+s_dat <- cbind(s_vac_vec,s_liom_vec,s_other_vec,s_crem_vec)
+colnames(s_dat) <- c("Vacant","Liom.","Other","Crem.")
+v_dat <- cbind(v_vac_vec,v_liom_vec,v_other_vec,v_crem_vec)
+colnames(v_dat) <- c("Vacant","Liom.","Other","Crem.")
+png("year_ant_corr.png")
+par(mar=c(5,1,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4),
+              ncol = 2, nrow = 2, byrow = TRUE), heights = c(1), widths = c(4,4,4))
+corrplot(cor(g_dat), method = "color", tl.col = "black",
+         col = my_colors, addCoef.col = "black",
+         main = "a)                                              ",
+         type= "lower")
+corrplot(cor(s_dat), method = "color",  tl.col = "black",
+         col = my_colors, addCoef.col = "black",
+         main = "b)                                              ",
+         type= "lower")
+corrplot(cor(v_dat), method = "color",  tl.col = "black",
+         col = my_colors, addCoef.col = "black",
+         main = "c)                                              ",
+         type= "lower")
 dev.off()
 
-png("year_ant_grow3.png")
-corrplot(cor(cbind(vac_vec,liom_vec,other_vec,crem_vec)), method = "color", main = "Correlation of Ant and Year Effects", diag = F)
-dev.off()
 
-png("year_ant.png")
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,1,2,3,4,5),
-              ncol = 2, byrow = TRUE), heights = c(0.7,1.4,1.4), widths = c(3.9,3.9))
-plot.new()
-text(0.5,0.5,"Interaction of Ant State and Year",cex=2,font=2)
-barplot(vac_vec,
-        main = "Vacant Cacti", xlab = "Year", ylab = "Year-Ant Factor")
-barplot(liom_vec,
-        main = "Liom. Tended Cacti", xlab = "Year", ylab = "Year-Ant Factor")
-barplot(crem_vec,
-        main = "Crem. Tended Cacti", xlab = "Year", ylab = "Year-Ant Factor")
-barplot(other_vec,
-        main = "Other Tended Cacti", xlab = "Year", ylab = "Year-Ant Factor")
-mtext("Year",side=1,line=0,outer=TRUE,cex=1.0)
-mtext("Year-Ant Factor",side=2,line=0,outer=TRUE,cex=1.1,las=0)
-dev.off()
 
-png("grow_year_ant_timeseries.png")
-plot(years,liom_vec,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "Ants have Different Effects on Growth \n Rates Across Years",
-     ylim = c(-0.4,0.4), xlab = "Years",ylab = "Year-Ant Effect on Growth",cex.lab = 1.5)
-lines(years, crem_vec, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years, vac_vec, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-lines(years, other_vec, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-legend("topright",legend = c("Liom.","Crem.","Other","Vacant"),fill = c(liomcol,cremcol,othercol,vaccol))
-dev.off()
+
 ###########################################################################################################################
 #### Survival Visuals #####################################################################################################
 #########################################################################################################################
@@ -679,12 +777,12 @@ mean(invlogit(surv_out_ant$beta0.4)) ## Liom
 ## Panel Plots
 ## For paper
 png("surv_panels.png")
-par(mar=c(2,2,2,1),oma=c(2,2,0,0))
+par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
 # Crem
 plot(x = size_crem  ,y = invlogit(y_crem_surv), type = "l", col = cremcol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15),
-     cex.main = 2, main = "a)        Crem.         ")
+     cex.main = 2, main = "a)           Crem.         ")
 points(surv_plot_crem$mean_size,surv_plot_crem$surv,pch=16,cex=surv_plot_crem$N_mod,col= alpha(cremcol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_crem_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_crem_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
@@ -692,7 +790,7 @@ polygon(c(size_crem,rev(size_crem)),c(invlogit(y_crem_high_surv), rev(invlogit(y
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Liom
 plot(x = size_liom  ,y = invlogit(y_liom_surv), type = "l", col = liomcol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15),
-     cex.main = 2, main = "b)        Liom.         ")
+     cex.main = 2, main = "b)           Liom.         ")
 points(surv_plot_liom$mean_size,surv_plot_liom$surv,pch=16,cex=surv_plot_liom$N_mod,col= alpha(liomcol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_liom_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_liom_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)# Vacant
@@ -700,7 +798,7 @@ polygon(c(size_liom,rev(size_liom)),c(invlogit(y_liom_high_surv), rev(invlogit(y
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Other
 plot(x = size_other  ,y = invlogit(y_other_surv), type = "l", col = othercol, lwd = 4, ylim = c(0.6,1), xlim = c(1,15),
-     cex.main = 2, main = "c)        Other         ")
+     cex.main = 2, main = "c)           Other         ")
 points(surv_plot_other$mean_size,surv_plot_other$surv,pch=16,cex=surv_plot_other$N_mod,col= alpha(othercol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_other_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_other_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
@@ -708,7 +806,7 @@ polygon(c(size_other,rev(size_other)),c(invlogit(y_other_high_surv), rev(invlogi
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Vac
 plot(x = size_vac  ,y = invlogit(y_vac_surv), type = "l", col = vaccol, lwd = 4, ylim = c(0.2,1), xlim = c(-5,15),
-     cex.main = 2, main = "d)        Vac.         ")
+     cex.main = 2, main = "d)        Vacant         ")
 points(surv_plot_vac$mean_size,surv_plot_vac$surv,pch=16,cex=surv_plot_vac$N_mod,col= alpha(vaccol, 0.4))
 #lines(x = size_dummy, y = invlogit(y_vac_low_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 #lines(x = size_dummy, y = invlogit(y_vac_high_surv), type = "l", col = "darkgrey", lty = 2, lwd = 2)
@@ -716,7 +814,7 @@ polygon(c(size_vac,rev(size_vac)),c(invlogit(y_vac_high_surv), rev(invlogit(y_va
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # All Together
 plot(x = size_dummy, y = invlogit(other_extr), type = "l", col = othercol, lwd = 2, ylim = c(0.6,1), lty = 2, xlim = c(1,15),
-     cex.main = 2, main = "e)     All Ants         ")
+     cex.main = 2, main = "e)                          All Ants                          ")
 lines(x = size_dummy, y = invlogit(crem_extr), col = cremcol,lwd = 2, lty = 2)
 lines(x = size_dummy, y = invlogit(liom_extr), col = liomcol, lwd = 2, lty = 2)
 lines(x = size_dummy, y = invlogit(vac_extr), col = vaccol, lwd = 2, lty = 2)
@@ -726,8 +824,25 @@ lines(x = size_liom, y = invlogit(y_liom_surv), col = liomcol, lwd = 2)
 lines(x = size_vac, y = invlogit(y_vac_surv), col = vaccol, lwd = 2)
 legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
        cex = 2)
-mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=1.7)
-mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=1.7,las=0)
+mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=2)
+mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=2,las=0)
+dev.off()
+
+png("surv_all.png")
+par(mar=c(5,5,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1),
+              ncol = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9))
+plot(x = size_dummy, y = invlogit(other_extr), type = "l", col = othercol, lwd = 3, ylim = c(0.6,1), lty = 2, xlim = c(1,15),
+      main = "", ylab = "Probability of Survival", xlab = "Log (Volume)", cex.lab = 2)
+lines(x = size_dummy, y = invlogit(crem_extr), col = cremcol,lwd = 3, lty = 2)
+lines(x = size_dummy, y = invlogit(liom_extr), col = liomcol, lwd = 3, lty = 2)
+lines(x = size_dummy, y = invlogit(vac_extr), col = vaccol, lwd = 3, lty = 2)
+lines(x = size_other, y = invlogit(y_other_surv), col = othercol, lwd = 3)
+lines(x = size_crem, y = invlogit(y_crem_surv), col = cremcol, lwd = 3)
+lines(x = size_liom, y = invlogit(y_liom_surv), col = liomcol, lwd = 3)
+lines(x = size_vac, y = invlogit(y_vac_surv), col = vaccol, lwd = 3)
+legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
+       cex = 2)
 dev.off()
 ## For posters
 png("surv_panels_title.png")
@@ -914,6 +1029,22 @@ ggarrange(a, b, c, d,
                     ncol = 4, nrow = 1)
 dev.off()
 
+png("Viability.png")
+par(mar=c(5,6,3,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1)) 
+hist(crem_subset$viab, xlim = c(0,1), prob = TRUE, ylim = c(0,12), col = cremcol, cex.main = 2,xlab = "",ylab = "",main = "a)                                               Crem.                                                 ")
+lines(density(invlogit(viab_out$beta0.3)), lwd = 3, col = cremcol)
+hist(liom_subset$viab, xlim = c(0,1), prob = TRUE, ylim = c(0,12), col = liomcol, cex.main = 2, xlab = "",ylab = "",main = "b)                                               Liom.                                                 ")
+lines(density(invlogit(viab_out$beta0.4)), lwd = 3, col = liomcol)
+hist(other_subset$viab, xlim = c(0,1), prob = TRUE, ylim = c(0,12), col = othercol, cex.main = 2, xlab = "",ylab = "",main = "c)                                              Other                                                  ")
+lines(density(invlogit(viab_out$beta0.2)), lwd = 3, col = othercol)
+hist(vac_subset$viab, xlim = c(0,1), prob = TRUE, ylim = c(0,12), col = vaccol, cex.main = 2, xlab = "",ylab = "",main = "d)                                           Vacant                                               ")
+lines(density(invlogit(viab_out$beta0.1)), lwd = 3, col = vaccol) 
+mtext("Proportion of Flowerbuds Viable",side=1,line=-1.5,outer=TRUE,cex=2)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
+dev.off()
+
 
 ## Format Data for Barplot (proportion of viable buds)
 means <- c(mean(viab_out$beta0.1), mean(viab_out$beta0.2), mean(viab_out$beta0.3), mean(viab_out$beta0.4))
@@ -937,21 +1068,7 @@ barplot(invlogit(means), ylim = c(0,1.1), col = c(vaccol,othercol,cremcol,liomco
         cex.main = 2.6, cex.lab = 1.5)
 dev.off()
 ############
-## Show the correlation between ant and year -- from growth model random effects
-vac_vec <- (colMeans(viab_outputs$w[,1,]))
-liom_vec <- colMeans(viab_outputs$w[,4,])
-other_vec <- colMeans(viab_outputs$w[,2,])
-crem_vec <- colMeans(viab_outputs$w[,3,])
-years <- c(2004,2005,2006,2012,2013,2014,2015,2016,2017,2018,2019)
-png("viab_year_ant_timeseries.png")
-plot(years,liom_vec,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "Ants Have Different Effects on \n Viability Across Years",
-     ylim = c(-1.5,2.1), xlab = "Years",ylab = "Year-Ant Effect on Growth",cex.lab = 1.5)
-lines(years, crem_vec, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years, other_vec, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-lines(years, vac_vec, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-legend("topright",legend = c("Liom.","Crem.","Other","Vacant"),fill = c(liomcol,cremcol,othercol,vaccol))
-dev.off()
+
 
 
 #########################################################################################################################
@@ -1165,7 +1282,7 @@ dev.off()
 ################################################################################################################################################
 ##################### Recruit Sizes Visuals ########################################################################
 ###############################################################################################################################################
-seedling.dat_orig <- cactus[,c("logsize_t1","Recruit")]
+seedling.dat_orig <- cactus[,c("logsize_t1","Recruit", "Year_t")]
 seedling.dat_orig <- filter(seedling.dat_orig, Recruit == 1)
 seedling.dat <- na.omit(seedling.dat_orig)
 summary(seedling.dat$logsize_t1)
