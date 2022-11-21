@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  3 NOV 2022 16:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  21 NOV 2022 13:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1465,28 +1465,28 @@ File: english.lbx 2018/11/02 v3.12 biblatex localization (PK/MW)
 (./manuscript_draft.aux)
 \openout1 = `manuscript_draft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 36.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Try loading font information for T1+lmr on input line 37.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 36.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1562,7 +1562,7 @@ Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box112
-Package hyperref Info: Link coloring OFF on input line 37.
+Package hyperref Info: Link coloring OFF on input line 36.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -1572,9 +1572,9 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count466
 )
-LaTeX Info: Redefining \ref on input line 37.
-LaTeX Info: Redefining \pageref on input line 37.
-LaTeX Info: Redefining \nameref on input line 37.
+LaTeX Info: Redefining \ref on input line 36.
+LaTeX Info: Redefining \pageref on input line 36.
+LaTeX Info: Redefining \nameref on input line 36.
 
 (./manuscript_draft.out) (./manuscript_draft.out)
 \@outlinefile=\write5
@@ -1588,255 +1588,516 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'manuscript_draft.bbl' found.
  (./manuscript_draft.bbl)
-Package biblatex Info: Reference section=0 on input line 37.
-Package biblatex Info: Reference segment=0 on input line 37.
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 39.
+Package biblatex Info: Reference section=0 on input line 36.
+Package biblatex Info: Reference segment=0 on input line 36.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 38.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 39.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 38.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 39.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 38.
 
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 39.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 38.
 
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 39.
+(Font)              <14.4> on input line 38.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 39.
+(Font)              <10> on input line 38.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 39.
-LaTeX Font Info:    Try loading font information for U+lasy on input line 39.
+(Font)              <7> on input line 38.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 38.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 39.
+LaTeX Font Info:    Try loading font information for U+msa on input line 38.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 39.
+LaTeX Font Info:    Try loading font information for U+msb on input line 38.
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 46.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 46.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 46.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 46.
- [1
+) [1
 
 {/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 
-LaTeX Warning: Citation 'Chamberlain2014' on page 2 undefined on input line 62.
+LaTeX Warning: Citation 'Chamberlain2014' on page 2 undefined on input line 46.
 
-
-
-LaTeX Warning: Citation 'Stachowicz2005' on page 2 undefined on input line 62.
 
 
 LaTeX Warning: Citation 'BoucherDouglasH.1985' on page 2 undefined on input lin
-e 62.
+e 46.
 
 
-LaTeX Warning: Citation 'Bascompote2019' on page 2 undefined on input line 64.
+LaTeX Warning: Citation 'Bronstein1994' on page 2 undefined on input line 46.
 
 
-LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 66.
+LaTeX Warning: Citation 'Chamberlain2014' on page 2 undefined on input line 46.
 
 
-LaTeX Warning: Citation 'Palmer2010' on page 2 undefined on input line 66.
 
-
-LaTeX Warning: Citation 'stanton2013' on page 2 undefined on input line 68.
-
-
-LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 68.
-
-
-LaTeX Warning: Citation 'Boucher1982' on page 2 undefined on input line 68.
-
-
-LaTeX Warning: Citation 'Bascompote2019' on page 2 undefined on input line 69.
-
-
-LaTeX Warning: Citation 'Stanton2003' on page 2 undefined on input line 69.
-
-
-LaTeX Warning: Citation 'Palmer2010' on page 2 undefined on input line 70.
-
-
-LaTeX Warning: Citation 'Stanton2013. Chamberlain2014' on page 2 undefined on i
-nput line 70.
-
-
-LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 70.
-
-[2]
-
-LaTeX Warning: Citation 'Bronstein1994' on page 3 undefined on input line 76.
-
-
-LaTeX Warning: Citation 'Afkhami2014' on page 3 undefined on input line 76.
-
-
-LaTeX Warning: Citation 'Song2020' on page 3 undefined on input line 76.
-
-
-LaTeX Warning: Citation 'West2007' on page 3 undefined on input line 76.
-
-
-LaTeX Warning: Citation 'Frederickson2013' on page 3 undefined on input line 76
+LaTeX Warning: Citation 'Frederickson2013' on page 2 undefined on input line 46
 .
 
 
-LaTeX Warning: Citation 'Stanton2003' on page 3 undefined on input line 76.
+LaTeX Warning: Citation 'Rodriguez-Rodriguez2017' on page 2 undefined on input 
+line 46.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 3 undefined on input line 78.
+LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 46.
 
 
-LaTeX Warning: Citation 'Winfree2020' on page 3 undefined on input line 81.
+LaTeX Warning: Citation 'Mandyam2014' on page 2 undefined on input line 46.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 3 undefined on input line 81.
+LaTeX Warning: Citation 'Thrall2007' on page 2 undefined on input line 46.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 3 undefined on input line 82.
+LaTeX Warning: Citation 'Bahia2022' on page 2 undefined on input line 46.
 
 
-LaTeX Warning: Citation 'Winfree2020' on page 3 undefined on input line 84.
+LaTeX Warning: Citation 'Bronstein2001' on page 2 undefined on input line 47.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 3 undefined on input line 84.
+LaTeX Warning: Citation 'Stachowicz2001' on page 2 undefined on input line 48.
 
 
-LaTeX Warning: Citation 'Bronstein2006' on page 3 undefined on input line 85.
+LaTeX Warning: Citation 'West2007' on page 2 undefined on input line 48.
 
 
-LaTeX Warning: Citation 'Stanton2003' on page 3 undefined on input line 85.
+LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 49.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 3 undefined on input line 86.
-
-[3]
-
-LaTeX Warning: Citation 'Bronstein2006' on page 4 undefined on input line 92.
+LaTeX Warning: Citation 'Boucher1982' on page 2 undefined on input line 49.
 
 
-LaTeX Warning: Citation 'Bronstein1998' on page 4 undefined on input line 93.
+Overfull \hbox (42.59pt too wide) in paragraph at lines 46--50
+\T1/lmr/m/n/12 among the most widespread species interactions[[], []],
+ []
 
 
-LaTeX Warning: Reference `fig:herb' on page 4 undefined on input line 104.
-
-[4]
-
-LaTeX Warning: Citation 'Palmer2010' on page 5 undefined on input line 116.
+Overfull \hbox (50.4865pt too wide) in paragraph at lines 46--50
+\T1/lmr/m/n/12 and are no-to-ri-ously con-text dependent[[], [], []],
+ []
 
 
-LaTeX Warning: Citation 'Benson1982' on page 5 undefined on input line 128.
+Overfull \hbox (67.63278pt too wide) in paragraph at lines 46--50
+\T1/lmr/m/n/12 of-ten de-te-ri-o-rat-ing into other types of in-ter-ac-tions, i
+n-clud-ing par-a-sitism [[],
+ []
 
 
-LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 133.
+LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 51.
 
 
-LaTeX Warning: Citation 'Oliveira1999' on page 5 undefined on input line 133.
+LaTeX Warning: Citation 'Palmer2010' on page 2 undefined on input line 51.
 
 
-LaTeX Warning: Reference `Fig:Ant_freq' on page 5 undefined on input line 138.
-
-[5]
-
-LaTeX Warning: Citation 'Miller2007' on page 6 undefined on input line 141.
+LaTeX Warning: Citation 'Bascompte2019' on page 2 undefined on input line 51.
 
 
-LaTeX Warning: Citation 'Miller2014' on page 6 undefined on input line 147.
+LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 51.
 
 
-LaTeX Warning: Citation 'Miller2007' on page 6 undefined on input line 149.
+LaTeX Warning: Citation 'Frederickson2013' on page 2 undefined on input line 51
+.
 
 
-Overfull \hbox (33.87138pt too wide) in paragraph at lines 141--154
+LaTeX Warning: Citation 'Jones2015' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Ness2006' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Kiers2003' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Sun2019' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Heath2009' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Heath2014' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Grutter2003' on page 2 undefined on input line 51.
+
+
+LaTeX Warning: Citation 'Palmer2010' on page 2 undefined on input line 52.
+
+
+LaTeX Warning: Citation 'Stanton2013' on page 2 undefined on input line 52.
+
+
+LaTeX Warning: Citation 'Chamberlain2014' on page 2 undefined on input line 52.
+
+
+
+LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 52.
+
+
+LaTeX Warning: Citation 'Bascompte2019' on page 2 undefined on input line 53.
+
+
+Overfull \hbox (37.3161pt too wide) in paragraph at lines 51--54
+\T1/lmr/m/n/12 mutualist[[], []], due to dif-fer-ences in part-ner quality[[],
+ []
+
+
+Overfull \hbox (36.61497pt too wide) in paragraph at lines 51--54
+\T1/lmr/m/n/12 ben-e-fits offered[[], []], and di-rect in-ter-ac-tions be-tween
+ partners[[],
+ []
+
+
+LaTeX Warning: Citation 'Bronstein1994' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation 'Bronstein2001a' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation 'Afkhami2014' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation 'Song2020' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation 'West2007' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation 'Frederickson2013' on page 2 undefined on input line 56
+.
+
+
+LaTeX Warning: Citation 'Jones2015' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation 'Stanton2003' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation 'Frederickson2013' on page 2 undefined on input line 57
+.
+
+
+LaTeX Warning: Citation 'Batstone2018' on page 2 undefined on input line 58.
+
+
+LaTeX Warning: Citation 'Stachowicz2005' on page 2 undefined on input line 59.
+
+
+LaTeX Warning: Citation 'Bronstein2006' on page 2 undefined on input line 59.
+
+
+LaTeX Warning: Citation 'Stanton2003' on page 2 undefined on input line 59.
+
+
+LaTeX Warning: Citation 'Batstone2018' on page 2 undefined on input line 60.
+
+
+LaTeX Warning: Citation 'Ollerton2006' on page 2 undefined on input line 61.
+
+
+LaTeX Warning: Citation 'Alarcon2008' on page 2 undefined on input line 61.
+
+
+LaTeX Warning: Citation 'Batstone2018' on page 2 undefined on input line 62.
+
+
+LaTeX Warning: Citation 'Lazaro2022' on page 2 undefined on input line 62.
+
+
+Overfull \hbox (25.70073pt too wide) in paragraph at lines 55--63
+[]\T1/lmr/m/n/12 , [], [], [], [], []];
+ []
+
+<complementarity.png, id=19, 441.65pt x 246.9225pt>
+File: complementarity.png Graphic file (type png)
+<use complementarity.png>
+Package pdftex.def Info: complementarity.png  used on input line 65.
+(pdftex.def)             Requested size: 262.7222pt x 146.89244pt.
+<sampling_effect.png, id=21, 304.13625pt x 237.88875pt>
+File: sampling_effect.png Graphic file (type png)
+<use sampling_effect.png>
+Package pdftex.def Info: sampling_effect.png  used on input line 66.
+(pdftex.def)             Requested size: 181.18439pt x 141.7216pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<portfolio_effect.png, id=22, 428.60126pt x 285.065pt>
+File: portfolio_effect.png Graphic file (type png)
+<use portfolio_effect.png>
+Package pdftex.def Info: portfolio_effect.png  used on input line 71.
+(pdftex.def)             Requested size: 271.7835pt x 180.76633pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: Citation 'Djieto-Lordon2005' on page 2 undefined on input line 7
+7.
+
+
+LaTeX Warning: Citation 'Ness2006' on page 2 undefined on input line 77.
+
+
+LaTeX Warning: Citation 'Bruna2014' on page 2 undefined on input line 77.
+
+
+LaTeX Warning: Citation 'Oliveira1999' on page 2 undefined on input line 78.
+
+
+LaTeX Warning: Citation 'Horvitz1986' on page 2 undefined on input line 78.
+
+
+LaTeX Warning: Citation 'Hegland2009' on page 2 undefined on input line 80.
+
+
+LaTeX Warning: Citation 'Sachs2004' on page 2 undefined on input line 80.
+
+
+LaTeX Warning: Citation 'Fonseca2003' on page 2 undefined on input line 81.
+
+
+LaTeX Warning: Citation 'Boege2005' on page 2 undefined on input line 82.
+
+
+LaTeX Warning: Citation 'Barton2010' on page 2 undefined on input line 82.
+
+
+LaTeX Warning: Citation 'Djieto-Lordon2005' on page 2 undefined on input line 8
+2.
+
+[2]
+
+LaTeX Warning: Citation 'Bronstein1998' on page 3 undefined on input line 84.
+
+
+LaTeX Warning: Citation 'Bronstein2006' on page 3 undefined on input line 84.
+
+
+LaTeX Warning: Citation 'Schultheiss2022' on page 3 undefined on input line 85.
+
+
+
+LaTeX Warning: Citation 'Schultheiss2022' on page 3 undefined on input line 85.
+
+
+
+LaTeX Warning: Citation 'Beattie1985' on page 3 undefined on input line 85.
+
+
+LaTeX Warning: Citation 'Rico-Gray1989' on page 3 undefined on input line 85.
+
+
+LaTeX Warning: Citation 'Palmer2010' on page 3 undefined on input line 85.
+
+
+LaTeX Warning: Citation 'Ness2006' on page 3 undefined on input line 86.
+
+
+LaTeX Warning: Citation 'Beattie1985' on page 3 undefined on input line 86.
+
+
+LaTeX Warning: Citation 'Schultheiss2022' on page 3 undefined on input line 86.
+
+
+
+LaTeX Warning: Citation 'Stanton2013' on page 3 undefined on input line 86.
+
+
+LaTeX Warning: Citation 'Tr\IeC {\o }jelsgaard2015' on page 3 undefined on inpu
+t line 86.
+
+
+Overfull \hbox (72.50687pt too wide) in paragraph at lines 84--87
+\T1/lmr/m/n/12 extra-floral nec-tar and/or ``hous-ing'' to ants which in turn d
+e-fend them from herbivores[[],
+ []
+
+
+Overfull \hbox (1.32204pt too wide) in paragraph at lines 84--87
+\T1/lmr/m/n/12 the lit-er-a-ture, few have con-sid-ered how di-ver-sity within 
+ant de-fender guilds[[]]
+ []
+
+[3 <./complementarity.png> <./sampling_effect.png> <./portfolio_effect.png>]
+
+LaTeX Warning: Citation 'Miller2009' on page 4 undefined on input line 89.
+
+
+LaTeX Warning: Citation 'Miller2007' on page 4 undefined on input line 90.
+
+<herb_ant_only_flow.png, id=38, 481.8pt x 481.8pt>
+File: herb_ant_only_flow.png Graphic file (type png)
+<use herb_ant_only_flow.png>
+Package pdftex.def Info: herb_ant_only_flow.png  used on input line 96.
+(pdftex.def)             Requested size: 362.37569pt x 362.38568pt.
+
+LaTeX Warning: Citation 'Palmer2010' on page 4 undefined on input line 111.
+
+
+LaTeX Warning: Citation 'Nishi2013' on page 4 undefined on input line 111.
+
+
+LaTeX Warning: Citation 'Hussa2013' on page 4 undefined on input line 111.
+
+[4 <./herb_ant_only_flow.png>]
+
+LaTeX Warning: Citation 'Benson1982' on page 5 undefined on input line 120.
+
+
+LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 125.
+
+
+LaTeX Warning: Citation 'Oliveira1999' on page 5 undefined on input line 125.
+
+<Timeseries.png, id=49, 481.8pt x 481.8pt>
+File: Timeseries.png Graphic file (type png)
+<use Timeseries.png>
+Package pdftex.def Info: Timeseries.png  used on input line 131.
+(pdftex.def)             Requested size: 452.9679pt x 452.98027pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: Citation 'Miller2007' on page 5 undefined on input line 140.
+
+
+LaTeX Warning: Citation 'Miller2014' on page 5 undefined on input line 146.
+
+
+LaTeX Warning: Citation 'Miller2007' on page 5 undefined on input line 148.
+
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 151.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 151.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 151.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 151.
+
+Overfull \hbox (33.87138pt too wide) in paragraph at lines 140--153
 []\T1/lmr/m/n/12 These ants rarely co-occur on a plant, prob-a-bly due to in-te
 r-spe-cific competition[[]],
  []
 
+[5] [6 <./Timeseries.png>]
 
-LaTeX Warning: Citation 'Mann1969' on page 6 undefined on input line 155.
-
-
-LaTeX Warning: Citation 'Miller2006' on page 6 undefined on input line 159.
+LaTeX Warning: Citation 'Mann1969' on page 7 undefined on input line 154.
 
 
-LaTeX Warning: Citation 'Miller 2009' on page 6 undefined on input line 161.
+LaTeX Warning: Citation 'Miller2006' on page 7 undefined on input line 158.
 
 
-LaTeX Warning: Reference `fig:map' on page 6 undefined on input line 169.
-
-[6] [7] [8]
-
-LaTeX Warning: Reference `fig:grow' on page 9 undefined on input line 260.
+LaTeX Warning: Citation 'Miller2009' on page 7 undefined on input line 160.
 
 
-LaTeX Warning: Reference `fig:year-ant' on page 9 undefined on input line 267.
-
-[9]
-
-LaTeX Warning: Reference `fig:surv' on page 10 undefined on input line 276.
+LaTeX Warning: Citation 'Benson1982' on page 7 undefined on input line 168.
 
 
-LaTeX Warning: Reference `fig:viab' on page 10 undefined on input line 290.
-
-[10]
-
-LaTeX Warning: Reference `fig:ant' on page 11 undefined on input line 302.
+LaTeX Warning: Citation 'Ness2006' on page 7 undefined on input line 173.
 
 
-LaTeX Warning: Reference `fig:lambda' on page 11 undefined on input line 318.
+LaTeX Warning: Citation 'Oliveira1999' on page 7 undefined on input line 173.
 
 
-LaTeX Warning: Reference `fig:surv' on page 11 undefined on input line 329.
+LaTeX Warning: Reference `Fig:Ant_freq' on page 7 undefined on input line 178.
 
 
-LaTeX Warning: Reference `fig:grow' on page 11 undefined on input line 329.
+LaTeX Warning: Citation 'Miller2007' on page 7 undefined on input line 181.
 
 
-LaTeX Warning: Reference `fig:viab' on page 11 undefined on input line 330.
+LaTeX Warning: Citation 'Miller2014' on page 7 undefined on input line 187.
+
+
+LaTeX Warning: Citation 'Miller2007' on page 7 undefined on input line 189.
+
+
+Overfull \hbox (33.87138pt too wide) in paragraph at lines 181--194
+[]\T1/lmr/m/n/12 These ants rarely co-occur on a plant, prob-a-bly due to in-te
+r-spe-cific competition[[]],
+ []
+
+[7]
+
+LaTeX Warning: Citation 'Mann1969' on page 8 undefined on input line 195.
+
+
+LaTeX Warning: Citation 'Miller2006' on page 8 undefined on input line 199.
+
+
+LaTeX Warning: Citation 'Miller 2009' on page 8 undefined on input line 201.
+
+
+LaTeX Warning: Reference `fig:map' on page 8 undefined on input line 209.
+
+[8] [9] [10]
+
+LaTeX Warning: Reference `fig:grow' on page 11 undefined on input line 300.
+
+
+LaTeX Warning: Reference `fig:year-ant' on page 11 undefined on input line 307.
+
+
+
+LaTeX Warning: Reference `fig:surv' on page 11 undefined on input line 316.
 
 [11]
 
-LaTeX Warning: Citation 'lach2010' on page 12 undefined on input line 345.
+LaTeX Warning: Reference `fig:viab' on page 12 undefined on input line 330.
 
 
-LaTeX Warning: Reference `fig:ant' on page 12 undefined on input line 351.
+LaTeX Warning: Reference `fig:ant' on page 12 undefined on input line 342.
 
 [12]
 
-LaTeX Warning: Citation 'Lach2010' on page 13 undefined on input line 361.
+LaTeX Warning: Reference `fig:lambda' on page 13 undefined on input line 358.
+
+
+LaTeX Warning: Reference `fig:surv' on page 13 undefined on input line 369.
+
+
+LaTeX Warning: Reference `fig:grow' on page 13 undefined on input line 369.
+
+
+LaTeX Warning: Reference `fig:viab' on page 13 undefined on input line 370.
 
 [13]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 368.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 368.
+
+LaTeX Warning: Citation 'lach2010' on page 14 undefined on input line 385.
+
+
+LaTeX Warning: Reference `fig:ant' on page 14 undefined on input line 391.
+
+[14]
+
+LaTeX Warning: Citation 'Lach2010' on page 15 undefined on input line 401.
+
+[15]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 408.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 408.
  (./manuscript_draft.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 368.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 368.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 408.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 408.
 Package rerunfilecheck Info: File `manuscript_draft.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
@@ -1851,16 +2112,16 @@ Package biblatex Warning: Please (re)run Biber on the file:
 Package logreq Info: Writing requests to 'manuscript_draft.run.xml'.
 \openout1 = `manuscript_draft.run.xml'.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 368.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 408.
  ) 
 Here is how much of TeX's memory you used:
- 39086 strings out of 492616
- 769008 string characters out of 6129482
- 1291493 words of memory out of 5000000
- 42391 multiletter control sequences out of 15000+600000
+ 39094 strings out of 492616
+ 769388 string characters out of 6129482
+ 1281767 words of memory out of 5000000
+ 42419 multiletter control sequences out of 15000+600000
  605555 words of font info for 83 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,10n,69p,952b,1139s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,8n,69p,1668b,1113s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
 texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/local/texlive/20
 19/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2019/texmf-dist/
@@ -1876,10 +2137,10 @@ ublic/lm/lmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmr
 8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmri10.pfb></us
 r/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/te
 xlive/2019/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on manuscript_draft.pdf (13 pages, 263481 bytes).
+Output written on manuscript_draft.pdf (15 pages, 687218 bytes).
 PDF statistics:
- 235 PDF objects out of 1000 (max. 8388607)
- 204 compressed objects within 3 object streams
- 70 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 190 PDF objects out of 1000 (max. 8388607)
+ 149 compressed objects within 2 object streams
+ 44 named destinations out of 1000 (max. 500000)
+ 38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

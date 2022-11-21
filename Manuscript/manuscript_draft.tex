@@ -18,43 +18,28 @@
 \usepackage{flowchart}
 \usetikzlibrary{shapes,arrows,positioning,calc,fit}
 \usepackage{graphics}
+\usepackage{graphicx}
 \usepackage{subfig}
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{color,soul}
-%\usepackage[numbers,sort&compress]{natbib}
 \usepackage{hyperref}
-%\usepackage{cite}
 \usepackage{biblatex}
 \addbibresource{References.bib}
 \newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}}
-\newcommand{\ali}[2]{{\color{blue}{#1}}\footnote{\textit{\color{blue}{#2}}}}
+\newcommand{\ali}[2]{{\color{pink}{#1}}\footnote{\textit{\color{pink}{#2}}}}
 
 
-\title{Thank You, Next}
+\title{An Integral Projection Modeling Approach to Demographic Consequences of Multiple Partner Mutualisms}
 \author{Ali M. Campbell\\
 	Tom E.X. Miller}
 \begin{document}
 	\maketitle
 	
 	\section*{Abstract}
-
-Mutualisms are among the most widespread species interactions with diverse and dynamic consequences.
-Depending on environmental context the outcome of the interaction can range from parasitic to mutualistic. 
-Most studies focus on a pair of species interacting in a mutualism, however most observed mutualistic interactions include more than two species. 
-These are multi-species mutualisms, where there are multiple partners interacting with the same focal species. 
-\hl{The partners can directly impact the focal species through the interactions, \tom{and indirectly impact them through interactions with each other}{***This is true but not something we are well poised to address with our data so might be risky to bring it up.***}. }
-The cactus \textit{Cylindriopuntia imbricata} reward partners with extrafloral nectar in exchange for defense by various ant species (primarily \textit{Crematogaster opuntiae} and \textit{Liometopum apiculatum}, though there are many other ant species with smaller populations) from herbivores and seed predators. 
-\hl{Using a 20-year collection of demographic data (growth, survival, reproduction, ant partners, herbivory, etc.) from these cacti in New Mexico, we estimate the fitness of the cacti populations with every combination of partners, allowing us to *** understand what accounts for partner diversity in this system *** understand if the current partner diversity of the system is associated with the optimal fitness *** and the impacts of these partners on different vital plant processes across their life history (such as partner impacts on reproduction, survival, or growth). }
-We found that different ant partners had different impacts on cacti vital rates suggesting there may be a different 'best' partner during pre-reprodctive life stages than during reproductive life stages, and that the highest cacti fitness is associated with the current partner set (all possible ant partners are available).
-Together, these results suggest that complementarity may account for the benefits that these plants experience with partner diversity. 
-Our results demonstrate the importance of evaluating a mutualism within a community context and \tom{suggest that even slight differences of rewards between mutualist partners can help promote fitness of the cacti}{Nothing you have reported in the abstract so far really supports this statement.}. 
-
-\tom{Each of the ant partners}{Again, abstract should briefly state how many and which.} in this system are within the same guild, all offering defense from herbivores, \tom{with only one ant species interacting with each individual cactus in a given period of time}{Redundant with statement above.}. 
-Though these ants may offer very similar rewards, \tom{they likely differ in some way}{Vague}. 
-Two possible ways they could differ are the \tom{fitness boost}{Vague and too colloquial.} they offer the focal species or the \tom{period of ontogeny}{We have size structure data but we are not really dealing with ontogeny per se, so I think it is safer to discuss things in terms of size.} in which they offer the greatest fitness boost. 
-\tom{Using a long-term data-set, we show that there are differences in the impacts of different ant partners on various vital rates of the cacti across ontogeny. Our results demonstrate the importance of evaluating a mutualism within a community context and suggest that even slight differences of rewards between mutualist partners can help promote fitness of the cacti. }{I am a little confused - maybe these two paragraphs are two different versions of the abstract?}
-\tom{}{I know this was just a first stab at the abstract, and written when you don't yet have your final results. But eventually this will need to be tightened up and edited to better describe the conceptual motivation, what was done, and what was found.}
+	
+	Mutualisms are among the most widespread species interactions with diverse and dynamic consequences. They are considered more context dependent than other species interactions, meaning there are many different factors which influence the impacts of a mutualistic interaction, including partner diversity. Partner diversity has become a central focus in the field of mutualisms in recent years shifting the focus to multispecies mutualisms where the focus was previously on pairwise studies. It has been shown that pairwise studies are poor predictors of the effects of multispecies mutualistic interactions. The diversity of partners in a multi-species mutualism causes varied demographic effects on the population of the focal mutualist which can be explained by several mechanisms, portfolio effect, complementarity, and sampling effect. In this paper, I will focus on defensive ant-plant mutualisms. These involve plants which provide extra-floral nectar and/or “housing” to ants which in turn defend them from herbivores. While these interactions have been well studied in the literature, few have considered how diversity within partner guilds affect the overall benefits of mutualism for the plant partner. 
+	I use the plant, Cylindropuntia imbracata (tree cholla), and ant, Crematogaster opuntiae (Crem.), Liometopum apiculatum (Liom.), and more, multispecies mutualism in which the cacti provide extrafloral nectar in exchange for defense from various herbivores and seed predators. I used 18 years of data collected from demographic censuses, which includes data such as size, survival, reproductive status, flowers produced, ant partner, and herbivory for 8 30x30 m plots, in New Mexico. With this data I parameterize a series of Bayesian generalized linear vital rate models to determine the impacts of different partners on the focal mutualists. I found that different ant partners did have different impacts on the vital rates of the tree cholla. Specifically, Crem. tended plants had advantages in both growth and survival when small, and Liom. tended plants had advantages in colonizing partners as well as floral viability. With these models I constructed an Integral Projection Model in which I could vary the presence of each partner, creating different “diversity scenarios”, to determine under which diversity scenario the focal mutualist experienced the highest fitness, and which of the above mechanisms may explain the effects of partner diversity in this system. I found that the real-life scenario (all possible ants are present) lead to the highest fitness for the tree cholla, indicating that partner diversity is beneficial in this system. It also shows that complementarity is at play in this system, meaning different partners offer different benefits leading to synergistic benefits for the tree cholla. 
 
 \section*{Context/Introduction}
 
