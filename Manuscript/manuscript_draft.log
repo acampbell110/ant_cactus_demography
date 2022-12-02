@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  21 NOV 2022 13:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  2 DEC 2022 14:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2051,53 +2051,87 @@ LaTeX Warning: Citation 'Miller 2009' on page 8 undefined on input line 201.
 LaTeX Warning: Reference `fig:map' on page 8 undefined on input line 209.
 
 [8] [9] [10]
+<grow_contour_lines_color.png, id=99, 481.8pt x 481.8pt>
+File: grow_contour_lines_color.png Graphic file (type png)
+<use grow_contour_lines_color.png>
+Package pdftex.def Info: grow_contour_lines_color.png  used on input line 301.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
-LaTeX Warning: Reference `fig:grow' on page 11 undefined on input line 300.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<year_ant_timeseries.png, id=102, 481.8pt x 481.8pt>
+File: year_ant_timeseries.png Graphic file (type png)
+<use year_ant_timeseries.png>
+Package pdftex.def Info: year_ant_timeseries.png  used on input line 313.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: Reference `fig:year-ant' on page 11 undefined on input line 307.
+LaTeX Warning: Reference `fig:year-ant' on page 11 undefined on input line 318.
 
 
-
-LaTeX Warning: Reference `fig:surv' on page 11 undefined on input line 316.
-
+<surv_panels.png, id=103, 481.8pt x 481.8pt>
+File: surv_panels.png Graphic file (type png)
+<use surv_panels.png>
+Package pdftex.def Info: surv_panels.png  used on input line 327.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 [11]
 
-LaTeX Warning: Reference `fig:viab' on page 12 undefined on input line 330.
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[12 <./grow_contour_lines_color.png>]
+<Viability.png, id=119, 481.8pt x 481.8pt>
+File: Viability.png Graphic file (type png)
+<use Viability.png>
+Package pdftex.def Info: Viability.png  used on input line 349.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
 
-LaTeX Warning: Reference `fig:ant' on page 12 undefined on input line 342.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-[12]
+<Ant_Size_Multi.png, id=121, 481.8pt x 481.8pt>
+File: Ant_Size_Multi.png Graphic file (type png)
+<use Ant_Size_Multi.png>
+Package pdftex.def Info: Ant_Size_Multi.png  used on input line 367.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
-LaTeX Warning: Reference `fig:lambda' on page 13 undefined on input line 358.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-LaTeX Warning: Reference `fig:surv' on page 13 undefined on input line 369.
-
-
-LaTeX Warning: Reference `fig:grow' on page 13 undefined on input line 369.
-
-
-LaTeX Warning: Reference `fig:viab' on page 13 undefined on input line 370.
-
-[13]
-
-LaTeX Warning: Citation 'lach2010' on page 14 undefined on input line 385.
+[13 <./year_ant_timeseries.png>]
+<lambda_det_full.png, id=133, 481.8pt x 481.8pt>
+File: lambda_det_full.png Graphic file (type png)
+<use lambda_det_full.png>
+Package pdftex.def Info: lambda_det_full.png  used on input line 387.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
 
-LaTeX Warning: Reference `fig:ant' on page 14 undefined on input line 391.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-[14]
+<lambda_st_full3.png, id=134, 481.8pt x 481.8pt>
+File: lambda_st_full3.png Graphic file (type png)
+<use lambda_st_full3.png>
+Package pdftex.def Info: lambda_st_full3.png  used on input line 392.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
-LaTeX Warning: Citation 'Lach2010' on page 15 undefined on input line 401.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-[15]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 408.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 408.
- (./manuscript_draft.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 408.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 408.
+[14 <./surv_panels.png>] [15 <./Viability.png>]
+
+LaTeX Warning: Citation 'lach2010' on page 16 undefined on input line 424.
+
+[16 <./Ant_Size_Multi.png>]
+
+LaTeX Warning: Citation 'Lach2010' on page 17 undefined on input line 440.
+
+[17 <./lambda_det_full.png>] [18 <./lambda_st_full3.png>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 447.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 447.
+
+(./manuscript_draft.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 447.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 447.
 Package rerunfilecheck Info: File `manuscript_draft.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
@@ -2112,13 +2146,13 @@ Package biblatex Warning: Please (re)run Biber on the file:
 Package logreq Info: Writing requests to 'manuscript_draft.run.xml'.
 \openout1 = `manuscript_draft.run.xml'.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 408.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 447.
  ) 
 Here is how much of TeX's memory you used:
- 39094 strings out of 492616
- 769388 string characters out of 6129482
- 1281767 words of memory out of 5000000
- 42419 multiletter control sequences out of 15000+600000
+ 39141 strings out of 492616
+ 770372 string characters out of 6129482
+ 1281049 words of memory out of 5000000
+ 42449 multiletter control sequences out of 15000+600000
  605555 words of font info for 83 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,8n,69p,1668b,1113s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -2137,10 +2171,10 @@ ublic/lm/lmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmr
 8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmri10.pfb></us
 r/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/te
 xlive/2019/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on manuscript_draft.pdf (15 pages, 687218 bytes).
+Output written on manuscript_draft.pdf (18 pages, 1030107 bytes).
 PDF statistics:
- 190 PDF objects out of 1000 (max. 8388607)
- 149 compressed objects within 2 object streams
- 44 named destinations out of 1000 (max. 500000)
- 38 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 233 PDF objects out of 1000 (max. 8388607)
+ 175 compressed objects within 2 object streams
+ 54 named destinations out of 1000 (max. 500000)
+ 73 words of extra memory for PDF output out of 10000 (max. 10000000)
 
