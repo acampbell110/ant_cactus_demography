@@ -297,19 +297,37 @@ These predators can have significant negative impacts on the fitness of individu
 		I’m honestly not sure what all should be included here. I feel like I need a lot more info about the specifics???
 		
 		\subsection*{Vital Rates}
+		\begin{figure}[h]
+			\includegraphics[width=0.58\linewidth]{grow_contour_lines_color.png}
+			\caption{asdasdf}
+			\label{fig:grow}
+		\end{figure}
 		The results of the Bayesian growth model show the probability of a cactus being a specific size given the size in the previous year and the ant partner in Figure \ref{fig:grow}.
 		Our analyses showed that plants of a specific size were more likely to grow larger by the next year if tended by certain ant partners. 
 		Plants tended by \textit{Crem.} ants had higher growth rates than tree cholla tended by any other ant or vacant. 
 		The next highest growth rate was seen in plants tended by other ants, followed by \textit{Liom.} ants, then vacant plants. 
 		The standard deviation of the growth rates also vary with the size of the tree cholla, decreasing as the size of the plants increase, ranging from $-1.089$ to $1.499$.
-		\ali{ }{I’m really unsure about what else I should say about this. }
 		
+		\ali{ }{I’m really unsure about what else I should say about this. }
+			\begin{figure}[h]
+			\includegraphics[width=0.58\linewidth]{year_ant_timeseries.png}
+			\caption{asdasdf}
+			\label{fig:year_ant}
+		\end{figure}
+	
 		We broke down the impacts of ant partner on the growth rate by year and found that the effects of each ant on the growth rates of the cacti don’t always align, as shown in Figure \ref{fig:year-ant}. 
 		In 2004, 2005, and 2007, the only ant which has a positive effect on the growth rate of the tree cholla. 
 		In 2006, \textit{Crem.} has the most positive effect on the growth rate of cacti, followed by Vacant, Other, and \textit{Liom.}. 
 		In 2007, 2008, and 2016, vacant had the most negative effect on the growth rates of cacti, while in 2012, vacant plants had experienced the most positive effects on their growth rates. 
 		In 2010 and 2012, the only ant which has a negative effect on the growth rate of the cacti. 
 		From 2013-2019, the effects of all ant partners are quite tightly coupled (all closely positive or closely negative). 
+		
+		
+		\begin{figure}[h]
+			\includegraphics[width=0.58\linewidth]{surv_panels.png}
+			\caption{asdasdf}
+			\label{fig:surv}
+		\end{figure}
 		
 		Our analyses of the bayesian hierarchical survival model showed that large cacti have higher survival rates than small, regardless of the ant partner. 
 		It also showed that small cacti had significantly different survival rates depending on the ant partner. 
@@ -327,6 +345,12 @@ These predators can have significant negative impacts on the fitness of individu
 		\textit{Crem.} tended tree cholla experienced more negative effects on the survival rates than any other cacti. 
 		\textit{Crem.}, \textit{Liom.}, and Other-tended plants all experience similar patterns of positive and negative effects on survival rates through most years, with exceptions between the years of 2009-2010, 2011-2012, and 2017-2019. 
 		
+		\begin{figure}[h]
+			\includegraphics[width=0.58\linewidth]{Viability.png}
+			\caption{asdasdf}
+			\label{fig:viab}
+		\end{figure}
+		
 		Tree cholla tended by \textit{Liom.} ants had significantly higher viability rates, from $79.83\%$ to $91.81\%$ with a mean of $87.047\%$, as compared to those of cacti tended by \textit{Crem.}, from $69.19\%$ to $87.60\%$ with a mean of $79,784\%$, and other, from $76.98\%$ to $86.20\%$ with a mean of $76.977\%$, as shown in Figure \ref{fig:viab}. 
 		The lowest observed viability rate of tree cholla flower buds ranged from $62.83\%$ to $83.78\%$ with a mean of $74.604\%$ when there were no ant partners. 
 		Using a chi squared test I determined that there is a $13.6\%$ chance that this difference between the mean viability rates of \textit{Liom.} tended plants and vacant plants. 
@@ -339,6 +363,11 @@ These predators can have significant negative impacts on the fitness of individu
 		From the years 2013 to 2019, the effects of all ant partners on the viability rates of cacti are tightly coupled in patterns from positive to negative. 
 		
 		\subsection*{Ant Transition Rates}
+			\begin{figure}[h]
+			\includegraphics[width=0.58\linewidth]{Ant_Size_Multi.png}
+			\caption{asdasdf}
+			\label{fig:ant}
+		\end{figure}
 		All very small cacti are vacant with the probability of an ant partner increasing as the cacti grow larger, as shown in Figure \ref{fig:ant}. 
 		Most large tree cholla are tended by \textit{Liom.} ants even if they had a different previous partner.
 		The largest vacant cacti have a $42.875\%$ probability of being tended by \textit{Liom.} ants in the next season, $7.143\%$ probability of being tended by other ants in the next season, $28.571\%$ probability of being tended by \textit{Crem.}, and $21.429\%$ probability of being vacant in the next season.
@@ -354,8 +383,18 @@ These predators can have significant negative impacts on the fitness of individu
 		
 		
 		\subsection*{Demographic Modeling}
+		\begin{figure}[h]
+			\includegraphics[width=0.58\linewidth]{lambda_det_full.png}
+			\caption{asdasdf}
+			\label{fig:lambda_det}
+		\end{figure}
+		\begin{figure}[h]
+		\includegraphics[width=0.58\linewidth]{lambda_st_full3.png}
+		\caption{asdasdf}
+		\label{fig:lambda_stoch}
+	\end{figure}
 		We considered both a deterministic Integral Projection Model and a stochastic one to contrast the differences. 
-		In the deterministic model, we found that simulations with all ant partners (and vacancy) present resulted in the highest mean population growth rate while populations with no ant partners had the lowest mean population growth rate, as shown in Figure \ref{fig:lambda}.
+		In the deterministic model, we found that simulations with all ant partners (and vacancy) present resulted in the highest mean population growth rate while populations with no ant partners had the lowest mean population growth rate, as shown in Figure \ref{fig:lambda_det}.
 		The estimated mean population fitness of tree cholla when all ants were present was higher than the mean population fitness of any other scenario.
 		Similarly, only a few other scenarios had means within the interquartile range of this high partner diversity scenario. 
 		Honestly have no idea how much detail I should go into in this? 
