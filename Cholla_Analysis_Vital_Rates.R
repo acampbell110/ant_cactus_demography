@@ -7,7 +7,7 @@
 #######################################################################################################
 source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Setup_Script.R")
 cactus <- read.csv("cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+setwd("/Users/alicampbell/Box Sync/Grad/GitHub/ant_cactus_demography")
 
 ##############################################################################################
 #### Growth Model -- What size will the cacti be next time step? #############################
@@ -79,6 +79,143 @@ size_moments_ppc(growth_data,
                  n_bins = 10,
                  "Growth")
 dev.off()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+##############################################################################################
+#### Skew Growth Model -- What size will the cacti be next time step? #############################
+##############################################################################################
+growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
+growth_data <- na.omit(growth_data_orig)
+## Lose 2032 rows (due to plant death & recruit status)
+nrow(growth_data_orig)
+nrow(growth_data)
+# check that you are happy with the subsetting
+plot(growth_data$logsize_t, growth_data$logsize_t1)
+points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
+levels(growth_data$ant_t)
+## Create Stan Data for all ant states
+stan_data_grow_skew <- list(N = nrow(growth_data), ## number of observations
+                       vol = (growth_data$logsize_t), ## predictors volume
+                       y_grow = (growth_data$logsize_t1), ## response survival next year
+                       ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
+                       K = 4, ## number of ant states
+                       N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
+                       N_Plot = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
+                       plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
+                       year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
+)
+########## growth model includes sd variance across size and year as a random effect
+fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+mcmc_plot(fit_grow_skew)
+
+grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u","alpha"))
+grow_mu_skew <- rstan::extract(fit_grow_skew, pars = c("mu"))$mu
+grow_sigma_skew <- rstan::extract(fit_grow_skew, pars = c("sigma"))$sigma
+write.csv(grow_outputs_skew, "grow_outputs_skew.csv")
+write.csv(grow_yrep_skew, "grow_yrep_skew.csv")
+write.csv(grow_sigma_skew, "grow_sigma_skew.csv")
+summary(fit_grow_skew)
+## Check the posterior distributions
+setwd("/Users/alicampbell/Box Sync/Grad/GitHub/ant_cactus_demography/Figures")
+#For overlay plots
+n_post_draws <- 100
+post_draws <- sample.int(dim(fit_grow_skew)[1], n_post_draws)
+y <- stan_data_grow_skew$y_grow
+ant <- stan_data_grow_skew$ant
+grow_outputs_skew <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs_skew.csv", header = TRUE,stringsAsFactors=T)
+grow_outputs_skew <- grow_outputs_skew[,c(-1)]
+gos <- as.matrix(grow_outputs_skew)
+grow_yrep_skew <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_yrep_skew.csv", header = TRUE,stringsAsFactors=T)
+grow_yrep_skew <- grow_yrep_skew[,c(-1)]
+gys <- as.matrix(grow_yrep_skew)
+grow_sigma_skew <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_sigma_skew.csv", header = TRUE,stringsAsFactors=T)
+grow_sigma_skew <- grow_sigma_skew[,c(-1)]
+gss <- as.matrix(grow_sigma_skew)
+y_sim <- matrix(NA, n_post_draws,length(y))
+for(i in 1:n_post_draws){
+  y_sim[i,] <- rsn(n=length(y), xi = (gys[i,]), omega = (gss[i,]), alpha = gos[i,"alpha"])
+}
+rsn(n = length(y), xi = mean(gys[1,]), omega = mean(gss[1,]) ,alpha = gos[i,("alpha")])
+samp100 <- sample(nrow(y_sim), 100)
+## Overlay Plots
+png(file = "grow_post_test.png")
+bayesplot::color_scheme_set(scheme = "pink")
+bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant)
+dev.off()
+## Convergence Plots
+png("grow_conv_test.png")
+bayesplot::color_scheme_set(scheme = "pink")
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_skew, pars=c("beta0", "beta1","alpha","d_0","d_size")))
+dev.off()
+## They all converge
+## Histograms
+png("grow_hist_post_test.png")
+bayesplot::color_scheme_set(scheme = "pink")
+bayesplot::ppc_stat_grouped(y, y_sim[samp100,], stat = "mean",group = ant)
+dev.off()
+#### Skew, Kurtosis, ETC.
+png("grow_moments_test.png")
+size_moments_ppc(growth_data, 
+                 "logsize_t1", 
+                 y_sim[samp100,], 
+                 n_bins = 10,
+                 "Growth")
+dev.off()
+
+Lkurtosis=function(x) log(kurtosis(x)); 
+size_moments_ppc <- function(data,y_name,sim, n_bins, title = NA){
+  require(tidyverse)
+  require(patchwork)
+  growth_data$logsize_t1 <- growth_data[["logsize_t1"]]
+  bins <- growth_data %>%
+    ungroup() %>% 
+    arrange(logsize_t) %>% 
+    mutate(size_bin = cut_number(logsize_t, 10)) %>% 
+    group_by(size_bin)  %>% 
+    dplyr::summarize(mean_t1 = mean(logsize_t1),
+                     sd_t1 = sd(logsize_t1),
+                     skew_t1 = skewness(logsize_t1),
+                     kurt_t1 = Lkurtosis(logsize_t1),
+                     bin_mean = mean(logsize_t),
+                     bin_n = n())
+  sim_moments <- bind_cols(enframe(growth_data$logsize_t), as_tibble(t(y_sim))) %>%
+    rename(logsize_t = value) %>%
+    arrange(logsize_t) %>%
+    mutate(size_bin = cut_number(logsize_t, 10)) %>%
+    pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim") %>%
+    group_by(size_bin, post_draw) %>%
+    summarize( mean_sim = mean((y_sim)),
+               sd_sim = sd((y_sim)),
+               skew_sim = skewness((y_sim)),
+               kurt_sim = Lkurtosis((y_sim)),
+               bin_mean = mean(logsize_t),
+               bin_n = n())
+  sim_medians <- sim_moments %>%
+    group_by(size_bin, bin_mean) %>%
+    summarize(median_mean_sim = median(mean_sim),
+              median_sd_sim = median(sd_sim),
+              median_skew_sim = median(skew_sim),
+              median_kurt_sim = median(kurt_sim))
+  meanplot <-  ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = mean_sim), color = "pink") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_mean_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = mean_t1), shape = 1, color = "gray72") +
+    theme_classic()
+  sdplot <-  ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = sd_sim), color = "pink") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_sd_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = sd_t1), shape = 1, color = "gray72") + theme_classic()
+  skewplot <-  ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = skew_sim), color = "pink") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_skew_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = skew_t1), shape = 1, color = "gray72") + theme_classic()
+  kurtplot <- ggplot(data = bins)+
+    geom_point(data = sim_moments, aes(x = bin_mean, y = kurt_sim), color = "pink") +
+    geom_point(data = sim_medians, aes(x = bin_mean, y = median_kurt_sim),shape = 1, color = "black") +
+    geom_point(aes(x = bin_mean, y = kurt_t1), shape = 1, color = "gray72") + theme_classic()
+  size_ppc_plot <- meanplot+ sdplot+skewplot+ kurtplot+plot_annotation(title = title)
+  return(size_ppc_plot)
+}
+
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #######################################################################################################
 #### Survival Model -- What is the probability of surviving to the next time step?  ###################
