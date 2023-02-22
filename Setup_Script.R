@@ -8,7 +8,7 @@
 ########################################################################################################
 
 ## Set working directory
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
+setwd("/Users/alicampbell/Box Sync/Grad/GitHub/ant_cactus_demography/Data Analysis")
 
 ########################################################################################################
 ##############          Load All Necessary Packages Here        ########################################
@@ -354,22 +354,22 @@ size_moments_ppc <- function(data,y_name,sim, n_bins, title = NA){
               median_skew_sim = median(skew_sim),
               median_kurt_sim = median(kurt_sim))
   meanplot <-  ggplot(data = bins)+
-    geom_point(data = sim_moments, aes(x = bin_mean, y = mean_sim), color = "gray72") +
+    geom_point(data = sim_moments, aes(x = bin_mean, y = mean_sim), color = "pink") +
     geom_point(data = sim_medians, aes(x = bin_mean, y = median_mean_sim),shape = 1, color = "black") +
-    geom_point(aes(x = bin_mean, y = mean_t1), shape = 1, color = "firebrick2") +
+    geom_point(aes(x = bin_mean, y = mean_t1), shape = 1, color = "gray72") +
     theme_classic()
   sdplot <-  ggplot(data = bins)+
-    geom_point(data = sim_moments, aes(x = bin_mean, y = sd_sim), color = "gray72") +
+    geom_point(data = sim_moments, aes(x = bin_mean, y = sd_sim), color = "pink") +
     geom_point(data = sim_medians, aes(x = bin_mean, y = median_sd_sim),shape = 1, color = "black") +
-    geom_point(aes(x = bin_mean, y = sd_t1), shape = 1, color = "firebrick2") + theme_classic()
+    geom_point(aes(x = bin_mean, y = sd_t1), shape = 1, color = "gray72") + theme_classic()
   skewplot <-  ggplot(data = bins)+
-    geom_point(data = sim_moments, aes(x = bin_mean, y = skew_sim), color = "gray72") +
+    geom_point(data = sim_moments, aes(x = bin_mean, y = skew_sim), color = "pink") +
     geom_point(data = sim_medians, aes(x = bin_mean, y = median_skew_sim),shape = 1, color = "black") +
-    geom_point(aes(x = bin_mean, y = skew_t1), shape = 1, color = "firebrick2") + theme_classic()
+    geom_point(aes(x = bin_mean, y = skew_t1), shape = 1, color = "gray72") + theme_classic()
   kurtplot <- ggplot(data = bins)+
-    geom_point(data = sim_moments, aes(x = bin_mean, y = kurt_sim), color = "gray72") +
+    geom_point(data = sim_moments, aes(x = bin_mean, y = kurt_sim), color = "pink") +
     geom_point(data = sim_medians, aes(x = bin_mean, y = median_kurt_sim),shape = 1, color = "black") +
-    geom_point(aes(x = bin_mean, y = kurt_t1), shape = 1, color = "firebrick2") + theme_classic()
+    geom_point(aes(x = bin_mean, y = kurt_t1), shape = 1, color = "gray72") + theme_classic()
   size_ppc_plot <- meanplot+ sdplot+skewplot+ kurtplot+plot_annotation(title = title)
   return(size_ppc_plot)
 }
