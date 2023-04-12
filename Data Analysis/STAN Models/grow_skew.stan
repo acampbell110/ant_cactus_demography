@@ -47,7 +47,11 @@ model {
  y_grow[i] ~ skew_normal(mu[i],sigma[i], alpha);
  }
 }
-
+generated quantities {
+  int<lower = 0> y_rep[N] = skew_normal_rng(mu,sigma,alpha);
+  real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
+  real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
+}
 
 
 
