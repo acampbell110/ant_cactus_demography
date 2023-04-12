@@ -36,7 +36,7 @@ model {
  }
 }
 generated quantities {
-  int<lower = 0> y_rep[N] = bernoulli_logit_rng(mu);
+  real<lower = 0> y_rep[N] = bernoulli_logit_rng(mu);
   real<lower = 0> mean_y_rep = mean(to_vector(y_rep));
   real<lower = 0> sd_y_rep = sd(to_vector(y_rep));
 }
