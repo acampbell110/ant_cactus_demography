@@ -5,81 +5,78 @@
 ##                          save the outputs, and check the posterior distributions 
 ##
 #######################################################################################################
-source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Setup_Script.R")
 cactus <- read.csv("cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
-setwd("/Users/alicampbell/Box Sync/Grad/GitHub/ant_cactus_demography")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 ##############################################################################################
 #### Growth Model -- What size will the cacti be next time step? #############################
 ##############################################################################################
-growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
-growth_data <- na.omit(growth_data_orig)
-## Lose 2032 rows (due to plant death & recruit status)
-nrow(growth_data_orig)
-nrow(growth_data)
-# check that you are happy with the subsetting
-plot(growth_data$logsize_t, growth_data$logsize_t1)
-points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
-levels(growth_data$ant_t)
-## Create Stan Data for all ant states
-stan_data_grow <- list(N = nrow(growth_data), ## number of observations
-                       vol = (growth_data$logsize_t), ## predictors volume
-                       y_grow = (growth_data$logsize_t1), ## response survival next year
-                       ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
-                       K = 4, ## number of ant states
-                       N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
-                       N_Plot = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
-                       plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
-                       year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
-)
-freq <- glm(growth_data$logsize_t1 ~ growth_data$logsize_t + growth_data$ant_t)
-summary(freq)
-########## growth model includes sd variance across size and year as a random effect
-fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
-grow_yrep <- rstan::extract(fit_grow, pars = c("mu"))$mu
-grow_sigma <- rstan::extract(fit_grow, pars = c("sigma"))$sigma
-write.csv(grow_outputs, "grow_outputs.csv")
-write.csv(grow_yrep, "grow_yrep.csv")
-write.csv(grow_sigma, "grow_sigma.csv")
-summary(fit_grow)
-## Check the posterior distributions
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-#For overlay plots
-n_post_draws <- 100
-post_draws <- sample.int(dim(fit_grow)[1], n_post_draws)
-y <- stan_data_grow$y_grow
-ant <- stan_data_grow$ant
-grow_outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs.csv", header = TRUE,stringsAsFactors=T)
-grow_yrep <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_yrep.csv", header = TRUE,stringsAsFactors=T)
-grow_sigma <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_sigma.csv", header = TRUE,stringsAsFactors=T)
-y_sim <- matrix(NA, n_post_draws,length(y))
-for(i in 1:n_post_draws){
-  y_sim[i,] <- rnorm(n=length(y), mean = mean(grow_yrep[i,]), sd = grow_sigma[i,])
-}
-samp100 <- sample(nrow(y_sim), 100)
-## Overlay Plots
-png(file = "grow_post_full.png")
-bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant)
-dev.off()
-## Convergence Plots
-png("grow_conv_full.png")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow, pars=c("beta0", "beta1")))
-dev.off()
-## They all converge
-## Histograms
-png("grow_hist_post_full.png")
-bayesplot::ppc_stat_grouped(y, y_sim[samp100,], stat = "mean",group = ant)
-dev.off()
-#### Skew, Kurtosis, ETC.
-png("grow_skew_kurt_full.png")
-size_moments_ppc(growth_data, 
-                 "logsize_t1", 
-                 y_sim, 
-                 n_bins = 10,
-                 "Growth")
-dev.off()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+# growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
+# growth_data <- na.omit(growth_data_orig)
+# ## Lose 2032 rows (due to plant death & recruit status)
+# nrow(growth_data_orig)
+# nrow(growth_data)
+# # check that you are happy with the subsetting
+# plot(growth_data$logsize_t, growth_data$logsize_t1)
+# points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
+# levels(growth_data$ant_t)
+# ## Create Stan Data for all ant states
+# stan_data_grow <- list(N = nrow(growth_data), ## number of observations
+#                        vol = (growth_data$logsize_t), ## predictors volume
+#                        y_grow = (growth_data$logsize_t1), ## response survival next year
+#                        ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
+#                        K = 4, ## number of ant states
+#                        N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
+#                        N_Plot = max(as.integer(as.factor(growth_data$Plot))), ## number of plots
+#                        plot = as.integer(as.factor(growth_data$Plot)), ## predictor plots
+#                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
+# )
+# ########## growth model includes sd variance across size and year as a random effect
+# fit_grow <- stan(file = "Data Analysis/STAN Models/grow.stan", data = stan_data_grow, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+# grow_outputs <- rstan::extract(fit_grow, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
+# grow_yrep <- rstan::extract(fit_grow, pars = c("mu"))$mu
+# grow_sigma <- rstan::extract(fit_grow, pars = c("sigma"))$sigma
+# write.csv(grow_outputs, "grow_outputs.csv")
+# write.csv(grow_yrep, "grow_yrep.csv")
+# write.csv(grow_sigma, "grow_sigma.csv")
+# summary(fit_grow)
+# ## Check the posterior distributions
+# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+# #For overlay plots
+# n_post_draws <- 100
+# post_draws <- sample.int(dim(fit_grow)[1], n_post_draws)
+# y <- stan_data_grow$y_grow
+# ant <- stan_data_grow$ant
+# grow_outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs.csv", header = TRUE,stringsAsFactors=T)
+# grow_yrep <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_yrep.csv", header = TRUE,stringsAsFactors=T)
+# grow_sigma <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_sigma.csv", header = TRUE,stringsAsFactors=T)
+# y_sim <- matrix(NA, n_post_draws,length(y))
+# for(i in 1:n_post_draws){
+#   y_sim[i,] <- rnorm(n=length(y), mean = mean(grow_yrep[i,]), sd = grow_sigma[i,])
+# }
+# samp100 <- sample(nrow(y_sim), 100)
+# ## Overlay Plots
+# png(file = "grow_post_full.png")
+# bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant)
+# dev.off()
+# ## Convergence Plots
+# png("grow_conv_full.png")
+# bayesplot::mcmc_trace(As.mcmc.list(fit_grow, pars=c("beta0", "beta1")))
+# dev.off()
+# ## They all converge
+# ## Histograms
+# png("grow_hist_post_full.png")
+# bayesplot::ppc_stat_grouped(y, y_sim[samp100,], stat = "mean",group = ant)
+# dev.off()
+# #### Skew, Kurtosis, ETC.
+# png("grow_skew_kurt_full.png")
+# size_moments_ppc(growth_data, 
+#                  "logsize_t1", 
+#                  y_sim, 
+#                  n_bins = 10,
+#                  "Growth")
+# dev.off()
+# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 ##############################################################################################
 #### Skew Growth Model -- What size will the cacti be next time step? #############################
 ##############################################################################################
@@ -111,11 +108,11 @@ grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1",
 grow_mu_skew <- rstan::extract(fit_grow_skew, pars = c("mu"))$mu
 grow_sigma_skew <- rstan::extract(fit_grow_skew, pars = c("sigma"))$sigma
 write.csv(grow_outputs_skew, "grow_outputs_skew.csv")
-write.csv(grow_yrep_skew, "grow_yrep_skew.csv")
+write.csv(grow_mu_skew, "grow_mu_skew.csv")
 write.csv(grow_sigma_skew, "grow_sigma_skew.csv")
 summary(fit_grow_skew)
 ## Check the posterior distributions
-setwd("/Users/alicampbell/Box Sync/Grad/GitHub/ant_cactus_demography/Figures")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
 n_post_draws <- 100
 post_draws <- sample.int(dim(fit_grow_skew)[1], n_post_draws)
@@ -134,7 +131,7 @@ y_sim <- matrix(NA, n_post_draws,length(y))
 for(i in 1:n_post_draws){
   y_sim[i,] <- rsn(n=length(y), xi = (gys[i,]), omega = (gss[i,]), alpha = gos[i,"alpha"])
 }
-rsn(n = length(y), xi = mean(gys[1,]), omega = mean(gss[1,]) ,alpha = gos[i,("alpha")])
+View(y_sim)
 samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
 png(file = "grow_post_test.png")
