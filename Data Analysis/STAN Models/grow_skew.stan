@@ -22,17 +22,18 @@ parameters {
   real d_size;                // Error size
   real a_0;                   // skew intercept
   real a_size;                // skew size
+  real alpha;
   }
 
 transformed parameters{
   vector[N] mu;               // linear predictor for the mean
   vector[N] sigma;            // transformed predictor for the sd
-  vector[N] alpha;            // predictor for the skew
+  //vector[N] alpha;            // predictor for the skew
 
   for(i in 1:N){
     mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[ant[i],year[i]];
     sigma[i] = exp(d_0 + d_size * vol[i]);
-    alpha[i] = a_0 + a_size * vol[i];
+    //alpha[i] = a_0 + a_size * vol[i];
   }
 }
 model {
@@ -50,7 +51,7 @@ model {
   beta0 ~ normal(0,100);          // ant beta
   //Model
   for(i in 1:N){
-    y[i] ~ skew_normal(mu[i],sigma[i], alpha[i]);
+    y[i] ~ skew_normal(mu[i],sigma[i], alpha);
   }
 }
 generated quantities {
