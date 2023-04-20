@@ -23,6 +23,7 @@ parameters {
   real a_0;                   // skew intercept
   real a_size;                // skew size
   real alpha;
+  //real sigma;
   }
 
 transformed parameters{
@@ -49,9 +50,10 @@ model {
   a_0 ~ normal(0, 100);           // intercept skew 
   a_size ~ normal(0, 100);        // size skew
   beta0 ~ normal(0,100);          // ant beta
+  //sigma ~ gamma(.001,.001);
   //Model
   for(i in 1:N){
-    y[i] ~ skew_normal(mu[i],sigma[i], alpha);
+    y[i] ~ skew_normal(mu[i],sigma, alpha);
   }
 }
 generated quantities {
