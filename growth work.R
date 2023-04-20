@@ -94,7 +94,7 @@ growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
 growth_data <- na.omit(growth_data_orig)
 stan_data <- list(y = (growth_data$logsize_t1),                            ## the response variable
                   N = nrow(growth_data),                                   ## the number of observations
-                  vol = (growth_data$logsize_t),                           ## predictors volume
+                  vol = (growth_data$logsize_t)-mean(growth_data$logsize_t),                           ## predictors volume
                   ant = as.integer(as.factor(growth_data$ant_t)),          ## predictors ants
                   K = 4,                                                   ## number of ant states
                   N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
@@ -118,7 +118,7 @@ samp100 <- sample(nrow(y_rep), 100)
 ## the convergence of the parameters
 png("convergence_data7.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(stan_model, pars = c("d_0","d_size","a_0","a_size")) 
+bayesplot::mcmc_trace(stan_model, pars = c("sigma","alpha")) 
 dev.off()
 ## converges fine
 ## the ability of the model to match the data
