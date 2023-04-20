@@ -11,17 +11,17 @@ stan_data <- list(y = a,              ## the response variable
                   N = length(a),      ## the number of observations
                   vol = vol           ## size data
                   )
-stan_model <- stan(file = "Data Analysis/STAN Models/stan_prac.stan", 
+stan_null_model <- stan(file = "Data Analysis/STAN Models/stan_prac.stan", 
                    data = stan_data, warmup = 150, iter = 1000, chains = 3, 
                    cores = 3, thin = 1)
 ##### export the required variables so they may be used
 ## export
-summary(stan_model)
-stan_mu <- rstan::extract(stan_model, pars = c("beta0"))$beta0
-stan_outputs <- rstan::extract(stan_model, pars = c("alpha","sigma","beta0","beta1"))
+summary(stan_null_model)
+stan_mu <- rstan::extract(stan_null_model, pars = c("beta0"))$beta0
+stan_outputs <- rstan::extract(stan_null_model, pars = c("alpha","sigma","beta0","beta1"))
 write.csv(stan_outputs, "stan_outputs.csv")
 write.csv(stan_mu, "stan_mu.csv")
-y_rep <- rstan::extract(stan_model, pars = "y_rep")[["y_rep"]]
+y_rep <- rstan::extract(stan_null_model, pars = "y_rep")[["y_rep"]]
 samp100 <- sample(nrow(y_rep), 100)
 ## format
 others <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/stan_outputs.csv", header = TRUE,stringsAsFactors=T)
@@ -37,7 +37,7 @@ for(i in 1:1000){
 ## the convergence of the parameters
 png("null_convergence_try4.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(stan_model, pars = c("beta0","beta1","sigma","alpha")) 
+bayesplot::mcmc_trace(stan_null_model, pars = c("beta0","beta1","sigma","alpha")) 
 dev.off()
 ## converges fine
 ## the ability of the model to match the data
@@ -124,7 +124,7 @@ dev.off()
 ## the ability of the model to match the data
 png("overlay_data7.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay(as.vector(y), y_rep[samp100,])
+bayesplot::ppc_dens_overlay(as.vector(y), y_rep[,])
 dev.off()
 ## Overlay separated by ant partner
 png("overlay_group_data7.png")
