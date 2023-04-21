@@ -92,7 +92,7 @@ levels(growth_data$ant_t)
 ## Create Stan Data for all ant states
 stan_data_grow_skew <- list(N = nrow(growth_data), ## number of observations
                        vol = (growth_data$logsize_t), ## predictors volume
-                       y_grow = (growth_data$logsize_t1), ## response survival next year
+                       y = (growth_data$logsize_t1-mean(growth_data$logsize_t1)), ## response survival next year
                        ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
                        K = 4, ## number of ant states
                        N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
@@ -101,10 +101,10 @@ stan_data_grow_skew <- list(N = nrow(growth_data), ## number of observations
                        year = as.integer(as.factor(growth_data$Year_t)) ## predictor years
 )
 ########## growth model includes sd variance across size and year as a random effect
-fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-mcmc_plot(fit_grow_skew)
+fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, warmup = 1000, iter = 5000, chains = 3, cores = 3, thin = 2)
+mcmc_trace(fit_grow_skew,pars=c("a_0","a_size","d_0","d_size","sigma_w","sigma_u"))
 
-grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u","alpha"))
+grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
 grow_mu_skew <- rstan::extract(fit_grow_skew, pars = c("mu"))$mu
 grow_sigma_skew <- rstan::extract(fit_grow_skew, pars = c("sigma"))$sigma
 write.csv(grow_outputs_skew, "grow_outputs_skew.csv")
