@@ -102,7 +102,7 @@ stan_data_grow_skew <- list(N = nrow(growth_data), ## number of observations
 )
 ########## growth model includes sd variance across size and year as a random effect
 fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, warmup = 1000, iter = 5000, chains = 3, cores = 3, thin = 2)
-mcmc_trace(fit_grow_skew,pars=c("a_0","a_size","d_0","d_size","sigma_w","sigma_u"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("a_0","a_size","d_0","d_size","sigma_w","sigma_u"))
 
 grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
 grow_mu_skew <- rstan::extract(fit_grow_skew, pars = c("mu"))$mu
