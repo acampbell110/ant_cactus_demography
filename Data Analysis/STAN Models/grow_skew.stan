@@ -57,6 +57,6 @@ model {
   //}
 }
 //generated quantities {
-//  real y_rep[N] = skew_normal_rng(mu,sigma,alpha);
+//  real y_rep[N] = skew_normal_rng(xi,omega,alpha);
 //}
 
