@@ -29,8 +29,8 @@ others <- others[,c(-1)]
 others <- as.matrix(others)
 y_sim <- matrix(NA, 1000,length(a))
 for(i in 1:1000){
-  y_sim[i,] <- rsn(n=length(a), xi = (others[i,"beta0"] + others[i,"beta1"] * mean(vol)), 
-                   omega = invlogit(others[i,"sigma"]), 
+  y_sim[i,] <- rsn(n=length(a), xi = (others[i,"beta0"] + others[i,"beta1"] * vol), 
+                   omega = others[i,"sigma"], 
                    alpha = others[i,"alpha"], dp = NULL)
 }
 ##### visualize the outcomes of the model
@@ -118,7 +118,7 @@ samp100 <- sample(nrow(y_rep), 100)
 ## the convergence of the parameters
 png("convergence_data7.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(stan_model, pars = c("sigma","alpha")) 
+bayesplot::mcmc_trace(stan_model, pars = c("a_0","a_size","d_0","d_size")) 
 dev.off()
 ## converges fine
 ## the ability of the model to match the data
