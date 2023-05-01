@@ -104,27 +104,40 @@ stan_data_grow_skew <- list(N = nrow(growth_data), ## number of observations
 fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, warmup = 1000, iter = 5000, chains = 3, cores = 3, thin = 2)
 bayesplot::mcmc_trace(fit_grow_skew,pars=c("a_0","a_size","d_0","d_size","sigma_w","sigma_u"))
 
-grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","sigma_w","sigma_u"))
-grow_mu_skew <- rstan::extract(fit_grow_skew, pars = c("mu"))$mu
-grow_sigma_skew <- rstan::extract(fit_grow_skew, pars = c("sigma"))$sigma
+grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","a_0","a_size","sigma_w","sigma_u"))
 write.csv(grow_outputs_skew, "grow_outputs_skew.csv")
-write.csv(grow_mu_skew, "grow_mu_skew.csv")
-write.csv(grow_sigma_skew, "grow_sigma_skew.csv")
+grow_xi_skew <- rstan::extract(fit_grow_skew, pars = c("xi"))
+grow_omega_skew <- rstan::extract(fit_grow_skew, pars = c("omega"))
+grow_alpha_skew <- rstan::extract(fit_grow_skew,pars = c("alpha"))
+write.csv(grow_xi_skew, "grow_xi_skew.csv")
+write.csv(grow_omega_skew, "grow_omega_skew.csv")
+write.csv(grow_alpha_skew, "grow_alpha_skew.csv")
 summary(fit_grow_skew)
 ## Check the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
 n_post_draws <- 100
 post_draws <- sample.int(dim(fit_grow_skew)[1], n_post_draws)
-y <- stan_data_grow_skew$y_grow
+y <- stan_data_grow_skew$y
 ant <- stan_data_grow_skew$ant
+outputs <- grow_outputs_skew
 outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs_skew.csv", header = TRUE,stringsAsFactors=T)
 outputs <- outputs[,c(-1)]
 outputs <- as.matrix(outputs)
+xi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_xi_skew.csv", header = TRUE,stringsAsFactors=T)
+xi <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_xi_skew.csv", header = TRUE,stringsAsFactors=T)
+xi <- xi[,c(-1)]
+xi <- as.matrix(xi)
+omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_omega_skew.csv", header = TRUE,stringsAsFactors=T)
+omega <- omega[,c(-1)]
+omega <- as.matrix(omega)
+alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
+alpha <- alpha[,c(-1)]
+alpha <- as.matrix(alpha)
 
 y_sim <- matrix(NA, n_post_draws,length(y))
 for(i in 1:n_post_draws){
-  y_sim[i,] <- rsn(n=length(y), xi = (outputs[i,]), omega = (gss[i,]), alpha = gos[i,"alpha"])
+  y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
 }
 View(y_sim)
 samp100 <- sample(nrow(y_sim), 100)
