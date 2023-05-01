@@ -118,18 +118,13 @@ n_post_draws <- 100
 post_draws <- sample.int(dim(fit_grow_skew)[1], n_post_draws)
 y <- stan_data_grow_skew$y_grow
 ant <- stan_data_grow_skew$ant
-grow_outputs_skew <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs_skew.csv", header = TRUE,stringsAsFactors=T)
-grow_outputs_skew <- grow_outputs_skew[,c(-1)]
-gos <- as.matrix(grow_outputs_skew)
-grow_yrep_skew <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_yrep_skew.csv", header = TRUE,stringsAsFactors=T)
-grow_yrep_skew <- grow_yrep_skew[,c(-1)]
-gys <- as.matrix(grow_yrep_skew)
-grow_sigma_skew <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_sigma_skew.csv", header = TRUE,stringsAsFactors=T)
-grow_sigma_skew <- grow_sigma_skew[,c(-1)]
-gss <- as.matrix(grow_sigma_skew)
+outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs_skew.csv", header = TRUE,stringsAsFactors=T)
+outputs <- outputs[,c(-1)]
+outputs <- as.matrix(outputs)
+
 y_sim <- matrix(NA, n_post_draws,length(y))
 for(i in 1:n_post_draws){
-  y_sim[i,] <- rsn(n=length(y), xi = (gys[i,]), omega = (gss[i,]), alpha = gos[i,"alpha"])
+  y_sim[i,] <- rsn(n=length(y), xi = (outputs[i,]), omega = (gss[i,]), alpha = gos[i,"alpha"])
 }
 View(y_sim)
 samp100 <- sample(nrow(y_sim), 100)
