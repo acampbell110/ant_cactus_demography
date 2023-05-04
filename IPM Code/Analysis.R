@@ -318,13 +318,13 @@ bigmatrix(params,lower,upper,matsize,scenario)
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 for(z in 1:length(scenario)){
   for(m in 1:100){
-    lams[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
+    lams[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
   }
 }
 lams
 colnames(lams) <- scenario
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("lambda_post.png")
+png("lambda_post_skew1.png")
 par(mar=c(2,2,2,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4),
               ncol = 3, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9,3.9))
@@ -342,26 +342,26 @@ legend("topleft",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orang
        cex = 1.5)
 dev.off()
 
-png("lambda_post2.png")
-boxplot(lams, xlim = c(-2,12),ylim = c(0.9, 1.1),
+png("lambda_post_skew2.png")
+boxplot(lams, xlim = c(-2,12),ylim = c(0, 1.1),
         main = "Fitness of Ants", ylab = "Lambda Values", xaxt = "n",
-        at = c(1,4,5,6,8,8,10,12),
+        at = c(1,4,5,6,8,9,10,12),
         col = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"))
 legend("topleft",legend = scenario,fill = c("Red","Blue","Green","Yellow","Orange","Brown","Black","Grey"),
        cex = 1.5)
 dev.off()
 
 
-png("lambda_det_full.png")
+png("lambda_det_full_skew.png")
 par(mar=c(4,4,1.01,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1))
 plot(density(lams[,1]), col = vcol, xlab = "",ylab = "", lwd = 3,cex.main = 2,  main = "a)                                                                                                       ",
-     ylim = c(0,80), xlim = c(0.9,1.06))
+     ylim = c(0,60), xlim = c(0.9,1.06))
 abline(v = mean(lams[,1]),col = vcol, lty = 2, lwd =3)
 legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
 plot(density(lams[,2]), col = ccol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "b)                                                                                                       ",
-     ylim = c(0,80), xlim = c(0.9,1.06))
+     ylim = c(0,60), xlim = c(0.9,1.06))
 abline(v = mean(lams[,2]),col = ccol, lty = 2, lwd =3)
 lines(density(lams[,3]), col = lcol, lwd = 3)
 abline(v = mean(lams[,3]),col = lcol, lty = 2, lwd =3)
@@ -369,7 +369,7 @@ lines(density(lams[,4]), col = ocol, lwd = 3)
 abline(v = mean(lams[,4]),col = ocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crem.","Liom.", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
 plot(density(lams[,5]), col = lccol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "c)                                                                                                       ",
-     ylim = c(0,80), xlim = c(0.9,1.06))
+     ylim = c(0,60), xlim = c(0.9,1.06))
 abline(v = mean(lams[,5]),col = lccol, lty = 4, lwd =3)
 lines(density(lams[,6]), col = locol, lwd = 3)
 abline(v = mean(lams[,6]),col = locol, lty = 2, lwd =3)
@@ -377,7 +377,7 @@ lines(density(lams[,7]), col = cocol, lwd = 3)
 abline(v = mean(lams[,7]),col = cocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crem. and Liom.","Liom. and Other", "Crem. and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
 plot(density(lams[,8]), col = acol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "d)                                                                                                       ",
-     ylim = c(0,80), xlim = c(0.9,1.06))
+     ylim = c(0,60), xlim = c(0.9,1.06))
 abline(v = mean(lams[,8]),col = acol, lty = 2, lwd =3)
 mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
@@ -567,8 +567,130 @@ dev.off()
 
 
 
+##############################################################################
+###### STOCHASTIC POSTERIOR IPM ##############################################
+##############################################################################
+scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+max_scenario = length(scenario)
+max_iter = 100
+max_yrs = 10
+lams <- matrix(rep(NA,max_iter*max_scenario), nrow = max_iter)
+for(n in 1:max_scenario){
+  ## must create kt matrix based on the scenario
+  if(scenario[n] == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
+  if(scenario[n] == "cremvac"|scenario[n] == "liomvac"|scenario[n] == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
+  if(scenario[n] == "liomcremvac"|scenario[n] == "liomvacother"|scenario[n] == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
+  if(scenario[n] == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
+  ## reinitialize matdim based on the new KT
+  matdim <- ncol(K_t)
+  for(m in 1:max_iter){  
+    ## Must reinitialize rtracker and n0 for every iteration of parameters
+    rtracker      <- c(rep(0,max_yrs))  ## Empty vector to store growth rates in 
+    n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
+    for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then 
+      ## scale this to the stochastic growth rate
+      ## Randomly sample the years we have data for by calling column r in all matricies of 
+      ## the year random effects
+      ## Must sample a new r value for every year of the simulation we run
+      r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
+      ## Call and store matrix for every year of the simulation
+      K_t[,]<-bigmatrix(params[m,],lower,upper,matsize,scenario[n],
+                        grow_rfx1[m,r],grow_rfx2[m,r],grow_rfx3[m,r],grow_rfx4[m,r],
+                        surv_rfx1[m,r],surv_rfx2[m,r],surv_rfx3[m,r],surv_rfx4[m,r],
+                        flow_rfx[m,r],
+                        repro_rfx[m,r],
+                        viab_rfx1[m,r],viab_rfx2[m,r],viab_rfx3[m,r],viab_rfx4[m,r])$IPMmat
+      n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
+      N  <- sum(n0) ## This gives the growth rate of the population
+      rtracker[t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
+      n0 <-n0/N ## Update scaling for next iteration
+    }
+    #discard initial values (to get rid of transient)
+    #print(rtracker)
+    burnin    <- round(max_yrs*0.1)
+    rtracker  <- rtracker[-c(1:burnin)]
+    #Finish and return
+    #For every iteration of parameters and every scenario, save the geometric sum of the rtracker
+    lams[m,n]<-exp(mean(rtracker))
+  }
+}
+lams
 
 
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
+png("lambda_st_full.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1))
+plot(density(lams[,1]), col = "Red", xlab = "",ylab = "",cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+legend("topright", legend = c("Vacant"), fill = c("Red"), cex = 1.5)
+plot(density(lams[,2]), col = "Blue", xlab = "",ylab = "",cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+lines(density(lams[,3]), col = "Green")
+lines(density(lams[,4]), col = "Yellow")
+legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c("Blue","Green","Yellow"), cex = 1.5)
+plot(density(lams[,5]), col = "Orange", xlab = "",ylab = "",cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+lines(density(lams[,6]), col = "Brown")
+lines(density(lams[,7]), col = "Black")
+legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c("Orange","Brown","Black"), cex = 1.5)
+plot(density(lams[,8]), col = "Grey", xlab = "",ylab = "",cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+legend("topright",legend = c("All Ants"),fill = c("Grey"),
+       cex = 1.5)
+dev.off()
 
+png("lambda_st_full2.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1))
+plot(density(lams[1,]), col = "Red", xlab = "",ylab = "",cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,25), xlim = c(0,1.06))
+legend("topright", legend = c("Vacant"), fill = c("Red"), cex = 1.5)
+plot(density(lams[2,]), col = "Blue", xlab = "",ylab = "",cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,25), xlim = c(0,1.06))
+lines(density(lams[3,]), col = "Green")
+lines(density(lams[4,]), col = "Yellow")
+legend("topright", legend = c("C. opuntiae","L. apiculatum", "Other"), fill = c("Blue","Green","Yellow"), cex = 1.5)
+plot(density(lams[5,]), col = "Orange", xlab = "",ylab = "",cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,25), xlim = c(0,1.06))
+lines(density(lams[6,]), col = "Brown")
+lines(density(lams[7,]), col = "Black")
+legend("topright", legend = c("C. opuntiae and L. apiculatum","L. apiculatum and Other", "C. opuntiae and Other"), fill = c("Orange","Brown","Black"), cex = 1.5)
+plot(density(lams[8,]), col = "Grey", xlab = "",ylab = "",cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,25), xlim = c(0,1.06))
+mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+legend("topright",legend = c("All Ants"),fill = c("Grey"),
+       cex = 1.5)
+dev.off()
+
+png("lambda_st_full3.png")
+par(mar=c(4,4,1.01,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1))
+plot(density(lams[,1]), col = vcol, xlab = "",ylab = "", lwd = 3,cex.main = 2,  main = "a)                                                                                                       ",
+     ylim = c(0,80), xlim = c(0.9,1.06))
+abline(v = mean(lams[,1]),col = vcol, lty = 2, lwd =3)
+legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+plot(density(lams[,2]), col = ccol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "b)                                                                                                       ",
+     ylim = c(0,80), xlim = c(0.9,1.06))
+abline(v = mean(lams[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams[,3]), col = lcol, lwd = 3)
+abline(v = mean(lams[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams[,4]), col = ocol, lwd = 3)
+abline(v = mean(lams[,4]),col = ocol, lty = 2, lwd =3)
+legend("topright", legend = c("Crem.","Liom.", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+plot(density(lams[,5]), col = lccol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "c)                                                                                                       ",
+     ylim = c(0,80), xlim = c(0.9,1.06))
+abline(v = mean(lams[,5]),col = lccol, lty = 4, lwd =3)
+lines(density(lams[,6]), col = locol, lwd = 3)
+abline(v = mean(lams[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams[,7]), col = cocol, lwd = 3)
+abline(v = mean(lams[,7]),col = cocol, lty = 2, lwd =3)
+legend("topright", legend = c("Crem. and Liom.","Liom. and Other", "Crem. and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+plot(density(lams[,8]), col = acol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "d)                                                                                                       ",
+     ylim = c(0,80), xlim = c(0.9,1.06))
+abline(v = mean(lams[,8]),col = acol, lty = 2, lwd =3)
+mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+legend("topright",legend = c("All Ants"),fill = c(acol),
+       cex = 1.5)
+dev.off()
 

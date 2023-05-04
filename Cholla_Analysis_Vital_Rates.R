@@ -91,8 +91,8 @@ points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
 levels(growth_data$ant_t)
 ## Create Stan Data for all ant states
 stan_data_grow_skew <- list(N = nrow(growth_data), ## number of observations
-                       vol = (growth_data$logsize_t), ## predictors volume
-                       y = (growth_data$logsize_t1-mean(growth_data$logsize_t1)), ## response survival next year
+                       vol = (growth_data$logsize_t-mean(growth_data$logsize_t)), ## predictors volume (because of the - constant need to subrtract that back out when recreating the beta function)
+                       y = (growth_data$logsize_t1), ## response survival next year
                        ant = as.integer(as.factor(growth_data$ant_t)),## predictors ants
                        K = 4, ## number of ant states
                        N_Year = max(as.integer(as.factor(growth_data$Year_t))), ## number of years
@@ -125,13 +125,15 @@ outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutual
 outputs <- outputs[,c(-1)]
 outputs <- as.matrix(outputs)
 xi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_xi_skew.csv", header = TRUE,stringsAsFactors=T)
-xi <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_xi_skew.csv", header = TRUE,stringsAsFactors=T)
+#xi <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_xi_skew.csv", header = TRUE,stringsAsFactors=T)
 xi <- xi[,c(-1)]
 xi <- as.matrix(xi)
-omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_omega_skew.csv", header = TRUE,stringsAsFactors=T)
+omega <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_omega_skew.csv", header = TRUE,stringsAsFactors=T)
+#omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_omega_skew.csv", header = TRUE,stringsAsFactors=T)
 omega <- omega[,c(-1)]
 omega <- as.matrix(omega)
-alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
+alpha <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
+#alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
 alpha <- alpha[,c(-1)]
 alpha <- as.matrix(alpha)
 

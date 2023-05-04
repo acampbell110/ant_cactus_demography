@@ -3,7 +3,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Data Analysis")
 
 
 ## load in the cleaned data product created by Create_Clean_Data_Script.R
-cactus<-read.csv("Data Analysis/cholla_demography_20042021_cleaned.csv")
+cactus<-read.csv("cholla_demography_20042021_cleaned.csv")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
@@ -26,7 +26,7 @@ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism proj
 #mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 
 ##These files contain all draws from the posterior distributions of all parameters
-grow.params <- read.csv(paste0(mcmc_dir,"grow_outputs.csv"), header = TRUE,stringsAsFactors=T)    
+grow.params <- read.csv(paste0(mcmc_dir,"grow_outputs_skew.csv"), header = TRUE,stringsAsFactors=T)    
 surv.params <- read.csv(paste0(mcmc_dir,"surv_outputs.csv"), header = TRUE,stringsAsFactors=T)    
 flow.params <- read.csv(paste0(mcmc_dir,"flow_trunc_outputs.csv"), header = TRUE,stringsAsFactors=T)    
 viab.params <- read.csv(paste0(mcmc_dir,"viab_outputs.csv"), header = TRUE,stringsAsFactors=T)    
@@ -36,8 +36,8 @@ pre.seed.params <- read.csv(paste0(mcmc_dir,"seed_surv_outputs.csv"), header = T
 germ1.params <- read.csv(paste0(mcmc_dir,"germ1_outputs.csv"), header = TRUE,stringsAsFactors=T)    
 germ2.params <- read.csv(paste0(mcmc_dir,"germ2_outputs.csv"), header = TRUE,stringsAsFactors=T)    
 rec.params <- read.csv(paste0(mcmc_dir,"rec_outputs.csv"), header = TRUE,stringsAsFactors=T)    
-Ndraws<-min(100,nrow(grow.params))
-draws<-sample(nrow(grow.params),Ndraws)
+Ndraws<-min(100,nrow(surv.params))
+draws<-sample(nrow(surv.params),Ndraws)
 
 ## Pull the random draws from all posterior distributions
 grow.params<-grow.params[draws,]
@@ -66,6 +66,8 @@ params<-params[,-1]
 #### No specific ant
 params$grow_sig0 <- grow.params$d_0           ## growth error intercept
 params$grow_sig1 <- grow.params$d_size        ## ## growth error size
+params$grow_alp0 <- grow.params$a_0
+params$grow_alp1 <- grow.params$a_size
 params$grow_sig_u<-grow.params$sigma_u
 params$grow_sig_w<-grow.params$sigma_w
 ####Ant 1 (vacant)
@@ -201,22 +203,22 @@ params$viab_beta04<-viab.params$beta0.4     	  ## viab intercept
 #### --- Year Random Effects --- ####
 ####Ant 1 (prev vacant)
 viab_rfx1 <- cbind(rep(0,100),viab.params$w.1.1,viab.params$w.1.2,viab.params$w.1.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.1.4,
+                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.1.4,
                    viab.params$w.1.5,viab.params$w.1.6, viab.params$w.1.7,viab.params$w.1.8,
                    viab.params$w.1.9,viab.params$w.1.10,viab.params$w.1.11)
 ####Ant 2 (prev other)
 viab_rfx2 <- cbind(rep(0,100),viab.params$w.2.1,viab.params$w.2.2,viab.params$w.2.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.2.4,
+                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.2.4,
                    viab.params$w.2.5,viab.params$w.2.6, viab.params$w.2.7,viab.params$w.2.8,
                    viab.params$w.2.9,viab.params$w.2.10,viab.params$w.2.11)
 ####Ant 3 (prev crem)
 viab_rfx3 <- cbind(rep(0,100),viab.params$w.3.1,viab.params$w.3.2,viab.params$w.3.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.3.4,
+                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.3.4,
                    viab.params$w.3.5,viab.params$w.3.6, viab.params$w.3.7,viab.params$w.3.8,
                    viab.params$w.3.9,viab.params$w.3.10,viab.params$w.3.11)
 ####Ant 4 (prev liom)
 viab_rfx4 <- cbind(rep(0,100),viab.params$w.4.1,viab.params$w.4.2,viab.params$w.4.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.4.4,
+                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.4.4,
                    viab.params$w.4.5,viab.params$w.4.6, viab.params$w.4.7,viab.params$w.4.8,
                    viab.params$w.4.9,viab.params$w.4.10,viab.params$w.4.11)
 

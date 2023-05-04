@@ -17,7 +17,7 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  #Density probability function which uses the parameters that are ant specific 
+  #Density probability function which uses the parameters that are ant specific
   g_vac = dnorm(y,mean=(params$grow_beta01) + (params$grow_beta11)*xb + (grow_rfx1),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
   g_liom = dnorm(y,mean=(params$grow_beta04) + (params$grow_beta14)*xb + (grow_rfx4),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
   g_crem = dnorm(y,mean=(params$grow_beta03) + (params$grow_beta13)*xb + (grow_rfx3),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
@@ -29,24 +29,39 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "vacant"){ return(g_vac)}
 }
 
-# ##Check that it works properly
-# i = c("vacant","crem","liom","other")
-# x = c(-1,-5,3,4)
-# y = c(-1,-4,3,4)
-# g <- matrix(NA,ncol = length(i), nrow = 100)
-# l <- list()
-# 
-# for(a in 1:17){ ## year
-# for(m in 1:nrow(params)){ ## iteration
-#   for(n in seq(1:length(i))){ ## input info
-#     g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-#     }
-# }
-#   l[[a]] <- g
-# }
-# 
-# g
-# l
+gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
+  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+  xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+  #Density probability function which uses the parameters that are ant specific 
+  g_vac = dsn(y,xi=(params$grow_beta01) + (params$grow_beta11)*xb + (grow_rfx1), omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  g_liom = dsn(y,xi=(params$grow_beta04) + (params$grow_beta14)*xb + (grow_rfx1), omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  g_crem = dsn(y,xi=(params$grow_beta03) + (params$grow_beta13)*xb + (grow_rfx1), omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  g_other = dsn(y,xi=(params$grow_beta02) + (params$grow_beta12)*xb + (grow_rfx1), omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  #Return the probability of growing from size x to y
+  if(i == "crem"){ return(g_crem)}
+  if(i == "liom"){ return(g_liom)}
+  if(i == "other"){ return(g_other)}
+  if(i == "vacant"){ return(g_vac)}
+}
+
+##Check that it works properly
+i = c("vacant","crem","liom","other")
+x = c(-1,-5,3,4)
+y = c(-1,-4,3,4)
+g <- matrix(NA,ncol = length(i), nrow = 100)
+l <- list()
+
+for(a in 1:17){ ## year
+for(m in 1:nrow(params)){ ## iteration
+  for(n in seq(1:length(i))){ ## input info
+    xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+    g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
+    }
+}
+  l[[a]] <- g
+}
+g
+l
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -187,13 +202,13 @@ transition.1<-function(x, i, j,params, scenario){
   ## Crem and Vac
   if(scenario == "cremvac"){
     #Denom of previously tended by None
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) + 
+    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
       exp((params$multi_betavc) + xb*(params$multi_betac))
     #Calculate the probabilities by next ant state
     vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
     vac_crem = exp((params$multi_betavc) + xb*(params$multi_betac))/Denominator_vac
     #Denom of previously tended by Crem
-    Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+    Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
       exp((params$multi_betacc) + xb*(params$multi_betac))
     #Calculate the probabilities by next ant state
     crem_vac = exp((params$multi_betacv) + xb*(params$multi_betav))/Denominator_crem
@@ -207,13 +222,13 @@ transition.1<-function(x, i, j,params, scenario){
   ## Liom and Vac
   if(scenario == "liomvac"){
     #Denom of previously tended by None
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) + 
+    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
       exp((params$multi_betavl) + xb*(params$multi_betal))
     #Calculate the probabilities by next ant state
     vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
     vac_liom = exp((params$multi_betavl) + xb*(params$multi_betal))/Denominator_vac
     #Denom of previously tended by Liom
-    Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+    Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
       exp((params$multi_betall) + xb*(params$multi_betal))
     #Calculate the probabilities by next ant state
     liom_vac = exp((params$multi_betalv) + xb*(params$multi_betav))/Denominator_liom
@@ -227,13 +242,13 @@ transition.1<-function(x, i, j,params, scenario){
   ## Other and Vac
   if(scenario == "othervac"){
     #Denom of previously tended by None
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) + 
+    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
       exp((params$multi_betavo) + xb*(params$multi_betao))
     #Calculate the probabilities by next ant state
     vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
     vac_other = exp((params$multi_betavo) + xb*(params$multi_betao))/Denominator_vac
     #Denom of previously tended by Liom
-    Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+    Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
       exp((params$multi_betaoo) + xb*(params$multi_betao))
     #Calculate the probabilities by next ant state
     other_vac = exp((params$multi_betaov) + xb*(params$multi_betav))/Denominator_other
@@ -391,7 +406,6 @@ transition.2<-function(x, i, j, params,scenario){
 # #}
 # t2
 # l
-######## OUT OF BOUNDS PROBLEM HERE
 
 #######################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)
@@ -532,28 +546,28 @@ bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3
   Fmat[1,3:(n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) 
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
   Tmat[2,1]<-1-invlogit((params$germ1_beta0))
-  # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
+  # # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),1]<-invlogit((params$germ1_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
-  # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
+  # # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))   
-  # Growth/survival transitions among cts sizes
+  # # Growth/survival transitions among cts sizes
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h 
-  # Put it all together
+  # # Put it all together
   IPMmat<-Fmat+Tmat  
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   #lambda = Re(eigen(IPMmat)$values[1])
   #return(lambda)
 }
- # i = c("liom","vacant")
- # x <- c(1,1)
- # lam <- matrix(rep(NA,120), nrow = 10)
- # for(a in 1:12){ ## years
- # for(m in 1:10){ ## params
- #   lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
- # }
- # }
+#  i = c("liom","vacant")
+#  x <- c(1,1)
+#  lam <- matrix(rep(NA,120), nrow = 10)
+#  for(a in 1:12){ ## years
+#  for(m in 1:10){ ## params
+#   lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#  }
+#  }
 # lam # each row is different iteration and each column is a year
-# colMeans(lam)
+#  colMeans(lam)
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
@@ -672,7 +686,7 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
 # big <- list()
 # 
 #   for(a in 1:7){ ## year
-#     for(m in 1:1){ ## iter
+#     for(m in 1:10){ ## iter
 #       for(n in 1:length(i)){ ## input info
 #       lam[m,n] <- lambda(bigmatrix.2(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
 #     }
@@ -822,22 +836,22 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
 }
-## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-# i = c("liom","vacant")
-# x <- c(1,1)
-# scenario = c("liomvacother","liomcremvac")
-# lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
-# big <- list()
-# for(a in 1:2){ ## year
-#   for(m in 1:1){ ## iter
-#     for(n in 1:length(i)){ ## input info
-#       lam[m,n] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-#     }
-#   }
-#   big[[a]] <- lam
-# }
-# lam
-# big
+# Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
+i = c("liom","vacant")
+x <- c(1,1)
+scenario = c("liomvacother","liomcremvac")
+lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
+big <- list()
+for(a in 1:2){ ## year
+  for(m in 1:10){ ## iter
+    for(n in 1:length(i)){ ## input info
+      lam[m,n] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+    }
+  }
+  big[[a]] <- lam
+}
+lam
+big
 
 
 ##################################################################################################
@@ -980,7 +994,7 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
 # i = c("liom","vacant","vacant","crem")
 # x <- c(1,1,1,1)
 # scenario = c("all","all","none","liomcremvac")
-# lam <- matrix(rep(NA,70),nrow = 10,ncol = 7)
+# lam <- matrix(rep(NA,10),nrow = 10,ncol = 4)
 # big <- list()
 # for(a in 1:2){ ## year
 #   for(m in 1:1){ ## iter
@@ -998,139 +1012,67 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
 # lambdaS Simulations for different Years Rands #########################################################
 # This is the original code as taken from the Climate IPM Online ########################################
 #########################################################################################################
-lambdaSim=function(params,                                  ## parameters
-                   grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
-                   surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
-                   flow_rfx,                                ## flower model year rfx
-                   repro_rfx,                               ## repro model year rfx
-                   viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
-                   max_yrs,                                 ## the # years you want to iterate
-                   matsize,                                 ## size of transition matrix
-                   scenario,                                ## partner diversity scenario
-                   lower,upper                              ## extensions to avoid eviction
-){           
-  
-  ## Create an actual matrix filled with 0 of the right size based on scenarios
-  if(scenario == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
-  if(scenario == "cremvac"|scenario == "liomvac"|scenario == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
-  if(scenario == "liomcremvac"|scenario == "liomvacother"|scenario == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
-  if(scenario == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
-  matdim <- ncol(K_t)
-  rtracker      <- matrix(rep(0,max_yrs*1),nrow = 1)  ## Empty vector to store growth rates in 
-  n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
-  
-  
-  for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then 
-    ## scale this to the stochastic growth rate
-    ## Randomly sample the years we have data for by calling column r in all matricies of 
-    ## the year random effects
-    r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
-    
-    ## Create and store matrix
-    K_t[,]<-bigmatrix(params[1,],lower,upper,matsize,scenario,
-                      grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
-                      surv_rfx1[,r],surv_rfx2[,r],surv_rfx3[,r],surv_rfx4[,r],
-                      flow_rfx[,r],
-                      repro_rfx[,r],
-                      viab_rfx1[,r],viab_rfx2[,r],viab_rfx3[,r],viab_rfx4[,r])$IPMmat
-    ## At each time step call the IPM for the proper Year
-    
-    n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
-    N  <- sum(n0) ## This gives the growth rate of the population
-    rtracker[m,t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
-    n0 <-n0/N ## Update scaling for next iteration
-  }
-  
-  #discard initial values (to get rid of transient)
-  burnin    <- round(max_yrs*0.1)
-  rtracker  <- rtracker[,-c(1:burnin)]
-  
-  #Finish and return
-  #print(proc.time() - ptm)
-  lambdaS<-exp(mean(rtracker))
-  return(lambdaS)
-}
-# lams[m,n] <- lambdaSim(params = params[m,],
-#                        grow_rfx1[m,],grow_rfx2[m,],grow_rfx3[m,],grow_rfx4[m,],
-#                        surv_rfx1[m,],surv_rfx2[m,],surv_rfx3[m,],surv_rfx4[m,],
-#                        flow_rfx[m,],
-#                        repro_rfx[m,],
-#                        viab_rfx1[m,],viab_rfx2[m,],viab_rfx3[m,],viab_rfx4[m,],
-#                      max_yrs = 5,
-#                      matsize = matsize,
-#                      scenario = scenario[n],
-#                      lower = lower, upper = upper
-# )
-nrw <- 3 ## The number or iterations I want to cycle through
-lams <- matrix(rep(NA,80),nrow = 10)
-lambdaS <- matrix(rep(NA,nrw*length(scenario)), nrow = nrw)
-scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+# lambdaSim=function(params,                                  ## parameters
+#                    grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
+#                    surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
+#                    flow_rfx,                                ## flower model year rfx
+#                    repro_rfx,                               ## repro model year rfx
+#                    viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
+#                    max_yrs,                                 ## the # years you want to iterate
+#                    matsize,                                 ## size of transition matrix
+#                    scenario,                                ## partner diversity scenario
+#                    lower,upper                              ## extensions to avoid eviction
+# ){           
+#   
+#   ## Create an actual matrix filled with 0 of the right size based on scenarios
+#   if(scenario == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
+#   if(scenario == "cremvac"|scenario == "liomvac"|scenario == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
+#   if(scenario == "liomcremvac"|scenario == "liomvacother"|scenario == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
+#   if(scenario == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
+#   matdim        <- ncol(K_t)
+#   rtracker      <- matrix(rep(0,max_yrs*10),nrow = 10)  ## Empty vector to store growth rates in
+#   n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
+# 
+# 
+#   for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then
+#     ## scale this to the stochastic growth rate
+#     ## Randomly sample the years we have data for by calling column r in all matricies of
+#     ## the year random effects
+#     r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
+#     ## Create and store matrix
+#     K_t[,]<-bigmatrix(params,lower,upper,matsize,scenario,
+#                       grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
+#                       surv_rfx1[,r],surv_rfx2[,r],surv_rfx3[,r],surv_rfx4[,r],
+#                       flow_rfx[,r],
+#                       repro_rfx[,r],
+#                       viab_rfx1[,r],viab_rfx2[,r],viab_rfx3[,r],viab_rfx4[,r])$IPMmat
+#     ## At each time step call the IPM for the proper Year
+# 
+#     # n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
+#     # N  <- sum(n0) ## This gives the growth rate of the population
+#     # rtracker[,t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
+#     # n0 <-n0/N ## Update scaling for next iteration
+#    }
+# # 
+# #   #discard initial values (to get rid of transient)
+# #   burnin    <- round(max_yrs*0.1)
+# #   rtracker  <- rtracker[,-c(1:burnin)]
+# # 
+# #   #Finish and return
+# #   #print(proc.time() - ptm)
+# #   lambdaS<-exp(mean(rtracker))
+# #   return(lambdaS)
+#     return(list(K_t = K_t))#, matdim = matdim, rtracker = rtracker, n0 = n0))
+# }
+## To get the proper putputs of this, I need to iterate over all scenarios, all iterations, and all years
+## To start with only do one scenario == "none"
+## Create an actual matrix filled with 0 of the right size based on scenarios
 scenario = c("none","cremvac")
-for(n in 1:length(scenario)){
-  for(m in 1:nrw){
-  matdim <- ncol(K_t)
-    rtracker      <- matrix(rep(0,max_yrs*nrw),nrow = nrw)  ## Empty vector to store growth rates in 
-    n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
-    
-    for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then 
-      ## scale this to the stochastic growth rate
-      ## Randomly sample the years we have data for by calling column r in all matricies of 
-      ## the year random effects
-      r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
-      
-      ## Create and store matrix
-      K_t[,]<-bigmatrix(params[m,],lower,upper,matsize,scenario,
-                        grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
-                        surv_rfx1[,r],surv_rfx2[,r],surv_rfx3[,r],surv_rfx4[,r],
-                        flow_rfx[,r],
-                        repro_rfx[,r],
-                        viab_rfx1[,r],viab_rfx2[,r],viab_rfx3[,r],viab_rfx4[,r])$IPMmat[1,1]
-      ## At each time step call the IPM for the proper Year
-      
-      n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
-      N  <- sum(n0) ## This gives the growth rate of the population
-      rtracker[m,t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
-      n0 <-n0/N ## Update scaling for next iteration
-      #print(rtracker)
-    }
-    #discard initial values (to get rid of transient)
-    burnin    <- round(max_yrs*0.1)
-    rtracker  <- rtracker[,-c(1:burnin)]
-    
-    #Finish and return
-    #print(proc.time() - ptm)
-    lambdaS[m,n]<-exp(mean(rtracker))
-  }
-  print(lambdaS)
-}
-lams
-
-nrw <- 3 ## The number or iterations I want to cycle through
-lams <- matrix(rep(NA,80),nrow = 10)
-lambdaS <- matrix(rep(NA,nrw*length(scenario)), nrow = nrw)
-scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-scenario = c("none","cremvac")
-for(n in 1:length(scenario)){
-  for(m in 1:nrw){
-    lams[m,n] <- lambdaSim(params[m,],)
-    }
-  }
-
-lambdaSim=function(params,                                  ## parameters
-                   grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
-                   surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
-                   flow_rfx,                                ## flower model year rfx
-                   repro_rfx,                               ## repro model year rfx
-                   viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
-                   max_yrs,                                 ## the # years you want to iterate
-                   matsize,                                 ## size of transition matrix
-                   scenario,                                ## partner diversity scenario
-                   lower,upper,                             ## extensions to avoid eviction
-                   nrw
-){           
-  
-  ## Create an actual matrix filled with 0 of the right size based on scenarios
-for(n in 1:length(scenario)){
+max_scenario = length(scenario)
+max_iter = 100
+max_yrs = 5
+lambdaS <- matrix(rep(NA,max_iter*max_scenario), nrow = max_iter)
+for(n in 1:max_scenario){
   ## must create kt matrix based on the scenario
   if(scenario[n] == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
   if(scenario[n] == "cremvac"|scenario[n] == "liomvac"|scenario[n] == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
@@ -1138,7 +1080,7 @@ for(n in 1:length(scenario)){
   if(scenario[n] == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
   ## reinitialize matdim based on the new KT
   matdim <- ncol(K_t)
-  for(m in 1:nrw){  
+  for(m in 1:max_iter){  
     ## Must reinitialize rtracker and n0 for every iteration of parameters
     rtracker      <- c(rep(0,max_yrs))  ## Empty vector to store growth rates in 
     n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
@@ -1150,16 +1092,16 @@ for(n in 1:length(scenario)){
       r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
       ## Call and store matrix for every year of the simulation
       K_t[,]<-bigmatrix(params[m,],lower,upper,matsize,scenario[n],
-                      grow_rfx1[m,r],grow_rfx2[m,r],grow_rfx3[m,r],grow_rfx4[m,r],
-                      surv_rfx1[m,r],surv_rfx2[m,r],surv_rfx3[m,r],surv_rfx4[m,r],
-                      flow_rfx[m,r],
-                      repro_rfx[m,r],
-                      viab_rfx1[m,r],viab_rfx2[m,r],viab_rfx3[m,r],viab_rfx4[m,r])$IPMmat
+                        grow_rfx1[m,r],grow_rfx2[m,r],grow_rfx3[m,r],grow_rfx4[m,r],
+                        surv_rfx1[m,r],surv_rfx2[m,r],surv_rfx3[m,r],surv_rfx4[m,r],
+                        flow_rfx[m,r],
+                        repro_rfx[m,r],
+                        viab_rfx1[m,r],viab_rfx2[m,r],viab_rfx3[m,r],viab_rfx4[m,r])$IPMmat
       n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
       N  <- sum(n0) ## This gives the growth rate of the population
       rtracker[t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
       n0 <-n0/N ## Update scaling for next iteration
-      }
+    }
     #discard initial values (to get rid of transient)
     #print(rtracker)
     burnin    <- round(max_yrs*0.1)
@@ -1169,26 +1111,6 @@ for(n in 1:length(scenario)){
     lambdaS[m,n]<-exp(mean(rtracker))
   }
 }
-  return(lambdaS)
-}
-
-scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-nrw = 100
-max_yrs = 100
-lambdaS <- matrix(rep(NA,nrw*length(scenario)), nrow = nrw)
-lams <- lambdaSim(params,                                  ## parameters
-          grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
-          surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
-          flow_rfx,                                ## flower model year rfx
-          repro_rfx,                               ## repro model year rfx
-          viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
-          max_yrs,                                 ## the # years you want to iterate
-          matsize,                                 ## size of transition matrix
-          scenario,                                ## partner diversity scenario
-          lower,upper, nrw   )
-
-
-
-
+lambdaS
 
 

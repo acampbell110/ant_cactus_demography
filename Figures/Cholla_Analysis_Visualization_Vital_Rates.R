@@ -304,7 +304,7 @@ size_liom <- seq(min(y_liom_subset_grow$logsize_t, na.rm = TRUE), max(y_liom_sub
 size_other <- seq(min(y_other_subset_grow$logsize_t, na.rm = TRUE), max(y_other_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 size_vac <- seq(min(y_vac_subset_grow$logsize_t, na.rm = TRUE), max(y_vac_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 
-grow_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs.csv", header = TRUE,stringsAsFactors=T)
+grow_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs_skew.csv", header = TRUE,stringsAsFactors=T)
 ## Formulas
 ## Other
 
@@ -324,19 +324,19 @@ y_vac_mean_grow <- quantile(grow_out$beta0.1,0.5) + size_vac * quantile(grow_out
 y_vac_low_grow <- quantile(grow_out$beta0.1,0.05) + size_vac * quantile(grow_out$beta1.1,0.05)
 y_vac_high_grow <- quantile(grow_out$beta0.1,0.95) + size_vac * quantile(grow_out$beta1.1,0.95)
 
-grow_sd <- mean(grow_outputs$d_0) + size_dummy * mean(grow_outputs$d_size)
+grow_sd <- mean(grow_out$d_0) + size_dummy * mean(grow_out$d_size)
 range(grow_sd)
 
 ## create the panel figure
 ## For posters
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("grow_all.png")
+png("grow_all_skew.png")
 par(mar=c(5,5,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1),
               ncol = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9))
 plot(x = size_other  ,y = y_other_mean_grow, type = "l",lwd = 3,col = othercol,
      main = "",cex.main = 1.5, xlab = "Log(Volume) year t", ylab = "Log(Volume) year t+1",
-     ylim = c(5,6), xlim = c(5,6), cex.lab = 2)  
+      cex.lab = 2)  
 lines(x = size_crem, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 3) 
 lines(x = size_liom, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 3) 
 lines(x = size_vac, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 3) 
@@ -469,6 +469,12 @@ crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
   function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.3,0.5) + x * quantile(grow_out$beta1.3,0.5), sd = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x))
+);
+
+crem <- outer (
+  y,     # First dimension:  the columns (y)
+  x,     # Second dimension: the rows    (x)
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.3,0.5) + x * quantile(grow_out$beta1.3,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
 );
 
 outer(

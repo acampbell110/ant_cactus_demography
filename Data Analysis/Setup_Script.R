@@ -9,7 +9,7 @@
 
 ## Set working directory
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography")
+#setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography")
 ########################################################################################################
 ##############          Load All Necessary Packages Here        ########################################
 ########################################################################################################
@@ -515,3 +515,4 @@ nrow(seed_data)
 # check if you're happy with the subsetting
 plot(seed$fruit_number)
 points(seed_data$fruit_number, col = "red")
+
