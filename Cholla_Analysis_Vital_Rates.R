@@ -136,7 +136,7 @@ alpha <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualis
 #alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
 alpha <- alpha[,c(-1)]
 alpha <- as.matrix(alpha)
-
+n_post_draws = 100
 y_sim <- matrix(NA, n_post_draws,length(y))
 for(i in 1:n_post_draws){
   y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
@@ -144,23 +144,23 @@ for(i in 1:n_post_draws){
 View(y_sim)
 samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
-png(file = "grow_post_test.png")
+png(file = "grow_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant)
 dev.off()
 ## Convergence Plots
-png("grow_conv_test.png")
+png("grow_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_grow_skew, pars=c("beta0", "beta1","alpha","d_0","d_size")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_grow_skew, pars=c("beta0", "beta1","a_0","a_size","d_0","d_size")))
 dev.off()
 ## They all converge
 ## Histograms
-png("grow_hist_post_test.png")
+png("grow_hist_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_stat_grouped(y, y_sim[samp100,], stat = "mean",group = ant)
 dev.off()
 #### Skew, Kurtosis, ETC.
-png("grow_moments_test.png")
+png("grow_moments.png")
 size_moments_ppc(growth_data, 
                  "logsize_t1", 
                  y_sim[samp100,], 
