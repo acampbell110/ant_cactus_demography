@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.23)  18 APR 2023 16:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.23)  12 MAY 2023 12:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1711,198 +1711,160 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 [4 <./Portfolio_Effect copy.png>]
 
-LaTeX Warning: Citation 'Benson1982' on page 5 undefined on input line 123.
+LaTeX Warning: Citation 'Benson1982' on page 5 undefined on input line 122.
 
 
-LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 128.
+LaTeX Warning: Citation 'Ohm2014' on page 5 undefined on input line 126.
 
 
-LaTeX Warning: Citation 'Oliveira1999' on page 5 undefined on input line 128.
+LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 127.
+
+
+LaTeX Warning: Citation 'Oliveira1999' on page 5 undefined on input line 127.
 
 [5 <./herb_ant_only_flow.png>]
-<Timeseries.png, id=72, 481.8pt x 481.8pt>
-File: Timeseries.png Graphic file (type png)
-<use Timeseries.png>
-Package pdftex.def Info: Timeseries.png  used on input line 134.
-(pdftex.def)             Requested size: 452.9679pt x 452.98027pt.
+
+LaTeX Warning: Citation 'Donald2022' on page 6 undefined on input line 131.
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+LaTeX Warning: Citation 'Miller2007' on page 6 undefined on input line 134.
 
 
-LaTeX Warning: Reference `fig:timeseries' on page 6 undefined on input line 140
-.
+LaTeX Warning: Citation 'Ohm2014' on page 6 undefined on input line 137.
 
 
-LaTeX Warning: Citation 'Miller2007' on page 6 undefined on input line 143.
+LaTeX Warning: Citation 'Miller2014' on page 6 undefined on input line 138.
 
 
-LaTeX Warning: Citation 'Miller2014' on page 6 undefined on input line 149.
-
-
-LaTeX Warning: Citation 'Miller2007' on page 6 undefined on input line 151.
-
-
-Overfull \hbox (33.87138pt too wide) in paragraph at lines 143--156
+Overfull \hbox (33.87138pt too wide) in paragraph at lines 134--140
 []\T1/lmr/m/n/12 These ants rarely co-occur on a plant, prob-a-bly due to in-te
-r-spe-cific competition[[]][],
- []
-
-[6] [7 <./Timeseries.png>]
-
-LaTeX Warning: Citation 'Mann1969' on page 8 undefined on input line 157.
-
-
-LaTeX Warning: Citation 'Miller2006' on page 8 undefined on input line 161.
-
-
-LaTeX Warning: Citation 'Miller2009' on page 8 undefined on input line 163.
-
-
-LaTeX Warning: Citation 'Benson1982' on page 8 undefined on input line 171.
-
-
-LaTeX Warning: Citation 'Ness2006' on page 8 undefined on input line 176.
-
-
-LaTeX Warning: Citation 'Oliveira1999' on page 8 undefined on input line 176.
-
-
-LaTeX Warning: Reference `Fig:Ant_freq' on page 8 undefined on input line 181.
-
-[8]
-
-LaTeX Warning: Citation 'Miller2007' on page 9 undefined on input line 184.
-
-
-LaTeX Warning: Citation 'Miller2014' on page 9 undefined on input line 190.
-
-
-LaTeX Warning: Citation 'Miller2007' on page 9 undefined on input line 192.
-
-
-Overfull \hbox (33.87138pt too wide) in paragraph at lines 184--197
-[]\T1/lmr/m/n/12 These ants rarely co-occur on a plant, prob-a-bly due to in-te
-r-spe-cific competition[[]],
+r-spe-cific competition[[]].
  []
 
 
-LaTeX Warning: Citation 'Mann1969' on page 9 undefined on input line 198.
+LaTeX Warning: Citation 'Mann1969' on page 6 undefined on input line 143.
 
 
-LaTeX Warning: Citation 'Miller2006' on page 9 undefined on input line 202.
+LaTeX Warning: Citation 'Miller2006' on page 6 undefined on input line 145.
 
 
-LaTeX Warning: Citation 'Miller 2009' on page 9 undefined on input line 204.
+LaTeX Warning: Citation 'Miller2009' on page 6 undefined on input line 147.
 
 
-LaTeX Warning: Reference `fig:map' on page 9 undefined on input line 212.
+LaTeX Warning: Citation 'Miller2007' on page 6 undefined on input line 148.
 
-[9]
-Overfull \hbox (38.9549pt too wide) in paragraph at lines 220--224
+[6]
+Overfull \hbox (38.9549pt too wide) in paragraph at lines 163--167
 \T1/lmr/m/n/12 dataset was *** pre-census sur-vival. The fourth dataset was ***
  $\OML/lmm/m/it/12 JO[]ruit[]ata[]inal[]ropplant\OT1/lmr/m/n/12 0\OML/lmm/m/it/
 12 :csv$\T1/lmr/m/n/12 . 
  []
 
-[10] [11] [12]
-<grow_contour_lines_color.png, id=226, 481.8pt x 481.8pt>
+[7] [8] [9]
+<grow_contour_lines_color.png, id=133, 481.8pt x 481.8pt>
 File: grow_contour_lines_color.png Graphic file (type png)
 <use grow_contour_lines_color.png>
-Package pdftex.def Info: grow_contour_lines_color.png  used on input line 304.
+Package pdftex.def Info: grow_contour_lines_color.png  used on input line 252.
 (pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
 
-LaTeX Warning: Reference `fig:grow' on page 13 undefined on input line 308.
+LaTeX Warning: Reference `fig:grow' on page 10 undefined on input line 256.
 
-[13 <./grow_contour_lines_color.png>]
-<year_ant_timeseries.png, id=241, 481.8pt x 481.8pt>
+<year_ant_timeseries.png, id=137, 481.8pt x 481.8pt>
 File: year_ant_timeseries.png Graphic file (type png)
 <use year_ant_timeseries.png>
-Package pdftex.def Info: year_ant_timeseries.png  used on input line 316.
+Package pdftex.def Info: year_ant_timeseries.png  used on input line 264.
 (pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-LaTeX Warning: Reference `fig:year-ant' on page 14 undefined on input line 326.
+
+LaTeX Warning: Reference `fig:year-ant' on page 10 undefined on input line 274.
 
 
-<surv_panels.png, id=243, 481.8pt x 481.8pt>
+[10 <./grow_contour_lines_color.png>]
+<surv_panels.png, id=152, 481.8pt x 481.8pt>
 File: surv_panels.png Graphic file (type png)
 <use surv_panels.png>
-Package pdftex.def Info: surv_panels.png  used on input line 330.
+Package pdftex.def Info: surv_panels.png  used on input line 278.
 (pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
+
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: Reference `fig:surv' on page 14 undefined on input line 337.
+LaTeX Warning: Reference `fig:surv' on page 11 undefined on input line 285.
 
-[14 <./year_ant_timeseries.png>]
-<Viability.png, id=256, 481.8pt x 481.8pt>
+[11 <./year_ant_timeseries.png>]
+<Viability.png, id=162, 481.8pt x 481.8pt>
 File: Viability.png Graphic file (type png)
 <use Viability.png>
-Package pdftex.def Info: Viability.png  used on input line 352.
+Package pdftex.def Info: Viability.png  used on input line 300.
 (pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: Reference `fig:viab' on page 15 undefined on input line 357.
+LaTeX Warning: Reference `fig:viab' on page 12 undefined on input line 305.
 
-[15 <./surv_panels.png>]
-<Ant_Size_Multi.png, id=266, 481.8pt x 481.8pt>
+[12 <./surv_panels.png>]
+<Ant_Size_Multi.png, id=173, 481.8pt x 481.8pt>
 File: Ant_Size_Multi.png Graphic file (type png)
 <use Ant_Size_Multi.png>
-Package pdftex.def Info: Ant_Size_Multi.png  used on input line 370.
+Package pdftex.def Info: Ant_Size_Multi.png  used on input line 318.
 (pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: Reference `fig:ant' on page 16 undefined on input line 374.
+LaTeX Warning: Reference `fig:ant' on page 13 undefined on input line 322.
 
-[16 <./Viability.png>] [17 <./Ant_Size_Multi.png>]
-<lambda_det_full.png, id=287, 481.8pt x 481.8pt>
+[13 <./Viability.png>]
+<lambda_det_full.png, id=187, 481.8pt x 481.8pt>
 File: lambda_det_full.png Graphic file (type png)
 <use lambda_det_full.png>
-Package pdftex.def Info: lambda_det_full.png  used on input line 391.
-(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
-<lambda_st_full3.png, id=288, 481.8pt x 481.8pt>
-File: lambda_st_full3.png Graphic file (type png)
-<use lambda_st_full3.png>
-Package pdftex.def Info: lambda_st_full3.png  used on input line 396.
+Package pdftex.def Info: lambda_det_full.png  used on input line 339.
 (pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+<lambda_st_full3.png, id=188, 481.8pt x 481.8pt>
+File: lambda_st_full3.png Graphic file (type png)
+<use lambda_st_full3.png>
+Package pdftex.def Info: lambda_st_full3.png  used on input line 344.
+(pdftex.def)             Requested size: 262.7222pt x 262.7265pt.
 
-LaTeX Warning: Reference `fig:lambda_det' on page 18 undefined on input line 40
-1.
-
-[18 <./lambda_det_full.png>]
-
-LaTeX Warning: Reference `fig:surv' on page 19 undefined on input line 412.
-
-
-LaTeX Warning: Reference `fig:grow' on page 19 undefined on input line 412.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: Reference `fig:viab' on page 19 undefined on input line 413.
+LaTeX Warning: Reference `fig:lambda_det' on page 14 undefined on input line 34
+9.
+
+[14 <./Ant_Size_Multi.png>]
+
+LaTeX Warning: Reference `fig:surv' on page 15 undefined on input line 360.
 
 
-LaTeX Warning: Citation 'lach2010' on page 19 undefined on input line 428.
-
-[19 <./lambda_st_full3.png>]
-
-LaTeX Warning: Reference `fig:ant' on page 20 undefined on input line 434.
+LaTeX Warning: Reference `fig:grow' on page 15 undefined on input line 360.
 
 
-LaTeX Warning: Citation 'Lach2010' on page 20 undefined on input line 444.
+LaTeX Warning: Reference `fig:viab' on page 15 undefined on input line 361.
 
-[20] (./manuscript_draft.aux)
+[15 <./lambda_det_full.png>]
+
+LaTeX Warning: Citation 'lach2010' on page 16 undefined on input line 376.
+
+
+LaTeX Warning: Reference `fig:ant' on page 16 undefined on input line 382.
+
+[16 <./lambda_st_full3.png>]
+
+LaTeX Warning: Citation 'Lach2010' on page 17 undefined on input line 392.
+
+[17] (./manuscript_draft.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -1927,10 +1889,10 @@ Package logreq Info: Writing requests to 'manuscript_draft.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 34709 strings out of 478268
- 690685 string characters out of 5846347
- 1480573 words of memory out of 5000000
- 52196 multiletter control sequences out of 15000+600000
+ 34655 strings out of 478268
+ 690002 string characters out of 5846347
+ 1472573 words of memory out of 5000000
+ 52187 multiletter control sequences out of 15000+600000
  542476 words of font info for 87 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,8n,89p,1668b,1164s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1943,17 +1905,16 @@ m/lmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbxi10.
 pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/
 local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/local/texl
 ive/2022/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2022/te
-xmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texmf-dist/fo
-nts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/p
-ublic/lm/lmr17.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lm
-r7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr
-/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/tex
-live/2022/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2022/
-texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on manuscript_draft.pdf (20 pages, 747284 bytes).
+xmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fo
+nts/type1/public/lm/lmr17.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/p
+ublic/lm/lmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr
+8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10.pfb></us
+r/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/te
+xlive/2022/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
+Output written on manuscript_draft.pdf (17 pages, 669220 bytes).
 PDF statistics:
- 416 PDF objects out of 1000 (max. 8388607)
- 338 compressed objects within 4 object streams
- 132 named destinations out of 1000 (max. 500000)
- 73 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 309 PDF objects out of 1000 (max. 8388607)
+ 239 compressed objects within 3 object streams
+ 88 named destinations out of 1000 (max. 500000)
+ 68 words of extra memory for PDF output out of 10000 (max. 10000000)
 

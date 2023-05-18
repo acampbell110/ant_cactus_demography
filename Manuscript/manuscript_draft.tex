@@ -38,7 +38,7 @@
 	
 	\section*{Abstract}
 	
-	Mutualisms are among the most widespread species interactions with diverse and dynamic consequences. They are considered more context dependent than other species interactions, meaning there are many different factors which influence the impacts of a mutualistic interaction, including partner diversity. Partner diversity has become a central focus in the field of mutualisms in recent years shifting the focus to multispecies mutualisms where the focus was previously on pairwise studies. It has been shown that pairwise studies are poor predictors of the effects of multispecies mutualistic interactions. The diversity of partners in a multi-species mutualism causes varied demographic effects on the population of the focal mutualist which can be explained by several mechanisms, portfolio effect, complementarity, and sampling effect. In this paper, I will focus on defensive ant-plant mutualisms. These involve plants which provide extra-floral nectar and/or “housing” to ants which in turn defend them from herbivores. While these interactions have been well studied in the literature, few have considered how diversity within partner guilds affect the overall benefits of mutualism for the plant partner. 
+Mutualisms are among the most widespread species interactions with diverse and dynamic consequences. They are considered more context dependent than other species interactions, meaning there are many different factors which influence the impacts of a mutualistic interaction, including partner diversity. Partner diversity has become a central focus in the field of mutualisms in recent years shifting the focus to multispecies mutualisms where the focus was previously on pairwise studies. It has been shown that pairwise studies are poor predictors of the effects of multispecies mutualistic interactions. The diversity of partners in a multi-species mutualism causes varied demographic effects on the population of the focal mutualist which can be explained by several mechanisms, portfolio effect, complementarity, and sampling effect. In this paper, I will focus on defensive ant-plant mutualisms. These involve plants which provide extra-floral nectar and/or “housing” to ants which in turn defend them from herbivores. While these interactions have been well studied in the literature, few have considered how diversity within partner guilds affect the overall benefits of mutualism for the plant partner. 
 	I use the plant, Cylindropuntia imbracata (tree cholla), and ant, Crematogaster opuntiae (Crem.), Liometopum apiculatum (Liom.), and more, multispecies mutualism in which the cacti provide extrafloral nectar in exchange for defense from various herbivores and seed predators. I used 18 years of data collected from demographic censuses, which includes data such as size, survival, reproductive status, flowers produced, ant partner, and herbivory for 8 30x30 m plots, in New Mexico. With this data I parameterize a series of Bayesian generalized linear vital rate models to determine the impacts of different partners on the focal mutualists. I found that different ant partners did have different impacts on the vital rates of the tree cholla. Specifically, Crem. tended plants had advantages in both growth and survival when small, and Liom. tended plants had advantages in colonizing partners as well as floral viability. With these models I constructed an Integral Projection Model in which I could vary the presence of each partner, creating different “diversity scenarios”, to determine under which diversity scenario the focal mutualist experienced the highest fitness, and which of the above mechanisms may explain the effects of partner diversity in this system. I found that the real-life scenario (all possible ants are present) lead to the highest fitness for the tree cholla, indicating that partner diversity is beneficial in this system. It also shows that complementarity is at play in this system, meaning different partners offer different benefits leading to synergistic benefits for the tree cholla. 
 
 \section*{Context/Introduction}
@@ -48,7 +48,6 @@ They are among the most widespread species interactions\cite{Chamberlain2014, Bo
 One reason they are so ubiquitous is they take many forms in nature, including defense for food or housing\cite{Willmer1997}, pollination and dispersal for food\cite{Sakai2002,Burns2004}, resource uptake for housing\cite{Holland2010}, etc. 
 Mutualisms are typically considered more context dependent than other species interactions\cite{Chamberlain2014,Frederickson2013}, meaning strength of the interaction is often determined by the surrounding environment and species. 
 
-\ali{}{I don't love this paragraph. Help. I particularly don't like how I defined multispecies mutualisms vs pairwise}
 Historically, pairwise studies, where two species engage in mutualism with only each other, were central in the field of mutualisms, it has since been shown that pairwise studies are poor predictors of the effects of multi-species mutualistic interactions\cite{Afkhami2014,Palmer2010}, where more than two species engage in mutualisms.
 The differences in mutualistic outcomes are due to differences in partner quality\cite{Bascompte2019,Stanton2013,Frederickson2013,Jones2015, Ness2006}, differences in the types of benefits offered\cite{Kiers2003,Afkhami2014}, and direct interactions between partners\cite{Sun2019,Heath2009,Heath2014,Grutter2003}.
 For these reasons, pairwise studies cannot be accurately used to predict the outcomes of multi-species mutualisms\cite{Palmer2010, Stanton2013, Chamberlain2014, Song2020}.
@@ -89,10 +88,10 @@ A subset of these interactions, defensive ant-plant mutualisms are common intera
 While these interactions have been well studied\cite{Ness2006,Beattie1985,Schultheiss2022}, few have considered how diversity within ant defender guilds\cite{Stanton2013} or temporal fluctuations in partner interactions\cite{Trøjelsgaard2015} affect the overall benefits of mutualism for the plant partner.
 
 This study focuses on the tree cholla cactus, a long lived \textit{Cylindriopuntia imbricata}, EFN-bearing plant that associates with multiple species of ant partners.
-Insect herbivory negatively affects the growth of cacti, in turn reducing population growth rates\cite{Miller2009}. 
-Ant partners defend the cacti from these insect herbivores, reducing the negative effects of herbivory\cite{Miller2007}. 
-The multiple ant partners do not co-occur on individual plants, but a single cactus may interact with multiple types of partners over its lifetime.
-While the quality of ant partners in this system has been studied, with some seen as superior defenders and some  being viewed as net-negative because they can deter pollinators \cite{Ohm2014}, no one has integrated demographic effects over the life cycle of these cacti.
+Insect herbivory negatively affects the growth of cholla, in turn reducing population growth rates\cite{Miller2009}. 
+Ant partners defend the cholla from these insect herbivores, reducing the negative effects of herbivory\cite{Miller2007}. 
+The multiple ant partners do not co-occur on individual plants, but a single cholla may interact with multiple types of partners over its lifetime.
+While the quality of ant partners in this system has been studied, with some seen as superior defenders and some  being viewed as net-negative because they can deter pollinators \cite{Ohm2014}, no one has integrated demographic effects over the life cycle of these tree cholla.
 
 
 \begin{figure}[h]
@@ -102,149 +101,119 @@ While the quality of ant partners in this system has been studied, with some see
 \end{figure}
 
 In this study we will answer three questions about the demographic effects of partner diversity across host lifetimes in multi-species mutualisms:
+
 \begin{enumerate}
 	\item{What are the contrasting demographic effects of multiple partners?}
-	\item{How do host size and partner identity impact the directionality of turnover between multiple partners?}
+	\item{How do host size and partner identity impact the directionality of turnover between          multiple partners?}
 	\item{What mechanisms explain the effects of partner diversity in a multispecies mutualism?}
 \end{enumerate}
 
 
 To answer these questions, we used a 20-year long-term dataset of individual-level demographic information and ant partner identity and quantity data to track the structure of the population across time as well as individual level impacts of ant partners on the cacti.
-We analyzed the correlations between each individual vital rate (survival, growth, floral viability, etc.) and ant partners with Bayesian analysis of heirarchical models, which we used to parameterize an Integral Projection Model (IPM).
+We used vital rate functions to evaluate the first two questions. 
+We then used the composite integral projection model (IPM) to evaluate how vital rate differences affect intrinsic population growth rates and identify mechanisms at play. 
 
 
 
 \section*{Methods}
 \subsection*{Study System}
-
-\st{To determine how interactions with multiple partners impacts the cacti over time, we have monitored a population of tree cholla annually since 2004.} 
-This study was conducted in the Los \tom{Pinos}{there is an accent on the n} mountains, a small mountain chain located on the Sevilleta National Wildlife Refuge, a Long-term Ecological Research (LTER) site in central New Mexico \tom{(34*20’5.3’’N, 106*37’53.2’’W)}{I would not give lat-long here. We should provied lat-long of each plot as part of the full data that we make available.}.
+This study was conducted in the Los Pi$\tilde{n}$os mountains, a small mountain chain located on the Sevilleta National Wildlife Refuge, a Long-term Ecological Research (LTER) site in central New Mexico.
 This is an area characterized by steep, rocky slopes, and perennial vegetation like cacti and junipers. 
-\st{The} tree cholla cacti are common in high Chihuahuan desert habitats, with their native range spanning the southwestern USA\cite{Benson1982}. 
-These arborescent cacti produce cylindrical segments with large spines. 
+Tree cholla cacti are common in high Chihuahuan desert habitats, with their native range spanning the southwestern USA\cite{Benson1982}. 
+These arborescent cholla produce cylindrical segments with large spines. 
 In the growing season, May to August in New Mexico, the plants initiate new vegetative segments and flower buds at the ends of existing segments. 
 While most plants produce new segments every season, only those which are reproductively mature produce flower buds. 
-Tree cholla generally reach at least 9 years of age before beginning to reproduce *** I found this being cited as unpublished data in Ohm Miller 2014 ***. 
-Like other EFN-bearing cacti, tree cholla cacti secrete nectar from specialized glands on young vegetative and reproductive structures\cite{Ness2006,Oliveira1999}.
+Tree cholla generally reach at least 9 years of age before beginning to reproduce \cite{Ohm2014}.
+Like other EFN-bearing cacti, tree cholla secrete nectar from specialized glands on young vegetative and reproductive structures\cite{Ness2006,Oliveira1999}.
 
 This EFN is harvested by various ant species in return for defense. 
-At the Sevilleta, the cacti are visited primarily by two species of ground-nesting ants from the formicoid clade, \textit{Crematogaster opuntiae (Crem.) } and \textit{Liometopum apiculatum \tom{(Liom.)}{I know I have used these abbreviations in previous papers but I would not recommend doing so again. More professional and appropriate to refer to \emph{L. apiculatum}, etc.}, } as well as other rarer species, including \textit{Forelius pruinosus (For.) }, a \tom{\textit{Phenogaster}}{Incorrect spelling.} \tom{ant}{Obviously it's an ant.}, and \textit{Camponotus spp. (Camp.)}.
+At the Sevilleta, the cholla are visited primarily by two species of ground-nesting ants from the formicoid clade, \textit{Crematogaster opuntiae} and \textit{Liometopum apiculatum}, as well as other rarer species, including \textit{Forelius pruinosus}, a \tom{\textit{Phenogaster spp.}}{Incorrect spelling.}, and \textit{Camponotus spp.}.
+\textit{L. apiculatum} are the most frequent visitors with 25\% - 60\% of tree cholla tended by these ants, followed by \textit{C. opuntiae} visiting between 0\% - 20\% of cacti\cite{Donald2022} depending on the year. 
+Up to 80\% of cacti remain vacant in any given year. 
 
-\begin{figure}[h]
-	\includegraphics[width=\linewidth]{Timeseries.png}
-	\caption{asdfasdfsadfasdf}
-	\label{fig:timeseries}
-\end{figure}
-
-
-\textit{Liom.} ants were the most frequent visitors, present a  between 25\% - 60\% of cacti \tom{annually}{Unclear what you mean by ``annually''? Think about the most technically correct and most efficient way to communicate these results.}, \textit{Crem.} were present at between 0\% - 20\% of cacti, and \textit{For.} were present at between 0\% - 5\% of cacti in any given year, as shown in \tom{Figure}{Again, you have slipped in a result without providing any methods. There is a similar figure in Donald and Miller 2022, so you can cite that paper when you report frequencies of association.} \ref{fig:timeseries}. 
-\tom{\st{It is important to note that not all cacti are visited every season, they can remain vacant, in fact} }{Notice that this part of the sentence does not provide any information that is not in the second part.}up to 80\% of cacti are vacant in any given year. 
-
-These ants rarely co-occur on a plant, probably due to interspecific competition\cite{Miller2007}\tom{, rather}{Grammatically awkward. I would start a new sentence Instead, each cactus} each cactus is visited by a single ant species for the duration of a season, and the \tom{visitor}{What do you mean by visitor? Is each individual ant a visitor?} can change from one season to the next. 
-\tom{Across the entire lifespan cacti may interact with multiple species of partners. }{This is implied by the sentences above so there is no new information here.}
+These ants rarely co-occur on a plant, probably due to interspecific competition\cite{Miller2007}.
+Each cholla is visited by a single ant species for the duration of a season, and the species of the visitors can change from one season to the next. 
 At the beginning of the growing season, when EFN production begins, the ground-nesting ants will begin visiting tree cholla.
-They will visit the cacti every day during the season from early morning *** to sunset *** \tom{abandoning the cacti at night for their nests}{Incorrect. See Ohm and Miller 2014.}. 
-In late August, the tree cholla will stop producing EFN and the ants will stop visiting until the next growing season. 
-\tom{The process by which ants are sorted out onto different cacti is somewhat of a mystery}{too colloquial}, but we know several facts which likely influence the process. 
-Smaller cacti are less likely to be visited because they produce very little EFN, so larger cacti are generally more desirable\cite{Miller2014}. 
-Similarly, many factors go into how many vegetative segments and floral buds are produced in a particular growing season, so the more productive cacti are also more \tom{desirable}{I don't yhink we should speculate about ants' desires.}. 
-Some of the ant species are considered more aggressive, specifically \textit{Liom.}\cite{Miller2007}, which may be advantageous in \tom{going after}{too colloquial} more desirable cacti. 
-Some ants are also more likely to retain the same tree cholla partners year after year, meaning they reduce the partner turnover experienced by individual cacti. 
-These factors mean that by some hierarchy at the beginning of the season the ants claim a subset of the existing cacti and visit them regularly throughout the season, and that from season to season the same ant species may visit the same cacti, but it is not guaranteed. 
-\ali{Note.}{I am not sure how much of this I should include here, since some of the turnover info is results from this paper?}\tom{}{Yes this is what I was thinnking as i was reading. Much of this fall out of the results of your analysis. I would significantly reduce this paragraph. Think about what your readers need to know to process what's to come.}
-\st{These ants defend the tree cholla from various seed predators and herbivores in exchange for the EFN.} 
+They will visit the cholla every day during the season around the clock, with the most acticity around sunrise or sunset\cite{Ohm2014}. 
+Smaller cholla are less likely to be visited because they produce very little EFN, so larger cholla are generally more highly tended\cite{Miller2014}. 
+In late August, the tree cholla stop producing EFN and the ants vacate until the next growing season. 
 
-There are a variety of insect herbivores and seed predators which attack the cacti, focusing either on the vegetative segments and the reproductive segments \tom{throughout the entire range}{range info not really pertinent} of the tree cholla\cite{Mann1969}. 
-\tom{More locally, at the Sevilleta, there are several insects which occur commonly on these cacti.
-These include an unidentified weevil, a cactus bug, and a seed predator. }{Notice how these sentences add no information to the paragraph.}
-The unidentified weevil of the genus \textit{Gerstaekeria} which feed on vegetative and reproductive structures and implant their larvae within the plant for the winter. 
-The cactus bug, \textit{Narnia pallidicornis}, (Hemiptera: Coreidae) feed on all cactus parts with a preference for the reproductive structures \cite{Miller2006}.
-The seed predator, \textit{Cahela ponderosella}, (Lepidoptera: Pyralidae) attack developing fruits pre-dispersal and oviposit in open flowers mid-growing season where larvae burrow into the ripening ovary. 
-These predators can have significant negative impacts on the fitness of individual cacti and depress population growth\cite{Miller2009}.\tom{}{I think it is also important to summarize what is known about ant defense against these insects from previous papers. The fact that we have experimental evidence that ants provide defense is important to include, because your data are all observational.} 
+There are a variety of insect herbivores and seed predators which attack the cholla, focusing either on the vegetative segments and the reproductive segments\cite{Mann1969}. 
+An unidentified weevil of the genus \textit{Gerstaekeria} feeds on vegetative and reproductive structures and implants their larvae within the plant tissue for the winter. 
+A cactus bug, \textit{Narnia pallidicornis}, (Hemiptera: Coreidae) feeds on all cholla parts with a preference for the reproductive structures \cite{Miller2006}.
+A seed predator, \textit{Cahela ponderosella}, (Lepidoptera: Pyralidae) attacks developing fruits pre-dispersal and oviposits in open flowers mid-growing season where larvae burrow into the ripening ovary. 
+These predators can have significant negative impacts on the fitness of individual cholla and depress population growth\cite{Miller2009}.
+There is experimental evidence that tree cholla tended by \textit{L. apiculatum} and \textit{C. opuntiae} experience less herbivory from all of the mentioned insect predators\cite{Miller2007}. 
 
-\tom{\section*{Methods}}{Some duplication here...?}
-\subsection*{Study System}
-\subsection*{Natural History}
-To determine how interactions with multiple partners impacts the cacti over time, we have monitored a population of tree cholla annually since 2004. 
-This study was conducted in the Los Pinos mountains, a small mountain chain located on the Sevilleta National Wildlife Refuge, a Long-term Ecological Research (LTER) site in central New Mexico (34*20’5.3’’N, 106*37’53.2’’W).
-This is an area characterized by steep, rocky slopes, perennial vegetation like cacti and junipers. 
-The tree cholla cacti are common in high Chihuahuan desert habitats, with their native range spanning the southwestern USA\cite{Benson1982}. 
-These arborescent cacti produce cylindrical segments with large spines. 
-In the growing season, May to August in New Mexico, the plants initiate new vegetative segments and flower buds at the ends of existing segments. 
-While most plants produce new segments every season, only those which are mature enough produce flower buds. 
-Tree cholla generally reach at least 9 years of age before beginning to reproduce *** I found this being cited as unpublished data in Ohm Miller 2014 ***. 
-Like other EFN-bearing cacti, tree cholla cacti secrete nectar from specialized glands on young vegetative or reproductive structures\cite{Ness2006,Oliveira1999}.
-
-This EFN is harvested by various ant species in return for defense. 
-At the Sevilleta, the cacti are visited primarily by two species of ground-nesting ants from the formicoid clade, \textit{Crematogaster opuntiae (Crem.) } and \textit{Liometopum apiculatum (Liom.), } as well as other rarer species, including \textit{Forelius pruinosus (For.) } and \textit{Camponotus spp. (Camp.)}.
-
-\textit{Liom.} ants were the most frequent visitors, present a  between 25\% - 60\% of cacti annually, \textit{Crem.} were present at between 0\% - 20\% of cacti, and \textit{For.} were present at between 0\% - 5\% of cacti in any given year \ref{Fig:Ant_freq}. 
-It is important to note that not all cacti are visited every season, they can remain vacant, in fact up to 80\% of cacti are vacant in any given year. 
-
-These ants rarely co-occur on a plant, probably due to interspecific competition\cite{Miller2007}, rather each cactus is visited by a single ant species for the duration of a season, and the visitor can change from one season to the next. 
-Across the entire lifespan cacti may interact with multiple species of partners. 
-At the beginning of the growing season, when EFN production begins, the ground-nesting ants will begin visiting tree cholla.
-They will visit the cacti every day during the season from early morning *** to sunset *** abandoning the cacti at night for their nests. 
-In late August, the tree cholla will stop producing EFN and the ants will stop visiting until the next growing season. 
-The process by which ants are sorted out onto different cacti is somewhat of a mystery, but we know several facts which likely influence the process. 
-Smaller cacti are less likely to be visited because they produce very little EFN, so larger cacti are generally more desirable\cite{Miller2014}. 
-Similarly, many factors go into how many vegetative segments and floral buds are produced in a particular growing season, so the more productive cacti are also more desirable. 
-Some of the ant species are considered more aggressive, specifically \textit{Liom.}\cite{Miller2007}, which may be advantageous in going after more desirable cacti. 
-Some ants are also more likely to retain the same tree cholla partners year after year, meaning they reduce the partner turnover experienced by individual cacti. 
-These factors mean that by some hierarchy at the beginning of the season the ants claim a subset of the existing cacti and visit them regularly throughout the season, and that from season to season the same ant species may visit the same cacti, but it is not guaranteed. 
-\ali{Note.}{I am not sure how much of this I should include here, since some of the turnover info is results from this paper?}
-These ants defend the tree cholla from various seed predators and herbivores in exchange for the EFN. 
-
-There are a variety of insect herbivores and seed predators which attack the cacti, focusing either on the vegetative segments and the reproductive segments throughout the entire range of the tree cholla\cite{Mann1969}. 
-More locally, at the Sevilleta, there are several insects which occur commonly on these cacti.
-These include an unidentified weevil, a cactus bug, and a seed predator. 
-The unidentified weevil of the genus \textit{Gerstaekeria} which feed on vegetative and reproductive structures and implant their larvae within the plant for the winter. 
-The cactus bug, \textit{Narnia pallidicornis}, (Hemiptera: Coreidae) feed on all cactus parts with a preference for the reproductive structures \cite{Miller2006}.
-The seed predator, \textit{Cahela ponderosella}, (Lepidoptera: Pyralidae) attack developing fruits pre-dispersal and oviposit in open flowers mid-growing season where larvae burrow into the ripening ovary. 
-These predators can have significant negative impacts on the fitness of individual cacti and depress population growth\cite{Miller 2009}. 
 	
 	\subsection*{Data}
-	
-	The data collected \tom{on these cacti}{notice how these words add nothing} are from a long-term dataset spanning 2004 to 2022 taken from our eight 30 $\times$ 30 meter plots at the Sevilleta LTER. 
-	\tom{The data initially included 134 naturally occurring plants across 4 spatial blocks censused annually from 2004 to 2008.}{this seems to contradict what you just said about eight plots.}
-	Six of the 30 $\times$ 30 meter plots \tom{were created with naturally occurring plants}{this sounds funny, meaning unclear}, censused from 2009 to \tom{2014}{Not sure why you have these ending in 2014. These are plots 1-6, which we continue to collect data from}. 
-	The final two plots were added to this census from 2011 onwards. 
-	The distribution of these eight plots are shown in \tom{figure}{you probably don't need a plot map - maybe in the supplement} \ref{fig:map}.
-		Annually, in May we surveyed these plots, taking many types of demographic and partner data. 
-		For each plant, we recorded the height (cm), maximum crown width, and \st{perpendicular }crown width perpendicular to the maximum, which are used to calculate plant volume (\tom{cm3}{make this a superscript}) based on the volume of a cone with the mean of maximum crown width and perpendicular crown width as the diameter. 
-		We recorded plant \tom{survival}{I would start with survival because if it's dead nothing else is recorded} from the last survey to the current survey\st{ as a binary data point, 0 (died) or 1 (survived)}. 
-		We recorded the total number of flower buds, including how many were aborted and how many were not\st{, which we used to calculate the viability rates of the cacti}. 
-		We recorded all ant species present, usually just one, and the number of ants we could count in 30 seconds. 
-		We also recorded the species of herbivore or \tom{seed predator}{we do not record seed predator data}, the number present on the plant, and \tom{if there is any clear, new evidence of herbivory}{beware that this has not been very consistent} on the tree cholla segments. 
+The data collected are from a long-term dataset spanning 2004 to 2023 taken from 30 $\times$ 30 meter plots at the Sevilleta LTER. 
+The data initially included 134 naturally occurring plants across 4 spatial blocks censused annually from 2004 to 2008.
+Six of the plots were established in 2009 by tagging all existing plants within a 30 $\times$ 30 meter area. 
+The final two plots were added to this census from 2011 onwards. 
+Annually, in May we surveyed these plots, taking many types of demographic and partner data. 
+For each cholla, we recorded plant survival from the last survey to the current survey. 
+We recorded the height (cm), maximum crown width, and crown width perpendicular to the maximum, which are used to calculate plant volume ($cm^3$) based on the volume of a cone with the mean of maximum crown width and perpendicular crown width as the diameter. 
+We recorded the total number of flower buds, including how many were aborted and how many were not. We recorded all ant species present and the number of ants we could count in 30 seconds. 
+We also recorded the species of herbivore and the number present on the plant.
 		
-		In addition to this primary dataset, I used \tom{several other datasets}{I don't think you need to say much here, you can cite prevous papers when you describe these parts of the IPM} throughout the analysis in this paper.  Look at how Tom has described these. Cite these other papers which this data comes from. 
-		The second dataset was *** germination rates.
-		The third dataset was *** pre-census survival.
-		The fourth dataset was *** $JO_fruit_data_final_dropplant0.csv$.
-		
-		\subsection*{Demographic Modeling}
-		
-		The \tom{statistical models described above}{they are actually below - but i would put them above.} parameterize the Integral Projection Model (IPM) that we used to estimate population growth under various partner conditions.  
-		IPMs are used to estimate fitness of a population across a \tom{continuous variable}{you actually have both continuous and discrete variables}, \tom{rather than using a stage- or size-specific variable}{not an accurate description of how IPMs differ from MPMs} to categorize the population. 
-		This IPM was used to estimate the \tom{growth rate }{not just growth rate, but growthrate as a function of partner identity and diversity -- important to include}of the tree cholla population, \tom{effectively}{why effectively?} a quantitative measure of the fitness of the population. 
-		
-		Following previous studies, we modeled the life cycle of \tom{\textit{C. imbricata}}{sometimes you say cholla, sometimes cacti, sometimes the latin name -- stay consistent} using continuously size-structured plants,\tom{$n_i(x)$}{what is n? what is i? what is x?}, and two discrete \tom{seed banks}{there is no beta in the model below. what is t?} ($\beta_{1,t}$ and $\beta_{2,t}$) corresponding to 1 and 2-year old seeds.
+	\subsection*{Statistical Modeling -- Construction}
+With the data described above we fit a series of generalized linear mixed models (GLMMs) in a hierarchical Bayesian framework with both fixed and random effects.
+Many of the vital rates are estimated as a function of plant size, ant partner, or both.
+Ant partner type is included as a predictor only where there are biological pathways through which ants could impact the outcome of that process. 
+The biological sources of variance (including individual, spatial, and annual variance) are accounted for by including year-to-year and plot-to-plot random effects in the models. 
+Unless otherwise mentioned, all models use vague priors. 
+The growth model ($G_j(y,x)$) estimates the size of cholla, with fixed effects of the previous size and ant partner and random effects of plot and year, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
+Ants are included as a predictor here because ant partners defend plants from herbivory, therefore decreasing the likelihood of segment loss.
+The survival model ($S_j(x)$) estimates the probability of survival, with fixed effects of the previous size of the cholla and ant partner and random effects of plot and year, using a Bernoulli distribution. 
+Ants are included as predictors here because ant partners defend cholla from herbivores and predators, decreasing the likelihood of mortality due to either of these. 
+The reproduction model ($P(x)$) estimates the probability of reproducing each year, with fixed effects for the size and random effects of plot and year, using a Bernoulli distribution. 
+The total flowers model ($F(x)$) estimates the total flowers produced by a plant, with fixed effects of size and random effects of plot and year, using a Negative Binomial distribution. 
+The viability model ($V_i(x)$) estimates the proportion of flowers produced by a plant which are viable (not aborted), with fixed effects of the ant partner of the cactus and random effects of plot and year, using a Binomial distribution.
+Ants are included as predictors here because they defend the cacti from seed predation which can lead to floral abortion. 
+The ant transition rates model ($\tau_{i,j}(x)$) estimates the probability of a cactus being visited by an ant partner, with fixed effects of the previous size of the cholla and the previous ant partner and random effects of plot and year, using a Multinomial distribution.  
+Ant partners are included as predictors here because partners may choose to return to the same cholla repeatedly or choose new ones, therefore the previous partner may be a good indicator of the next partner. 
+The recruit size model ($n_j(x)$) estimates the size distribution of all recruits from a given year, with no fixed or random effects, using a Normal distribution. 
+With germination data from Miller et al., 2009, we fit two Bayesian generalized linear models for the probability of germinating from a seed in the first year ($\gamma_1$) or the second year ($1 - \gamma_1$), with no fixed or random effects, using a Binomial distribution.
+With data collected in a 2005-2006 recruit census, we fit a Bayesian generalized linear model for the probability of a seedling surviving to May ($\delta$) (accounting for missed mortality events), with fixed effects of the previous size and random effects of the transect, using a Bernoulli distribution. 
+With data from Miller 2007, we fit a Bayesian generalized linear model for the number of seeds produced by every flower on a cholla ($\kappa$) based on the ant partner, using a Negative Binomial distribution. 
+Ant partners are included as predictors here because they reduce floral abortion rates and therefore may lead to higher numbers of seeds. 
+
+To obtain posterior estimates of the demographic parameters, we fit models using Markov chain Monte Carlo (MCMC) simulations via STAN run through version 4.0.2 of R 
+For each model, we obtained 3 chains of 10,000 iterations, each with randomly chosen initial conditions. 
+The first 1,500 iterations were discarded as burn-in to eliminate transience associated with initial conditions. 
+We did not thin the chains, thus all samples were retained. 
+To assess the convergence of our models we assessed between and within chain convergence, the resulting figures are included in supplemental documents. 
+To assess the overall model fit we carried out posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data.
+Large differences in the two indicate a poor model fit and can be assessed visually (figures included in supplemental documents). 
+All estimated parameters are described in table 1.
+Data and code for all vital rate models is included in the supplemental information.
+
+\subsection*{Integral Projection Model Construction}
+Integral Projection Models describe population dynamics in discrete time, with continuous functions that relate vital rates to continuous and discrete state variables. 
+We constructed a composite IPM which allows us to analyze the long term population growth rate of cholla with ant transition dynamics explicitly included.
+Many of the vital rate models are dependent not only on continuous size variables, but also on discrete variables representing the ant partner present.
+There is also a transition rate which determines what proportion of cholla are tended by each ant in a given year based on the previous ant partner and the size of the plants. 
+This unique composite structure allows us to determine the individual effects of each ant species as well as the composite effects of several partners across the cholla population. 
+
+Following previous studies, we modeled the life cycle of cholla using continuously size-structured plants, $n_i(x)$, where x is the size of the cholla and i is the ant partner, and two discrete seed banks ($B_{1,t}$ and $B_{2,t}$) corresponding to 1 and 2-year old seeds.
+The dynamics of these 1 and 2-year old seedbanks are given by the following equations: 
+
 		$$
-		B_{1, t+1} = \kappa \delta \sum_{i}^{4} \int_L^U P(x) A_i(x) F(x)n_i(x) dx \\
+		B_{1, t+1} = \kappa \delta \sum_{i}^{4} \int_L^U P(x) V_i(x) F(x) n_i(x) dx \\
 		$$
 		$$
 		B_{2,t+1} =  (1 - \gamma_1)B_{1,t}\\
 		$$
 		
-		The functions $P$, $F$, and $A$ give the probability of flowering, the number of flowerbuds produced, and the proportion of flowerbuds which will create seeds. 
-		Each of these functions, \st{estimated by a Bayesian model} \tom{calculates}{the function does not do any calculation} these values for an $x$-sized plant in year $t$. 
-		The proportion of flowerbuds which will produce seeds ($A$) is also dependent on the ant species present on the plant $i$ in year $t$. 
-		The integral is multiplied by the number of seeds per fruit ($\kappa$) and the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the 1-year old seed bank. 
-		Parameters $U$ and $L$ are the upper and lower bounds, respectively, of the plant size distribution. 
-		Plants can recruit out of the 1-year seed bank with the probability of $\gamma_1$ or transition to the 2-year seed bank with a probability of $1 - \gamma_1$. 
-		Seeds in the 2-year seed bank are assumed to either germinate with a probability of $\gamma_2$ or die. 
+The functions $P(x)$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $x$ and the year $t$. 
+The proportion of flowerbuds which will produce seeds ($V_i(x)$) is dependent on the plant size $x$ and the ant species present on the plant $i$ in year $t$. 
+The integral is multiplied by the number of seeds per fruit ($\kappa$) and the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the one-year old seed bank. 
+Parameters $U$ and $L$ are the upper and lower bounds, respectively, of the plant size distribution. 
+Plants can recruit out of the one-year seed bank with the probability of $\gamma_1$ or transition to the two-year seed bank with a probability of $1 - \gamma_1$. 
+Seeds in the two-year seed bank are assumed to either germinate with a probability of $\gamma_2$ or die. 
 		
-		The size dynamics of the plants are given by:
+The size dynamics of the cholla are given by:
 		
 		$$
 		n(y,i)_{t+1} = (\gamma_1 B_{1,t} + \gamma_2 B_{2,t}) \eta(y) \omega \beta_i  + \\
@@ -253,48 +222,55 @@ These predators can have significant negative impacts on the fitness of individu
 		\sum_{j}^{4} \int_L^U S_j(x) G_j(y,x) \tau_{ij}(x) n_j(x) dx \\
 		$$
 		
-		The final equation gives the \tom{stochastic population composition }{what does this mean?}in terms of size and ant state of the \textit{C. imbracata} population $n$ in year $t+1$ based on the vital rates and size $n$ of the population in year $t$.
-		The first term gives the recruitment from 1 and 2-year seedbanks to size $y$.
-		$\eta(y)$ gives the seedling size distribution, which is assumed to be normally distributed, and $\omega$ gives the proportion of seedlings which survive from germination (late summer) to the census (May). 
-		The second term gives the changes in the population of the cacti which are not recruits. 
-		The functions $S$ and $G$ give the probabilities of surviving from year $t$ to $t+1$ and growing to size $y$ from year $t$ to year $t+1$, respectively. 
-		Each depends on the size $x$ in year $t$ and the ant state $j$ in year $t+1$. 
-		Finally, $\tau_{ij}$ is the probability of a cactus which is size $x$ with ant partner $i$ in year $t$ being tended by ant partner $j$ in year $t+1$.\tom{}{the ants dynamics of the model need to be presented more thoroughly and clearly.} 
+The first term gives the recruitment from one and two-year seed banks to a plant of size $y$, where $\eta(y) ~ N(***)$ gives the seedling size distribution and $\omega ~ ***$ gives the proportion of seedlings which surive from germination (late summer) to the census (May).
+The second term reflects the changes in the population of the cholla which are not recruits, where $S_j(x)$ gives the probability of a plant of size $x$ in year $t$ surviving to year $t+1$ with partner $j$.
+$G_j(y,x)$ gives the probability of growing from size $x$ in year $t$ to size $y$ in year $t+1$, respectively with partner $j$. 
+Finally, $\tau_{ij}$ is the probability of a cholla which is size $x$ with ant partner $i$ in year $t$ being tended by ant partner $j$ in year $t+1$.
+
+\subsection*{Deterministic IPM Analysis}
+Analyzing an IPM requires discretizing the composite IPM into a matrix to calculate the dominant eigenvalue. 
+Each component of the IPM (each set of ant partner specific vital rates) can be discretized into its own $ 200 \times 200$ matrix \as shown in figure ***. 
+The possibility of eviction, when individuals are predicted to grow outside of the possible size classes, was avoided by adding probabilities of growing smaller or larger than the existing boundaries, as done by many others***.
+We used the composite IPM to quantify the effects of partner diversity on the intrinsic growth rate of cholla, $r$ $ln(\lambda)$. 
+We calculated the $r$ for each combination of ant partners: complete vacancy; \textit{L. apiculatum} and vacancy; \textit{C. opuntiae} and vacancy; other and vacancy; \textit{L. apiculatum}, \textit{C. opuntiae}, and vacancy, \textit{L. apiculatum}, other, and vacancy; \textit{C. opuntiae}, other, and vacancy; and all ant partners and vacancy.
+The relative distributions allowed us to determine if either complementarity or sampling effect were at play in the tree cholla-ant defense system.
+Sampling Effect requires that the $r$ when all possible partners are present is equal to the $r$ of the cholla population when only the best partner is present.
+Complementarity requires that the $r$ when all possible partners are present is greater than the $r$ of any other combination of partners or any single partner. 
+
+
+\subsection*{Stochastic IPM Analysis}
+The third mechanism considered in this study requires annual variation to be explicitly considered in the IPM so we constructed a stochastic version of the IPM described above. 
+The year of record was a random effect in all vital rate models meaning we were able to include an intercept for specific years. 
+In order to include stochasticity in the analysis, we randomly sampled from the year-random effect intercepts 1,000 times.
+For each of these 1,000 iterations we calculated the $r$ for every possible combination of ant partners. 
+With these values we calculated $\delta r$ between the scenario with all possible partners and the scenario with no partners.
+This $\delta r$ measures the net benefits offered by partner diversity with annual variation.
+We also calculated the $\delta r$ of the deterministic IPM to measure the net benefits offered by partner diversity without annual variation. 
+These two relative differences allow us to determine if portfolio effect is at play.
+Portfolio effect is demonstrated when the net benefit with annual variation is larger than the net benefit without annual variation. 
 		
-		\tom{}{This paragraph should get its own subsection. This is about model analysis, not model structure.}\tom{Because many of the vital rates were ant-specific}{you need to explain why some are and some are not}, we were able to consider the composition of the population with the presence of any single ant species, or any combination of ant species (with vacancy always included).
-		These options include: complete vacancy; \textit{Liom.} and vacancy; \textit{Crem.} and vacancy; other and vacancy; \textit{Liom.}, \textit{Crem.}, and vacancy, \textit{Liom.}, other, and vacancy; \textit{Crem.}, other, and vacancy; and all ant partners and vacancy.
-		We used this option to calculate the distribution of stochastic population fitness for each combination of ant partners to determine if there is benefit from partner diversity and if there is an optimal combination of partners for this system. 
-		We then used these fitnesses and \tom{the yearly break-downs of the model}{what does this mean?} to determine if there was \tom{evidence of any biodiversity ecosystem function mechanisms to explain any partner diversity benefits}{you never describe any criteria for detecting the different mechanisms. What does one need to see in data to conclude that one or another is operating?}. 
-		
-		\subsection*{Statistical Modeling}
-		At the start of this section say for all models unless otherwise noted we used vague priors. 
-		Also need to introduce the names of these functions ex: survival = s(x)
-		With the primary dataset above we fit a series of generalized linear mixed models (GLMMs) in a hierarchical Bayesian framework, meaning the output is a distribution of \tom{the interaction between various factors on the highlighted variable}{confusing} rather than a maximum likelihood estimate with both fixed and random effects, which predicts the probability of a given process based on the size of the cacti, the presence of different ant partners, the year, and the plot.\tom{}{this is a confusing sentence. try to sharpen this.}
-		Unless otherwise mentioned, all models used vague priors. 
-		The growth model ($G_j(y,x)$) estimated the \tom{growth rate}{this is not what you modeled} of cacti, with fixed effects for the size and ant partner and random effects for plot and year, using a Normal distribution, with standard deviation dependent on the size of the cactus \tom{also with a Normal distribution}{??}. 
-		The survival model ($S_j(x)$) estimated the probability of survival, with fixed effects for the size of the cactus and ant partner and random effects for plot and year, using a Bernoulli distribution. 
-		The reproduction model ($P(x)$) estimated the probability of reproducing each year, with fixed effects for the size of the cactus and random effects for plot and year, using a Bernoulli distribution. 
-		The total flowers model ($F(x)$) estimated the total flowers produced by a plant, with fixed effects for its size and random effects for plot and year, using a \tom{Truncated}{truncated how?} Negative Binomial distribution. 
-		The viability model ($A_i(x)$) estimated the proportion of flowers produced by a plant which are viable (not aborted), with fixed effects for the size of the cactus and the \tom{presence of ant partners}{this is not the variable in the model} and random effects for plot and year, using a Binomial distribution.
-		The ant transition rates model ($\tau_{i,j}(x)$) estimates the probability of a cactus being visited by an ant partner, with fixed effects for the size of the cactus and the previous ant partner and random effects for plot and year, using a Multinomial distribution.  
-		The recruit size model ($n_j(x)$) estimates the size distribution of all recruits from a year, with no fixed or random effects, using a Normal distribution. 
-		With the \tom{second dataset}{what second data set? same question for 3 and 4} above, we fit a two Bayesian generalized linear models for the 
-		probability of germinating from a seed in the first year ($\gamma_1$) or the second year ($1 - \gamma_1$) using a Binomial distribution.
-		With the third dataset above, we fit a Bayesian generalized linear model for the probability of a seedling, which has sprouted each year, surviving to May ($\delta$) when we visit (accounting for missed mortality events), with fixed effects for the previous size and transect random effects, using a Bernoulli distribution. 
-		With the fourth dataset above, we fit a Bayesian generalized linear model for the number of seeds produced by every flower on a cactus ($\kappa$) based on the ant partner, using a Negative Binomial distribution. 
-		
-		These Bayesian GLMMs were run with STAN through version 4.0.2  of R using \tom{1000 iterations}{do you mean 10000? 1000 is not very many}, \tom{150 warmups, 3 chains, and 1 thins.}{``warmups'' and ``thins'' are not the right word choices} 
-		To assess the convergence of our models we checked the trace of each mcmc chain (the convergence graphs are shown in the supplemental documents in Figures ***).
-		To assess the fit we simulated data from the models and compared this to the real data (the fit plots are shown in the supplemental documents in Figures ***).
-		
-		\tom{With these models, we investigated the impacts of different ant species on the processes of vital rates and the probabilities of individual cacti interacting with each ant species.
-		To address our first goal, we compared the effects of ant partners on the growth rate, survival rate, and the viability of flowers across sizes. 
-		We also broke these effects down by every year of data to see if the impacts of ant partners varied across years. 
-		To address the second goal, we compared the probability of being visited by a given ant based on each possible previous partner to note any patterns of ant tending. 
-		We also broke these interactions down by every year of data to see if the patterns changed across years. }{This needs a much more thorough explanation. You have not described any methods for a stochastic analysis. You need a new section here explaining these methods in a way that is reproducible. Keep in mind that reproducibility is the standard we are aiming for, and in the current draft, just about all of the methods fall short of that standard.}
-		
-		\vspace{1cm}
-		
+% I am creating a table here to include all parameter estimations and descriptions
+\begin{table}[]
+\begin{tabular}{l|l|l}
+\textbf{Parameter} & \textbf{Median ($95\%$ CI)} & \textbf{Prior Distribution} \\
+\hline
+growth xi intercept vacant $\Beta_01^g$ & & \\
+growth xi intercept other $\Beta_02^g$ & & \\
+growth xi intercept \textit{C. opuntiae} $\Beta_03^g$ & & \\
+growth xi intercept \textit{L. apiculatum} $\Beta_04^g$ & & \\
+growth xi size dependent vacant $\Beta_11^g$ & & \\
+growth xi size dependent other $\Beta_12^g$ & & \\
+growth xi size dependent \textit{C. opuntiae} $\Beta_13^g$ & & \\
+growth xi size dependent \textit{L. apiculatum} $\Beta_14^g$ & & \\
+growth omega intercept $\omega_0^g$ & & \\
+growth omega size dependent $\omega_1^g$ & & \\
+growth alpha intercept $\alpha_0^g$ & & \\
+growth alpha size dependent $\alpha_1^g$ & & \\
+1-year germination intercept $\alpha^{\gamma_1}$ & & \\
+2-year germination intercept $\alpha^{\gamma_2}$ & & \\
+
+\end{tabular}
+\end{table}
 		
 		\section*{Results}
 		\tom{I’m honestly not sure what all should be included here. I feel like I need a lot more info about the specifics???}{Let's talk about this.}
