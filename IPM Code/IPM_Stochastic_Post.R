@@ -44,24 +44,24 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "vacant"){ return(g_vac)}
 }
 
-##Check that it works properly
-i = c("vacant","crem","liom","other")
-x = c(-1,-5,3,4)
-y = c(-1,-4,3,4)
-g <- matrix(NA,ncol = length(i), nrow = 100)
-l <- list()
-
-for(a in 1:17){ ## year
-for(m in 1:nrow(params)){ ## iteration
-  for(n in seq(1:length(i))){ ## input info
-    xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-    g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-    }
-}
-  l[[a]] <- g
-}
-g
-l
+# ##Check that it works properly
+# i = c("vacant","crem","liom","other")
+# x = c(-1,-5,3,4)
+# y = c(-1,-4,3,4)
+# g <- matrix(NA,ncol = length(i), nrow = 100)
+# l <- list()
+# 
+# for(a in 1:17){ ## year
+# for(m in 1:nrow(params)){ ## iteration
+#   for(n in seq(1:length(i))){ ## input info
+#     xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+#     g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
+#     }
+# }
+#   l[[a]] <- g
+# }
+# g
+# l
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -836,22 +836,22 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
 }
-# Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-i = c("liom","vacant")
-x <- c(1,1)
-scenario = c("liomvacother","liomcremvac")
-lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
-big <- list()
-for(a in 1:2){ ## year
-  for(m in 1:10){ ## iter
-    for(n in 1:length(i)){ ## input info
-      lam[m,n] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-    }
-  }
-  big[[a]] <- lam
-}
-lam
-big
+# # Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
+# i = c("liom","vacant")
+# x <- c(1,1)
+# scenario = c("liomvacother","liomcremvac")
+# lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
+# big <- list()
+# for(a in 1:2){ ## year
+#   for(m in 1:10){ ## iter
+#     for(n in 1:length(i)){ ## input info
+#       lam[m,n] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#     }
+#   }
+#   big[[a]] <- lam
+# }
+# lam
+# big
 
 
 ##################################################################################################
@@ -1010,7 +1010,10 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
 
 #########################################################################################################
 # lambdaS Simulations for different Years Rands #########################################################
-# This is the original code as taken from the Climate IPM Online ########################################
+# m indicates the number of iterations from MCMC chains #################################################
+# n indicates the diversity scenario ####################################################################
+# For every iteration included there should be a single lambda value estimated ##########################
+# For every diversity scenario analyzed there should be a posterior distribution of lambdas estimated ###
 #########################################################################################################
 lambdaSim=function(params,                                  ## parameters
                    grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
@@ -1033,13 +1036,12 @@ lambdaSim=function(params,                                  ## parameters
   rtracker      <- (rep(0,max_yrs*1))  ## Empty vector to store growth rates in
   n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
 
-
   for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then
     ## scale this to the stochastic growth rate
     ## Randomly sample the years we have data for by calling column r in all matricies of
     ## the year random effects
     r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
-  
+
     ## Create and store matrix
     K_t[,]<-bigmatrix(params,lower,upper,matsize,scenario,
                       grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
@@ -1066,91 +1068,33 @@ lambdaSim=function(params,                                  ## parameters
     return(list(K_t = K_t, matdim = matdim, rtracker = rtracker, n0 = n0))
 }
 
-m = 1
-lambdaSim(params = params[m,],                                  ## parameters
-          grow_rfx1=grow_rfx1,
-          grow_rfx2=grow_rfx2,
-          grow_rfx3=grow_rfx3,
-          grow_rfx4=grow_rfx4, ## growth model year rfx
-          surv_rfx1=surv_rfx1,
-          surv_rfx2=surv_rfx2,
-          surv_rfx3=surv_rfx3,
-          surv_rfx4=surv_rfx4, ## survival model year rfx
-          flow_rfx=flow_rfx,                                ## flower model year rfx
-          repro_rfx=repro_rfx,                               ## repro model year rfx
-          viab_rfx1=viab_rfx1,
-          viab_rfx2=viab_rfx2,
-          viab_rfx3=viab_rfx3,
-          viab_rfx4=viab_rfx4, ## viability model year rfx
-          max_yrs = 10,                                 ## the # years you want to iterate
-          matsize=matsize,                                 ## size of transition matrix
-          scenario = "all",                                ## partner diversity scenario
-          lower=lower,upper=upper  )
-
-# i = c("liom","vacant")
-# x <- c(1,1)
-# scenario = c("all","all")
-# lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
-# big <- list()
-# for(a in 1:17){ ## year
-#   for(m in 1:10){ ## iter
-#     for(n in 1:length(i)){ ## input info
-#       lam[m,n] <- lambda(bigmatrix.4(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-#     }
-#   }
-#   big[[a]] <- lam
-# }
-# lam
-# big
-
-
-## To get the proper putputs of this, I need to iterate over all scenarios, all iterations, and all years
-## To start with only do one scenario == "none"
-## Create an actual matrix filled with 0 of the right size based on scenarios
-scenario = c("none","cremvac")
-max_scenario = length(scenario)
-max_iter = 100
-max_yrs = 5
-lambdaS <- matrix(rep(NA,max_iter*max_scenario), nrow = max_iter)
-for(n in 1:max_scenario){
-  ## must create kt matrix based on the scenario
-  if(scenario[n] == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
-  if(scenario[n] == "cremvac"|scenario[n] == "liomvac"|scenario[n] == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
-  if(scenario[n] == "liomcremvac"|scenario[n] == "liomvacother"|scenario[n] == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
-  if(scenario[n] == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
-  ## reinitialize matdim based on the new KT
-  matdim <- ncol(K_t)
-  for(m in 1:max_iter){  
-    ## Must reinitialize rtracker and n0 for every iteration of parameters
-    rtracker      <- c(rep(0,max_yrs))  ## Empty vector to store growth rates in 
-    n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
-    for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then 
-      ## scale this to the stochastic growth rate
-      ## Randomly sample the years we have data for by calling column r in all matricies of 
-      ## the year random effects
-      ## Must sample a new r value for every year of the simulation we run
-      r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
-      ## Call and store matrix for every year of the simulation
-      K_t[,]<-bigmatrix(params[m,],lower,upper,matsize,scenario[n],
-                        grow_rfx1[m,r],grow_rfx2[m,r],grow_rfx3[m,r],grow_rfx4[m,r],
-                        surv_rfx1[m,r],surv_rfx2[m,r],surv_rfx3[m,r],surv_rfx4[m,r],
-                        flow_rfx[m,r],
-                        repro_rfx[m,r],
-                        viab_rfx1[m,r],viab_rfx2[m,r],viab_rfx3[m,r],viab_rfx4[m,r])$IPMmat
-      n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
-      N  <- sum(n0) ## This gives the growth rate of the population
-      rtracker[t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
-      n0 <-n0/N ## Update scaling for next iteration
-    }
-    #discard initial values (to get rid of transient)
-    #print(rtracker)
-    burnin    <- round(max_yrs*0.1)
-    rtracker  <- rtracker[-c(1:burnin)]
-    #Finish and return
-    #For every iteration of parameters and every scenario, save the geometric sum of the rtracker
-    lambdaS[m,n]<-exp(mean(rtracker))
+max_rep = 100
+scenario = c("none","all")
+max_yrs = 10
+# n = 1
+# lam <- vector()
+lam <- matrix(nrow = max_rep, ncol = 2)
+for(n in 1:length(scenario)){
+  for(m in 1:100){
+    lam[m,n] <- lambdaSim(params = params[m,],                                  ## parameters
+                          grow_rfx1=grow_rfx1,
+                          grow_rfx2=grow_rfx2,
+                          grow_rfx3=grow_rfx3,
+                          grow_rfx4=grow_rfx4, ## growth model year rfx
+                          surv_rfx1=surv_rfx1,
+                          surv_rfx2=surv_rfx2,
+                          surv_rfx3=surv_rfx3,
+                          surv_rfx4=surv_rfx4, ## survival model year rfx
+                          flow_rfx=flow_rfx,                                ## flower model year rfx
+                          repro_rfx=repro_rfx,                               ## repro model year rfx
+                          viab_rfx1=viab_rfx1,
+                          viab_rfx2=viab_rfx2,
+                          viab_rfx3=viab_rfx3,
+                          viab_rfx4=viab_rfx4, ## viability model year rfx
+                          max_yrs = 10,                                 ## the # years you want to iterate
+                          matsize=matsize,                                 ## size of transition matrix
+                          scenario = scenario[n],                                ## partner diversity scenario
+                          lower=lower,upper=upper  )
   }
 }
-lambdaS
-
 
