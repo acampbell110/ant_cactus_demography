@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.23)  25 MAY 2023 17:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.23)  29 MAY 2023 20:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -458,13 +458,14 @@ Package biblatex Info: Automatic encoding selection.
 \openout3 = `Manuscript_Am_Nat.bcf'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'Manuscript_Am_Nat.bbl' not found.
+Package biblatex Info: ... file 'Manuscript_Am_Nat.bbl' found.
 
-No file Manuscript_Am_Nat.bbl.
+(./Manuscript_Am_Nat.bbl)
 Package biblatex Info: Reference section=0 on input line 49.
 Package biblatex Info: Reference segment=0 on input line 49.
 LaTeX Font Info:    Trying to load font information for OML+zplm on input line 
 51.
+
 (/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/omlzplm.fd
 File: omlzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OML/zplm.
 )
@@ -490,672 +491,293 @@ File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 {/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
 
 
-LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 87.
 
 
 
 LaTeX Warning: Citation 'BoucherDouglasH.1985' on page 4 undefined on input lin
-e 84.
+e 87.
 
 
-LaTeX Warning: Citation 'Bronstein1994' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Bronstein1994' on page 4 undefined on input line 87.
 
 
-LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 87.
 
 
 
-LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 84
+LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 87
 .
 
 
 LaTeX Warning: Citation 'Rodriguez-Rodriguez2017' on page 4 undefined on input 
-line 84.
+line 87.
 
 
-LaTeX Warning: Citation 'Song2020' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Song2020' on page 4 undefined on input line 87.
 
 
-LaTeX Warning: Citation 'Mandyam2014' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Mandyam2014' on page 4 undefined on input line 87.
 
 
-LaTeX Warning: Citation 'Thrall2007' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Thrall2007' on page 4 undefined on input line 87.
 
 
-LaTeX Warning: Citation 'Bahia2022' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Bahia2022' on page 4 undefined on input line 87.
 
 
-LaTeX Warning: Citation 'Willmer1997' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Willmer1997' on page 4 undefined on input line 88.
 
 
-LaTeX Warning: Citation 'Sakai2002' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Sakai2002' on page 4 undefined on input line 88.
 
 
-LaTeX Warning: Citation 'Burns2004' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Burns2004' on page 4 undefined on input line 88.
 
 
-LaTeX Warning: Citation 'Holland2010' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Holland2010' on page 4 undefined on input line 88.
 
 
-LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 84.
+LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 89.
 
 
 
-LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 84
+LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 89
 .
 
 
-LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Palmer2010' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Bascompte2019' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Stanton2013' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 84
-.
-
-
-LaTeX Warning: Citation 'Jones2015' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Ness2006' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Kiers2003' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Sun2019' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Heath2009' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Heath2014' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Grutter2003' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Palmer2010' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Stanton2013' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 84.
-
-
-
-LaTeX Warning: Citation 'Song2020' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Bascompte2019' on page 4 undefined on input line 84.
-
-! Undefined control sequence.
-\ali #1#2->{\color 
-                   {pink}{#1}}\footnote {\textit {\color {pink}{#2}}}
-l.84 ...e cost of rewards to the partner ... etc.}
-                                                   \cite{Bronstein1994,Brons...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-<recently read> \color 
-                       
-l.84 ...e cost of rewards to the partner ... etc.}
-                                                   \cite{Bronstein1994,Brons...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-LaTeX Warning: Citation 'Bronstein1994' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Bronstein2001a' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Song2020' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'West2007' on page 4 undefined on input line 84.
-
-
-LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 84
-.
-
-
-LaTeX Warning: Citation 'Jones2015' on page 4 undefined on input line 84.
-
-! Undefined control sequence.
-\ali #1#2->{\color 
-                   {pink}{#1}}\footnote {\textit {\color {pink}{#2}}}
-l.84 ... detail or do I need to go into examples?}
-                                                   \cite{Stanton2003}.
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-<recently read> \color 
-                       
-l.84 ... detail or do I need to go into examples?}
-                                                   \cite{Stanton2003}.
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-LaTeX Warning: Citation 'Stanton2003' on page 4 undefined on input line 84.
-
-
-Overfull \hbox (0.83153pt too wide) in paragraph at lines 84--85
-\OT1/pplx/m/n/10.95 interactions[[], []] with di-verse and dy-namic con-se-quen
-ces
- []
-
-
-Overfull \hbox (10.9711pt too wide) in paragraph at lines 84--85
+Overfull \hbox (10.9711pt too wide) in paragraph at lines 86--90
 \OT1/pplx/m/n/10.95 ter-ac-tions, in-clud-ing par-a-sitism [[], [], [], [],
  []
 
 
-Overfull \hbox (5.04724pt too wide) in paragraph at lines 84--85
-\OT1/pplx/m/n/10.95 fense for food or housing[[]], pol-li-na-tion and dis-per-s
-al for food[[], []],
+Overfull \hbox (12.09898pt too wide) in paragraph at lines 86--90
+\OT1/pplx/m/n/10.95 ered more con-text de-pen-dent than other species in-ter-ac
+-tions [[], []],
  []
 
 
-Overfull \hbox (33.26535pt too wide) in paragraph at lines 84--85
-\OT1/pplx/m/n/10.95 wise stud-ies can-not be ac-cu-rately used to pre-dict the 
-out-comes of multi-species mutualisms[[],
- []
-
-[4]
-! Undefined control sequence.
-l.87     \includegraphics
-                         [width=0.58\linewidth]{Complementarity copy.png}
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   ]
-l.87     \includegraphics[width=0.58\linewidth]
-                                               {Complementarity copy.png}
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   ]
-l.87     \includegraphics[width=0.58\linewidth]
-                                               {Complementarity copy.png}
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Undefined control sequence.
-l.88     \includegraphics
-                         [width=0.40\linewidth]{Sampling_Effect copy.png}\ca...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   ]
-l.88     \includegraphics[width=0.40\linewidth]
-                                               {Sampling_Effect copy.png}\ca...
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   ]
-l.88     \includegraphics[width=0.40\linewidth]
-                                               {Sampling_Effect copy.png}\ca...
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.88 ...degraphics[width=0.40\linewidth]{Sampling_
-                                                  Effect copy.png}\caption{a...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Extra }, or forgotten $.
-l.88 ...=0.40\linewidth]{Sampling_Effect copy.png}
-                                                  \caption{asdasdf}\label{fi...
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.88 ...Sampling_Effect copy.png}\caption{asdasdf}
-                                                  \label{fig:comp-samp}
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.89   \end{figure}
-                   
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-! Undefined control sequence.
-l.91     \includegraphics
-                         [width=0.60\linewidth]{Portfolio_Effect copy.png}
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   ]
-l.91     \includegraphics[width=0.60\linewidth]
-                                               {Portfolio_Effect copy.png}
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   ]
-l.91     \includegraphics[width=0.60\linewidth]
-                                               {Portfolio_Effect copy.png}
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.91 ...egraphics[width=0.60\linewidth]{Portfolio_
-                                                  Effect copy.png}
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Extra }, or forgotten $.
-l.91 ...0.60\linewidth]{Portfolio_Effect copy.png}
-                                                  
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.92     \caption{asdasdf}
-                          
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.94   \end{figure}
-                   
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-! Undefined control sequence.
-\ali #1#2->{\color 
-                   {pink}{#1}}\footnote {\textit {\color {pink}{#2}}}
-l.96 ...h? If so should I include a figure panel?}
-                                                  .In this study I focus on ...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-<recently read> \color 
-                       
-l.96 ...h? If so should I include a figure panel?}
-                                                  .In this study I focus on ...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
+LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 91.
 
 
-LaTeX Warning: Citation 'Frederickson2013' on page 5 undefined on input line 96
+LaTeX Warning: Citation 'Palmer2010' on page 4 undefined on input line 91.
+
+
+LaTeX Warning: Citation 'Bascompte2019' on page 4 undefined on input line 92.
+
+
+LaTeX Warning: Citation 'Stanton2013' on page 4 undefined on input line 92.
+
+
+LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 92
 .
 
 
-LaTeX Warning: Reference `fig:comp-samp' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Jones2015' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Ness2006' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Citation 'Stachowicz2005' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Kiers2003' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Citation 'Bronstein2006' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Citation 'Stanton2003' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Sun2019' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Reference `fig:comp-samp' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Heath2009' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Heath2014' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Citation 'Ollerton2006' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Grutter2003' on page 4 undefined on input line 92.
 
 
-LaTeX Warning: Citation 'Alarcon2008' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Palmer2010' on page 4 undefined on input line 93.
 
 
-LaTeX Warning: Reference `fig:portfolio' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Stanton2013' on page 4 undefined on input line 93.
 
 
-LaTeX Warning: Citation 'Batstone2018' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Lazaro2022' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Djieto-Lordon2005' on page 5 undefined on input line 9
-6.
-
-
-LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Bruna2014' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Oliveira1999' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Horvitz1986' on page 5 undefined on input line 96.
-
-! Undefined control sequence.
-\ali #1#2->{\color 
-                   {pink}{#1}}\footnote {\textit {\color {pink}{#2}}}
-l.96 ...2004}.}{Not quite sure what to say here. }
-                                                   The direction of turnover...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-LaTeX Warning: Citation 'Sachs2004' on page 5 undefined on input line 96.
-
-! Undefined control sequence.
-<recently read> \color 
-                       
-l.96 ...2004}.}{Not quite sure what to say here. }
-                                                   The direction of turnover...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-LaTeX Warning: Citation 'Fonseca2003' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Boege2005' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Barton2010' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Djieto-Lordon2005' on page 5 undefined on input line 9
-6.
-
-! Undefined control sequence.
-\ali #1#2->{\color 
-                   {pink}{#1}}\footnote {\textit {\color {pink}{#2}}}
-l.96 ...ied to tie it in a bit more conceptually.}
-                                                  , making these interaction...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-<recently read> \color 
-                       
-l.96 ...ied to tie it in a bit more conceptually.}
-                                                  , making these interaction...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-LaTeX Warning: Citation 'Bronstein1998' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Bronstein2006' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Beattie1985' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Schultheiss2022' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Chamberlain2014' on page 4 undefined on input line 93.
 
 
 
-LaTeX Warning: Citation 'Stanton2013' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Song2020' on page 4 undefined on input line 93.
 
 
-LaTeX Warning: Citation 'Tr√∏jelsgaard2015' on page 5 undefined on input line 9
-6.
+LaTeX Warning: Citation 'Bascompte2019' on page 4 undefined on input line 94.
+
+
+LaTeX Warning: Citation 'Bronstein1994' on page 4 undefined on input line 96.
+
+
+LaTeX Warning: Citation 'Bronstein2001a' on page 4 undefined on input line 96.
+
+
+LaTeX Warning: Citation 'Afkhami2014' on page 4 undefined on input line 96.
+
+
+LaTeX Warning: Citation 'Song2020' on page 4 undefined on input line 96.
+
+
+LaTeX Warning: Citation 'West2007' on page 4 undefined on input line 96.
+
+
+LaTeX Warning: Citation 'Frederickson2013' on page 4 undefined on input line 96
+.
+
+
+LaTeX Warning: Citation 'Jones2015' on page 4 undefined on input line 96.
+
+
+LaTeX Warning: Citation 'Stanton2003' on page 4 undefined on input line 97.
+
+[4]
+
+LaTeX Warning: Citation 'Frederickson2013' on page 5 undefined on input line 10
+1.
+
+
+LaTeX Warning: Citation 'Batstone2018' on page 5 undefined on input line 102.
+
+
+LaTeX Warning: Citation 'Stachowicz2005' on page 5 undefined on input line 103.
+
+
+
+LaTeX Warning: Citation 'Bronstein2006' on page 5 undefined on input line 103.
+
+
+LaTeX Warning: Citation 'Stanton2003' on page 5 undefined on input line 103.
+
+
+LaTeX Warning: Citation 'Batstone2018' on page 5 undefined on input line 104.
+
+
+LaTeX Warning: Citation 'Ollerton2006' on page 5 undefined on input line 105.
+
+
+LaTeX Warning: Citation 'Alarcon2008' on page 5 undefined on input line 105.
+
+
+LaTeX Warning: Citation 'Batstone2018' on page 5 undefined on input line 105.
+
+
+LaTeX Warning: Citation 'Lazaro2022' on page 5 undefined on input line 105.
+
+
+LaTeX Warning: Citation 'Djieto-Lordon2005' on page 5 undefined on input line 1
+07.
+
+
+LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 107.
+
+
+LaTeX Warning: Citation 'Bruna2014' on page 5 undefined on input line 107.
+
+
+LaTeX Warning: Citation 'Oliveira1999' on page 5 undefined on input line 108.
+
+
+LaTeX Warning: Citation 'Horvitz1986' on page 5 undefined on input line 108.
+
+
+LaTeX Warning: Citation 'Sachs2004' on page 5 undefined on input line 110.
+
+
+LaTeX Warning: Citation 'Fonseca2003' on page 5 undefined on input line 111.
+
+
+LaTeX Warning: Citation 'Boege2005' on page 5 undefined on input line 112.
+
+
+LaTeX Warning: Citation 'Barton2010' on page 5 undefined on input line 112.
+
+
+LaTeX Warning: Citation 'Djieto-Lordon2005' on page 5 undefined on input line 1
+12.
+
+
+LaTeX Warning: Citation 'Bronstein1998' on page 5 undefined on input line 114.
+
+
+LaTeX Warning: Citation 'Bronstein2006' on page 5 undefined on input line 114.
+
+
+LaTeX Warning: Citation 'Ness2006' on page 5 undefined on input line 115.
+
+
+LaTeX Warning: Citation 'Beattie1985' on page 5 undefined on input line 115.
+
+
+LaTeX Warning: Citation 'Schultheiss2022' on page 5 undefined on input line 115
+.
+
+
+LaTeX Warning: Citation 'Stanton2013' on page 5 undefined on input line 115.
+
+
+LaTeX Warning: Citation 'Tr√∏jelsgaard2015' on page 5 undefined on input line 1
+15.
 
 Missing character: There is no √ in font pplb9t!
 Missing character: There is no ∏ in font pplb9t!
+[5]
 
-LaTeX Warning: Citation 'Miller2009' on page 5 undefined on input line 96.
-
-
-LaTeX Warning: Citation 'Miller2007' on page 5 undefined on input line 96.
+LaTeX Warning: Citation 'Miller2009' on page 6 undefined on input line 117.
 
 
-LaTeX Warning: Citation 'Ohm2014' on page 5 undefined on input line 96.
-
-[5] [6]
-! Undefined control sequence.
-l.99     \includegraphics
-                         [width=.8\linewidth]{herb_ant_only_flow.png}	
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Missing number, treated as zero.
-<to be read again> 
-                   ]
-l.99     \includegraphics[width=.8\linewidth]
-                                             {herb_ant_only_flow.png}	
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   ]
-l.99     \includegraphics[width=.8\linewidth]
-                                             {herb_ant_only_flow.png}	
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.99 ...\includegraphics[width=.8\linewidth]{herb_
-                                                  ant_only_flow.png}	
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Extra }, or forgotten $.
-l.99 ...idth=.8\linewidth]{herb_ant_only_flow.png}
-                                                  	
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.100     \caption{asdasdf}
-                           	
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.102   \end{figure}
-                    
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
+LaTeX Warning: Citation 'Miller2007' on page 6 undefined on input line 118.
 
 
-LaTeX Warning: Citation 'Benson1982' on page 7 undefined on input line 116.
+LaTeX Warning: Citation 'Ohm2014' on page 6 undefined on input line 120.
+
+[6]
+
+LaTeX Warning: Citation 'Benson1982' on page 7 undefined on input line 137.
 
 
-LaTeX Warning: Citation 'Ohm2014' on page 7 undefined on input line 120.
+LaTeX Warning: Citation 'Ohm2014' on page 7 undefined on input line 141.
 
 
-LaTeX Warning: Citation 'Ness2006' on page 7 undefined on input line 121.
+LaTeX Warning: Citation 'Ness2006' on page 7 undefined on input line 142.
 
 
-LaTeX Warning: Citation 'Oliveira1999' on page 7 undefined on input line 121.
+LaTeX Warning: Citation 'Oliveira1999' on page 7 undefined on input line 142.
+
+
+LaTeX Warning: Citation 'Donald2022' on page 7 undefined on input line 146.
+
+
+LaTeX Warning: Citation 'Miller2007' on page 7 undefined on input line 148.
+
+
+LaTeX Warning: Citation 'Ohm2014' on page 7 undefined on input line 151.
+
+
+LaTeX Warning: Citation 'Miller2014' on page 7 undefined on input line 152.
 
 [7]
+
+LaTeX Warning: Citation 'Mann1969' on page 8 undefined on input line 155.
+
+
+LaTeX Warning: Citation 'Miller2006' on page 8 undefined on input line 157.
+
+
+LaTeX Warning: Citation 'Miller2009' on page 8 undefined on input line 159.
+
+
+LaTeX Warning: Citation 'Miller2007' on page 8 undefined on input line 160.
+
+[8] [9] [10] [11]
 ! Undefined control sequence.
-\tom #1#2->{\color 
-                   {red}{#1}}\footnote {\textit {\color {red}{#2}}}
-l.124 ...t{Phenogaster spp.}}{Incorrect spelling.}
-                                                  , and \textit{Camponotus s...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-! Undefined control sequence.
-<recently read> \color 
-                       
-l.124 ...t{Phenogaster spp.}}{Incorrect spelling.}
-                                                  , and \textit{Camponotus s...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-LaTeX Warning: Citation 'Donald2022' on page 8 undefined on input line 125.
-
-
-LaTeX Warning: Citation 'Miller2007' on page 8 undefined on input line 127.
-
-
-LaTeX Warning: Citation 'Ohm2014' on page 8 undefined on input line 130.
-
-
-LaTeX Warning: Citation 'Miller2014' on page 8 undefined on input line 131.
-
-
-LaTeX Warning: Citation 'Mann1969' on page 8 undefined on input line 134.
-
-
-LaTeX Warning: Citation 'Miller2006' on page 8 undefined on input line 136.
-
-
-LaTeX Warning: Citation 'Miller2009' on page 8 undefined on input line 138.
-
-
-LaTeX Warning: Citation 'Miller2007' on page 8 undefined on input line 139.
-
-[8] [9] [10] [11] [12]
-! Undefined control sequence.
-l.228 ...into its own $ 200 \times 200$ matrix \as
+l.253 ...into its own $ 200 \times 200$ matrix \as
                                                    shown in figure ***.
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -1163,16 +785,21 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[13]
+[12] [13]
+\GenericError {               }{LaTeX Error: Can be used only in preamble}{See 
+the LaTeX manual or LaTeX Companion for explanation.}{Your command was ignored.
+\MessageBreak Type  I <command> <return>  to replace it with another command,\M
+essageBreak or  <return>  to continue without it.}{References.bib}
+[14]
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 249.
+               Default added (so using `tbp') on input line 350.
 
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.254     growth xi intercept vacant $\Beta
-                                           _01^g$ & -5.210899 (-5.686865, -5...
+l.355     growth xi intercept vacant $\Beta
+                                           _{01}^g$ & -5.210899 (-5.686865, ...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1182,8 +809,8 @@ and I'll forget about whatever was undefined.
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.255     growth xi intercept other $\Beta
-                                          _02^g$ & -5.8288 (-5.956217, 1.766...
+l.356     growth xi intercept other $\Beta
+                                          _{02}^g$ & -5.8288 (-5.956217, 1.7...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1193,8 +820,8 @@ and I'll forget about whatever was undefined.
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.256 ... xi intercept \textit{C. opuntiae} $\Beta
-                                                  _03^g$ & -4.529523 (-6.077...
+l.357 ... xi intercept \textit{C. opuntiae} $\Beta
+                                                  _{03}^g$ & -4.529523 (-6.0...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1204,8 +831,8 @@ and I'll forget about whatever was undefined.
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.257 ...i intercept \textit{L. apiculatum} $\Beta
-                                                  _04^g$ -5.106802 (-5.44999...
+l.358 ...i intercept \textit{L. apiculatum} $\Beta
+                                                  _{04}^g$ & -5.106802 (-5.4...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1215,8 +842,8 @@ and I'll forget about whatever was undefined.
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.258     growth xi size dependent vacant $\Beta
-                                                _11^g$ & & \\
+l.359     growth xi size dependent vacant $\Beta
+                                                _{11}^g$ & & \\
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1226,8 +853,8 @@ and I'll forget about whatever was undefined.
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.259     growth xi size dependent other $\Beta
-                                               _12^g$ & & \\
+l.360     growth xi size dependent other $\Beta
+                                               _{12}^g$ & & \\
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1237,8 +864,8 @@ and I'll forget about whatever was undefined.
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.260 ...ize dependent \textit{C. opuntiae} $\Beta
-                                                  _13^g$ & & \\
+l.361 ...ize dependent \textit{C. opuntiae} $\Beta
+                                                  _{13}^g$ & & \\
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1248,8 +875,162 @@ and I'll forget about whatever was undefined.
 ! Undefined control sequence.
 <recently read> \Beta 
                       
-l.261 ...e dependent \textit{L. apiculatum} $\Beta
-                                                  _14^g$ & & \\
+l.362 ...e dependent \textit{L. apiculatum} $\Beta
+                                                  _{14}^g$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.373     survival intercept vacant $\Beta
+                                          _{01}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.374     survival intercept other $\Beta
+                                         _{02}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.375 ...ival intercept \textit{C.opuntiae} $\Beta
+                                                  _{03}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.376 ...l intercept \textit{L. apiculatum} $\Beta
+                                                  _{04}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.377     survival size dependent vacant $\Beta
+                                               _{11}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.378     survival size dependent other $\Beta
+                                              _{12}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.379 ...ize dependent \textit{C. opuntiae} $\Beta
+                                                  _{13}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.380 ...e dependent \textit{L. apiculatum} $\Beta
+                                                  _{14}^s$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.383     flowering intercept $\Beta
+                                    _0^f$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.384     flowering size dependent $\Beta
+                                         _1^f$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.387     viability intercept vacant $\Beta
+                                           _01^v$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.388     viability intercept other $\Beta
+                                          02^v$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.389 ...ity intercept \textit{C. opuntiae} $\Beta
+                                                  _03^v$ & & \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+<recently read> \Beta 
+                      
+l.390 ...y intercept \textit{L. apiculatum} $\Beta
+                                                  _04^v$ & &
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -1257,56 +1038,83 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Overfull \hbox (152.63008pt too wide) in paragraph at lines 250--271
+Overfull \hbox (16.16058pt too wide) in paragraph at lines 351--392
 [][] 
  []
 
-[14] [15]
 
-Package natbib Warning: Citation `CookEtAl2015' on page 16 undefined on input l
-ine 306.
+LaTeX Warning: Float too large for page by 52.0485pt on input line 392.
 
 
-LaTeX Warning: Reference `Fig:Jumps' on page 16 undefined on input line 339.
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.395 {
+       \footnotesize Note: Table titles should be short. Further details sho...
+
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Too many }'s.
+\@endfloatbox ...pagefalse \outer@nobreak \egroup 
+                                                  \color@endbox 
+l.396 \end{table}
+                 
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+! Extra \endgroup.
+\color@endgroup ->\endgraf \endgroup 
+                                     
+l.396 \end{table}
+                 
+Things are pretty mixed up, but I think the worst is over.
+
+! Too many }'s.
+\color@endbox ->\color@endgroup \egroup 
+                                        
+l.396 \end{table}
+                 
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
 
 
-LaTeX Warning: Reference `Fig:JumpsOk' on page 16 undefined on input line 339.
+! LaTeX Error: \begin{document} ended by \end{table}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.396 \end{table}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Extra \endgroup.
+<recently read> \endgroup 
+                          
+l.396 \end{table}
+                 
+Things are pretty mixed up, but I think the worst is over.
+
+[15] [16]
+
+Package natbib Warning: Citation `LemKapEx07' on page 17 undefined on input lin
+e 429.
 
 
-LaTeX Warning: Reference `Table:Rivers' on page 16 undefined on input line 349.
-
-
-
-LaTeX Warning: Reference `Table:Founders' on page 16 undefined on input line 36
-5.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-LaTeX Warning: Reference `Fig:Jumps' on page 16 undefined on input line 368.
-
-
-LaTeX Warning: Reference `Fig:JumpsOk' on page 16 undefined on input line 368.
-
-[16] [17] [18] [19]
-
-Package natbib Warning: Citation `LemKapEx07' on page 20 undefined on input lin
-e 485.
-
-
-Package natbib Warning: Citation `LemKapEx07' on page 20 undefined on input lin
-e 485.
+Package natbib Warning: Citation `LemKapEx07' on page 17 undefined on input lin
+e 429.
 
 
 Package natbib Warning: There were undefined citations.
 
-[20] (./Manuscript_Am_Nat.aux
-
-Package natbib Warning: Citation(s) may have changed.
-(natbib)                Rerun to get citations correct.
-
-)
+[17] (./Manuscript_Am_Nat.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -1323,13 +1131,13 @@ Package logreq Info: Writing requests to 'Manuscript_Am_Nat.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 9666 strings out of 478268
- 184424 string characters out of 5846347
- 892905 words of memory out of 5000000
- 27779 multiletter control sequences out of 15000+600000
- 504482 words of font info for 114 fonts, out of 8000000 for 9000
+ 9637 strings out of 478268
+ 183982 string characters out of 5846347
+ 893905 words of memory out of 5000000
+ 27750 multiletter control sequences out of 15000+600000
+ 503158 words of font info for 111 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,10n,68p,4497b,1151s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 60i,10n,68p,1671b,1151s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
 xlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texl
@@ -1340,10 +1148,10 @@ e/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive
 mf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2022/texmf-dist
 /fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/
 type1/urw/palatino/uplri8a.pfb>
-Output written on Manuscript_Am_Nat.pdf (20 pages, 148315 bytes).
+Output written on Manuscript_Am_Nat.pdf (17 pages, 140563 bytes).
 PDF statistics:
- 115 PDF objects out of 1000 (max. 8388607)
- 74 compressed objects within 1 object stream
+ 105 PDF objects out of 1000 (max. 8388607)
+ 67 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
