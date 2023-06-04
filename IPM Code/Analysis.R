@@ -573,8 +573,8 @@ dev.off()
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 max_rep = 100
-scenario = c("none","all")
-max_yrs = 10
+#scenario = c("none","all")
+max_yrs = 1000
 lam <- matrix(nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){
   print(n)
