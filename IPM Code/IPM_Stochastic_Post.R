@@ -1070,7 +1070,7 @@ lambdaSim=function(params,                                  ## parameters
 
 max_rep = 100
 scenario = c("none","all")
-max_yrs = 10
+max_yrs = 1000
 # n = 1
 # lam <- vector()
 lam <- matrix(nrow = max_rep, ncol = 2)
