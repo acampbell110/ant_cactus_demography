@@ -40,22 +40,7 @@ vignettes/*.pdf
 
 .DS_Store
 .RDataTmp1
-.DS_Store
-Data Analysis/.DS_Store
-Data Analysis/STAN Models/.DS_Store
-.DS_Store
-Data Analysis/.DS_Store
-Data Analysis/.DS_Store
-Figures/.DS_Store
-Data Analysis/STAN Models/.DS_Store
-Manuscript/manuscript_draft.synctex.gz
-.DS_Store
-Data Analysis/.DS_Store
-Figures/.DS_Store
-Manuscript/manuscript_draft.aux
-Manuscript/manuscript_draft.log
-Manuscript/manuscript_draft.pdf
-Manuscript/manuscript_draft.synctex.gz
-Data Analysis/STAN Models/.DS_Store
-.DS_Store
-Figures/.DS_Store
+.synctex.gz
+.aux
+.log
+.gz
