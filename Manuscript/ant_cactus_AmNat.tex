@@ -6,12 +6,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lineno}
 \usepackage{titlesec}
+\newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}}
+\newcommand{\ali}[2]{{\color{pink}{#1}}\footnote{\textit{\color{pink}{#2}}}}  
+
+
 \titleformat{\section}[block]{\Large\bfseries\filcenter}{\thesection}{1em}{}
 \titleformat{\subsection}[block]{\Large\itshape\filcenter}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}[block]{\large\itshape}{\thesubsubsection}{1em}{}
-\titleformat{\paragraph}[runin]{\itshape}{\theparagraph}{1em}{}[. ]\renewcommand{\refname}{Literature Cited}
-\newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}}
-\newcommand{\ali}[2]{{\color{pink}{#1}}\footnote{\textit{\color{pink}{#2}}}}  
+\titleformat{\paragraph}[runin]{\itshape}{\theparagraph}{1em}{}[.]\renewcommand{\refname}{Literature Cited}
+
 
 %%%%%%%%%%%%%%%%%%%%%
 % Line numbering
@@ -85,21 +88,56 @@
 % articles. Please refrain from using section references (à la
 % section~\ref{section:CountingOwlEggs}), and refer to sections by name
 % (e.g. section ``Counting Owl Eggs'').
-
 Mutualisms are species interactions where all participants benefit, leading to higher individual fitness and increased population growth rates. 
 They are among the most widespread species interactions \citep{Bronstein1994,Chamberlain2014,Frederickson2013}, but can deteriorate into commensalism or parasitism  \citep{Rodriguez-Rodriguez2017,Song2020,Mandyam2014,Thrall2007, Bahia2022}.
 %One reason they are so ubiquitous is they take many forms in nature, including defense for food or housing \cite{Willmer1997}, pollination and dispersal for food \cite{Sakai2002,Burns2004}, resource uptake for housing \cite{Holland2010}, etc. 
 Mutualisms are considered more context dependent than other species interactions \citep{Chamberlain2014,Frederickson2013}, meaning the magnitude and sign of interaction strength are often determined by environmental conditions and species' identities.
 
-Mutualism is defined at the level of a species pair (+/+), but these interactions are embedded within multi-species communities. 
-Growing evidence suggests that pairwise interactions are poor predictors of the net effects of multi-species mutualism \cite{Afkhami2014,Palmer2010}. 
+Mutualism is defined at the level of a species pair (+/+) but these interactions are embedded within multi-species communities, and growing evidence suggests that pairwise interactions are poor predictors of the net effects of multi-species mutualism \citep{Afkhami2014,Palmer2010}. 
 A focal mutualist may interact with multiple guilds of partner types (e.g., plants that interact with pollinators, seed dispersers, soil microbes, and ant defenders) or with multiple partner species within the same guild (e.g., plants visited by multiple pollinator species). 
-Even within a mutualist guild, partner species often differ in the amount or type of goods or services they provide, making partner identity an important source of contingency in mutualism \cite{Stanton2003}. 
+Even within a mutualist guild, partner species often differ in the amount or type of goods or services they provide, making partner identity an important source of contingency in mutualism \citep{Stanton2003}. 
 Whether and how partner diversity modifies the demographic effects of mutualistic interactions remain open questions within relevance in applied settings such as agriculture \citep{rogers2014bee}, restoration (cite), and pest management (cite). 
 
-There are multiple mechanisms by which partner diversity can influence the net benefits accrued by a focal mutualist, mirroring the mechanisms by which, at a larger scale of organization, biodiversity can influence ecosystem function (BEF chapter). 
-When there is a consistent hierarchy of fitness effects -- a consistent ranking of best to worst mutualists -- a more diverse sample of the partner community may be more likely to include the best partner \cite{Frederickson2013}.
-When this leads to the fitness of a focal mutualist interacting with multiple partners being equal to the fitness of a focal mutualist interacting with only the highest quality partner, sampling effect can explain the positive effects of partner diversity \cite{Batstone2018}. 
+There are multiple mechanisms by which partner diversity can influence the net benefits accrued by a focal mutualist -- mirroring the mechanisms by which, at a larger scale of organization, biodiversity can influence ecosystem function (BEF chapter). 
+First, when there is a hierarchy of fitness effects -- a consistent ranking of best to worst mutualists -- a more diverse sample of the partner community may be more likely to include the best partner \cite{Frederickson2013}.
+This can lead to an apparent benefit of diversity driven by a sampling effect \cite{Batstone2018}. 
+However, if partner associations are mutually exclusive then partner diversity may impose opportunity costs, leading to negative effects of a diverse mutualist assemblage relative to exclusive association with the best partner \citep{Miller2007}. 
+Second, even within a single mutualist guild, the benefits conferred by alternative partner species can vary in type, and not just degree \cite{Stachowicz2005,Bronstein2006,Stanton2003}. 
+For example, [give example].
+This can lead to a positive effect of partner diversity through complementarity of alternative functions \cite{Batstone2018}. 
+Interference or synergies between partners can make their combined effect different than the expected from the sum of complementary functions (cite). 
+Third, partner species can have species-specific responses to the environment, either spatially \citep{Ollerton2006} or temporally \citep{Alarcon2008}. 
+Multiple partners can therefore act as a 'portfolio' that stabilizes fitness benefits across environmental stochasticity or temporal heterogeneity, leading to positive effects of partner diversity through the portfolio effect \cite{Batstone2018,Lazaro2022}. 
+
+Partner diversity can have different effects depending on whether partners are present all at once or sequentially (partner turnover) \citep{Djieto-Lordon2005, Ness2006, Bruna2014}. 
+Sequential associations are likely when alternative partners engage in interference comptetition for access to a shared mutualist (cite examples, including non-ant-plant examples). 
+Turnover can happen at different timescales, from minutes to years \citep{Oliveira1999,Horvitz1986}. 
+The frequency of partner turnover can impact the level of benefits received by the focal mutualist, particularly if the benefits continue to accumulate (e.g., when sequential partners provide complementary functions) or if they saturate over time \citep{Sachs2004}.
+Directionality of turnover can also influence diversity effects, particularly if partner identity changes consistently across ontogeny of a focal mutualist \citep{Fonseca2003}.
+For example, plant susceptibility to enemies can change across life stages \citep{Boege2005,Barton2010}, so the benefits of defensive mutualism with ants are greatest when more defensive partner species align with more vulnerable life stages \citep{Djieto-Lordon2005}.
+
+Defensive ant-plant mutualisms -- where plants provide food and/or housing to ants that in turn defend them from enemies -- are widespread interactions that offer valuable model systems for the ecology and evolution of mutualism \citep{Bronstein1998, Bronstein2006}. 
+Ant-plant mutualisms are commonly multi-species, where a guild of ant partner species share, and often compete for, a plant mutualist (examples), including dynamic turnover patterns between partners that may differ in quantity and quality of defensive services (cite). 
+While these interactions have been well studied \citep{Ness2006,Beattie1985,Schultheiss2022}, few have considered how diversity within ant defender guilds \citep{Stanton2013} or temporal fluctuations in partner interactions \citep{Tgaard2015} affect the overall benefits of mutualism for the plant partner. \footnote{It is noticeable to anyone who knows this literature that you do not cite Palmer et al. 2010 in this paragraph. I think this paragraph gives a nice intro to ant-plant studies but I think you need a more thorough summary of what is known about effects of partner diversity in these systems (including Palmer), and what outstanding gaps in knowledge this study will fill.}
+
+This study examined the consequences of partner diversity in a food-for-protection mutualism between the tree cholla cactus (\textit{Cylindriopuntia imbricata}), a long-lived EFN-bearing plant, and multiple species of ant partners.
+Previous studies have shown that herbivory by specialized insect herbivores negatively affects plant fitness \cite{Miller2009}, and ant defense reduces herbivore damage \cite{Miller2007}. 
+Tree cholla are tended by two common ant species (\textit{Liometopum apiculatum} and \textit{Crematogaster opuntiae}) and several infrequent species, all of which are ground-nesting. 
+These ant species locally co-occur at the scale of meters, but individual plants are typically tended by only one species that patrols the plant around-the-clock and maintains control of the plant's nectar resources for an entire growing season \citep{Ohm2014,donald2022does}. 
+Switches between partner species, or between vacancy and ant occupancy, commonly occur from one growing season to the next \citep{Miller2007}. 
+Prior experiments suggested a hierarchy of mutualist quality, with \textit{Liometopum apiculatum} providing strong fitness benefits and \textit{Crematogaster opuntiae} actually having net negative fitness effects though deterrence of pollinators \citep{Miller2007,Ohm2014}. 
+However, those studies did not consider variation in ant defense across the plant life cycle, nor did they account for inter-annual fluctuations, and therefore may have missed important mechanisms through which different partner species, and their combination, may be beneficial. 
+
+In this study we used a unique long-term data set that allows us to explore mutualistic associations with multiple partner species and how the demographic effects of alternative partner species varied across the range of plant size structure and nearly 20 years of inter-annual fluctuations. 
+We used this observational data set, contextualized by previous experiments, to ask whether and through which mechanism(s) partner diversity affects the fitness benefits of mutualism for the focal plant partner. 
+Specifically, we asked:
+\begin{enumerate}	
+	\item{What are the demographic effects of association with alternative partners and how do these effects fluctuate across years?}
+	\item{What are the frequency and direction of partner turnover across the plant life cycle?}	
+	\item{What is the net effect of partner diversity on plant fitness, and what mechanism(s) explain(s) this effect?}
+\end{enumerate}
+We used a hierarchical Bayesian statistical approach to estimate demographic vital rates for hosts in different states of ant occupancy, and to quantify state-dependent partner turnover. 
+We then used a multi-state integral projection model (IPM) that combines diverse effects on vital rates and pathways of partner turnover to quantify effects of partner diversity on plant fitness. 
 
 \section*{Methods}
 
