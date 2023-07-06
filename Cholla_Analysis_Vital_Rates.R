@@ -8,7 +8,11 @@
 ## First read the data in 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
-cactus <- read.csv("cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
+
+levels(cactus$ant_t)
+levels(cactus$ant_t1)
+
 
 ##############################################################################################
 ##
@@ -39,59 +43,71 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
 ########## growth model with a skew normal distribution -- fixed effects: previous size and ant state, ##############
 ########## random effects: plot and year, size variation is included for both the omega and alpha estimates #########
 fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, 
-                      warmup = 1000, iter = 5000, chains = 3, cores = 3, thin = 2)
-## extract the parameters from the model and save a random selection of the iterations
-grow_outputs_skew <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","a_0","a_size","sigma_w","sigma_u"))
-grow_outputs_skew_draws<-sample(nrow(grow_outputs_skew),1000)
-write.csv(grow_outputs_skew_draws, "grow_outputs_skew.csv")
-## extract the xi, omega, and alpha parameters from the model and save a random selection of the interactions
-grow_xi_skew <- rstan::extract(fit_grow_skew, pars = c("xi"))
-grow_xi_skew_draws<-sample(nrow(grow_xi_skew),1000)
-write.csv(grow_xi_skew_draws, "grow_xi_skew.csv")
-grow_omega_skew <- rstan::extract(fit_grow_skew, pars = c("omega"))
-grow_omega_skew_draws<-sample(nrow(grow_omega_skew),1000)
-write.csv(grow_omega_skew_draws, "grow_omega_skew.csv")
-grow_alpha_skew <- rstan::extract(fit_grow_skew,pars = c("alpha"))
-grow_alpha_skew_draws<-sample(nrow(grow_alpha_skew),1000)
-write.csv(grow_alpha_skew_draws, "grow_alpha_skew.csv")
+                      warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 2)
+########## extract the parameters from the model and save a random selection of the iterations
+## list all parameters
+fit_grow_skew@model_pars
+## pull all iterations for parameters and save as a data frame
+grow_outputs <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","a_0","a_size","sigma_w","sigma_u"))
+grow_outputs <- as.data.frame(grow_outputs)
+## pull 1000 random rows from the data frame and export it
+draws<-sample(nrow(grow_outputs),1000)
+grow.params <- grow_outputs[draws,]
+write.csv(grow.params, "grow.params.csv")
+########## Xi
+## pull all iterations for parameters and save as a data frame
+grow_xi <- rstan::extract(fit_grow_skew, pars = c("xi"))
+grow_xi <- as.data.frame(grow_xi)
+## pull 1000 random rows from the data frame and export it
+grow.xi <- grow_xi[draws,]
+write.csv(grow.xi, "grow.xi.csv")
+########## Omega
+grow_omega <- rstan::extract(fit_grow_skew, pars = c("omega"))
+grow_omega <- as.data.frame(grow_omega)
+## pull 1000 random rows from the data frame and export it
+grow.omega <- grow_omega[draws,]
+write.csv(grow.omega, "grow.omega.csv")
+########## Alpha
+grow_alpha <- rstan::extract(fit_grow_skew, pars = c("xi"))
+grow_alpha <- as.data.frame(grow_alpha)
+## pull 1000 random rows from the data frame and export it
+grow.alpha <- grow_alpha[draws,]
+write.csv(grow.alpha, "grow.alpha.csv")
 ########### Check the posterior distribution of the model and the convergence of each of the parameters
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
-n_post_draws <- 100
-post_draws <- sample.int(dim(fit_grow_skew)[1], n_post_draws)
 y <- stan_data_grow_skew$y
 ant <- stan_data_grow_skew$ant
 ## Read in the data and format it properly to use to simulate data
 ## remove the first column which is the iteration id and format as a matrix.
-outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs_skew.csv", header = TRUE,stringsAsFactors=T)
+outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
 outputs <- outputs[,c(-1)]
-outputs <- as.matrix(outputs)
-## xi
-xi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_xi_skew.csv", header = TRUE,stringsAsFactors=T)
-#xi <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_xi_skew.csv", header = TRUE,stringsAsFactors=T)
+outs <- as.matrix(outputs)
+########## xi
+xi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.xi.csv", header = TRUE,stringsAsFactors=T)
 xi <- xi[,c(-1)]
 xi <- as.matrix(xi)
-## omega
-omega <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_omega_skew.csv", header = TRUE,stringsAsFactors=T)
+########## omega
+omega <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.omega.csv", header = TRUE,stringsAsFactors=T)
 #omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_omega_skew.csv", header = TRUE,stringsAsFactors=T)
 omega <- omega[,c(-1)]
 omega <- as.matrix(omega)
-## alpha
-alpha <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
+########## alpha
+alpha <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.alpha.csv", header = TRUE,stringsAsFactors=T)
 #alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
 alpha <- alpha[,c(-1)]
 alpha <- as.matrix(alpha)
 ## Simulate data using the model outputs
-y_sim <- matrix(NA, n_post_draws,length(y))
+y_sim <- matrix(NA, 1000,length(y))
 dim(y_sim) ## Each row is an iteration, each column is a data point
-for(i in 1:n_post_draws){
+for(i in 1:1000){
   y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
 }
 ## Plot the simulated data over the real data (separated by ant partners)
 ## This looks pretty good
 png(file = "grow_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,], group = ant)
+bayesplot::ppc_dens_overlay_grouped(y, y_sim, group = ant) + xlim(-50,50)
 dev.off()
 ## Plot the convergence of all chains for parameters
 ## They all converge
@@ -166,12 +182,15 @@ plot(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 points(x = sim_bins2$bin_mean, y = sim_bins2$kurt_sim, col = "pink", pch = 20,cex = 2)
 points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 dev.off()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
+
+
+#######################################################################################################
 #######################################################################################################
 ##
 ##  Survival Model -- What is the probability of surviving to the next time step?   
 ##
+#######################################################################################################
 #######################################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are
 ## ready to feed into the stan model
@@ -196,59 +215,52 @@ stan_data_surv <- list(N = nrow(survival_data), ## number of observations
 ) 
 
 ## Run the Model
-fit_surv <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_data_surv, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-summary(fit_surv)[1]
-surv_out <- rstan::extract(fit_surv, pars = c("w","beta0","beta1","u","sigma_u","sigma_w"))
-surv_mu <- rstan::extract(fit_surv, pars = c("mu"))$mu
-surv_sigma <- rstan::extract(fit_surv, pars = c("sigma"))$sigma
-write.csv(surv_outputs, "surv_outputs.csv")
-write.csv(surv_mu, "surv_mu.csv")
-write.csv(surv_sigma, "surv_sigma.csv")
-
-freq <- glm(survival_data$Survival_t1 ~ survival_data$logsize_t + (as.factor(survival_data$ant_t)), family = "binomial")
-summary(freq)
-## Compare Freq to Bayes
-vac_freq <- (coef(freq)[1] + coef(freq)[2]*size_vac) ## Vacant
-other_freq <- (coef(freq)[1] + coef(freq)[2]*size_other + coef(freq)[3]) ## Other
-crem_freq <- (coef(freq)[1] + coef(freq)[2]*size_crem + coef(freq)[4]) ## Crem
-liom_freq <- (coef(freq)[1] + coef(freq)[2]*size_liom + coef(freq)[5]) ## Liom
-vac_bayes <- quantile(surv_out$beta0.1,0.5) + size_vac * quantile(surv_out$beta1.1,0.5)
-other_bayes <- quantile(surv_out$beta0.2,0.5) + size_other * quantile(surv_out$beta1.2,0.5)
-crem_bayes <- quantile(surv_out$beta0.3,0.5) + size_crem * quantile(surv_out$beta1.3,0.5)
-liom_bayes <- quantile(surv_out$beta0.4,0.5) + size_liom * quantile(surv_out$beta1.4,0.5)
-## Vacant -- very good
-plot(size_vac, invlogit(vac_freq), col = vaccol, ylim = c(0,1))
-lines(size_vac, invlogit(vac_bayes), col = vaccol, lwd = 3) 
-## Other -- underestimating at small values
-points(size_other, invlogit(other_freq), col = othercol, ylim = c(0,1))
-lines(size_other, invlogit(other_bayes), col = othercol, lwd = 3)
-## Crem -- underestimating at small values
-points(size_crem, invlogit(crem_freq), col = cremcol, ylim = c(0,1))
-lines(size_crem, invlogit(crem_bayes), col = cremcol, lwd = 3)
-## Liom -- underestimating at small values
-points(size_liom, invlogit(liom_freq), col = liomcol, ylim = c(0,1))
-lines(size_liom, invlogit(liom_bayes), col = liomcol, lwd = 3)
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+fit_surv <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_data_surv, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+########## extract the parameters from the model and save a random selection of the iterations
+## list all parameters
+fit_surv@model_pars
+draws<-sample(nrow(grow_outputs),1000)
+## pull all iterations for parameters and save as a data frame
+surv_outputs <- rstan::extract(fit_surv, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
+surv_outputs <- as.data.frame(surv_outputs)
+## pull 1000 random rows from the data frame and export it
+surv.params <- surv_outputs[draws,]
+write.csv(surv.params, "surv.params.csv")
+## mu
+surv_mu <- rstan::extract(fit_surv, pars = c("mu"))
+surv_mu <- as.data.frame(surv_mu)
+## pull 1000 random rows from the data frame and export it
+surv.mu <- surv_mu[draws,]
+write.csv(surv.mu, "surv.mu.csv")
+## sigma
+surv_sigma <- rstan::extract(fit_surv, pars = c("sigma"))
+surv_sigma <- as.data.frame(surv_sigma)
+## pull 1000 random rows from the data frame and export it
+surv.sigma <- surv_sigma[draws,]
+write.csv(surv.sigma, "surv.sigma.csv")
 
 ## Visualize the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 #overlay plot data
-y <- survival_data$Survival_t1
-surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_outputs.csv", header = TRUE,stringsAsFactors=T)
+y <- stan_data_surv$y_surv
+ant <- stan_data_surv$ant
+surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv.params.csv", header = TRUE,stringsAsFactors=T)
 surv_data <- surv_data[,c(-1)]
 surv_data <- as.matrix(surv_data)
-surv_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv_mu.csv", header = TRUE,stringsAsFactors=T)
+surv_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv.mu.csv", header = TRUE,stringsAsFactors=T)
 surv_mu <- surv_mu[,c(-1)]
 surv_mu <- as.matrix(surv_mu)
-y_sim <- matrix(NA, n_post_draws,length(y))
-for(i in 1:n_post_draws){
+y_sim <- matrix(NA, 1000,length(y))
+for(i in 1:1000){
   #y_sim[i,] <- rbinom(n=length(y), mean = surv_yrep[i,], sd = surv_sigma[i,])
   y_sim[i,] <- rbinom(n=length(y), size=1, prob = invlogit(mean(surv_mu[i,])))
 }
-samp100 <- sample(nrow(y_sim), 100)
+view(y_sim)
 ## Overlay Plots
-png(file = "surv_ant_post.png")
+png(file = "surv_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,],group = as.integer(as.factor(survival_data$ant_t)))
+bayesplot::ppc_dens_overlay_grouped(y, y_sim,group = ant)
 dev.off()
 ## Convergence Plots
 png(file = "surv_conv.png")
@@ -256,8 +268,15 @@ bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+
+
+
 ######################################################################################################
+######################################################################################################
+####
 #### Flowering Model -- What are the total number of fruits produced in the next time step? ##########
+####
+######################################################################################################
 ######################################################################################################
 flower_data_orig <- cactus[ , c("TotFlowerbuds_t", "logsize_t","Year_t","Plot")]
 flower_data_orig <- subset(flower_data_orig, TotFlowerbuds_t > 0)
@@ -279,35 +298,47 @@ stan_data_flow_trunc <- list(N = nrow(flower_data), ## number of observations
                              year = as.integer(as.factor(flower_data$Year_t)) ## predictor years
 ) 
 ## Run the Model
-fit_flow_trunc <- stan(file = "Data Analysis/STAN Models/flower_trunc_code.stan", data = stan_data_flow_trunc, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-flow_trunc_outputs <- rstan::extract(fit_flow_trunc, pars = c("beta0","beta1","u","w","sigma_u","sigma_w"))
-write.csv(flow_trunc_outputs, "flow_trunc_outputs.csv")
-flow_mu <- rstan::extract(fit_flow_trunc, pars = c("mu"))$mu
-write.csv(flow_mu, "flow_mu.csv")
-flow_phi <- rstan::extract(fit_flow_trunc, pars = c("phi"))$phi
-write.csv(flow_phi, "flow_phi.csv")
-summary(fit_flow_trunc)[1]
+fit_flow_trunc <- stan(file = "Data Analysis/STAN Models/flower_trunc_code.stan", data = stan_data_flow_trunc, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_flow_trunc@model_pars
+draws<-sample(nrow(grow_outputs),1000)
+########## extract the parameters from the model and save a random selection of the iterations
+## list all parameters
+## pull all iterations for parameters and save as a data frame
+flow_outputs <- rstan::extract(fit_flow_trunc, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
+flow_outputs <- as.data.frame(flow_outputs)
+## pull 1000 random rows from the data frame and export it
+flow.params <- flow_outputs[draws,]
+write.csv(flow.params, "flow.params.csv")
+#### Phi
+flow_phi <- rstan::extract(fit_flow_trunc, pars = c("phi"))
+flow_phi <- as.data.frame(flow_phi)
+## pull 1000 random rows from the data frame and export it
+flow.phi <- flow_phi[draws,]
+write.csv(flow.phi, "flow.phi.csv")
+#### Mu
+flow_mu <- rstan::extract(fit_flow_trunc, pars = c("mu"))
+flow_mu <- as.data.frame(flow_mu)
+## pull 1000 random rows from the data frame and export it
+flow.mu <- flow_mu[draws,]
+write.csv(flow.mu, "flow.mu.csv")
 ## Check the posterior distributions
 y <- flower_data$TotFlowerbuds_t
-flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow_trunc_outputs.csv", header = TRUE,stringsAsFactors=T)
+flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow.params.csv", header = TRUE,stringsAsFactors=T)
 # Create the y rep (needs to be done outside of STAN because of the 0 truncation)
-n_post_draws <- 100
-post_draws <- sample.int(dim(flow_mu)[1], n_post_draws)
-y_sim <- matrix(NA,n_post_draws,length(y))
-for(i in 1:n_post_draws){
-  ## sample panicle data (zero-truncated NB)
+y_sim <- matrix(NA,1000,length(y))
+for(i in 1:1000){
   for(j in 1:length(y)){
-    y_sim[i,j] <- sample(x=1:1000,size=1,replace=T,prob=dnbinom(1:1000, mu = exp(flow_mu[i,j]), size=flow_phi[i]) / (1 - dnbinom(0, mu = exp(flow_mu[i,j]), size=flow_phi[i])))
+    y_sim[i,j] <- sample(x=1:1000,size=1,replace=T,prob=dnbinom(1:1000, mu = exp(flow.mu[i,j]), size=flow.phi[i]) / (1 - dnbinom(0, mu = exp(flow.mu[i,j]), size=flow.phi[i])))
   }
 }
 ## Plot the posterior distributions
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("flow_trunc_post.png")
+png("flow_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay(y, y_sim[samp100,])
+bayesplot::ppc_dens_overlay(y, y_sim)
 dev.off()
 ## Convergence Plots
-png(file = "flow_trunc_conv.png")
+png(file = "flow_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_flow_trunc, pars=c("beta0", "beta1")))
 dev.off()
@@ -318,6 +349,9 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #######################################################################################################
 ## Create Stan Data
 viability_data_orig <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "logsize_t","Year_t","Plot")]
+viability_data_orig$TotFlowerbuds_t1 <- as.integer(as.character(viability_data_orig$TotFlowerbuds_t1))
+viability_data_orig$ABFlowerbuds_t1 <- as.integer(as.character(viability_data_orig$ABFlowerbuds_t1))
+viability_data_orig$Goodbuds_t1 <- as.integer(as.character(viability_data_orig$Goodbuds_t1))
 viability_data_orig <- subset(viability_data_orig, TotFlowerbuds_t1 > 0)
 viability_data <- na.omit(viability_data_orig)
 levels(viability_data$ant_t)
@@ -340,52 +374,46 @@ stan_data_viab <- list(N = nrow(viability_data), ## number of observations
                        year = as.integer(as.factor(viability_data$Year_t)) ## predictor years
 ) 
 ## Run the Model
-fit_viab <- stan(file = "Data Analysis/STAN Models/viab_code.stan", data = stan_data_viab, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-viab_mu <- rstan::extract(fit_viab, pars = c("mu"))$mu
-viab_outputs <- rstan::extract(fit_viab, pars = c("w","beta0","u","sigma_u","sigma_w"))
-viab_sigma <- rstan::extract(fit_viab, pars = c("sigma"))$sigma
-write.csv(viab_outputs, "viab_outputs.csv")
-write.csv(viab_mu, "viab_mu.csv")
-write.csv(viab_sigma, "viab_sigma.csv")
-summary(fit_viab)[1]
-
-
-freq <- glm(cbind(Goodbuds_t,ABFlowerbuds_t) ~ ant_t ,family="binomial",data=cactus)
-summary(freq)
-## Compare Freq to Bayes
-vac_freq <- (coef(freq)[1]) ## Vacant
-other_freq <- (coef(freq)[1] + coef(freq)[2]) ## Other
-crem_freq <- (coef(freq)[1] + coef(freq)[3]) ## Crem
-liom_freq <- (coef(freq)[1] + coef(freq)[4]) ## Liom
-liom_bayes <- invlogit(mean(viab_out$beta0.4))
-crem_bayes <- invlogit(mean(viab_out$beta0.3))
-vac_bayes <- invlogit(mean(viab_out$beta0.1))
-other_bayes <- invlogit(mean(viab_out$beta0.2))
-viability_data$viab <- viability_data$Goodbuds_t1/viability_data$TotFlowerbuds_t1
-vac_real <- viability_data$viab[viability_data$ant_t == "vacant"]
-other_real <- viability_data$viab[viability_data$ant_t == "other"]
-crem_real <- viability_data$viab[viability_data$ant_t == "crem"]
-liom_real <- viability_data$viab[viability_data$ant_t == "liom"]
-par(mfrow = c(1,3))
-barplot(c(invlogit(vac_freq), invlogit(other_freq), invlogit(crem_freq), invlogit(liom_freq)), col = c(vaccol, othercol, cremcol, liomcol), ylim = c(0,1))
-barplot(c(vac_bayes,other_bayes,crem_bayes,liom_bayes), col = c(vaccol, othercol, cremcol, liomcol))
-barplot(c(mean(vac_real), mean(other_real), mean(crem_real), mean(liom_real)),col = c(vaccol,othercol,cremcol,liomcol))
-
+fit_viab <- stan(file = "Data Analysis/STAN Models/viab_code.stan", data = stan_data_viab, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_viab@model_pars
+draws<-sample(nrow(grow_outputs),1000)
+## list all parameters
+## pull all iterations for parameters and save as a data frame
+viab_outputs <- rstan::extract(fit_viab, pars = c("w","beta0","u","sigma_w","sigma_u"))
+viab_outputs <- as.data.frame(viab_outputs)
+## pull 1000 random rows from the data frame and export it
+viab.params <- viab_outputs[draws,]
+write.csv(viab.params, "viab.params.csv")
+## pull all iterations for parameters and save as a data frame
+viab_sigma <- rstan::extract(fit_viab, pars = c("sigma"))
+viab_sigma <- as.data.frame(viab_sigma)
+## pull 1000 random rows from the data frame and export it
+viab.sigma <- viab_sigma[draws,]
+write.csv(viab.sigma, "viab.sigma.csv")
+## pull all iterations for parameters and save as a data frame
+viab_mu <- rstan::extract(fit_viab, pars = c("mu"))
+viab_mu <- as.data.frame(viab_mu)
+## pull 1000 random rows from the data frame and export it
+viab.mu <- viab_mu[draws,]
+write.csv(viab.mu, "viab.mu.csv")
 
 ## Check the Posterior Distribution
-n_post_draws <- 100
-post_draws <- sample.int(dim(viab_yrep)[1], n_post_draws)
 y <- viability_data$Goodbuds_t1
-y_sim <- matrix(NA,n_post_draws,length(y))
-for(i in 1:n_post_draws){
+viab_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.params.csv", header = TRUE,stringsAsFactors=T)
+viab_data <- viab_data[,c(-1)]
+viab_data <- as.matrix(viab_data)
+viab_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.mu.csv", header = TRUE,stringsAsFactors=T)
+viab_mu <- viab_mu[,c(-1)]
+viab_mu <- as.matrix(viab_mu)
+y_sim <- matrix(NA,1000,length(y))
+for(i in 1:1000){
   y_sim[i,] <- rbern(n = length(y), prob = invlogit(mean(viab_mu[i,])))
 }
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
 png(file = "viab_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay(y, y_sim[samp100,])
+bayesplot::ppc_dens_overlay(y, y_sim)
 dev.off()
 png(file = "viab_ant_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
@@ -420,34 +448,49 @@ stan_data_repro <- list(N = nrow(reproductive_data), ## number of observations
                         plot = as.integer(as.factor(reproductive_data$Plot)), ## predictor plots
                         year = as.integer(as.factor(reproductive_data$Year_t)) ## predictor years
 ) 
-
-plot(reproductive_data$logsize_t1,reproductive_data$flower1_YN)
-flow <-glm(flower1_YN~logsize_t1,data=reproductive_data,family="binomial")
-lines(-5:15,exp(coef(flow)[1]+coef(flow)[2]*-5:15)/(1+exp(coef(flow)[1]+coef(flow)[2]*-5:15)))
-
 ## Run the Model
 #Check if the model is written to the right place
 #stanc("STAN Models/repro_mix_ant.stan")
-fit_repro <- stan(file = "Data Analysis/STAN Models/repro_code.stan", data = stan_data_repro, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-repro_outputs <- rstan::extract(fit_repro, pars = c("beta0","u","w","sigma_u","sigma_w","beta1"))
-repro_mu <- rstan::extract(fit_repro, pars = c("mu"))$mu
-repro_sigma <- rstan::extract(fit_repro, pars = c("sigma"))$sigma
-write.csv(repro_outputs, "repro_outputs.csv")
-write.csv(repro_mu, "repro_mu.csv")
-write.csv(repro_sigma, "repro_sigma.csv")
-summary(fit_repro)[1]
+fit_repro <- stan(file = "Data Analysis/STAN Models/repro_code.stan", data = stan_data_repro, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_repro@model_pars
+########## extract the parameters from the model and save a random selection of the iterations
+## list all parameters
+## pull all iterations for parameters and save as a data frame
+repro_outputs <- rstan::extract(fit_repro, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
+repro_outputs <- as.data.frame(repro_outputs)
+## pull 1000 random rows from the data frame and export it
+repro.params <- repro_outputs[draws,]
+write.csv(repro.params, "repro.params.csv")
+## Mu
+## pull all iterations for parameters and save as a data frame
+repro_mu <- rstan::extract(fit_repro, pars = c("mu"))
+repro_mu <- as.data.frame(repro_mu)
+## pull 1000 random rows from the data frame and export it
+repro.mu <- repro_mu[draws,]
+write.csv(repro.mu, "repro.mu.csv")
+## Sigma
+## pull all iterations for parameters and save as a data frame
+repro_sigma <- rstan::extract(fit_repro, pars = c("sigma"))
+repro_sigma <- as.data.frame(repro_sigma)
+## pull 1000 random rows from the data frame and export it
+repro.sigma <- repro_sigma[draws,]
+write.csv(repro.sigma, "repro.sigma.csv")
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro_outputs.csv", header = TRUE,stringsAsFactors=T)
+repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.params.csv", header = TRUE,stringsAsFactors=T)
+repro_data <- repro_data[,c(-1)]
+repro_data <- as.matrix(repro_data)
+repro_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.mu.csv", header = TRUE,stringsAsFactors=T)
+repro_mu <- repro_mu[,c(-1)]
+repro_mu <- as.matrix(repro_mu)
 y <- as.numeric(reproductive_data$flower1_YN)
-y_sim <- matrix(NA,n_post_draws,length(y))
-for(i in 1:n_post_draws){
+y_sim <- matrix(NA,1000,length(y))
+for(i in 1:1000){
   y_sim[i,] <- rbern(n = length(y), prob = invlogit(mean(repro_mu[i,])))
 }
-samp100 <- sample(nrow(y_sim), 100)
 ## Overlay Plots
 png(file = "repro_post.png")
-bayesplot::ppc_dens_overlay(y, y_sim[samp100,])
+bayesplot::ppc_dens_overlay(y, y_sim)
 dev.off()
 ## Convergence Plots
 png(file = "repro_conv.png")
@@ -502,33 +545,55 @@ stan_data_seed <- list(N = nrow(seed_data),
                        seed = seed_data$seed_count)
 
 ## Run the model
-fit_seed <- stan(file = "Data Analysis/STAN Models/seed_code.stan", data = stan_data_seed, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
+fit_seed <- stan(file = "Data Analysis/STAN Models/seed_code.stan", data = stan_data_seed, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_seed@model_pars
+## pull all iterations for parameters and save as a data frame
 seed_outputs <- rstan::extract(fit_seed, pars = c("beta0"))
-seed_mu <- rstan::extract(fit_seed, pars = c("y_rep"))$y_rep
-write.csv(seed_outputs, "seed_outputs.csv")
-write.csv(seed_mu, "seed_mu.csv")
-summary(fit_seed)[1]
-
-## Compare to Real and Bayes
-crem_bayes <- exp(quantile(seed_out$beta0.1,0.5))
-liom_bayes <- quantile(seed_out$beta0.2,0.5)
-vac_bayes <- quantile(seed_out$beta0.3,0.5)
-crem_real <- mean(seed$seed_count[seed$ant_state == "Crem"])
-liom_real <- mean(seed$seed_count[seed$ant_state == "Liom"])
-vac_real <- mean(seed$seed_count[seed$ant_state == "Vacant"])
-barplot(c(crem_real,liom_real,vac_real), col = c(cremcol, liomcol, vaccol))
-barplot(c(exp(vac_bayes),exp(crem_bayes),exp(liom_bayes)), col = c(cremcol, liomcol, vaccol))
-
+seed_outputs <- as.data.frame(seed_outputs)
+## pull 1000 random rows from the data frame and export it
+seed.params <- seed_outputs[draws,]
+write.csv(seed.params, "seed.params.csv")
+## mu
+seed_mu <- rstan::extract(fit_seed, pars = c("mu"))
+seed_mu <- as.data.frame(seed_mu)
+## pull 1000 random rows from the data frame and export it
+seed.mu <- seed_mu[draws,]
+write.csv(seed.mu, "seed.mu.csv")
+## sigma
+seed_sigma <- rstan::extract(fit_seed, pars = c("sigma"))
+seed_sigma <- as.data.frame(seed_sigma)
+## pull 1000 random rows from the data frame and export it
+seed.sigma <- seed_sigma[draws,]
+write.csv(seed.sigma, "seed.sigma.csv")
+## phi
+seed_phi <- rstan::extract(fit_seed, pars = c("phi"))
+seed_phi <- as.data.frame(seed_phi)
+## pull 1000 random rows from the data frame and export it
+seed.phi <- seed_phi[draws,]
+write.csv(seed.phi, "seed.phi.csv")
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-y <- seed_data$seed_count
-samp100 <- sample(nrow(seed_mu), 500)
+seed_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.params.csv", header = TRUE,stringsAsFactors=T)
+seed_data <- seed_data[,c(-1)]
+seed_data <- as.matrix(seed_data)
+seed_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.mu.csv", header = TRUE,stringsAsFactors=T)
+seed_mu <- seed_mu[,c(-1)]
+seed_mu <- as.matrix(seed_mu)
+seed_phi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.phi.csv", header = TRUE,stringsAsFactors=T)
+seed_phi <- seed_phi[,c(-1)]
+seed_phi <- as.matrix(seed_phi)
+y <- stan_data_seed$seed
+ant = stan_data_seed$ant
+y_sim <- matrix(NA,1000,length(y))
+for(i in 1:1000){
+  y_sim[i,] <- rnegbin(n = length(y), mu = seed_mu[i,], theta = seed_phi[i,])
+}
 ## Overlay Plots
 png(file = "seed_post.png")
-bayesplot::ppc_dens_overlay(y, seed_mu[samp100,])
+bayesplot::ppc_dens_overlay(y, y_sim)
 dev.off()
 png(file = "seed_ant_post.png")
-bayesplot::ppc_dens_overlay_grouped(y, seed_mu[samp100,],group = as.integer(as.factor(seed_data$ant)))
+bayesplot::ppc_dens_overlay_grouped(y, y_sim,group = ant)
 dev.off()
 ## Convergence Plots
 png(file = "seed_conv.png")
@@ -555,19 +620,30 @@ stan_data_seed_surv <- list(N = nrow(precensus.dat),
                             y = precensus.dat$survive0405)
 
 ## Run the model
-fit_seed_surv <- stan(file = "Data Analysis/STAN Models/seed_surv_code.stan", data = stan_data_seed_surv, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-seed_surv_outputs <- rstan::extract(fit_seed_surv, pars = c("beta0","w","sigma_w","sigma"))
-seed_surv_mu <- rstan::extract(fit_seed_surv, pars = c("y_rep"))$y_rep
-write.csv(seed_surv_outputs, "seed_surv_outputs.csv")
-write.csv(seed_surv_mu, "seed_surv_mu.csv")
+fit_seed_surv <- stan(file = "Data Analysis/STAN Models/seed_surv_code.stan", data = stan_data_seed_surv, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_seed_surv@model_pars
+## pull all iterations for parameters and save as a data frame
+seed_surv_outputs <- rstan::extract(fit_seed_surv, pars = c("beta0","w","sigma_w","mu","sigma"))
+seed_surv_outputs <- as.data.frame(seed_surv_outputs)
+## pull 1000 random rows from the data frame and export it
+seed.surv.params <- seed_surv_outputs[draws,]
+write.csv(seed.surv.params, "seed.surv.params.csv")
+## yrep
+seed_surv_yrep <- rstan::extract(fit_seed_surv, pars = c("y_rep"))
+seed_surv_yrep <- as.data.frame(seed_surv_yrep)
+## pull 1000 random rows from the data frame and export it
+seed.surv.yrep <- seed_surv_yrep[draws,]
+write.csv(seed.surv.yrep, "seed.surv.yrep.csv")
 summary(fit_seed_surv)[1]
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 y <- precensus.dat$survive0405
-samp100 <- sample(nrow(seed_surv_mu), 100)
+seed_surv_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.surv.yrep.csv", header = TRUE,stringsAsFactors=T)
+seed_surv_mu <- seed_surv_mu[,c(-1)]
+seed_surv_mu <- as.matrix(seed_surv_mu)
 ## Overlay Plots
 png(file = "seed_surv_post.png")
-bayesplot::ppc_dens_overlay(y, seed_surv_mu[samp100,])
+bayesplot::ppc_dens_overlay(y, seed_surv_mu)
 dev.off()
 ## Convergence Plots
 png(file = "seed_surv_conv.png")
@@ -604,27 +680,45 @@ stan_data_germ2 <- list(N = nrow(germ.dat),
                         trials = germ.dat$Input-germ.dat$Seedlings04)
 
 ## Run a model 
-fit_germ1 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ1, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-fit_germ2 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ2, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-germ1_outputs <- rstan::extract(fit_germ1, pars = c("beta0","sigma","phi"))
-germ2_outputs <- rstan::extract(fit_germ2, pars = c("beta0","sigma","phi"))
-write.csv(germ1_outputs, "germ1_outputs.csv")
-write.csv(germ2_outputs, "germ2_outputs.csv")
-germ1_mu <- rstan::extract(fit_germ1, pars = c("y_rep"))$y_rep
-germ2_mu <- rstan::extract(fit_germ2, pars = c("y_rep"))$y_rep
-write.csv(germ1_mu, "germ1_mu.csv")
-write.csv(germ2_mu, "germ2_mu.csv")
-summary(fit_germ1)[1]
-summary(fit_germ2)[1]
-
+fit_germ1 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ1, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_germ2 <- stan(file = "Data Analysis/STAN Models/germ_code.stan", data = stan_data_germ2, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_germ1@model_pars
+fit_germ2@model_pars
+## pull all iterations for parameters and save as a data frame
+## germ 1 params
+germ1_outputs <- rstan::extract(fit_germ1, pars = c("beta0","mu","sigma"))
+germ1_outputs <- as.data.frame(germ1_outputs)
+## pull 1000 random rows from the data frame and export it
+germ1.params <- germ1_outputs[draws,]
+write.csv(germ1.params, "germ1.params.csv")
+## germ 2 params
+germ2_outputs <- rstan::extract(fit_germ2, pars = c("beta0","mu","sigma"))
+germ2_outputs <- as.data.frame(germ2_outputs)
+## pull 1000 random rows from the data frame and export it
+germ2.params <- germ2_outputs[draws,]
+write.csv(germ2.params, "germ2.params.csv")
+## germ 1 yrep
+germ1_yrep <- rstan::extract(fit_germ1, pars = c("y_rep"))
+germ1_yrep <- as.data.frame(germ1_yrep)
+## pull 1000 random rows from the data frame and export it
+germ1.yrep <- germ1_yrep[draws,]
+write.csv(germ1.yrep, "germ1.yrep.csv")
+## germ 2 yrep
+germ2_yrep <- rstan::extract(fit_germ2, pars = c("y_rep"))
+germ2_yrep <- as.data.frame(germ2_yrep)
+## pull 1000 random rows from the data frame and export it
+germ2.yrep <- germ2_yrep[draws,]
+write.csv(germ2.yrep, "germ2.yrep.csv")
 ## Check the Posteriors
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 ## Germ yr 1
 y <- germ.dat$Seedlings04/germ.dat$Input
-samp100 <- sample(nrow(germ1_mu), 100)
+germ1_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ1.yrep.csv", header = TRUE,stringsAsFactors=T)
+germ1_mu <- germ1_mu[,c(-1)]
+germ1_mu <- as.matrix(germ1_mu)
 ## Overlay Plots
 png(file = "germ1_post.png")
-bayesplot::ppc_dens_overlay(y, germ1_mu[samp100,])
+bayesplot::ppc_dens_overlay(y, germ1_mu)
 dev.off()
 ## Convergence Plots
 png(file = "germ1_conv.png")
@@ -632,10 +726,11 @@ bayesplot::mcmc_trace(As.mcmc.list(fit_germ1, pars=c("beta0")))
 dev.off()
 ## Germ yr 2
 y <- germ.dat$Seedlings05/(germ.dat$Input - germ.dat$Seedlings04)
-samp100 <- sample(nrow(germ2_mu), 100)
-## Overlay Plots
+germ2_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ2.yrep.csv", header = TRUE,stringsAsFactors=T)
+germ2_mu <- germ2_mu[,c(-1)]
+germ2_mu <- as.matrix(germ2_mu)## Overlay Plots## Overlay Plots
 png(file = "germ2_post.png")
-bayesplot::ppc_dens_overlay(y, germ2_mu[samp100,])
+bayesplot::ppc_dens_overlay(y, germ2_mu)
 dev.off()
 ## Convergence Plots
 png(file = "germ2_conv.png")
@@ -660,18 +755,30 @@ stan_data_rec <- list(N = length(seedling.dat$logsize_t1),
 )
 
 ## Run the model 
-fit_rec <- stan(file = "Data Analysis/STAN Models/rec_code.stan",data = stan_data_rec, warmup = 150, iter = 1000, chains = 3, cores = 3, thin = 1)
-rec_outputs <- rstan::extract(fit_rec, pars = c("beta0","sigma"))
-write.csv(rec_outputs,"rec_outputs.csv")
-rec_mu <- rstan::extract(fit_rec,pars = c("y_rep"))$y_rep
-write.csv(rec_mu, "rec_mu.csv")
+fit_rec <- stan(file = "Data Analysis/STAN Models/rec_code.stan",data = stan_data_rec, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
+fit_rec@model_pars
+## pull all iterations for parameters and save as a data frame
+## recruitment params
+rec_outputs <- rstan::extract(fit_rec, pars = c("beta0","mu","sigma"))
+rec_outputs <- as.data.frame(rec_outputs)
+## pull 1000 random rows from the data frame and export it
+rec.params <- rec_outputs[draws,]
+write.csv(rec.params, "rec.params.csv")
+## recruitment yrep
+rec_yrep <- rstan::extract(fit_rec, pars = c("y_rep"))
+rec_yrep <- as.data.frame(rec_yrep)
+## pull 1000 random rows from the data frame and export it
+rec.yrep <- rec_yrep[draws,]
+write.csv(rec.yrep, "rec.yrep.csv")
 ## Check Posterior Dist
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 y <- seedling.dat$logsize_t1
-samp100 <- sample(nrow(rec_mu), 100)
+rec_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/rec.yrep.csv", header = TRUE,stringsAsFactors=T)
+rec_mu <- rec_mu[,c(-1)]
+rec_mu <- as.matrix(rec_mu)
 ## Overlay Plots
 png(file = "rec_post.png")
-bayesplot::ppc_dens_overlay(y, rec_mu[samp100,])
+bayesplot::ppc_dens_overlay(y, rec_mu)
 dev.off()
 ## Convergence Plots
 png(file = "rec_conv.png")
@@ -692,7 +799,7 @@ cactus_real <- cactus_real[,c("ant_t_relevel","ant_t1_relevel","logsize_t", "ant
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 5, #number of predictors
-                       P = 14, #number of random effect predictors
+                       P = 16, #number of random effect predictors
                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
                        x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real), #design matrix
                        z = model.matrix(~0 + as.factor(Year_t), cactus_real),
@@ -700,23 +807,15 @@ multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possib
 )
 ## Run the model & save the results
 fit_multi <- stan(file = "Data Analysis/STAN Models/multi_mixed.stan", 
-                  data = multi_dat_real, warmup = 15, iter = 100, chains = 3)
-fit_multi1 <- stan(file = "Data Analysis/STAN Models/multi_prac_tom_Km1.stan",
-                   data = multi_dat_real, warmup = 150, iter = 1000, chains = 3)
-multi_out <- rstan::extract(fit_multi, pars = c("beta","beta_raw","theta","theta_raw"))
-write.csv(multi_out, "multi_outputs.csv")
-multi_out1 <- rstan::extract(fit_multi1, pars = c("beta","beta_raw"))
-write.csv(multi_out1, "multi_outputs1.csv")
-## Simulate Multinomial Yreps
-n_post_draws <- 100
-post_draws <- sample.int(dim(flow_yrep)[1], n_post_draws)
-y_sim <- matrix(NA,n_post_draws,length(y))
-for(i in 1:n_post_draws){
-  ## sample panicle data (zero-truncated NB)
-  for(j in 1:length(y)){
-    y_sim[i,j] <- sample(x=1:1000,size=1,replace=T,prob=dnbinom(1:1000, mu = exp(flow_yrep[i,j]), size=flow_phi[i]) / (1 - dnbinom(0, mu = exp(flow_yrep[i,j]), size=flow_phi[i])))
-  }
-}
+                  data = multi_dat_real, warmup = 1500, iter = 10000, chains = 3)
+fit_multi@model_pars
+## pull all iterations for parameters and save as a data frame
+## recruitment params
+multi_outputs <- rstan::extract(fit_multi, pars = c("beta","beta_raw","theta","theta_raw","sigma_w"))
+multi_outputs <- as.data.frame(multi_outputs)
+## pull 1000 random rows from the data frame and export it
+multi.params <- multi_outputs[draws,]
+write.csv(multi.params, "multi.params.csv")
 ## P
 ## plot the chains
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
@@ -733,77 +832,79 @@ summary(fit_multi)
 
 ########################################## ALL ANTS ############################################################################
 ## Calculate the probabilities of being tended by each ant species
+levels(cactus$ant_t)
+multi_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/multi.params.csv", header = TRUE,stringsAsFactors=T)
 size_dummy_real <- seq(min(cactus_real$logsize_t, na.rm = TRUE), max(cactus_real$logsize_t, na.rm = TRUE), by = 0.1)
-## Previously tended by none
-Denominator_vac <- exp(mean(multi_out1$beta[,1,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
-  exp(mean(multi_out1$beta[,1,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
-  exp(mean(multi_out1$beta[,1,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
-  exp(mean(multi_out1$beta[,1,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
-pred_vac<-cbind(
-  #pr(vacant)
-  exp(mean(multi_out1$beta[,1,1]) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_vac,
-  #pr(other)
-  exp(mean(multi_out1$beta[,1,2]) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_vac,
-  #pr(crem)
-  exp(mean(multi_out1$beta[,1,3]) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_vac,
-  #pr(liom)
-  exp(mean(multi_out1$beta[,1,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_vac)
-sum(pred_vac[1,])
-
-## Previously tended by Other
-Denominator_other <- exp(mean(multi_out1$beta[,2,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
-  exp(mean(multi_out1$beta[,2,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
-  exp(mean(multi_out1$beta[,2,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
-  exp(mean(multi_out1$beta[,2,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
-pred_other<-cbind(
-  #pr(vacant)
-  exp((mean(multi_out1$beta[,2,1])) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_other,
-  #pr(other)
-  exp((mean(multi_out1$beta[,2,2])) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_other,
-  #pr(crem)
-  exp((mean(multi_out1$beta[,2,3])) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_other,
-  #pr(liom)
-  exp((mean(multi_out1$beta[,2,4])) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_other)
-sum(pred_other[1,])
-
-## Previously tended by Crem
-Denominator_crem <- exp(mean(multi_out1$beta[,3,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
-  exp(mean(multi_out1$beta[,3,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
-  exp(mean(multi_out1$beta[,3,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
-  exp(mean(multi_out1$beta[,3,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
+## Previously tended by crem
+Denominator_crem <- exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+  exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+  exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+  exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out$beta.5.4))
 pred_crem<-cbind(
-  #pr(vacant)
-  exp(mean(multi_out1$beta[,3,1]) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_crem,
-  #pr(other)
-  exp(mean(multi_out1$beta[,3,2]) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_crem,
   #pr(crem)
-  exp(mean(multi_out1$beta[,3,3]) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_crem,
+  exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_crem,
   #pr(liom)
-  exp(mean(multi_out1$beta[,3,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_crem)
+  exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_crem,
+  #pr(other)
+  exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_crem,
+  #pr(vac)
+  exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_crem)
 sum(pred_crem[1,])
 
 ## Previously tended by Liom
-Denominator_liom <- exp(mean(multi_out1$beta[,4,1]) + size_dummy_real*mean(multi_out1$beta[,5,1])) + 
-  exp(mean(multi_out1$beta[,4,2]) + size_dummy_real*mean(multi_out1$beta[,5,2])) + 
-  exp(mean(multi_out1$beta[,4,3]) + size_dummy_real*mean(multi_out1$beta[,5,3])) + 
-  exp(mean(multi_out1$beta[,4,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))
+Denominator_liom <- exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+  exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+  exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+  exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out$beta.5.4))
 pred_liom<-cbind(
-  #pr(vacant)
-  exp(mean(multi_out1$beta[,4,1]) + size_dummy_real*mean(multi_out1$beta[,5,1]))/Denominator_liom,
-  #pr(other)
-  exp(mean(multi_out1$beta[,4,2]) + size_dummy_real*mean(multi_out1$beta[,5,2]))/Denominator_liom,
   #pr(crem)
-  exp(mean(multi_out1$beta[,4,3]) + size_dummy_real*mean(multi_out1$beta[,5,3]))/Denominator_liom,
+  exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_liom,
   #pr(liom)
-  exp(mean(multi_out1$beta[,4,4]) + size_dummy_real*mean(multi_out1$beta[,5,4]))/Denominator_liom)
+  exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_liom,
+  #pr(other)
+  exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_liom,
+  #pr(vac)
+  exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_liom)
 sum(pred_liom[1,])
-## vac -> vac       vac -> other    vac -> crem       vac -> liom
+
+## Previously tended by other
+Denominator_other <- exp(mean(multi_out$beta.3.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+  exp(mean(multi_out$beta.3.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+  exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+  exp(mean(multi_out$beta.3.4) + size_dummy_real*mean(multi_out$beta.5.4))
+pred_other<-cbind(
+  #pr(crem)
+  exp(mean(multi_out$beta.3.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_other,
+  #pr(liom)
+  exp(mean(multi_out$beta.3.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_other,
+  #pr(other)
+  exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_other,
+  #pr(vac)
+  exp(mean(multi_out$beta.3.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_other)
+sum(pred_other[1,])
+
+## Previously tended by vac
+Denominator_vac <- exp(mean(multi_out$beta.4.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+  exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+  exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+  exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))
+pred_vac<-cbind(
+  #pr(crem)
+  exp(mean(multi_out$beta.4.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_vac,
+  #pr(liom)
+  exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_vac,
+  #pr(other)
+  exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_vac,
+  #pr(vac)
+  exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_vac)
+sum(pred_vac[1,])
+## vac -> crem       vac -> liom    vac -> other       vac -> vac
 pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
-## other-> vac        other -> other    other -> crem       other -> liom
+## other-> crem        other -> liom    other -> other       other -> vac
 pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]) , (pred_other[,3]) , (pred_other[,4]))
-## crem-> vac       crem -> other    crem -> crem      crem -> liom
+## crem-> crem       crem -> liom    crem -> other      crem -> vac
 pred_probs_crem <- cbind((pred_crem[,1]) , (pred_crem[,2]) , (pred_crem[,3]) , (pred_crem[,4]))
-## liom-> vac       liom -> other    liom -> crem       liom -> liom
+## liom-> crem       liom -> liom    liom -> other       liom -> vac
 pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]) , (pred_liom[,3]) , (pred_liom[,4]))
 
 all_ant_multi <- cbind(pred_probs_vac, pred_probs_crem, pred_probs_other, pred_probs_liom)
@@ -1011,42 +1112,42 @@ cremcol <- "#9239F6"
       plot.new()
       text(0.5,0.5,"Large Plants are Most Likely \n to be Liom. Tended",cex=4,font=2)
       ## Prev Vac
-      plot(size_dummy_real, pred_vac[,1], type = "l", col = vaccol,main = "Previously Vacant", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_vac[,1], type = "l", col = cremcol,main = "Previously Vacant", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 2)
-      lines(size_dummy_real, pred_vac[,2], col = othercol)
-      lines(size_dummy_real, pred_vac[,3], col = cremcol)
-      lines(size_dummy_real, pred_vac[,4], col = liomcol)
+      lines(size_dummy_real, pred_vac[,2], col = liomcol)
+      lines(size_dummy_real, pred_vac[,3], col = othercol)
+      lines(size_dummy_real, pred_vac[,4], col = vaccol)
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_crem,pch=16,cex=multi_plot_vac$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_liom,pch=16,cex=multi_plot_vac$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_other,pch=16,cex=multi_plot_vac$N_mod,col= alpha(othercol, 0.4))
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_vac,pch=16,cex=multi_plot_vac$N_mod,col= alpha(vaccol, 0.4))
       ## Prev Other
-      plot(size_dummy_real, pred_other[,1], type = "l", col = vaccol,main = "Previously Other", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_other[,1], type = "l", col = cremcol,main = "Previously Other", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 2)
-      lines(size_dummy_real, pred_other[,2], col = othercol)
-      lines(size_dummy_real, pred_other[,3], col = cremcol)
-      lines(size_dummy_real, pred_other[,4], col = liomcol)
+      lines(size_dummy_real, pred_other[,2], col = liomcol)
+      lines(size_dummy_real, pred_other[,3], col = othercol)
+      lines(size_dummy_real, pred_other[,4], col = vaccol)
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_plot_other$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
       legend("topright",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 2)
       ## Prev Crem
-      plot(size_dummy_real, pred_crem[,1], type = "l", col = vaccol,main = "Previously Crem", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_crem[,1], type = "l", col = cremcol,main = "Previously Crem", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 2)
-      lines(size_dummy_real, pred_crem[,2], col = othercol)
-      lines(size_dummy_real, pred_crem[,3], col = cremcol)
-      lines(size_dummy_real, pred_crem[,4], col = liomcol)
+      lines(size_dummy_real, pred_crem[,2], col = liomcol)
+      lines(size_dummy_real, pred_crem[,3], col = othercol)
+      lines(size_dummy_real, pred_crem[,4], col = vaccol)
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_crem,pch=16,cex=multi_plot_crem$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_plot_crem$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
       ## Prev Liom
-      plot(size_dummy_real, pred_liom[,1], type = "l", col = vaccol,main = "Previously Liom", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_liom[,1], type = "l", col = cremcol,main = "Previously Liom", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 2)
-      lines(size_dummy_real, pred_liom[,2], col = othercol)
-      lines(size_dummy_real, pred_liom[,3], col = cremcol)
-      lines(size_dummy_real, pred_liom[,4], col = liomcol)
+      lines(size_dummy_real, pred_liom[,2], col = liomcol)
+      lines(size_dummy_real, pred_liom[,3], col = othercol)
+      lines(size_dummy_real, pred_liom[,4], col = vaccol)
       points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_plot_liom$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
@@ -1060,42 +1161,42 @@ cremcol <- "#9239F6"
       layout(matrix(c(1,2,3,4),
                     ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
       ## Prev Vac
-      plot(size_dummy_real, pred_vac[,1], type = "l", col = vaccol,main = "a)              Prev. Vacant               ", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_vac[,4], type = "l", col = vaccol,main = "a)              Prev. Vacant               ", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 1.5)
-      lines(size_dummy_real, pred_vac[,2], col = othercol)
-      lines(size_dummy_real, pred_vac[,3], col = cremcol)
-      lines(size_dummy_real, pred_vac[,4], col = liomcol)
+      lines(size_dummy_real, pred_vac[,3], col = othercol)
+      lines(size_dummy_real, pred_vac[,1], col = cremcol)
+      lines(size_dummy_real, pred_vac[,2], col = liomcol)
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_crem,pch=16,cex=multi_plot_vac$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_liom,pch=16,cex=multi_plot_vac$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_other,pch=16,cex=multi_plot_vac$N_mod,col= alpha(othercol, 0.4))
       points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_vac,pch=16,cex=multi_plot_vac$N_mod,col= alpha(vaccol, 0.4))
       ## Prev Other
-      plot(size_dummy_real, pred_other[,1], type = "l", col = vaccol,main = "b)              Prev. Other                 ", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_other[,4], type = "l", col = vaccol,main = "b)              Prev. Other                 ", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 1.5)
-      lines(size_dummy_real, pred_other[,2], col = othercol)
-      lines(size_dummy_real, pred_other[,3], col = cremcol)
-      lines(size_dummy_real, pred_other[,4], col = liomcol)
+      lines(size_dummy_real, pred_other[,3], col = othercol)
+      lines(size_dummy_real, pred_other[,1], col = cremcol)
+      lines(size_dummy_real, pred_other[,2], col = liomcol)
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_plot_other$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
       points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
       legend("topleft",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1.5)
       ## Prev Crem
-      plot(size_dummy_real, pred_crem[,1], type = "l", col = vaccol,main = "c)              Prev. Crem.                ", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_crem[,4], type = "l", col = vaccol,main = "c)              Prev. Crem.                ", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 1.5)
-      lines(size_dummy_real, pred_crem[,2], col = othercol)
-      lines(size_dummy_real, pred_crem[,3], col = cremcol)
-      lines(size_dummy_real, pred_crem[,4], col = liomcol)
+      lines(size_dummy_real, pred_crem[,3], col = othercol)
+      lines(size_dummy_real, pred_crem[,1], col = cremcol)
+      lines(size_dummy_real, pred_crem[,2], col = liomcol)
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_crem,pch=16,cex=multi_plot_crem$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_plot_crem$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
       points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
       ## Prev Liom
-      plot(size_dummy_real, pred_liom[,1], type = "l", col = vaccol,main = "d)              Prev. Liom.                 ", ylim = c(0,1), xlab = "", ylab = "",
+      plot(size_dummy_real, pred_liom[,4], type = "l", col = vaccol,main = "d)              Prev. Liom.                 ", ylim = c(0,1), xlab = "", ylab = "",
            cex.main = 1.5)
-      lines(size_dummy_real, pred_liom[,2], col = othercol)
-      lines(size_dummy_real, pred_liom[,3], col = cremcol)
-      lines(size_dummy_real, pred_liom[,4], col = liomcol)
+      lines(size_dummy_real, pred_liom[,3], col = othercol)
+      lines(size_dummy_real, pred_liom[,1], col = cremcol)
+      lines(size_dummy_real, pred_liom[,2], col = liomcol)
       points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_plot_liom$N_mod,col= alpha(cremcol, 0.4))
       points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
       points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
@@ -1105,122 +1206,50 @@ cremcol <- "#9239F6"
       dev.off()
       setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
       
-      
-      ## Look into the frequentist model
-      cactus_fit <- summary(multinom(ant_t1_relevel ~ 0 + ant_t_relevel + logsize_t, cactus_real))
-      cactus_fit_coef <- coef(cactus_fit)
-      
-      Denominator_freq_vac <- 1+sum(exp(cactus_fit_coef[1,1] + size_dummy_real*cactus_fit_coef[1,5]), 
-                                    exp(cactus_fit_coef[2,1] + size_dummy_real*cactus_fit_coef[2,5]),
-                                    exp(cactus_fit_coef[3,1] + size_dummy_real*cactus_fit_coef[3,5]))
-      pred_vac_freq<-c(
-        #pr(vacant)
-        1/Denominator_freq_vac,
-        #pr(other)
-        exp(cactus_fit_coef[1,1] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_vac,
-        #pr(crem)
-        exp(cactus_fit_coef[2,1] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_vac,
-        #pr(liom)
-        exp(cactus_fit_coef[3,1] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_vac
-      )
-      sum(pred_vac_freq)
-      
-      Denominator_freq_crem <- 1+sum(exp(cactus_fit_coef[1,2] + size_dummy_real*cactus_fit_coef[1,5]), 
-                                     exp(cactus_fit_coef[2,2] + size_dummy_real*cactus_fit_coef[2,5]),
-                                     exp(cactus_fit_coef[3,2] + size_dummy_real*cactus_fit_coef[3,5]))
-      pred_crem_freq<-c(
-        #pr(vacant)
-        1/Denominator_freq_crem,
-        #pr(other)
-        exp(cactus_fit_coef[1,2] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_crem,
-        #pr(crem)
-        exp(cactus_fit_coef[2,2] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_crem,
-        #pr(liom)
-        exp(cactus_fit_coef[3,2] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_crem
-      )
-      sum(pred_crem_freq)
-      
-      Denominator_freq_liom <- 1+sum(exp(cactus_fit_coef[1,3] + size_dummy_real*cactus_fit_coef[1,5]), 
-                                     exp(cactus_fit_coef[2,3] + size_dummy_real*cactus_fit_coef[2,5]),
-                                     exp(cactus_fit_coef[3,3] + size_dummy_real*cactus_fit_coef[3,5]))
-      pred_liom_freq<-c(
-        #pr(vacant)
-        1/Denominator_freq_liom,
-        #pr(other)
-        exp(cactus_fit_coef[1,3] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_liom,
-        #pr(crem)
-        exp(cactus_fit_coef[2,3] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_liom,
-        #pr(liom)
-        exp(cactus_fit_coef[3,3] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_liom
-      )
-      sum(pred_liom_freq)
-      
-      Denominator_freq_other <- 1+sum(exp(cactus_fit_coef[1,4] + size_dummy_real*cactus_fit_coef[1,5]), 
-                                      exp(cactus_fit_coef[2,4] + size_dummy_real*cactus_fit_coef[2,5]),
-                                      exp(cactus_fit_coef[3,4] + size_dummy_real*cactus_fit_coef[3,5]))
-      pred_other_freq<-c(
-        #pr(vacant)
-        1/Denominator_freq_other,
-        #pr(other)
-        exp(cactus_fit_coef[1,4] + size_dummy_real*cactus_fit_coef[1,5])/Denominator_freq_other,
-        #pr(crem)
-        exp(cactus_fit_coef[2,4] + size_dummy_real*cactus_fit_coef[2,5])/Denominator_freq_other,
-        #pr(liom)
-        exp(cactus_fit_coef[3,4] + size_dummy_real*cactus_fit_coef[3,5])/Denominator_freq_other
-      )
-      sum(pred_other_freq)
-      
-      ## Compare outputs to real data and frequentist poutputs
-      ## Real data
-      a<-table(cactus$ant_t1, cactus$ant_t)
-      a[,1]/colSums(a)[1]
-      a[,2]/colSums(a)[2]
-      a[,3]/colSums(a)[3]
-      a[,4]/colSums(a)[4]
-      
       #######################################################################################################################
       #### 3 ANTS TRANSITION PROBABILITIES ##################################################################################
       #######################################################################################################################
       
       ##################################### LIOM & VAC & OTHER ###############################################################
       ## Calculate the probabilities of being tended by each ant species
-      ## Previously tended by none
-      Denominator_vac <- exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4])) + 
-        exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))
+      ## liom = 2, other = 3, vac = 4
+      ## Previously tended by vac
+      Denominator_vac <- exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+        exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3))
       pred_vac<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_vac,
         #pr(liom)
-        exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_vac,
         #pr(other)
-        exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_vac)
+        exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_vac)
       sum(pred_vac[1,])
       
       ## Previously tended by Liom
-      Denominator_liom <- exp(mean(multi_out$beta[,4,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4])) + 
-        exp(mean(multi_out$beta[,4,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))
+      Denominator_liom <- exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out$beta.2.4)) + 
+        exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+        exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out$beta.5.3))
       pred_liom<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,4,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_liom,
+        exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_liom,
         #pr(liom)
-        exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_liom,
+        exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_liom,
         #pr(other)
-        exp(mean(multi_out$beta[,4,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_liom)
+        exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_liom)
       sum(pred_liom[1,])
       
       ## Previously tended by Other
-      Denominator_other <- exp(mean(multi_out$beta[,2,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,2,4]) + size_dummy_real*mean(multi_out$beta[,5,4])) + 
-        exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))
+      Denominator_other <- exp(mean(multi_out$beta.3.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.3.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+        exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out$beta.5.3))
       pred_other<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,2,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_other,
+        exp(mean(multi_out$beta.3.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_other,
         #pr(liom
-        exp(mean(multi_out$beta[,2,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_other,
+        exp(mean(multi_out$beta.3.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_other,
         #pr(other)
-        exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_other)
+        exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_other)
       sum(pred_other[1,])
       ## vac -> vac      vac -> liom       vac -> other
       pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]))
@@ -1270,42 +1299,42 @@ cremcol <- "#9239F6"
       ####################################### LIOM & OTHER & CREM ####################################################
       ## Calculate the probabilities of being tended by each ant species
       ## Previously tended by Other
-      Denominator_other <- exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,2,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,2,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+      Denominator_other <- exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.3.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+        exp(mean(multi_out$beta.3.2) + size_dummy_real*mean(multi_out$beta.5.2))
       pred_other<-cbind(
         #pr(other)
-        exp((mean(multi_out$beta[,2,2])) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_other,
+        exp((mean(multi_out$beta.3.3)) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_other,
         #pr(crem)
-        exp((mean(multi_out$beta[,2,3])) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_other,
+        exp((mean(multi_out$beta.3.1)) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_other,
         #pr(liom)
-        exp((mean(multi_out$beta[,2,4])) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_other)
+        exp((mean(multi_out$beta.3.2)) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_other)
       sum(pred_other[1,])
       
       ## Previously tended by Crem
-      Denominator_crem <- exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+      Denominator_crem <- exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+        exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2))
       pred_crem<-cbind(
-        #pr(other)
-        exp(mean(multi_out$beta[,3,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_crem,
         #pr(crem)
-        exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_crem,
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_crem,
+        #pr(other)
+        exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_crem,
         #pr(liom)
-        exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_crem)
+        exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_crem)
       sum(pred_crem[1,])
       
       ## Previously tended by Liom
-      Denominator_liom <- exp(mean(multi_out$beta[,4,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,4,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+      Denominator_liom <- exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2))
       pred_liom<-cbind(
         #pr(other)
-        exp(mean(multi_out$beta[,4,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_liom,
+        exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_liom,
         #pr(crem)
-        exp(mean(multi_out$beta[,4,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_liom,
+        exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_liom,
         #pr(liom)
-        exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_liom)
+        exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_liom)
       sum(pred_liom[1,])
       ## other -> other    other -> crem       other -> liom
       pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]) , (pred_other[,2]))
@@ -1357,42 +1386,42 @@ cremcol <- "#9239F6"
       ####################################### LIOM & CREM & VAC #####################################################
       ## Calculate the probabilities of being tended by each ant species
       ## Previously tended by none
-      Denominator_vac <- exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,1,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+      Denominator_vac <- exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.4.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+        exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2))
       pred_vac<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_vac,
         #pr(crem)
-        exp(mean(multi_out$beta[,1,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_vac,
         #pr(liom)
-        exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_vac)
+        exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_vac)
       sum(pred_vac[1,])
       
       ## Previously tended by Crem
-      Denominator_crem <- exp(mean(multi_out$beta[,3,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+      Denominator_crem <- exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+        exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2))
       pred_crem<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,3,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_crem,
+        exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_crem,
         #pr(crem)
-        exp(mean(multi_out$beta[,3,2]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_crem,
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_crem,
         #pr(liom)
-        exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_crem)
+        exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_crem)
       sum(pred_crem[1,])
       
       ## Previously tended by Liom
-      Denominator_liom <- exp(mean(multi_out$beta[,4,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,4,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))
+      Denominator_liom <- exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+        exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2))
       pred_liom<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,4,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_liom,
+        exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_liom,
         #pr(crem)
-        exp(mean(multi_out$beta[,4,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_liom,
+        exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_liom,
         #pr(liom)
-        exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_liom)
+        exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_liom)
       sum(pred_liom[1,])
       
       ## vac -> vac             vac -> crem    vac -> liom
@@ -1446,42 +1475,42 @@ cremcol <- "#9239F6"
       ####################################### OTHER & CREM & VAC #####################################################
       ## Calculate the probabilities of being tended by each ant species
       ## Previously tended by none
-      Denominator_vac <- exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,1,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))
+      Denominator_vac <- exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.4.1) + size_dummy_real*mean(multi_out$beta.5.1))
       pred_vac<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_vac,
         #pr(other)
-        exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_vac,
         #pr(crem)
-        exp(mean(multi_out$beta[,1,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_vac)
+        exp(mean(multi_out$beta.4.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_vac)
       sum(pred_vac[1,])
       
       ## Previously tended by Crem
-      Denominator_crem <- exp(mean(multi_out$beta[,3,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,3,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))
+      Denominator_crem <- exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))
       pred_crem<-cbind(
         #pr(vacant)
-        exp((mean(multi_out$beta[,3,1])) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_crem,
+        exp((mean(multi_out$beta.1.4)) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_crem,
         #pr(other)
-        exp((mean(multi_out$beta[,3,2])) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_crem,
+        exp((mean(multi_out$beta.1.3)) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_crem,
         #pr(crem)
-        exp((mean(multi_out$beta[,3,3])) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_crem)
+        exp((mean(multi_out$beta.1.1)) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_crem)
       sum(pred_crem[1,])
       
       ## Previously tended by Crem
-      Denominator_other <- exp(mean(multi_out$beta[,2,1]) + size_dummy_real*mean(multi_out$beta[,5,1])) + 
-        exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,2,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))
+      Denominator_other <- exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out$beta.5.4)) + 
+        exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))
       pred_other<-cbind(
         #pr(vacant)
-        exp(mean(multi_out$beta[,2,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_other,
+        exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_other,
         #pr(other)
-        exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_other,
+        exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_other,
         #pr(crem)
-        exp(mean(multi_out$beta[,2,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_other)
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_other)
       sum(pred_other[1,])
       
       ## vac -> vac       vac -> other    vac -> crem  
@@ -1538,22 +1567,22 @@ cremcol <- "#9239F6"
       ####################################### CREM & OTHER ###########################################################
       ## Calculate the probabilities of being tended by each ant species
       ## Previously tended by Other
-      Denominator_other <- exp(mean(multi_out$beta[,2,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))
+      Denominator_other <- exp(mean(multi_out$beta.3.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+        exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out$beta.5.3))
       pred_other<-cbind(
         #pr(crem)
-        exp((mean(multi_out$beta[,2,3])) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_other,
+        exp((mean(multi_out$beta.3.1)) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_other,
         #pr(other)
-        exp((mean(multi_out$beta[,2,2])) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_other)
+        exp((mean(multi_out$beta.3.3)) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_other)
       sum(pred_other[1,])
       ## Previously tended by Crem
-      Denominator_crem <- exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3])) + 
-        exp(mean(multi_out$beta[,3,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))
+      Denominator_crem <- exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1)) + 
+        exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3))
       pred_crem<-cbind(
         #pr(crem)
-        exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_crem,
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_crem,
         #pr(other)
-        exp(mean(multi_out$beta[,3,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_crem)
+        exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_crem)
       sum(pred_crem[1,])
       ## other-> crem        other -> other 
       pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]))
@@ -1593,22 +1622,22 @@ cremcol <- "#9239F6"
       ####################################### LIOM & VAC #############################################################
       ## Calculate the probabilities of being tended by each ant species
       ## Previously tended by Liom
-      Denominator_liom <- exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4])) + 
-        exp(mean(multi_out$beta[,4,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))
+      Denominator_liom <- exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+        exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out$beta.5.4))
       pred_liom<-cbind(
         #pr(liom)
-        exp((mean(multi_out$beta[,4,4])) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_liom,
+        exp((mean(multi_out$beta.2.2)) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_liom,
         #pr(vac)
-        exp((mean(multi_out$beta[,4,1])) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_liom)
+        exp((mean(multi_out$beta.2.4)) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_liom)
       sum(pred_liom[1,])
       ## Previously tended by none
-      Denominator_vac <- exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4])) + 
-        exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))
+      Denominator_vac <- exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+        exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))
       pred_vac<-cbind(
         #pr(liom)
-        exp(mean(multi_out$beta[,1,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_vac,
         #pr(vac)
-        exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_vac)
+        exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_vac)
       sum(pred_vac[1,])
       ## liom-> liom        liom -> vac 
       pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]))
@@ -1647,22 +1676,22 @@ cremcol <- "#9239F6"
       ####################################### LIOM & CREM ############################################################
       ## Calculate the probabilities of being tended by each ant species
       ## Previously tended by none
-      Denominator_liom <- exp(mean(multi_out$beta[,4,4]) + size_dummy_real*mean(multi_out$beta[,5,4])) + 
-        exp(mean(multi_out$beta[,4,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))
+      Denominator_liom <- exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+        exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.1))
       pred_liom<-cbind(
         #pr(liom)
-        exp((mean(multi_out$beta[,4,4])) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_liom,
+        exp((mean(multi_out$beta.2.2)) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_liom,
         #pr(crem)
-        exp((mean(multi_out$beta[,4,3])) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_liom)
+        exp((mean(multi_out$beta.2.1)) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_liom)
       sum(pred_liom[1,])
       ## Previously tended by none
-      Denominator_crem <- exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4])) + 
-        exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))
+      Denominator_crem <- exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2)) + 
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))
       pred_crem<-cbind(
         #pr(liom)
-        exp(mean(multi_out$beta[,3,4]) + size_dummy_real*mean(multi_out$beta[,5,4]))/Denominator_crem,
+        exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_crem,
         #pr(crem)
-        exp(mean(multi_out$beta[,3,3]) + size_dummy_real*mean(multi_out$beta[,5,3]))/Denominator_crem)
+        exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_crem)
       sum(pred_crem[1,])
       ## liom-> liom        liom -> crem 
       pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]))
@@ -1701,22 +1730,22 @@ cremcol <- "#9239F6"
       ####################################### OTHER & VAC ############################################################
       ## Calculate the probabilities of being tended by each ant species
       ## Previously tended by none
-      Denominator_other <- exp(mean(multi_out$beta[,2,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,2,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))
+      Denominator_other <- exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.3.4) + size_dummy_real*mean(multi_out$beta.5.4))
       pred_other<-cbind(
         #pr(other)
-        exp((mean(multi_out$beta[,2,2])) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_other,
+        exp((mean(multi_out$beta.3.3)) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_other,
         #pr(vac)
-        exp((mean(multi_out$beta[,2,1])) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_other)
+        exp((mean(multi_out$beta.3.4)) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_other)
       sum(pred_other[1,])
       ## Previously tended by none
-      Denominator_vac <- exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2])) + 
-        exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))
+      Denominator_vac <- exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3)) + 
+        exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))
       pred_vac<-cbind(
         #pr(other)
-        exp(mean(multi_out$beta[,1,2]) + size_dummy_real*mean(multi_out$beta[,5,2]))/Denominator_vac,
+        exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_vac,
         #pr(vac)
-        exp(mean(multi_out$beta[,1,1]) + size_dummy_real*mean(multi_out$beta[,5,1]))/Denominator_vac)
+        exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_vac)
       sum(pred_vac[1,])
       ## other-> other        other -> vac 
       pred_probs_other <- cbind((pred_other[,1]) , (pred_other[,2]))
