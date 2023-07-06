@@ -14,20 +14,20 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 ## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
 ## will get a vector of probabilities.                                                               ####
 #########################################################################################################
-gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
-  #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  #Density probability function which uses the parameters that are ant specific
-  g_vac = dnorm(y,mean=(params$grow_beta01) + (params$grow_beta11)*xb + (grow_rfx1),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
-  g_liom = dnorm(y,mean=(params$grow_beta04) + (params$grow_beta14)*xb + (grow_rfx4),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
-  g_crem = dnorm(y,mean=(params$grow_beta03) + (params$grow_beta13)*xb + (grow_rfx3),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
-  g_other = dnorm(y,mean=(params$grow_beta02) + (params$grow_beta12)*xb + (grow_rfx2),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
-  #Return the probability of growing from size x to y
-  if(i == "crem"){ return(g_crem)}
-  if(i == "liom"){ return(g_liom)}
-  if(i == "other"){ return(g_other)}
-  if(i == "vacant"){ return(g_vac)}
-}
+# gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
+#   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+#   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+#   #Density probability function which uses the parameters that are ant specific
+#   g_vac = dnorm(y,mean=(params$grow_beta01) + (params$grow_beta11)*xb + (grow_rfx1),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+#   g_liom = dnorm(y,mean=(params$grow_beta04) + (params$grow_beta14)*xb + (grow_rfx4),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+#   g_crem = dnorm(y,mean=(params$grow_beta03) + (params$grow_beta13)*xb + (grow_rfx3),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+#   g_other = dnorm(y,mean=(params$grow_beta02) + (params$grow_beta12)*xb + (grow_rfx2),sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+#   #Return the probability of growing from size x to y
+#   if(i == "crem"){ return(g_crem)}
+#   if(i == "liom"){ return(g_liom)}
+#   if(i == "other"){ return(g_other)}
+#   if(i == "vacant"){ return(g_vac)}
+# }
 
 gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
