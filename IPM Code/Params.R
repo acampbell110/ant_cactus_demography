@@ -26,39 +26,24 @@ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism proj
 #mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 
 ##These files contain all draws from the posterior distributions of all parameters
-grow.params <- read.csv(paste0(mcmc_dir,"grow_outputs_skew.csv"), header = TRUE,stringsAsFactors=T)    
+grow.params <- read.csv(paste0(mcmc_dir,"grow.params.csv"), header = TRUE,stringsAsFactors=T)    
 surv.params <- read.csv(paste0(mcmc_dir,"surv.params.csv"), header = TRUE,stringsAsFactors=T)    
 flow.params <- read.csv(paste0(mcmc_dir,"flow.params.csv"), header = TRUE,stringsAsFactors=T)    
-viab.params <- read.csv(paste0(mcmc_dir,"viab.outputs.csv"), header = TRUE,stringsAsFactors=T)    
+viab.params <- read.csv(paste0(mcmc_dir,"viab.params.csv"), header = TRUE,stringsAsFactors=T)    
 repro.params <- read.csv(paste0(mcmc_dir,"repro.params.csv"), header = TRUE,stringsAsFactors=T)    
 seed.params <- read.csv(paste0(mcmc_dir,"seed.params.csv"), header = TRUE,stringsAsFactors=T)    
 pre.seed.params <- read.csv(paste0(mcmc_dir,"seed.surv.params.csv"), header = TRUE,stringsAsFactors=T)    
 germ1.params <- read.csv(paste0(mcmc_dir,"germ1.params.csv"), header = TRUE,stringsAsFactors=T)    
 germ2.params <- read.csv(paste0(mcmc_dir,"germ2.params.csv"), header = TRUE,stringsAsFactors=T)    
 rec.params <- read.csv(paste0(mcmc_dir,"rec.params.csv"), header = TRUE,stringsAsFactors=T)    
-Ndraws<-min(100,nrow(surv.params))
-draws<-sample(nrow(surv.params),Ndraws)
 
-## Pull the random draws from all posterior distributions
-grow.params<-grow.params[draws,]
-surv.params<-surv.params[draws,]
-flow.params<-flow.params[draws,]
-viab.params<-viab.params[draws,]
-repro.params<-repro.params[draws,]
-seed.params<-seed.params[draws,]
-pre.seed.params<-pre.seed.params[draws,]
-germ1.params<-germ1.params[draws,]
-germ2.params<-germ2.params[draws,]
-rec.params<-rec.params[draws,]
 
 ##This file contains random draws from the posterior distributions of the transition models 
 multi.params <- read.csv(paste0(mcmc_dir,"multi.params.csv"), header = TRUE,stringsAsFactors=T)
-## Pull the random draws from all posterior distributions
-multi.params<-multi.params[draws,]
 
 ## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
 ## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
-params <- data.frame(matrix(NA,nrow=Ndraws,ncol=1))
+params <- data.frame(matrix(NA,nrow=1000,ncol=1))
 params<-params[,-1]
 ##----------------------Growth Parameters----------------## 
 ## Check the names of the parameters
@@ -71,39 +56,43 @@ params$grow_alp1 <- grow.params$a_size
 params$grow_sig_u<-grow.params$sigma_u
 params$grow_sig_w<-grow.params$sigma_w
 ####Ant 1 (vacant)
-params$grow_beta01<-grow.params$beta0.4     	  ## growth intercept
-params$grow_beta11<-grow.params$beta1.4				## growth slope
+params$grow_beta01<-grow.params$beta0.1     	  ## growth intercept
+params$grow_beta11<-grow.params$beta1.1				## growth slope
 ####Ant 2 (other)
-params$grow_beta02<-grow.params$beta0.3     	  ## growth intercept
-params$grow_beta12<-grow.params$beta1.3				## growth slope
+params$grow_beta02<-grow.params$beta0.2     	  ## growth intercept
+params$grow_beta12<-grow.params$beta1.2				## growth slope
 ####Ant 3 (crem)
-params$grow_beta03<-grow.params$beta0.1     	  ## growth intercept
-params$grow_beta13<-grow.params$beta1.1				## growth slope
+params$grow_beta03<-grow.params$beta0.3     	  ## growth intercept
+params$grow_beta13<-grow.params$beta1.3				## growth slope
 ####Ant 4 (liom)
-params$grow_beta04<-grow.params$beta0.2     	## growth intercept
-params$grow_beta14<-grow.params$beta1.2				## growth slope
+params$grow_beta04<-grow.params$beta0.4     	## growth intercept
+params$grow_beta14<-grow.params$beta1.4				## growth slope
 #### --- Year Random Effects --- ####
 
 ####Ant 1 (prev vacant)
-grow_rfx4 <- cbind(grow.params$w.1.1,grow.params$w.1.2,grow.params$w.1.3,rep(0,100),rep(0,100),
+grow_rfx1 <- cbind(grow.params$w.1.1,grow.params$w.1.2,grow.params$w.1.3,rep(0,100),rep(0,100),
                    grow.params$w.1.4,grow.params$w.1.5,grow.params$w.1.6,grow.params$w.1.7,
                    grow.params$w.1.8,grow.params$w.1.9,grow.params$w.1.10,grow.params$w.1.11,
-                   grow.params$w.1.12,grow.params$w.1.13,grow.params$w.1.14,rep(0,100))
+                   grow.params$w.1.12,grow.params$w.1.13,grow.params$w.1.14,grow.params$w.1.15,
+                   grow.params$w.1.16,rep(0,100))
 ####Ant 2 (prev other)
-grow_rfx3 <- cbind(grow.params$w.2.1,grow.params$w.2.2,grow.params$w.2.3,rep(0,100),rep(0,100),
+grow_rfx2 <- cbind(grow.params$w.2.1,grow.params$w.2.2,grow.params$w.2.3,rep(0,100),rep(0,100),
                    grow.params$w.2.4,grow.params$w.2.5,grow.params$w.2.6,grow.params$w.2.7,
                    grow.params$w.2.8,grow.params$w.2.9,grow.params$w.2.10,grow.params$w.2.11,
-                   grow.params$w.2.12,grow.params$w.2.13,grow.params$w.2.14,rep(0,100))
+                   grow.params$w.2.12,grow.params$w.2.13,grow.params$w.2.14,grow.params$w.2.15,
+                   grow.params$w.2.16,rep(0,100))
 ####Ant 3 (prev crem)
-grow_rfx1 <- cbind(grow.params$w.3.1,grow.params$w.3.2,grow.params$w.3.3,rep(0,100),rep(0,100),
+grow_rfx3 <- cbind(grow.params$w.3.1,grow.params$w.3.2,grow.params$w.3.3,rep(0,100),rep(0,100),
                    grow.params$w.3.4,grow.params$w.3.5,grow.params$w.3.6,grow.params$w.3.7,
                    grow.params$w.3.8,grow.params$w.3.9,grow.params$w.3.10,grow.params$w.3.11,
-                   grow.params$w.3.12,grow.params$w.3.13,grow.params$w.3.14,rep(0,100))
+                   grow.params$w.3.12,grow.params$w.3.13,grow.params$w.3.14,grow.params$w.3.15,
+                   grow.params$w.3.16,rep(0,100))
 ####Ant 4 (prev liom)
-grow_rfx2 <- cbind(grow.params$w.4.1,grow.params$w.4.2,grow.params$w.4.3,rep(0,100),rep(0,100),
+grow_rfx4 <- cbind(grow.params$w.4.1,grow.params$w.4.2,grow.params$w.4.3,rep(0,100),rep(0,100),
                    grow.params$w.4.4,grow.params$w.4.5,grow.params$w.4.6,grow.params$w.4.7,
                    grow.params$w.4.8,grow.params$w.4.9,grow.params$w.4.10,grow.params$w.4.11,
-                   grow.params$w.4.12,grow.params$w.4.13,grow.params$w.4.14,rep(0,100))
+                   grow.params$w.4.12,grow.params$w.4.13,grow.params$w.4.14,grow.params$w.4.15,
+                   grow.params$w.4.16,rep(0,100))
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -127,22 +116,26 @@ params$surv_beta14<-surv.params$beta1.2				## surv slope
 surv_rfx4 <- cbind(surv.params$w.1.1,surv.params$w.1.2,surv.params$w.1.3,rep(0,100),rep(0,100),
                    surv.params$w.1.4,surv.params$w.1.5,surv.params$w.1.6,surv.params$w.1.7,
                    surv.params$w.1.8,surv.params$w.1.9,surv.params$w.1.10,surv.params$w.1.11,
-                   surv.params$w.1.12,surv.params$w.1.13,surv.params$w.1.14,rep(0,100))
+                   surv.params$w.1.12,surv.params$w.1.13,surv.params$w.1.14,surv.params$w.1.15,
+                   surv.params$w.1.16,rep(0,100))
 ####Ant 2 (prev other)
 surv_rfx3 <- cbind(surv.params$w.2.1,surv.params$w.2.2,surv.params$w.2.3,rep(0,100),rep(0,100),
                    surv.params$w.2.4,surv.params$w.2.5,surv.params$w.2.6,surv.params$w.2.7,
                    surv.params$w.2.8,surv.params$w.2.9,surv.params$w.2.10,surv.params$w.2.11,
-                   surv.params$w.2.12,surv.params$w.2.13,surv.params$w.2.14,rep(0,100))
+                   surv.params$w.2.12,surv.params$w.2.13,surv.params$w.2.14,surv.params$w.2.15,
+                   surv.params$w.2.16,rep(0,100))
 ####Ant 3 (prev crem)
 surv_rfx1 <- cbind(surv.params$w.3.1,surv.params$w.3.2,surv.params$w.3.3,rep(0,100),rep(0,100),
                    surv.params$w.3.4,surv.params$w.3.5,surv.params$w.3.6,surv.params$w.3.7,
                    surv.params$w.3.8,surv.params$w.3.9,surv.params$w.3.10,surv.params$w.3.11,
-                   surv.params$w.3.12,surv.params$w.3.13,surv.params$w.3.14,rep(0,100))
+                   surv.params$w.3.12,surv.params$w.3.13,surv.params$w.3.14,surv.params$w.3.15,
+                   surv.params$w.3.16,rep(0,100))
 ####Ant 4 (prev liom)
 surv_rfx2 <- cbind(surv.params$w.4.1,surv.params$w.4.2,surv.params$w.4.3,rep(0,100),rep(0,100),
                    surv.params$w.4.4,surv.params$w.4.5,surv.params$w.4.6,surv.params$w.4.7,
                    surv.params$w.4.8,surv.params$w.4.9,surv.params$w.4.10,surv.params$w.4.11,
-                   surv.params$w.4.12,surv.params$w.4.13,surv.params$w.4.14,rep(0,100))
+                   surv.params$w.4.12,surv.params$w.4.13,surv.params$w.4.14,surv.params$w.4.15,
+                   surv.params$w.4.16,rep(0,100))
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
@@ -157,7 +150,7 @@ params$flow_beta1<-flow.params$beta1          ## flow slopes
 flow_rfx <- cbind(flow.params$w.1,flow.params$w.2,flow.params$w.3,flow.params$w.4,rep(0,100),
                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),flow.params$w.5,flow.params$w.6,
                   flow.params$w.7,flow.params$w.8,flow.params$w.9,flow.params$w.10,flow.params$w.11,
-                  rep(0,100))
+                  flow.params$w.12,flow.params$w.13,flow.params$w.14)
 
 ##-----------------------Reproductive State Parameters-----------------## 
 ## Check the names of the parameters
@@ -167,10 +160,12 @@ params$repro_beta1<-repro.params$beta1      ## repro slope
 params$repro_sig_u<-repro.params$sigma_u    ## repro sigma u
 params$repro_sig_w<-repro.params$sigma_w    ## repro sigma w
 #### --- Year Random Effects --- ####
-repro_rfx <- cbind(rep(0,100),repro.params$w.1,repro.params$w.2,repro.params$w.3,repro.params$w.4,
+
+
+repro_rfx <- cbind(repro.params$w.1,repro.params$w.2,repro.params$w.3,repro.params$w.4,
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),repro.params$w.5,repro.params$w.6,
                    repro.params$w.7,repro.params$w.8,repro.params$w.9,repro.params$w.10,repro.params$w.11,
-                   repro.params$w.12)
+                   repro.params$w.12,repro.params$w.11,repro.params$w.13,repro.params$w.14)
 ##-----------------------Viability Parameters-----------------## 
 ## Check the names of the parameters
 #head(viab.params) 
@@ -190,22 +185,26 @@ params$viab_beta04<-viab.params$beta0.2     	  ## viab intercept
 viab_rfx4 <- cbind(rep(0,100),viab.params$w.1.1,viab.params$w.1.2,viab.params$w.1.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.1.4,
                    viab.params$w.1.5,viab.params$w.1.6, viab.params$w.1.7,viab.params$w.1.8,
-                   viab.params$w.1.9,viab.params$w.1.10,viab.params$w.1.11)
+                   viab.params$w.1.9,viab.params$w.1.10,viab.params$w.1.11,viab.params$w.1.12,
+                   viab.params$w.1.13)
 ####Ant 2 (prev other)
 viab_rfx3 <- cbind(rep(0,100),viab.params$w.2.1,viab.params$w.2.2,viab.params$w.2.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.2.4,
                    viab.params$w.2.5,viab.params$w.2.6, viab.params$w.2.7,viab.params$w.2.8,
-                   viab.params$w.2.9,viab.params$w.2.10,viab.params$w.2.11)
+                   viab.params$w.2.9,viab.params$w.2.10,viab.params$w.2.11,viab.params$w.2.12,
+                   viab.params$w.2.13)
 ####Ant 3 (prev crem)
 viab_rfx1 <- cbind(rep(0,100),viab.params$w.3.1,viab.params$w.3.2,viab.params$w.3.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.3.4,
                    viab.params$w.3.5,viab.params$w.3.6, viab.params$w.3.7,viab.params$w.3.8,
-                   viab.params$w.3.9,viab.params$w.3.10,viab.params$w.3.11)
+                   viab.params$w.3.9,viab.params$w.3.10,viab.params$w.3.11,viab.params$w.3.12,
+                   viab.params$w.3.13)
 ####Ant 2 (prev liom)
-viab_rfx4 <- cbind(rep(0,100),viab.params$w.4.1,viab.params$w.4.2,viab.params$w.4.3,rep(0,100),
+viab_rfx2 <- cbind(rep(0,100),viab.params$w.4.1,viab.params$w.4.2,viab.params$w.4.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.4.4,
                    viab.params$w.4.5,viab.params$w.4.6, viab.params$w.4.7,viab.params$w.4.8,
-                   viab.params$w.4.9,viab.params$w.4.10,viab.params$w.4.11)
+                   viab.params$w.4.9,viab.params$w.4.10,viab.params$w.4.11,viab.params$w.4.12,
+                   viab.params$w.4.13)
 
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
