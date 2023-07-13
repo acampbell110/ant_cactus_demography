@@ -45,23 +45,23 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
 }
 
 # ##Check that it works properly
-# i = c("vacant","crem","liom","other")
-# x = c(-1,-5,3,4)
-# y = c(-1,-4,3,4)
-# g <- matrix(NA,ncol = length(i), nrow = 100)
-# l <- list()
-# 
-# for(a in 1:17){ ## year
-# for(m in 1:nrow(params)){ ## iteration
-#   for(n in seq(1:length(i))){ ## input info
-#     xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-#     g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-#     }
-# }
-#   l[[a]] <- g
-# }
-# g
-# l
+i = c("vacant","crem","liom","other")
+x = c(-1,-5,3,4)
+y = c(-1,-4,3,4)
+g <- matrix(NA,ncol = length(i), nrow = 100)
+l <- list()
+
+for(a in 1:17){ ## year
+for(m in 1:nrow(params)){ ## iteration
+  for(n in seq(1:length(i))){ ## input info
+    xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+    g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
+    }
+}
+  l[[a]] <- g
+}
+g
+l
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -86,22 +86,22 @@ sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
 }
 
 # ##Check that it works properly
-# i = c("liom","vacant","crem","other")
-# x = c(-1,-5,4,3)
-# s <- matrix(NA,ncol = length(i), nrow = 100)
-# l <- list()
-# 
-# for(a in 1:17){ ## year
-# for(m in 1:nrow(params)){ ## iteration
-#   for(n in seq(1:length(i))){ ## input info
-#     s[m,n] <- sx(x[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a])
-#     }
-# }
-#   l[[a]] <- s
-# }
-# 
-# s
-# l
+i = c("liom","vacant","crem","other")
+x = c(-1,-5,4,3)
+s <- matrix(NA,ncol = length(i), nrow = 100)
+l <- list()
+
+for(a in 1:17){ ## year
+for(m in 1:nrow(params)){ ## iteration
+  for(n in seq(1:length(i))){ ## input info
+    s[m,n] <- sx(x[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a])
+    }
+}
+  l[[a]] <- s
+}
+
+s
+l
 
 #################################################
 #SURVIVAL*GROWTH. Combine the survival and growth probabilities
@@ -158,21 +158,21 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
 }
 
 # ## Check if it works
-# i = c("liom","vacant","crem","other")
-# x = c(-1,-5,4,3)
-# y = c(-1,-4,4.5,3.01)
-# f <- matrix(NA,ncol = length(i), nrow = 100)
-# l <- list()
-# for(a in 1:17){ ## year
-# for(m in seq(1:nrow(params))){ ## iteration
-#   for(n in seq(1:length(i))){ ## input info
-#     f[m,n] <- fx(x[n],i[n],params[m,],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])
-#     }
-# }
-#   l[[a]] <- f
-# }
-# f
-# l
+i = c("liom","vacant","crem","other")
+x = c(-1,-5,4,3)
+y = c(-1,-4,4.5,3.01)
+f <- matrix(NA,ncol = length(i), nrow = 100)
+l <- list()
+for(a in 1:17){ ## year
+for(m in seq(1:nrow(params))){ ## iteration
+  for(n in seq(1:length(i))){ ## input info
+    f[m,n] <- fx(x[n],i[n],params[m,],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])
+    }
+}
+  l[[a]] <- f
+}
+f
+l
 
 #####################################################
 #### Recruitment
@@ -263,23 +263,23 @@ transition.1<-function(x, i, j,params, scenario){
 
 # ## Scenario options == "othervac", "liomvac", "cremvac"
 # ## Check if it works
-# i = c("liom","vacant","vacant")
-# j = c("vacant","liom","vacant")
-# x = c(-1,2,2)
-# y = c(-1,2,3)
-# scenario = c("liomvac")
-# l <- list()
-# t1 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-# #for(a in 1:17){
-#   for(m in 1:nrow(params)){
-#     for(n in 1:length(i)){
-#     t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario)
-#     }
-#   }
-#  # l[[a]] <- t1
-# #}
-# t1
-# l
+i = c("liom","vacant","vacant")
+j = c("vacant","liom","vacant")
+x = c(-1,2,2)
+y = c(-1,2,3)
+scenario = c("liomvac")
+l <- list()
+t1 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+#for(a in 1:17){
+  for(m in 1:nrow(params)){
+    for(n in 1:length(i)){
+    t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario)
+    }
+  }
+ # l[[a]] <- t1
+#}
+t1
+l
 
 ##########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (THREE STATES)
