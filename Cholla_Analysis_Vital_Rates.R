@@ -349,14 +349,12 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #######################################################################################################
 ## Create Stan Data
 viability_data_orig <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "logsize_t","Year_t","Plot")]
-viability_data_orig$TotFlowerbuds_t1 <- as.integer(as.character(viability_data_orig$TotFlowerbuds_t1))
-viability_data_orig$ABFlowerbuds_t1 <- as.integer(as.character(viability_data_orig$ABFlowerbuds_t1))
-viability_data_orig$Goodbuds_t1 <- as.integer(as.character(viability_data_orig$Goodbuds_t1))
 viability_data_orig <- subset(viability_data_orig, TotFlowerbuds_t1 > 0)
 viability_data <- na.omit(viability_data_orig)
 levels(viability_data$ant_t)
+unique(viability_data_orig$Year_t)
 ## Lose __ Rows of data
-nrow(viability_data_orig)
+view(viability_data_orig)
 nrow(viability_data)
 # check if you're happy with the subsetting
 plot(viability_data$logsize_t, viability_data$ABFlowerbuds_t1)
@@ -459,6 +457,7 @@ fit_repro@model_pars
 repro_outputs <- rstan::extract(fit_repro, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
 repro_outputs <- as.data.frame(repro_outputs)
 ## pull 1000 random rows from the data frame and export it
+draws<-sample(nrow(repro_outputs),1000)
 repro.params <- repro_outputs[draws,]
 write.csv(repro.params, "repro.params.csv")
 ## Mu
