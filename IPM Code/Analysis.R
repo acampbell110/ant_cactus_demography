@@ -313,19 +313,19 @@ dev.off()
 ####################### DETERMINISTIC POST IPM    ########################################################
 ## Plot the lambda posterior distributions                                                              ##                                                                                  ##
 ##########################################################################################################
-lams <- matrix(rep(NA, 100*8), nrow = 100, ncol = 8)
+lams <- matrix(rep(NA, 1000*8), nrow = 1000, ncol = 8)
 bigmatrix(params,lower,upper,matsize,scenario)
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 for(z in 1:length(scenario)){
-  for(m in 1:100){
+  print(z)
+  for(m in 1:1000){
     lams[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z],grow_rfx1[m,],grow_rfx2[m,],grow_rfx3[m,],grow_rfx4[m,],surv_rfx1[m,],surv_rfx2[m,],surv_rfx3[m,],surv_rfx4[m,],flow_rfx[m,],repro_rfx[m,],viab_rfx1[m,],viab_rfx2[m,],viab_rfx3[m,],viab_rfx4[m,])$IPMmat)
-    print(z)
     }
 }
 lams
 colnames(lams) <- scenario
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("lambda_post_skew1.png")
+png("lambda_det.png")
 par(mar=c(2,2,2,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4),
               ncol = 3, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9,3.9))
@@ -417,7 +417,7 @@ for(n in 1:max_scenario){
                           viab_rfx2=viab_rfx2,
                           viab_rfx3=viab_rfx3,
                           viab_rfx4=viab_rfx4, ## viability model year rfx
-                          max_yrs = 10,                                 ## the # years you want to iterate
+                          max_yrs = 1000,                                 ## the # years you want to iterate
                           matsize=matsize,                                 ## size of transition matrix
                           scenario = scenario[n],                                ## partner diversity scenario
                           lower=lower,upper=upper  )
@@ -431,17 +431,17 @@ png("lambda_st_full.png")
 par(mar=c(4,4,1,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lam[,1]), col = "Red", xlab = "",ylab = "",cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+plot(density(lam[,1]), col = "Red", xlab = "",ylab = "",cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,25), xlim = c(0.9,1.6))
 legend("topright", legend = c("Vacant"), fill = c("Red"), cex = 1.5)
-plot(density(lam[,2]), col = "Blue", xlab = "",ylab = "",cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+plot(density(lam[,2]), col = "Blue", xlab = "",ylab = "",cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,25), xlim = c(0.9,1.6))
 lines(density(lam[,3]), col = "Green")
 lines(density(lam[,4]), col = "Yellow")
 legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c("Blue","Green","Yellow"), cex = 1.5)
-plot(density(lam[,5]), col = "Orange", xlab = "",ylab = "",cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+plot(density(lam[,5]), col = "Orange", xlab = "",ylab = "",cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,25), xlim = c(0.9,1.6))
 lines(density(lam[,6]), col = "Brown")
 lines(density(lam[,7]), col = "Black")
 legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c("Orange","Brown","Black"), cex = 1.5)
-plot(density(lam[,8]), col = "Grey", xlab = "",ylab = "",cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,25), xlim = c(0.,1.06))
+plot(density(lam[,8]), col = "Grey", xlab = "",ylab = "",cex.main = 2, main = "d)                                                                                                       ")
 mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
 legend("topright",legend = c("All Ants"),fill = c("Grey"),
