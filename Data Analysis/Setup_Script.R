@@ -143,6 +143,12 @@ summary(cactus_old$TotFlowerbuds_t1) ## Again a LOT of NAs (The most)
 summary(cactus_old$ABFlowerbuds_t)
 summary(cactus_old$ABFlowerbuds_t1) ## Fewer, but still a LOT
 
+str(cactus)
+cactus$Goodbuds_t1 <- as.integer(as.character(cactus$Goodbuds_t1))
+cactus$ABFlowerbuds_t1 <- as.integer(as.character(cactus$ABFlowerbuds_t1))
+cactus$TotFlowerbuds_t1 <- as.integer(as.character(cactus$TotFlowerbuds_t1))
+str(cactus)
+
 #### If Goodbuds is NA but Abortbuds and Totalbuds is not, set goodbuds = Tot - Ab (0 rows for t and 0 rows for t1)
 for(i in 1:nrow(cactus)){
   if(is.na(cactus$Goodbuds_t[i]) == TRUE & is.na(cactus$ABFlowerbuds_t[i]) == FALSE & is.na(cactus$TotFlowerbuds_t[i]) == FALSE){
@@ -171,18 +177,11 @@ for(i in 1:nrow(cactus)){
   }
 }
 
+view(cactus)
 
-
-## Create a variable that shows if the cacti are flowering
 cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
 summary(cactus$flower1_YN)
 
-
-## Create a variable that shows if the cacti are vacant or occupied
-cactus$occ_t[cactus$ant_t == "vacant"] <- "vac"
-cactus$occ_t[cactus$ant_t == "crem" | cactus$ant_t == "liom" | cactus$ant_t == "other"] <- "occ"
-cactus$occ_t1[cactus$ant_t1 == "vacant"] <- "vac"
-cactus$occ_t1[cactus$ant_t1 == "crem" | cactus$ant_t1 == "liom" | cactus$ant_t1 == "other"] <- "occ"
 
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 
