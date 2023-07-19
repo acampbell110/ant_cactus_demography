@@ -8,7 +8,7 @@
 ## First read the data in 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
-cactus <- read.csv("cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
 
 levels(cactus$ant_t)
 levels(cactus$ant_t1)
@@ -220,11 +220,11 @@ fit_surv <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_
 ########## extract the parameters from the model and save a random selection of the iterations
 ## list all parameters
 fit_surv@model_pars
-draws<-sample(nrow(grow_outputs),1000)
 ## pull all iterations for parameters and save as a data frame
 surv_outputs <- rstan::extract(fit_surv, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
 surv_outputs <- as.data.frame(surv_outputs)
 ## pull 1000 random rows from the data frame and export it
+draws<-sample(nrow(surv_outputs),1000)
 surv.params <- surv_outputs[draws,]
 write.csv(surv.params, "surv.params.csv")
 ## mu
@@ -300,7 +300,7 @@ stan_data_flow_trunc <- list(N = nrow(flower_data), ## number of observations
 ## Run the Model
 fit_flow_trunc <- stan(file = "Data Analysis/STAN Models/flower_trunc_code.stan", data = stan_data_flow_trunc, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
 fit_flow_trunc@model_pars
-draws<-sample(nrow(grow_outputs),1000)
+draws<-sample(nrow(surv_outputs),1000)
 ########## extract the parameters from the model and save a random selection of the iterations
 ## list all parameters
 ## pull all iterations for parameters and save as a data frame

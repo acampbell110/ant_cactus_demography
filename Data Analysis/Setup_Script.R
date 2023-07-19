@@ -48,8 +48,8 @@ options(mc.cores = parallel::detectCores())
 ################        import the data -- Cacti (main)        #######################################################
 #######################################################################################################
 #cactus_uncleaned <- read.csv("cholla_demography_20042021.csv", header = TRUE,stringsAsFactors=T)
-cactus <- read.csv("Data Analysis/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
-cactus_old <- read.csv("Data Analysis/cholla_demography_20042021.csv", header = TRUE,stringsAsFactors=T)
+#cactus <- read.csv("Data Analysis/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("Data Analysis/cholla_demography_20042021.csv", header = TRUE,stringsAsFactors=T)
 str(cactus) ##<- problem: antcount is a factor
 #levels(cactus$Antcount_t);levels(cactus$Antcount_t1)
 ## function for the volume of a cone
@@ -62,9 +62,8 @@ cactus$logsize_t <- log(volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t))
 cactus$logsize_t1 <- log(volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1))
 
 
-####################################################################################################
-########            Cactus 2023 data                    ############################################
-####################################################################################################
+#################################################################
+## 2021 data
 ## Change ant counts to numeric (some random entries are different types of strings)
 cactus$Antcount_t <- as.numeric(as.character(cactus$Antcount_t))
 cactus$Antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
@@ -78,11 +77,11 @@ Antsp_t_levels <- levels(cactus$Antsp_t)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
 ant_t_levels <- rep("other",times=length(Antsp_t_levels))
 ## crem levels - elements 
-ant_t_levels[c(5,8,9,10,39)] <- "crem"
+ant_t_levels[c(5,8,9,10,38)] <- "crem"
 ## liom levels - elements 
 ant_t_levels[c(17,21,22,23,24,25)] <- "liom"
 ## vacant - 
-ant_t_levels[c(1,36,37,38)] <- "vacant"
+ant_t_levels[c(1,36,37)] <- "vacant"
 ## create new variable merging levels as above
 cactus$ant_t <- factor(cactus$Antsp_t,levels=Antsp_t_levels,labels=ant_t_levels)
 ## first, there are no ant data from 2007:
@@ -107,11 +106,11 @@ Antsp_t1_levels <- levels(cactus$Antsp_t1)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
 ant_t1_levels <- rep("other",times=length(Antsp_t1_levels))
 ## crem levels 
-ant_t1_levels[c(9,10,11,12,42)] <- "crem"
+ant_t1_levels[c(8,9,10,11,39)] <- "crem"
 ## liom levels 
-ant_t1_levels[c(23,24,25,26,27)] <- "liom"
+ant_t1_levels[c(22,23,24,25,26)] <- "liom"
 ## vacant 
-ant_t1_levels[c(1,40,41,39)] <- "vacant"
+ant_t1_levels[c(1,37,38)] <- "vacant"
 ## create new variable merging levels as above
 cactus$ant_t1 <- factor(cactus$Antsp_t1,levels=Antsp_t1_levels,labels=ant_t1_levels)
 ## check the spread of these ants
@@ -135,14 +134,80 @@ cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
 
 
-## Check the Flower data
-summary(cactus_old$Goodbuds_t)
-summary(cactus_old$Goodbuds_t1) ## Here you can see that there are a LOT of NAs
-summary(cactus_old$TotFlowerbuds_t)
-summary(cactus_old$TotFlowerbuds_t1) ## Again a LOT of NAs (The most)
-summary(cactus_old$ABFlowerbuds_t)
-summary(cactus_old$ABFlowerbuds_t1) ## Fewer, but still a LOT
+####################################################################################################
+########            Cactus 2023 data                    ############################################
+####################################################################################################
+# ## Change ant counts to numeric (some random entries are different types of strings)
+# cactus$Antcount_t <- as.numeric(as.character(cactus$Antcount_t))
+# cactus$Antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
+# summary(as.factor(cactus$Antcount_t))
+# summary(as.factor(cactus$Antcount_t1))
+# ## assign ant counts of zero as vacant
+# cactus$Antsp_t[cactus$Antcount_t==0] <- "vacant"
+# summary(cactus$Antsp_t)
+# # here are the ordered levels of the current variable
+# Antsp_t_levels <- levels(cactus$Antsp_t)
+# # here is how I would like to collapse these into fewer bins -- most will be "other"
+# ant_t_levels <- rep("other",times=length(Antsp_t_levels))
+# ## crem levels - elements 
+# ant_t_levels[c(5,8,9,10,39)] <- "crem"
+# ## liom levels - elements 
+# ant_t_levels[c(17,21,22,23,24,25)] <- "liom"
+# ## vacant - 
+# ant_t_levels[c(1,36,37,38)] <- "vacant"
+# ## create new variable merging levels as above
+# cactus$ant_t <- factor(cactus$Antsp_t,levels=Antsp_t_levels,labels=ant_t_levels)
+# ## first, there are no ant data from 2007:
+# cactus$Antcount_t[cactus$Year_t==2007]
+# #so give these observations NA for ant status: should be 118 values of NA now
+# cactus$ant_t[cactus$Year_t==2007] <- NA
+# # also, if a plant was new in year t+1 it's year t ant status should be NA now up to 650 NA values
+# cactus$ant_t[cactus$Newplant==1] <- NA
+# # plots 7 and 8 were added in 2011, so their year_t==2010 ant status should be NA up to  NAs
+# cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==7] <- NA
+# cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==8] <- NA
+# ## for now here is my workaround: year t ==2018, height_t ==NA, height_t1 !=NA
+# cactus$ant_t[cactus$Year_t==2018 & is.na(cactus$Height_t) & !is.na(cactus$Height_t1)] <- NA
+# ## finally there are these plants with Antsp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
+# cactus$ant_t[cactus$Antsp_t==""]<-NA
+# ## Check the distribution of the ant species
+# summary(cactus$ant_t)
+# ## 4440 vac, 614 other, 659 813, 3422 liom, 1316 NA
+# 
+# ## repeat for t1 -- these indices are different
+# Antsp_t1_levels <- levels(cactus$Antsp_t1)
+# # here is how I would like to collapse these into fewer bins -- most will be "other"
+# ant_t1_levels <- rep("other",times=length(Antsp_t1_levels))
+# ## crem levels 
+# ant_t1_levels[c(9,10,11,12,42)] <- "crem"
+# ## liom levels 
+# ant_t1_levels[c(23,24,25,26,27)] <- "liom"
+# ## vacant 
+# ant_t1_levels[c(1,40,41,39)] <- "vacant"
+# ## create new variable merging levels as above
+# cactus$ant_t1 <- factor(cactus$Antsp_t1,levels=Antsp_t1_levels,labels=ant_t1_levels)
+# ## check the spread of these ants
+# summary(cactus$ant_t1) ## there are too many "vacants" -- same deal as above
+# ## vac 6097, other 373, crem 777, liom 3358, NA 0
+# ## first, there are no ant data from 2007 so give these observations NA for ant status:
+# cactus$ant_t1[cactus$Year_t1==2007] <- NA
+# ## if we did not get size in t1 assume we did not get ant
+# cactus$ant_t1[is.na(cactus$Height_t1)] <- NA
+# # check to see how many others this leaves -- still a lot
+# summary(cactus$ant_t1)
+# ## vac 4445, other 373, crem 777, liom 3357, NA 1653
+# ## there are some Antsp_t1=="" that show up as "other"
+# #cactus %>% filter(Antsp_t1=="" & ant_t1=="other")
+# ## finally there are these plants with Antsp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
+# cactus$ant_t[cactus$Antsp_t==""]<-NA
+# ## Relevel so that vacancy is the reference level
+# summary(cactus$ant_t1)
+# ## vac 4445, other 373, crem 777, liom 3357, NA 1653
+# cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
+# cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
 
+
+## Check the Flower data
 str(cactus)
 cactus$Goodbuds_t1 <- as.integer(as.character(cactus$Goodbuds_t1))
 cactus$ABFlowerbuds_t1 <- as.integer(as.character(cactus$ABFlowerbuds_t1))
@@ -206,10 +271,22 @@ for(i in 1:nrow(cactus_herb)){
 
 summary(cactus_herb$herb_YN)
 
-## Remove extra columns
+
+head(cactus)
+colnames(cactus) <- c("Plot" ,"TagID"     ,       "Transplant"   ,    "Year_t" ,         
+"Height_t"     ,    "Width_t"     ,     "Perp_t"      ,     "NS_t"   ,         
+"Goodbuds_t"    ,   "TotFlowerbuds_t" , "ABFlowerbuds_t" ,  "Antcount_t" ,     
+"Antsp_t"     ,     "Year_t1"        ,       "Recruit"    ,      "Newplant"  ,      
+"Survival_t1"   ,   "Height_t1"    ,    "Width_t1"    ,     "Perp_t1"  ,       
+"NS_t1"      ,      "Goodbuds_t1"    ,  "TotFlowerbuds_t1", "ABFlowerbuds_t1" ,
+"Antcount_t1"    ,  "Antsp_t1"    ,     "NP_adult"      ,   "NP_juv"    ,      
+"CV"      ,         "WVL"         ,     "Damage"        ,   "MA"    ,          
+"comments"    ,     "logsize_t"   ,     "logsize_t1"   ,    "ant_t"       ,    
+ "ant_t1"  ,         "flower1_YN" )     
+## Remove extra columns)
 cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1","ant_t","ant_t1",
                       "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1","Antcount_t1",
-                      "occ_t","occ_t1","flower1_YN", "ant_t_relevel","ant_t1_relevel")]
+                      "flower1_YN")]
 
 
 ## Export cactus to a csv
