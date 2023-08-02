@@ -3,7 +3,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 
 ## load in the cleaned data product created by Create_Clean_Data_Script.R
-cactus<-read.csv("cholla_demography_20042023_cleaned.csv")
+cactus<-read.csv("cholla_demography_20042021_cleaned.csv")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
@@ -24,18 +24,30 @@ upper<- cholla_max + ceiling.extend
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
 #mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+# grow.params <- read.csv(paste0(mcmc_dir,"grow.params.csv"), header = TRUE,stringsAsFactors=T)    
+# surv.params <- read.csv("surv.params.csv", header = TRUE,stringsAsFactors=T)    
+# flow.params <- read.csv("flow.params.csv", header = TRUE,stringsAsFactors=T)    
+# flow.phi <- read.csv("flow.phi.csv", header = TRUE,stringsAsFactors=T) 
+# viab.params <- read.csv("viab.params.csv", header = TRUE,stringsAsFactors=T)    
+# repro.params <- read.csv("repro.params.csv", header = TRUE,stringsAsFactors=T)    
+# seed.params <- read.csv("seed.params.csv", header = TRUE,stringsAsFactors=T)    
+# pre.seed.params <- read.csv(paste0(mcmc_dir,"seed.surv.params.csv"), header = TRUE,stringsAsFactors=T)    
+# germ1.params <- read.csv(paste0(mcmc_dir,"germ1.params.csv"), header = TRUE,stringsAsFactors=T)    
+# germ2.params <- read.csv(paste0(mcmc_dir,"germ2.params.csv"), header = TRUE,stringsAsFactors=T)    
+# rec.params <- read.csv(paste0(mcmc_dir,"rec.params.csv"), header = TRUE,stringsAsFactors=T)    
 
 ##These files contain all draws from the posterior distributions of all parameters
-grow.params <- read.csv(paste0(mcmc_dir,"grow.params.csv"), header = TRUE,stringsAsFactors=T)    
-surv.params <- read.csv(paste0(mcmc_dir,"surv.params.csv"), header = TRUE,stringsAsFactors=T)    
-flow.params <- read.csv(paste0(mcmc_dir,"flow.params.csv"), header = TRUE,stringsAsFactors=T)    
-viab.params <- read.csv(paste0(mcmc_dir,"viab.params.csv"), header = TRUE,stringsAsFactors=T)    
-repro.params <- read.csv(paste0(mcmc_dir,"repro.params.csv"), header = TRUE,stringsAsFactors=T)    
-seed.params <- read.csv(paste0(mcmc_dir,"seed.params.csv"), header = TRUE,stringsAsFactors=T)    
-pre.seed.params <- read.csv(paste0(mcmc_dir,"seed.surv.params.csv"), header = TRUE,stringsAsFactors=T)    
-germ1.params <- read.csv(paste0(mcmc_dir,"germ1.params.csv"), header = TRUE,stringsAsFactors=T)    
-germ2.params <- read.csv(paste0(mcmc_dir,"germ2.params.csv"), header = TRUE,stringsAsFactors=T)    
-rec.params <- read.csv(paste0(mcmc_dir,"rec.params.csv"), header = TRUE,stringsAsFactors=T)    
+grow.params <- read.csv(paste0(mcmc_dir,"grow.params.csv"), header = TRUE,stringsAsFactors=T)
+surv.params <- read.csv(paste0(mcmc_dir,"surv.params.csv"), header = TRUE,stringsAsFactors=T)
+flow.params <- read.csv(paste0(mcmc_dir,"flow.params.csv"), header = TRUE,stringsAsFactors=T)
+flow.phi <- read.csv(paste0(mcmc_dir,"flow.phi.csv"), header = TRUE,stringsAsFactors=T)
+viab.params <- read.csv(paste0(mcmc_dir,"viab.params.csv"), header = TRUE,stringsAsFactors=T)
+repro.params <- read.csv(paste0(mcmc_dir,"repro.params.csv"), header = TRUE,stringsAsFactors=T)
+seed.params <- read.csv(paste0(mcmc_dir,"seed.params.csv"), header = TRUE,stringsAsFactors=T)
+pre.seed.params <- read.csv(paste0(mcmc_dir,"seed.surv.params.csv"), header = TRUE,stringsAsFactors=T)
+germ1.params <- read.csv(paste0(mcmc_dir,"germ1.params.csv"), header = TRUE,stringsAsFactors=T)
+germ2.params <- read.csv(paste0(mcmc_dir,"germ2.params.csv"), header = TRUE,stringsAsFactors=T)
+rec.params <- read.csv(paste0(mcmc_dir,"rec.params.csv"), header = TRUE,stringsAsFactors=T)
 
 
 ##This file contains random draws from the posterior distributions of the transition models 
@@ -112,25 +124,25 @@ params$surv_beta13<-surv.params$beta1.1				## surv slope
 params$surv_beta04<-surv.params$beta0.2     	  ## surv intercept
 params$surv_beta14<-surv.params$beta1.2				## surv slope
 #### --- Year Random Effects --- ####
-####Ant 1 (prev vacant)
+####Ant 1 (prev crem)
 surv_rfx4 <- cbind(surv.params$w.1.1,surv.params$w.1.2,surv.params$w.1.3,rep(0,100),rep(0,100),
                    surv.params$w.1.4,surv.params$w.1.5,surv.params$w.1.6,surv.params$w.1.7,
                    surv.params$w.1.8,surv.params$w.1.9,surv.params$w.1.10,surv.params$w.1.11,
                    surv.params$w.1.12,surv.params$w.1.13,surv.params$w.1.14,surv.params$w.1.15,
                    surv.params$w.1.16,rep(0,100))
-####Ant 2 (prev other)
+####Ant 2 (prev liom)
 surv_rfx3 <- cbind(surv.params$w.2.1,surv.params$w.2.2,surv.params$w.2.3,rep(0,100),rep(0,100),
                    surv.params$w.2.4,surv.params$w.2.5,surv.params$w.2.6,surv.params$w.2.7,
                    surv.params$w.2.8,surv.params$w.2.9,surv.params$w.2.10,surv.params$w.2.11,
                    surv.params$w.2.12,surv.params$w.2.13,surv.params$w.2.14,surv.params$w.2.15,
                    surv.params$w.2.16,rep(0,100))
-####Ant 3 (prev crem)
+####Ant 3 (prev other)
 surv_rfx1 <- cbind(surv.params$w.3.1,surv.params$w.3.2,surv.params$w.3.3,rep(0,100),rep(0,100),
                    surv.params$w.3.4,surv.params$w.3.5,surv.params$w.3.6,surv.params$w.3.7,
                    surv.params$w.3.8,surv.params$w.3.9,surv.params$w.3.10,surv.params$w.3.11,
                    surv.params$w.3.12,surv.params$w.3.13,surv.params$w.3.14,surv.params$w.3.15,
                    surv.params$w.3.16,rep(0,100))
-####Ant 4 (prev liom)
+####Ant 4 (prev vac)
 surv_rfx2 <- cbind(surv.params$w.4.1,surv.params$w.4.2,surv.params$w.4.3,rep(0,100),rep(0,100),
                    surv.params$w.4.4,surv.params$w.4.5,surv.params$w.4.6,surv.params$w.4.7,
                    surv.params$w.4.8,surv.params$w.4.9,surv.params$w.4.10,surv.params$w.4.11,
@@ -140,7 +152,7 @@ surv_rfx2 <- cbind(surv.params$w.4.1,surv.params$w.4.2,surv.params$w.4.3,rep(0,1
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
 #head(flow.params)
-params$flow_phi<-flow.params$phi     	      ## flow phi
+params$flow_phi<-flow.phi$x   	      ## flow phi
 params$flow_sig_u<-flow.params$sigma_u        ## flow sigma u
 params$flow_sig_w<-flow.params$sigma_w        ## flow sigma w
 
@@ -181,25 +193,25 @@ params$viab_beta03<-viab.params$beta0.1     	  ## viab intercept
 ####Ant 4 (liom)
 params$viab_beta04<-viab.params$beta0.2     	  ## viab intercept
 #### --- Year Random Effects --- ####
-####Ant 1 (prev vacant)
+####Ant 1 (prev crem)
 viab_rfx4 <- cbind(rep(0,100),viab.params$w.1.1,viab.params$w.1.2,viab.params$w.1.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.1.4,
                    viab.params$w.1.5,viab.params$w.1.6, viab.params$w.1.7,viab.params$w.1.8,
                    viab.params$w.1.9,viab.params$w.1.10,viab.params$w.1.11,viab.params$w.1.12,
                    viab.params$w.1.13)
-####Ant 2 (prev other)
+####Ant 2 (prev liom)
 viab_rfx3 <- cbind(rep(0,100),viab.params$w.2.1,viab.params$w.2.2,viab.params$w.2.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.2.4,
                    viab.params$w.2.5,viab.params$w.2.6, viab.params$w.2.7,viab.params$w.2.8,
                    viab.params$w.2.9,viab.params$w.2.10,viab.params$w.2.11,viab.params$w.2.12,
                    viab.params$w.2.13)
-####Ant 3 (prev crem)
+####Ant 3 (prev other)
 viab_rfx1 <- cbind(rep(0,100),viab.params$w.3.1,viab.params$w.3.2,viab.params$w.3.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.3.4,
                    viab.params$w.3.5,viab.params$w.3.6, viab.params$w.3.7,viab.params$w.3.8,
                    viab.params$w.3.9,viab.params$w.3.10,viab.params$w.3.11,viab.params$w.3.12,
                    viab.params$w.3.13)
-####Ant 2 (prev liom)
+####Ant 2 (prev vac)
 viab_rfx2 <- cbind(rep(0,100),viab.params$w.4.1,viab.params$w.4.2,viab.params$w.4.3,rep(0,100),
                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.4.4,
                    viab.params$w.4.5,viab.params$w.4.6, viab.params$w.4.7,viab.params$w.4.8,
@@ -277,5 +289,5 @@ multi_rfx1 <- cbind(rep(0,100),rep(0,100),rep(0,100),rep(0,100),
                     rep(0,100),rep(0,100),rep(0,100),rep(0,100),
                     rep(0,100),rep(0,100),rep(0,100),rep(0,100),
                     rep(0,100))
-
+ 
   
