@@ -13,17 +13,18 @@ Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
 iter <- 1000
 matsize<-200
-floor.extend=0.9*cholla_min
-ceiling.extend=1.1*cholla_max
-lower<- cholla_min - floor.extend
-upper<- cholla_max + ceiling.extend
+## This code was creating strange size boundaries
+#floor.extend=0.9*cholla_min
+#ceiling.extend=1.1*cholla_max
+lower<- cholla_min
+upper<- cholla_max
 
 
 ## -------- read in MCMC output ---------------------- ##
 #Ali
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
-#mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 # grow.params <- read.csv(paste0(mcmc_dir,"grow.params.csv"), header = TRUE,stringsAsFactors=T)    
 # surv.params <- read.csv("surv.params.csv", header = TRUE,stringsAsFactors=T)    
 # flow.params <- read.csv("flow.params.csv", header = TRUE,stringsAsFactors=T)    

@@ -393,7 +393,7 @@ transition.x <- function(x,i,j,params,scenario){
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
 ##################################################################################################
-bigmatrix.1 <- function(params,lower,upper,matsize){
+bigmatrix.1 <- function(params,lower,upper,matsize,lower.extension=0,upper.extension=0){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -403,7 +403,8 @@ bigmatrix.1 <- function(params,lower,upper,matsize){
   ###################################################################################################
   #Applying the midpoint rule
   n<-matsize
-  L<-lower; U<-upper
+  L<-lower - lower.extension 
+  U<-upper + upper.extension
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
@@ -427,10 +428,12 @@ bigmatrix.1 <- function(params,lower,upper,matsize){
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params))*h 
   # Put it all together
   IPMmat<-Fmat+Tmat  
-  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y))
   #lambda = Re(eigen(IPMmat)$values[1])
   #return(lambda)
 }
+
+## Tom testing out this function
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################

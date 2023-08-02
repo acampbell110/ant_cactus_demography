@@ -28,7 +28,11 @@ cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
 ## Check that the outputs are right
 ## One ant option
 lambda(bigmatrix(params,lower,upper,matsize,"none")$IPMmat)
-lambda(bigmatrix.1(params,lower,upper,matsize)$IPMmat)
+
+bigmatrix.1(params,lower,upper,matsize,lower.extension = 1,upper.extension = 0)$y
+lambda(bigmatrix.1(params,lower,upper,matsize=100,lower.extension = 1,upper.extension = 10)$IPMmat)
+
+
 ## 2 ant options
 lambda(bigmatrix(params,lower,upper,matsize,"cremvac")$IPMmat)
 lambda(bigmatrix.2(params,lower,upper,matsize,"cremvac")$IPMmat)
