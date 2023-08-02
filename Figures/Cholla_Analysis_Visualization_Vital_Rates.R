@@ -304,27 +304,20 @@ size_liom <- seq(min(y_liom_subset_grow$logsize_t, na.rm = TRUE), max(y_liom_sub
 size_other <- seq(min(y_other_subset_grow$logsize_t, na.rm = TRUE), max(y_other_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 size_vac <- seq(min(y_vac_subset_grow$logsize_t, na.rm = TRUE), max(y_vac_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 
-grow_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_outputs_skew.csv", header = TRUE,stringsAsFactors=T)
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+grow_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
+grow_out <- read.csv("grow.params.csv", header = TRUE,stringsAsFactors=T)
 ## Formulas
 ## Other
-
-y_other_mean_grow <- quantile(grow_out$beta0.3,0.5) + (size_other+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.5)
-y_other_low_grow <- quantile(grow_out$beta0.3,0.05) + (size_other+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.05)
-y_other_high_grow <- quantile(grow_out$beta0.3,0.95) + (size_other+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.95)
+y_other_mean_grow <- quantile(grow_out$beta0.3,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.5)
 ## Crem
-y_crem_mean_grow <- quantile(grow_out$beta0.1,0.5) + (size_crem+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.5)
-y_crem_low_grow <- quantile(grow_out$beta0.1,0.05) + (size_crem+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.05)
-y_crem_high_grow <- quantile(grow_out$beta0.1,0.95) + (size_crem+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.95)
+y_crem_mean_grow <- quantile(grow_out$beta0.1,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.5)
 ## Liom
-y_liom_mean_grow <- quantile(grow_out$beta0.2,0.5) + (size_liom+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.5)
-y_liom_low_grow <- quantile(grow_out$beta0.2,0.05) + (size_liom+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.05)
-y_liom_high_grow <- quantile(grow_out$beta0.2,0.95) + (size_liom+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.95)
+y_liom_mean_grow <- quantile(grow_out$beta0.2,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.5)
 ## Vac
-y_vac_mean_grow <- quantile(grow_out$beta0.4,0.5) + (size_vac+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.5)
-y_vac_low_grow <- quantile(grow_out$beta0.4,0.05) + (size_vac+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.05)
-y_vac_high_grow <- quantile(grow_out$beta0.4,0.95) + (size_vac+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.95)
+y_vac_mean_grow <-  quantile(grow_out$beta0.4,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.5)
 
-grow_sd <- mean(grow_out$d_0) + (size_dummy+mean(growth_data$logsize_t)) * mean(grow_out$d_size)
+grow_sd <- mean(grow_out$d_0) + (size_dummy) * mean(grow_out$d_size)
 range(grow_sd)
 
 ## create the panel figure
@@ -334,61 +327,49 @@ png("grow_all_skew.png")
 par(mar=c(5,5,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1),
               ncol = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9))
-plot(x = size_other  ,y = y_other_mean_grow, type = "l",lwd = 3,col = othercol,
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l",lwd = 3,col = othercol,
      main = "",cex.main = 1.5, xlab = "Log(Volume) year t", ylab = "Log(Volume) year t+1",
-      cex.lab = 2)  
-lines(x = size_crem, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 3) 
-lines(x = size_liom, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 3) 
-lines(x = size_vac, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 3) 
+      cex.lab = 2, xlim = c(3,7), ylim = c(3,7))  
+lines(x = size_dummy, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 3) 
+lines(x = size_dummy, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 3) 
+lines(x = size_dummy, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 3) 
 lines(x = size_dummy, y = size_dummy, type= "l", col = "darkgrey", lwd = 2, lty = 2)
 legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
        cex=1.6)
 dev.off()
-png("grow_panel.png")
+png("grow_panel2021.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
 # Other (2)
 samp <- sample(nrow(grow_out), 50)
-plot(x = size_other  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4,
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4,
      main = "a)         Other   ",cex.main = 1.5) 
-for(i in 1:samp){
-  lines(x = size_other, y = (grow_out$beta0.2[i] + size_other * grow_out$beta1.2[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_other_subset_grow$logsize_t,y_other_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_other  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4)
+lines(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4)
 # Crem (3)
-plot(x = size_crem  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4,
+plot(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4,
      main = "b)         Crem.       ",cex.main = 1.5) 
-for(i in 1:samp){
-  lines(x = size_crem, y = (grow_out$beta0.3[i] + size_crem * grow_out$beta1.3[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_crem_subset_grow$logsize_t,y_crem_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_crem  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4)
+lines(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4)
 # Liom (4)
-plot(x = size_liom  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4,
+plot(x = size_dummy  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4,
      main = "c)         Liom.       ",cex.main = 1.5)
-for(i in 1:samp){
-  lines(x = size_liom, y = (grow_out$beta0.4[i] + size_liom * grow_out$beta1.4[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_liom_subset_grow$logsize_t,y_liom_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_liom  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4)
+lines(x = size_dummy  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4)
 # Vacant (1)s
-plot(x = size_vac  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4,
+plot(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4,
      main = "d)      Vac.      ",cex.main = 1.5) 
-for(i in 1:samp){
-  lines(x = size_vac, y = (grow_out$beta0.1[i] + size_vac * grow_out$beta1.1[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_vac_subset_grow$logsize_t,y_vac_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_vac  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4)
+lines(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4)
 
 # All together
-plot(x = size_other  ,y = y_other_mean_grow, type = "l",lwd = 2,col = othercol,
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l",lwd = 2,col = othercol,
      main = "e)              All Ants                 ",cex.main = 1.5,
-     ylim = c(9,11), xlim = c(9,11))  
-  lines(x = size_crem, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 2) 
-  lines(x = size_liom, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 2) 
-  lines(x = size_vac, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 2) 
+     ylim = c(4,7), xlim = c(4,7))  
+  lines(x = size_dummy, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 2) 
+  lines(x = size_dummy, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 2) 
+  lines(x = size_dummy, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 2) 
   lines(x = size_dummy, y = size_dummy, type= "l", col = "darkgrey", lwd = 2, lty = 2)
 legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
        cex=1.6)
@@ -397,7 +378,6 @@ mtext("Log(Volume) year t+1",side=2,line=0,outer=TRUE,cex=1.5,las=0)
 dev.off()
 
 ## For posters
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("grow_panel_title.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,1,1,2,3,4,5,6,6),
@@ -407,45 +387,32 @@ text(0.5,0.3,"Crem. Offer Higher Growth \n Rates for Small Cacti
 ",cex=4,font=2)
 # Other (2)
 samp <- sample(nrow(grow_out), 50)
-plot(x = size_other  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4,
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4,
      main = "Other",cex.main = 2) 
-for(i in 1:samp){
-  lines(x = size_other, y = (grow_out$beta0.3[i] + size_other * grow_out$beta1.3[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_other_subset_grow$logsize_t,y_other_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_other  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4)
+lines(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4)
 # Crem (3)
-plot(x = size_crem  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4,
+plot(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4,
      main = "Crem.",cex.main = 2) 
-for(i in 1:samp){
-  lines(x = size_crem, y = (grow_out$beta0.1[i] + size_crem * grow_out$beta1.1[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_crem_subset_grow$logsize_t,y_crem_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_crem  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4)
+lines(x = size_dummy  ,y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 4)
 # Liom (4)
-plot(x = size_liom  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4,
+plot(x = size_dummy  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4,
      main = "Liom.",cex.main = 2)
-for(i in 1:samp){
-  lines(x = size_liom, y = (grow_out$beta0.2[i] + size_liom * grow_out$beta1.2[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_liom_subset_grow$logsize_t,y_liom_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_liom  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4)
+lines(x = size_dummy  ,y = y_liom_mean_grow, type = "l", col = liomcol, lwd = 4)
 # Vacant (1)s
-plot(x = size_vac  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4,
+plot(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4,
      main = "Vacant",cex.main=2) 
-for(i in 1:samp){
-  lines(x = size_vac, y = (grow_out$beta0.4[i] + size_vac * grow_out$beta1.4[i]),col = "lightgrey", alpha = 0.1)
-}
 points(y_vac_subset_grow$logsize_t,y_vac_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(x = size_vac  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4)
-
+lines(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4)
 # All together
-plot(x = size_other  ,y = y_other_mean_grow, type = "l",lwd = 2,col = othercol,
+plot(x = size_dummy  ,y = y_other_mean_grow, type = "l",lwd = 2,col = othercol,
      main = "All Ants",cex.main = 2,
      ylim = c(9,11), xlim = c(9,11))  
-lines(x = size_crem, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 2) 
-lines(x = size_liom, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 2) 
-lines(x = size_vac, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 2) 
+lines(x = size_dummy, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 2) 
+lines(x = size_dummy, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 2) 
+lines(x = size_dummy, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 2) 
 lines(x = size_dummy, y = size_dummy, type= "l", col = "darkgrey", lwd = 2, lty = 2)
 abline(a = 1, b = 1, col = "darkgrey", lty = 20)
 legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
@@ -459,103 +426,28 @@ dev.off()
 x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
 y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), length = 25); # five rows
 
-z <- 2
-rand <- function(x,y,z){
-  return((x+y)*z)
-}
-dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb,sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-
-crem <- outer (
-  y,     # First dimension:  the columns (y)
-  x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.1,0.5) + (x+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.5), sd = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x))
-);
-
-crem <- outer (
-  y,     # First dimension:  the columns (y)
-  x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.1,0.5) + (x+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
-);
-
-outer(
-  y,x,
-  rand,z
-)
-
-liom <- outer (
-  y,     # First dimension:  the columns (y)
-  x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.2,0.5) + (x+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.5), sd = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x))
-);
 other <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.3,0.5) + (x+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.5), sd = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x))
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.3,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
 );
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dnorm(y,mean = quantile(grow_out$beta0.4,0.5) + (x+mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.5), sd = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x))
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.4,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
+);
+liom <- outer (
+  y,     # First dimension:  the columns (y)
+  x,     # Second dimension: the rows    (x)
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.2,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
+);
+crem <- outer (
+  y,     # First dimension:  the columns (y)
+  x,     # Second dimension: the rows    (x)
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.1,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
 );
 
-
-
-## Try with filled.contour
-cc <- palette()
-palette(c(cc,"purple","brown"))
-## Crem
-filled.contour(x,y,crem, xlab = "",ylab = "", main = "Crem. Tended",col = gray.colors(24, start =1, end = 0))
-## Liom
-filled.contour(x,y,liom, xlab = "",ylab = "", main = "Liom. Tended",col = gray.colors(24, start =1, end = 0))
-## Other
-filled.contour(x,y,other, xlab = "",ylab = "", main = "Other Tended",col = gray.colors(24, start =1, end = 0))
-## Vacant
-filled.contour(x,y,crem, xlab = "",ylab = "", main = " Not Tended",col = gray.colors(24, start =1, end = 0))
-
-
-x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
-y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), length = 25); # five rows
 ## Contour plots
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("grow_contour_lines_title.png")
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,2,3,4,5,5),
-              ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
-## Crem
-contour(x,y,crem, nlevels = 7
-        , xlim = c(2,10), ylim = c(0,10)
-        , col = "cremcol")#gray.colors(10, start =1, end = 0))
-#points(y_crem_subset_grow$logsize_t,y_crem_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(size_crem, y_crem_mean_grow, col = othercol, lwd = 3)
-points(y_other_subset_grow$logsize_t,y_other_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-## Liom
-contour(x,y,liom, nlevels = 8
-        , xlim = c(2,10), ylim = c(0,10)
-        , col = gray.colors(10, start =1, end = 0))
-#points(y_liom_subset_grow$logsize_t,y_liom_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(size_liom, y_liom_mean_grow, col = liomcol, lwd = 3)
-## Other
-contour(x,y,crem, nlevels = 8
-        , xlim = c(2,10), ylim = c(0,10)
-        , col = gray.colors(10, start =1, end = 0))
-#points(y_other_subset_grow$logsize_t,y_other_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(size_other, y_other_mean_grow, col = othercol, lwd = 3)
-## Vacant
-contour(x,y,crem, nlevels = 8
-        , xlim = c(2,10), ylim = c(0,10)
-        , col = gray.colors(10, start =1, end = 0))
-#points(y_vac_subset_grow$logsize_t,y_vac_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
-lines(size_vac, y_vac_mean_grow, col = vaccol, lwd = 3)
-## All together
-plot(size_crem, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(5,6), ylim = c(5.3,6.5))
-lines(size_liom, y_liom_mean_grow, col = liomcol, lwd = 3)
-lines(size_other, y_other_mean_grow, col = othercol, lwd = 3)
-lines(size_vac, y_vac_mean_grow, col = vaccol, lwd = 3)
-lines(size_vac, size_vac, col = "grey", lty = 2)
-legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
-mtext("Log(Volume) in Year t",side=1,line=0,outer=TRUE,cex=1.0)
-mtext("Log(Volume) in Year t+1",side=2,line=0,outer=TRUE,cex=1.1,las=0)
-dev.off()
 ## Now without the mean lines
 ## For gray scale contour lines, col = gray.colors(10, start =1, end = 0)
 png("grow_contour_lines_color.png")
@@ -565,29 +457,27 @@ layout(matrix(c(1,2,3,4,5,5),
 ## Crem
 contour(x,y,crem, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
         main = "a)       Crem.               ", cex.main = 2) 
-#points(growth_data$logsize_t[growth_data$ant_t == "crem"],growth_data$logsize_t1[growth_data$ant_t == "crem"],col = cremcol)
-lines(size_crem, y_crem_mean_grow, col = cremcol, lwd = 3)
+lines(size_dummy, y_crem_mean_grow, col = cremcol, lwd = 3)
 ## Liom
 contour(x,y,liom, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
         main = "b)      Liom.                ", cex.main = 2) 
-lines(size_liom, y_liom_mean_grow, col = liomcol, lwd = 3)
+lines(size_dummy, y_liom_mean_grow, col = liomcol, lwd = 3)
 ## Other
 contour(x,y,other, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
         main = "c)       Other                ", cex.main = 2) 
-lines(size_other, y_other_mean_grow, col = othercol, lwd = 3)
+lines(size_dummy, y_other_mean_grow, col = othercol, lwd = 3)
 ## Vacant
 contour(x,y,vacant, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,10), 
         main = "d)      Vacant                ", cex.main = 2) 
-lines(size_vac, y_vac_mean_grow, col = vaccol, lwd = 3)
+lines(size_dummy, y_vac_mean_grow, col = vaccol, lwd = 3)
 ## All together
-plot(size_crem, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(5,6), ylim = c(5.3,6.5), 
+plot(size_dummy, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(5,6), ylim = c(5.3,6.5), 
      main = "e)                      All Ants                           ", cex.main = 2) 
-lines(size_liom, y_liom_mean_grow, col = liomcol, lwd = 3)
-lines(size_other, y_other_mean_grow, col = othercol, lwd = 3)
-lines(size_vac, y_vac_mean_grow, col = vaccol, lwd = 3)
-lines(size_vac, size_vac, col = "grey", lty = 2)
+lines(size_dummy, y_liom_mean_grow, col = liomcol, lwd = 3)
+lines(size_dummy, y_other_mean_grow, col = othercol, lwd = 3)
+lines(size_dummy, y_vac_mean_grow, col = vaccol, lwd = 3)
+lines(size_dummy, size_dummy, col = "grey", lty = 2)
 legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
-legend("topleft", legend = c("1","0"), fill = c("black","white"))
 mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2,las=0)
 dev.off()
@@ -698,13 +588,14 @@ dev.off()
 ###########################################################################################################################
 #### Survival Visuals #####################################################################################################
 #########################################################################################################################
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 ## Extract & Format Data
 survival_data_orig <- subset(cactus, is.na(Survival_t1) == FALSE,c("Plot","Year_t","Survival_t1","ant_t","logsize_t"))
 survival_data_orig <- cactus[,c("Plot","Year_t","Survival_t1","ant_t","logsize_t")]
 survival_data <- na.omit(survival_data_orig)
 #extract from original ddata
 surv_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv.params.csv", header = TRUE,stringsAsFactors=T)
+surv_out <- read.csv("surv.params.csv", header = TRUE,stringsAsFactors=T)
 ## Create subsets for each ant species
 y_crem_subset_surv <- subset(survival_data, ant_t == "crem")
 y_liom_subset_surv <- subset(survival_data, ant_t == "liom")
@@ -772,7 +663,8 @@ surv_plot_vac <- y_vac_subset_surv %>%
 surv_plot_vac$N_mod <- log(surv_plot_vac$N)
 ## Panel Plots
 ## For paper -- No title and separated into panels by ant partner
-png("surv_panels.png")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+png("surv_panels2021.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
@@ -915,7 +807,7 @@ dev.off()
 #### Flowering Visuals #####################################################################################################
 #########################################################################################################################
 ## Extract & Format Data
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 flower_data_orig <- cactus[ , c("TotFlowerbuds_t", "logsize_t","Year_t","Plot")]
 flower_data_orig <- subset(flower_data_orig, TotFlowerbuds_t > 0)
 flower_data <- na.omit(flower_data_orig)
@@ -938,6 +830,7 @@ flow_plot <- flower_data %>%
 ## Plot the probabilities
 ## Plot
 ## For Posters 
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("flow_title.png")
 par(mar=c(4,4,0,1),oma=c(2,2,0,0),layout(matrix(c(1,2,3,4)),
               ncol = 4, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9,3.9))
@@ -969,10 +862,12 @@ dev.off()
 #### Viability Visuals #####################################################################################################
 #########################################################################################################################
 ## Extract & Format Data
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 viability_data_orig <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "logsize_t","Year_t","Plot")]
 viability_data_orig <- subset(viability_data_orig, TotFlowerbuds_t1 > 0)
 viability_data <- na.omit(viability_data_orig)
 viab_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.params.csv", header = TRUE,stringsAsFactors=T)
+viab_out <- read.csv("viab.params.csv", header = TRUE,stringsAsFactors=T)
 nrow(viability_data_orig)
 nrow(viability_data)
 levels(viability_data$ant_t)
@@ -1002,9 +897,9 @@ other_subset <- subset(viability_data, ant_t == "other")
 crem_subset <- subset(viability_data, ant_t == "crem")
 liom_subset <- subset(viability_data, ant_t == "liom")
 vac_subset <- subset(viability_data, ant_t == "vacant")
-
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 ## Histograms of biability rates
-png("viab_hist.png")
+png("viab_hist2021.png")
 a <- ggplot(viab_out,aes(invlogit(beta0.1))) +
   geom_histogram(bins=30, color = cremcol, fill = cremcol, alpha = 0.3) +
   coord_flip() + xlim(0.4,1) + ylim(0,900) + 
@@ -1026,7 +921,7 @@ ggarrange(a, b, c, d,
                     ncol = 4, nrow = 1)
 dev.off()
 
-png("Viability.png")
+png("Viability2021.png")
 par(mar=c(5,6,3,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1)) 
@@ -1049,18 +944,18 @@ low <- c(quantile(viab_out$beta0.1,0.05),quantile(viab_out$beta0.2,0.05),quantil
 high <- c(quantile(viab_out$beta0.1,0.95),quantile(viab_out$beta0.2,0.95),quantile(viab_out$beta0.3,0.95),quantile(viab_out$beta0.4,0.95))
 data <- cbind(viab_out$beta0.1,viab_out$beta0.2,viab_out$beta0.3,viab_out$beta0.4)
 data <- invlogit(data)
-colnames(data) <- c("Vacant","Other","Crem.","Liom.")
+colnames(data) <- c("Vacant","Other","Crem","Liom")
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 ## For Poster
-png("viab_bars_title.png")
-barplot(invlogit(means), ylim = c(0,1.1), col = c(liomcol,cremcol,othercol,vaccol),xlab = "Ant Partner", ylab = "Viability Rate",
-        main = "Liom. Offers Higher Viability \nRates for Flowerbuds", names.arg = c("Vacant","Other","Crem.","Liom."),
+png("viab_bars_title2021.png")
+barplot(invlogit(means), ylim = c(0,1.1), col = c(vaccol,othercol,cremcol,liomcol),xlab = "Ant Partner", ylab = "Viability Rate",
+        main = "Liom. Offers Higher Viability \nRates for Flowerbuds", names.arg = c("Vacant","Other","Crem.","Liom"),
         cex.main = 2.6, cex.lab = 1.5)
 dev.off()
 ## For paper
 png("viab_bars.png")
-barplot(invlogit(means), ylim = c(0,1.1), col = c(liomcol,cremcol,othercol,vaccol),xlab = "Ant Partner", ylab = "Viability Rate",
+barplot(invlogit(means), ylim = c(0,1.1), col = c(vaccol,othercol,cremcol,liomcol),xlab = "Ant Partner", ylab = "Viability Rate",
         main = "", names.arg = c("Vacant","Other","Crem.","Liom."),
         cex.main = 2.6, cex.lab = 1.5)
 dev.off()
@@ -1075,13 +970,16 @@ dev.off()
 #format for overlay plots
 #extract from STAN models
 #extract from original data
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 repro_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.params.csv", header = TRUE,stringsAsFactors=T)
+repro_out <- read.csv("repro.params.csv", header = TRUE,stringsAsFactors=T)
 ## Formulas
 size_dummy <- seq(min(reproductive_data$logsize_t),max((reproductive_data$logsize_t)), by = 0.1)
 y_repro = quantile(repro_out$beta0,0.5,na.rm = TRUE) + size_dummy * quantile(repro_out$beta1,0.5,na.rm = TRUE)
 y_low_repro = quantile(repro_out$beta0,0.05) + size_dummy * quantile(repro_out$beta1,0.05)
 y_high_repro = quantile(repro_out$beta0,0.95) + size_dummy * quantile(repro_out$beta1,0.95)
 ## Panel Plots
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("repro_panel.png")
 par(mar=c(5,5,0,1))
 layout(matrix(c(1,2),
@@ -1177,8 +1075,8 @@ for(i in 1:nrow(seed_out)){
   seeds$high[i] <- y_liom_h
 }
 for(i in 1:nrow(seed_out)){
-  seeds$beta[2*nrow(seed_out) + i] <- seed_out$beta0.3[i]
-  seeds$ant[2*nrow(seed_out) + i] <- "vacant"
+  seeds$beta[nrow(seed_out) + i] <- seed_out$beta0.3[i]
+  seeds$ant[nrow(seed_out) + i] <- "vacant"
   seeds$low[i] <- y_vac_l
   seeds$high[i] <- y_vac_h
 }
@@ -1205,10 +1103,6 @@ mtext("Number of Seeds Produced",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-3,outer=TRUE,cex=1.3,las=0)
 dev.off()
 
-png("seeds_bars.png")
-plot(exp(seeds$beta) ~ factor(seeds$ant), xlab = "Ant Species",ylab = "Expected Seeds", col = c(cremcol,liomcol,vaccol), main = "Liom. Provides Advantages \n for Seed Production")
-dev.off()
-
 ########################################################################################################
 #### Pre-Census Seed Survival #########################################################################
 ########################################################################################################
@@ -1223,7 +1117,7 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 y_surv = seed_out$beta0
 y_low_surv = quantile(seed_out$beta0,0.05) 
 y_high_surv = quantile(seed_out$beta0,0.95)
-y_surv <- cbind(invlogit(quantile(seed_out$beta0,0.5)), invlogit(quantile(seed_out$beta0,0.05)), invlogit(quantile(seed_out$beta0,0.95)))
+#y_surv <- cbind(invlogit(quantile(seed_out$beta0,0.5)), invlogit(quantile(seed_out$beta0,0.05)), invlogit(quantile(seed_out$beta0,0.95)))
 
 png("seed_surv.png")
 plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "Pre-census Survival Probability", ylab = "Density",main = "Probability of Seedlings\nSurviving to Census")
@@ -1236,6 +1130,10 @@ png("seed_surv_box.png")
 boxplot(invlogit(y_surv), col = "chartreuse4", ylim = c(-0.1,1),
         main = "Proportion of Seeds that \n Survive to Census", ylab = "Survival Rate")
 dev.off()
+
+mean(invlogit(y_surv))
+mean(invlogit(y_low_surv))
+mean(invlogit(y_high_surv))
 
 ################################################################################################################################################
 ##################### Germination Yr 1&2 Visuals ########################################################################
@@ -1295,19 +1193,14 @@ png("rec_size.png")
 boxplot(recruit_out$beta0, col = "chartreuse4", ylab = "Log(Volume)", main = "Recruit Size Distribution")
 dev.off()
 
-png("rec_size_hist.png")
-hist(seedling.dat$logsize_t1, freq = FALSE, xlab = "Log(Volume) of Recruits", ylab = "Density", main = "Size Distribution of New Recruits",
-     ylim = c(0,0.5))
-lines(x = size_dummy_rec, y = dnorm(x = size_dummy_rec, mean = y_rec, sd = mean(grow_out$sigma)), col = "chartreuse4", lwd = 2)
-dev.off()
-
-boxplot(seedling.dat$logsize_t1)
 
 ######################################################################################################################
 ###################### Ant Partner Transitions #######################################################################
 ######################################################################################################################
 cactus$individual_ID <- paste(cactus$Plot,cactus$TagID)
-cactus_ants <- cactus[,c("Recruit","individual_ID","Year_t","ant_t1","Newplant","logsize_t")]
+cactus_ants <- cactus[,c("Recruit","individual_ID","Year_t","ant_t1","Newplant","logsize_t1")]
+dim(cactus_ants)
+dim(cactus)
 cactus_ants <- na.omit(cactus_ants)
 cactus_ants$obs_yr <- NA
 
@@ -1317,7 +1210,7 @@ cactus_ants %>%
   summarise(min_yr = min(Year_t)) -> order
 ## and record this year as obs_yr in the dataset
 for(i in 1:nrow(cactus_ants)){
-  if(cactus_ants$Newplant[i] == 1 | cactus_ants$Recruit[i] == 1)
+  if(cactus_ants$Recruit[i] == 1| cactus_ants$Newplant[i] == 1 )
     for(j in 1:nrow(order)){
       if(cactus_ants$individual_ID[i] == order$individual_ID[j]) cactus_ants$obs_yr[i] <- order$min_yr[j]
     }
@@ -1332,6 +1225,7 @@ for(i in 1:nrow(cactus_ants)){
   }
 }
 view(cactus_ants)
+cactus_ants <- subset(cactus_ants, Recruit == 1)
 ## Now use this observed year to calculate the approximate age of the plant 
 cactus_ants$obs_age <- cactus_ants$Year_t - cactus_ants$obs_yr 
 ## Now calculate the highest age for each individual and order the rows by that max age
@@ -1415,11 +1309,11 @@ png("tester.png")
 plot(ages_mat, col = c("red","blue","green","white","yellow"))
 dev.off()
 
-png("tester2.png")
+png("ant_transitions_rec_only.png")
 ggplot(data = d, aes(x = Var2, y = Var1, fill = value)) + 
   geom_tile() + 
   xlab("Age") + 
-  ylab("Individual") 
-  
+  ylab("Individual") +
+  scale_fill_manual(values = c('white',cremcol,liomcol,othercol,vaccol))
 dev.off()
 
