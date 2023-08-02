@@ -286,11 +286,11 @@ colnames(cactus) <- c("Plot" ,"TagID"     ,       "Transplant"   ,    "Year_t" ,
 ## Remove extra columns)
 cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1","ant_t","ant_t1",
                       "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1","Antcount_t1",
-                      "flower1_YN")]
+                      "flower1_YN","Newplant")]
 
 
 ## Export cactus to a csv
-write.csv(cactus, "cholla_demography_20042023_cleaned.csv")
+write.csv(cactus, "cholla_demography_20042021_cleaned.csv")
 
 ## How many plants do we survey annually (on average)
 yr <- vector()
