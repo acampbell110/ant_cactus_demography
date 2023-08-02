@@ -433,7 +433,12 @@ bigmatrix.1 <- function(params,lower,upper,matsize,lower.extension=0,upper.exten
   #return(lambda)
 }
 
-## Tom testing out this function
+## Tom checking out growth model predictions from min and max initial sizes
+par(mfrow=c(2,1))
+plot(y,gxy(U,y,"vacant",params),type="l",col="blue",ylab="gxy()");abline(v=U,col="blue",lty=2)
+lines(y,gxy(L,y,"vacant",params),type="l",col="red");abline(v=L,col="red",lty=2)
+hist(cactus$logsize_t1[cactus$logsize_t< -3],xlim=c(-5,15))
+hist(cactus$logsize_t1[cactus$logsize_t>14],add=T)
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
