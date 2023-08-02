@@ -290,9 +290,112 @@ Portfolio effect is demonstrated when the net benefit with annual variation is l
     
   
 \section*{Results}
+\subsection*{Statistical Modeling}
+
+%% Growth Model
+%\begin{figure}[h]
+%	\includegraphics[width=0.95\linewidth]{grow_contour_lines_color.png}
+%	\caption{asdasdf}
+%	\label{fig:growth}
+%\end{figure}
+Plants tended by other ants experiened positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}a.
+They experienced significantly higher growth than vacant plants ($p = 2.2 \times 10^{-16}$), and similar mean growth to \textit{L. apiculatum} tended plants ($p = 0.9135$) and \textit{C. opuntiae} tended plants ($p = 0.4864$).  
+Plants tended by \textit{C. opuntiae} ants experienced positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}b.
+They experienced significantly higher mean growth than vacant plants ($p = 4.88 \times 10^{-14}$).
+Plants tended by \textit{L. apiculatum} experienced positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}c.
+Vacant plants experienced the lowest observed growth, except at the largest sizes where they are less likely to shrink than tended plants \cite{fig:growth}d. 
+
+%% Survival Model
+%\begin{figure}[h]
+%	\includegraphics[width=0.95\linewidth]{surv_panels.png}
+%	\caption{asdasdf}
+%	\label{fig:surv}
+%\end{figure}
+Plants tended by \texit{C. opuntiae} ants experienced significantly higher mean survival rates than \textit{L. apiculatum} tended plants ($p = 2.908 \times 10^{-14}$), plants tended by other ants ($p = 4.488 \times 10^{-14}$), and vacant plants ($p = 2.2 \times 10^{-16}$) \cite{fig:surv}. 
+These \textit{C. opuntiae} plants have the highest mean survival at small sizes before reaching a mean survival rate of about 100\% when medium to large.
+Plants tended by \textit{L. apiculatum} experienced similar mean survival rates to plants tended by other ants and vacant plants.
+\textit{L. apiculatum} tended plants and other tended plants reached a mean survival rate of nearly 100\% by medium sizes, with other tended plants reaching this rate slower. 
+Vacant plants never reach mean survival rates of 100\%. 
+
+%% Flowers Model
+There is a clear size effect on the number of flowers produced. 
+The mean number of flowers produced by a plant remains at 0 until the plant reachesmedium sizes after which the mean number of flower produced increases eponentially to about 40 at large sizes.
+
+
+%% Viability Model
+%\begin{figure}[h]
+%	\includegraphics[width=0.95\linewidth]{Viability.png}
+%	\caption{asdasdf}
+%	\label{fig:comp-samp}
+%\end{figure}
+Plants tended by \textit{L. apiculatum} ants experienced the highest viability rates, significantly higher than \textit{C. opuntiae} tended plants ($p = 2.2 \times 10^{-16}$), other tended plants ($p = 2.2 \times 10^{-16}$), and vacant plants ($p = 2.2 \times 10^{-16}$).
+The mean viability rate of \textit{L. apiculatum} tended plants was 84.888\%.
+Plants tended by \textit{C. opuntiae} ants experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$), but not than other tended plants ($p = 0.1168$).
+The mean viability rate of \textit{C. opuntiae} plants was 75.934\%.
+Plants tended by other ants also experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$).
+The mean viability rate of other tended plants was 76.367\%.
+The mean viability rate of vacant plants was 70.442\%.
+
+%% Reproduction Model
+The probability of a plant reproducing in a given year is highly size dependent. 
+The mean probability of reproducing remains at about 0\% until the plant reaches a medium size, after which the mean probability of reproducing increases steadily before reaching about 100\% at large sizes. 
+
+%% Seeds Produced
+The mean number of seeds produced by \textit{C. opuntiae} tended plants is significantly lower than the mean number of seeds produced by \textit{L. apiculatum} plants ($p = 2.2 \times 10^{-16}$) and vacant plants ($p = 2.2 \times 10^{-16}$). 
+\textit{C. opuntiae} tended plants produce a mean of 2.561 seeds per flower. 
+The mean number of seeds produced by \textit{L. apiculatum} tended plants is slightly higher than the mean number produced by vacant plants ($p = 0.02521$). 
+\textit{L. apiculatum} tended plants produce a mean of 3.563 seeds per flower. 
+Vacant plants produce a mean of 3.435 seeds per flower. 
+
+%% Precensus Survival
+The mean pre-census seed survival rate is 16.99\% with 90\% of model iterations landing between 1.13\% and 40.72\%. 
+
+%% Germination
+Seeds have a significantly higher probability of germinating in year one than in year two ($p = 2.2 \times 10^{-16}$).
+Seeds in year one have a mean germination rate of 0.578\% and seeds in year two have a mean germination rate of 0.221\%. 
+
+%% Recruit size distribution
+ The mean size of new recruits is -1.88 log($cm^3$) with 90\% of new recruits falling between the sizes of -2.12 log($cm^3$) and -1.64 log($cm^3$).
+ 
+%% Ant Transition Rates
+% previously vacant
+Plants that were previously vacant will most likely remain vacant until large. 
+These plants have significantly higher probabilities of being vacant rather than becoming tended  by \textit{C. opuntiae}, \textit{L. apiculatum}, or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
+The probability of previously vacant plants becoming tended by \texit{L. apiculatum} ants is significantly higher than the probabilities of becoming tended by \textit{C. opuntiae} or other ants (respecitvely, $p = 3.83 \times 10^{-14}$, $p = 2.2 \times 10^{-16}$).
+The probability of previously vacant plants becoming tended by other ants is significantly lower than the probability of becoming tended by \textit{C. opuntiae} ($p = 0.00227$).
+
+% previously crem
+Plants that were previously tended by \textit{C. opuntiae} will most likely remain vacant until large. 
+These plants have significantly higher probabilities of becoming vacant rather than remaining tended by \textit{C. opuntiae} or becoming tended by \textit{L. apiculatum} or other ants (repsectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$ ).
+The probability of these plants remaining tended by \textit{C. opuntiae} ants is significantly higher than the probability of becoming tended by \textit{L. apiculatum} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 3.797 \times 10^{-9}$).
+The probability of these plants becoming tended by \textit{L. apiculatum} is significantly higher than the probability of becoming tended by other ants ($p = 3.797 \times 10^{-9}$).
+
+% previously liom
+Plants that were previously tended by \textit{L. apiculatum} ants will most likely remain vacant until large. 
+These plants have significantly higher probabilities of becoming vacant than remaining tended by \textit{L. apiculatum} or becoming tended by \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
+These plants have significantly higher probabilities of remaining tended by \textit{L. apiculatum} ants than becoming tended by  \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
+The probability of these plants becoming tended by \textit{C. opuntiae} ants is significantly higher than the probability of them becoming tended by other ants ($p = 0.007925$).
+
+% previously other
+Plants that were previously tended by other ants will most likely remain vacant until they are large. 
+These plants have significantly higher probabilities of becoming vacant rather than remaining tended by other ants or becoming tended by \textit{C. opuntiae} or \textit{L. apiculatum} ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
+The probability of these plants becoming tended by \textit{L. apiculatum} ants is significantly higher than the probability of remaining tended by other ants or becomnig tended by \textit{C. opuntiae} (respectively, $p = 6.309 \times 10^{-12}$, $p = 6.256 \times 10^{-13}$).
+The probability of these plants remaining tended by other ants is not higher than the probability of becoming tended by \textit{C. opuntiae} ants ($p = 0.954$). 
+
+%% All cases/trends
+In all plants ,the most likely scenario is vacancy.
+In most cases, the second most likely next ant partner is \textit{L. apiculatum} with the exception of plants which were previously tended by \textit{C. opuntiae} who are second most likely to retain \textit{C. opuntiae} as their partners in successive years.
+The only case where two next partners do not have statistically significantly different probabilities is when previously other tended plants either remain tended by other ants or become tended by \textit{C. opuntiae}. 
+
+\subsection*{Deterministic IPM}
+
+\subsection*{Stochastic IPM}
+
 
 \section*{Discussion}
 
+
+\section*{Conclusion}
 
 \section*{Acknowledgments}
 
@@ -381,28 +484,28 @@ Portfolio effect is demonstrated when the net benefit with annual variation is l
     growth alpha size dependent $\alpha_1^g$ & & \\
     \hline
     %% Germination Parameters
-    1-year germination intercept $\alpha^{\gamma_1}$ & & \\
-    2-year germination intercept $\alpha^{\gamma_2}$ & & \\
+    1-year germination intercept $\alpha^{\gamma_1}$ & -5.144627 (-5.370185, -4.966587) & \\
+    2-year germination intercept $\alpha^{\gamma_2}$ & -6.155088 (-6.417991, -5.786996) & \\
     \hline
     %% Survival Parameters
-    survival intercept vacant $\Beta_{01}^s$ & & \\
-    survival intercept other $\Beta_{02}^s$ & & \\
-    survival intercept \textit{C.opuntiae} $\Beta_{03}^s$ & & \\
-    survival intercept \textit{L. apiculatum} $\Beta_{04}^s$ & & \\
-    survival size dependent vacant $\Beta_{11}^s$ & & \\
-    survival size dependent other $\Beta_{12}^s$ & & \\
-    survival size dependent \textit{C. opuntiae} $\Beta_{13}^s$ & & \\
-    survival size dependent \textit{L. apiculatum} $\Beta_{14}^s$ & & \\
+    survival intercept vacant $\Beta_{01}^s$ & 0.46375959 (0.07778875, 0.86267803) & \\
+    survival intercept other $\Beta_{02}^s$ & 0.2677732 (-1.7939375, 2.5857164) & \\
+    survival intercept \textit{C.opuntiae} $\Beta_{03}^s$ & 2.2690061 (0.7347587, 3.9967755) & \\
+    survival intercept \textit{L. apiculatum} $\Beta_{04}^s$ & 0.0538502 (-1.0054015, 1.3153753) & \\
+    survival size dependent vacant $\Beta_{11}^s$ & 0.86267803 (0.2696006, 0.3217293) & \\
+    survival size dependent other $\Beta_{12}^s$ & 0.4387909 (0.1953732, 0.7325813) & \\
+    survival size dependent \textit{C. opuntiae} $\Beta_{13}^s$ & 0.28392994 (0.08742771, 0.47423484) & \\
+    survival size dependent \textit{L. apiculatum} $\Beta_{14}^s$ & 0.5150193 (0.5150193, 0.6492092) & \\
     \hline
     %% Probability of Flowering Parameters
-    flowering intercept $\Beta_0^f$ & & \\
-    flowering size dependent $\Beta_1^f$ & & \\
+    flowering intercept $\Beta_0^f$ & -4.611414 (-5.119275, -4.082511) & \\
+    flowering size dependent $\Beta_1^f$ & 0.5693555 (0.5239602, 0.6104472) & \\
     \hline
     %% Floral Viability Parameters
-    viability intercept vacant $\Beta_01^v$ & & \\
-    viability intercept other $\Beta02^v$ & & \\
-    viability intercept \textit{C. opuntiae} $\Beta_03^v$ & & \\
-    viability intercept \textit{L. apiculatum} $\Beta_04^v$ & & 
+    viability intercept vacant $\Beta_01^v$ & 1.0930266 (0.5002784, 1.6629479) & \\
+    viability intercept other $\Beta02^v$ & 1.1102242 (0.5073163, 1.7414692) & \\
+    viability intercept \textit{C. opuntiae} $\Beta_03^v$ & 1.3605548 (0.7372043, 1.9359609) & \\
+    viability intercept \textit{L. apiculatum} $\Beta_04^v$ & 2.023599 (1.461603, 2.534776) & 
   \end{tabular}
   \end{table}
 \bigskip{}
