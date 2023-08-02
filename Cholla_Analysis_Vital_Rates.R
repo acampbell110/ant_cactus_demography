@@ -183,6 +183,26 @@ points(x = sim_bins2$bin_mean, y = sim_bins2$kurt_sim, col = "pink", pch = 20,ce
 points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 dev.off()
 
+###### Check the significance of the differences between survival rates
+## create data set where each column is an estimated survival rate
+grow_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
+crem_est <- invlogit(mean(surv_out$beta0.3) + mean(surv_out$beta1.3)*size_dummy)
+liom_est <- invlogit(mean(surv_out$beta0.4) + mean(surv_out$beta1.4)*size_dummy)
+other_est <- invlogit(mean(surv_out$beta0.2) + mean(surv_out$beta1.2)*size_dummy)
+vac_est <- invlogit(mean(surv_out$beta0.1) + mean(surv_out$beta1.1)*size_dummy)
+estimates <- cbind(crem_est, liom_est, other_est, vac_est)
+## crem and liom -- p = 0.9135
+t.test(estimates[,1],estimates[,2], alternative = "two.sided")
+## crem and other -- p = 0.4864
+t.test(estimates[,1],estimates[,3], alternative = "two.sided")
+## crem and vac -- p = 4.488e-14. ***
+t.test(estimates[,1],estimates[,4], alternative = "two.sided")
+## liom and other -- p = 0.3899
+t.test(estimates[,2],estimates[,3], alternative = "two.sided")
+## liom and vac -- p = 2.2e-16.   ***
+t.test(estimates[,2],estimates[,4], alternative = "two.sided")
+## other and vac -- p = 2.908e-14 ***
+t.test(estimates[,3],estimates[,4], alternative = "two.sided")
 
 
 #######################################################################################################
@@ -269,7 +289,26 @@ bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
-
+###### Check the significance of the differences between survival rates
+## create data set where each column is an estimated survival rate
+surv_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv.params.csv", header = TRUE,stringsAsFactors=T)
+crem_est <- invlogit(mean(surv_out$beta0.1) + mean(surv_out$beta1.1)*size_dummy)
+liom_est <- invlogit(mean(surv_out$beta0.2) + mean(surv_out$beta1.2)*size_dummy)
+other_est <- invlogit(mean(surv_out$beta0.3) + mean(surv_out$beta1.3)*size_dummy)
+vac_est <- invlogit(mean(surv_out$beta0.4) + mean(surv_out$beta1.4)*size_dummy)
+estimates <- cbind(crem_est, liom_est, other_est, vac_est)
+## crem and liom -- p = 2.908 e-14  *** 
+t.test(estimates[,1],estimates[,2], alternative = "two.sided")
+## crem and other -- p = 4.488 e-14 ***
+t.test(estimates[,1],estimates[,3], alternative = "two.sided")
+## crem and vac -- p = 2.2e-16      ***
+t.test(estimates[,1],estimates[,4], alternative = "two.sided")
+## liom and other -- p = 0.4864 
+t.test(estimates[,2],estimates[,3], alternative = "two.sided")
+## liom and vac -- p = 0.3899
+t.test(estimates[,2],estimates[,4], alternative = "two.sided")
+## other and vac -- p = 0.9135
+t.test(estimates[,3],estimates[,4], alternative = "two.sided")
 
 ######################################################################################################
 ######################################################################################################
@@ -323,7 +362,8 @@ flow.mu <- flow_mu[draws,]
 write.csv(flow.mu, "flow.mu.csv")
 ## Check the posterior distributions
 y <- flower_data$TotFlowerbuds_t
-flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow.params.csv", header = TRUE,stringsAsFactors=T)
+#flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow.params.csv", header = TRUE,stringsAsFactors=T)
+flow_data <- read.csv("flow.params.csv", header = TRUE,stringsAsFactors=T)
 # Create the y rep (needs to be done outside of STAN because of the 0 truncation)
 y_sim <- matrix(NA,1000,length(y))
 for(i in 1:1000){
@@ -374,7 +414,7 @@ stan_data_viab <- list(N = nrow(viability_data), ## number of observations
 ## Run the Model
 fit_viab <- stan(file = "Data Analysis/STAN Models/viab_code.stan", data = stan_data_viab, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
 fit_viab@model_pars
-draws<-sample(nrow(grow_outputs),1000)
+draws<-sample(nrow(surv_outputs),1000)
 ## list all parameters
 ## pull all iterations for parameters and save as a data frame
 viab_outputs <- rstan::extract(fit_viab, pars = c("w","beta0","u","sigma_w","sigma_u"))
@@ -397,10 +437,12 @@ write.csv(viab.mu, "viab.mu.csv")
 
 ## Check the Posterior Distribution
 y <- viability_data$Goodbuds_t1
-viab_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.params.csv", header = TRUE,stringsAsFactors=T)
+#viab_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.params.csv", header = TRUE,stringsAsFactors=T)
+viab_data <- read.csv("viab.params.csv", header = TRUE,stringsAsFactors=T)
 viab_data <- viab_data[,c(-1)]
 viab_data <- as.matrix(viab_data)
-viab_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.mu.csv", header = TRUE,stringsAsFactors=T)
+#viab_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.mu.csv", header = TRUE,stringsAsFactors=T)
+viab_mu <- read.csv("viab.mu.csv", header = TRUE,stringsAsFactors=T)
 viab_mu <- viab_mu[,c(-1)]
 viab_mu <- as.matrix(viab_mu)
 y_sim <- matrix(NA,1000,length(y))
@@ -415,7 +457,7 @@ bayesplot::ppc_dens_overlay(y, y_sim)
 dev.off()
 png(file = "viab_ant_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_sim[samp100,],group = as.integer(as.factor(viability_data$ant)))
+bayesplot::ppc_dens_overlay_grouped(y, y_sim,group = as.integer(as.factor(viability_data$ant)))
 dev.off()
 ## Convergence Plots
 png(file = "viab_conv.png")
@@ -424,6 +466,26 @@ bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
+###### Check the significance of the differences between survival rates
+## create data set where each column is an estimated survival rate
+viab_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.params.csv", header = TRUE,stringsAsFactors=T)
+crem_est <- (invlogit(viab_out$beta0.3))
+liom_est <- (invlogit(viab_out$beta0.4))
+other_est <- (invlogit(viab_out$beta0.2))
+vac_est <- (invlogit(viab_out$beta0.1))
+estimates <- cbind(crem_est, liom_est, other_est, vac_est)
+## crem and liom -- p = 2.2 e-16  *** 
+t.test(estimates[,1],estimates[,2], alternative = "two.sided")
+## crem and other -- p = 0.1168
+t.test(estimates[,1],estimates[,3], alternative = "two.sided")
+## crem and vac -- p = 2.2e-16    ***
+t.test(estimates[,1],estimates[,4], alternative = "two.sided")
+## liom and other -- p = 2.2 e-16 
+t.test(estimates[,2],estimates[,3], alternative = "two.sided")
+## liom and vac -- p = 2.2 e-16.  ***
+t.test(estimates[,2],estimates[,4], alternative = "two.sided")
+## other and vac -- p = 2.2 e-16. ***
+t.test(estimates[,3],estimates[,4], alternative = "two.sided")
 
 #####################################################################################################
 ##### Reproductive State Model -- Prob of reproducing at next time step #############################
@@ -475,11 +537,12 @@ repro_sigma <- as.data.frame(repro_sigma)
 repro.sigma <- repro_sigma[draws,]
 write.csv(repro.sigma, "repro.sigma.csv")
 ## Check the Posteriors
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.params.csv", header = TRUE,stringsAsFactors=T)
+#repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.params.csv", header = TRUE,stringsAsFactors=T)
+repro_data <- read.csv("repro.params.csv", header = TRUE,stringsAsFactors=T)
 repro_data <- repro_data[,c(-1)]
 repro_data <- as.matrix(repro_data)
-repro_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.mu.csv", header = TRUE,stringsAsFactors=T)
+#repro_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.mu.csv", header = TRUE,stringsAsFactors=T)
+repro_mu <- read.csv("repro.mu.csv", header = TRUE,stringsAsFactors=T)
 repro_mu <- repro_mu[,c(-1)]
 repro_mu <- as.matrix(repro_mu)
 y <- as.numeric(reproductive_data$flower1_YN)
@@ -488,6 +551,7 @@ for(i in 1:1000){
   y_sim[i,] <- rbern(n = length(y), prob = invlogit(mean(repro_mu[i,])))
 }
 ## Overlay Plots
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png(file = "repro_post.png")
 bayesplot::ppc_dens_overlay(y, y_sim)
 dev.off()
@@ -598,6 +662,21 @@ dev.off()
 png(file = "seed_conv.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_seed, pars=c("beta0")))
 dev.off()
+
+###### Check the significance of the differences between survival rates
+## create data set where each column is an estimated survival rate
+seed_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.params.csv", header = TRUE,stringsAsFactors=T)
+crem_est <- (exp(viab_out$beta0.1))
+liom_est <- (exp(viab_out$beta0.2))
+vac_est <- (exp(viab_out$beta0.3))
+estimates <- cbind(crem_est, liom_est, vac_est)
+## crem and liom -- p = 2.2 e-16  *** 
+t.test(estimates[,1],estimates[,2], alternative = "two.sided")
+## crem and vac -- p = 2.2e-16    ***
+t.test(estimates[,1],estimates[,3], alternative = "two.sided")
+## liom and vac -- p = 0.02521 
+t.test(estimates[,2],estimates[,3], alternative = "two.sided")
+
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 ###############################################################################################################################
@@ -649,6 +728,7 @@ png(file = "seed_surv_conv.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_seed_surv, pars=c("beta0")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+
 
 
 ######################################################################################################
@@ -735,6 +815,17 @@ dev.off()
 png(file = "germ2_conv.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_germ2, pars=c("beta0")))
 dev.off()
+
+###### Check the significance of the differences between germination rates
+## create data set where each column is an estimated survival rate
+germ1_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ1.params.csv", header = TRUE,stringsAsFactors=T)
+germ2_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/germ2.params.csv", header = TRUE,stringsAsFactors=T)
+germ1_est <- (invlogit(germ1_out$beta0))
+germ2_est <- (invlogit(germ2_out$beta0))
+estimates <- cbind(germ1_est, germ2_est)
+## crem and liom -- p = 2.2 e-16  *** 
+t.test(estimates[,1],estimates[,2], alternative = "two.sided")
+
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 #######################################################################################################
@@ -770,12 +861,13 @@ rec_yrep <- as.data.frame(rec_yrep)
 rec.yrep <- rec_yrep[draws,]
 write.csv(rec.yrep, "rec.yrep.csv")
 ## Check Posterior Dist
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 y <- seedling.dat$logsize_t1
-rec_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/rec.yrep.csv", header = TRUE,stringsAsFactors=T)
+#rec_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/rec.yrep.csv", header = TRUE,stringsAsFactors=T)
+rec_mu <- read.csv("rec.yrep.csv", header = TRUE,stringsAsFactors=T)
 rec_mu <- rec_mu[,c(-1)]
 rec_mu <- as.matrix(rec_mu)
 ## Overlay Plots
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png(file = "rec_post.png")
 bayesplot::ppc_dens_overlay(y, rec_mu)
 dev.off()
@@ -798,7 +890,7 @@ cactus_real <- cactus_real[,c("ant_t_relevel","ant_t1_relevel","logsize_t", "ant
 multi_dat_real <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 5, #number of predictors
-                       P = 16, #number of random effect predictors
+                       P = 15, #number of random effect predictors
                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
                        x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real), #design matrix
                        z = model.matrix(~0 + as.factor(Year_t), cactus_real),
@@ -818,10 +910,10 @@ write.csv(multi.params, "multi.params.csv")
 ## P
 ## plot the chains
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("multi_conv_beta.png")
+png("multi_conv_beta2021.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("beta")))
 dev.off()
-png("multi_conv_theta.png")
+png("multi_conv_theta2021.png")
 bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("theta[1,1]")))
 dev.off()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
@@ -843,11 +935,11 @@ pred_crem<-cbind(
   #pr(crem)
   exp(mean(multi_out$beta.1.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_crem,
   #pr(liom)
-  exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_crem,
+  exp(mean(multi_out$beta.1.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_crem,
   #pr(other)
-  exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_crem,
+  exp(mean(multi_out$beta.1.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_crem,
   #pr(vac)
-  exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_crem)
+  exp(mean(multi_out$beta.1.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_crem)
 sum(pred_crem[1,])
 
 ## Previously tended by Liom
@@ -859,11 +951,11 @@ pred_liom<-cbind(
   #pr(crem)
   exp(mean(multi_out$beta.2.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_liom,
   #pr(liom)
-  exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_liom,
+  exp(mean(multi_out$beta.2.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_liom,
   #pr(other)
-  exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_liom,
+  exp(mean(multi_out$beta.2.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_liom,
   #pr(vac)
-  exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_liom)
+  exp(mean(multi_out$beta.2.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_liom)
 sum(pred_liom[1,])
 
 ## Previously tended by other
@@ -875,11 +967,11 @@ pred_other<-cbind(
   #pr(crem)
   exp(mean(multi_out$beta.3.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_other,
   #pr(liom)
-  exp(mean(multi_out$beta.3.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_other,
+  exp(mean(multi_out$beta.3.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_other,
   #pr(other)
-  exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_other,
+  exp(mean(multi_out$beta.3.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_other,
   #pr(vac)
-  exp(mean(multi_out$beta.3.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_other)
+  exp(mean(multi_out$beta.3.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_other)
 sum(pred_other[1,])
 
 ## Previously tended by vac
@@ -891,11 +983,11 @@ pred_vac<-cbind(
   #pr(crem)
   exp(mean(multi_out$beta.4.1) + size_dummy_real*mean(multi_out$beta.5.1))/Denominator_vac,
   #pr(liom)
-  exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out1$beta.5.2))/Denominator_vac,
+  exp(mean(multi_out$beta.4.2) + size_dummy_real*mean(multi_out$beta.5.2))/Denominator_vac,
   #pr(other)
-  exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out1$beta.5.3))/Denominator_vac,
+  exp(mean(multi_out$beta.4.3) + size_dummy_real*mean(multi_out$beta.5.3))/Denominator_vac,
   #pr(vac)
-  exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out1$beta.5.4))/Denominator_vac)
+  exp(mean(multi_out$beta.4.4) + size_dummy_real*mean(multi_out$beta.5.4))/Denominator_vac)
 sum(pred_vac[1,])
 ## vac -> crem       vac -> liom    vac -> other       vac -> vac
 pred_probs_vac <- cbind((pred_vac[,1]) , (pred_vac[,2]) , (pred_vac[,3]) , (pred_vac[,4]))
@@ -907,11 +999,94 @@ pred_probs_crem <- cbind((pred_crem[,1]) , (pred_crem[,2]) , (pred_crem[,3]) , (
 pred_probs_liom <- cbind((pred_liom[,1]) , (pred_liom[,2]) , (pred_liom[,3]) , (pred_liom[,4]))
 
 all_ant_multi <- cbind(pred_probs_vac, pred_probs_crem, pred_probs_other, pred_probs_liom)
-colnames(all_ant_multi) <- c("vacvac","vaccrem","vacother","vacliom",
-                             "cremvac","cremcrem","cremother","cremliom",
-                             "othervac","othercrem","otherother","otherliom",
-                             "liomvac","liomcrem","liomother","liomliom")
+colnames(all_ant_multi) <- c("vaccrem","vacliom","vacother","vacvac",
+                             "cremcrem","cremliom","cremother","cremvac",
+                             "othercrem","otherliom","otherother","othervac",
+                             "liomcrem","liomliom","liomother","liomvac")
 write.csv(all_ant_multi,"all_ant_multi.csv")
+
+
+###### Check the significance of the differences between germination rates
+## create data set where each column is an estimated survival rate
+multi_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/multi.params.csv", header = TRUE,stringsAsFactors=T)
+vc_est <- all_ant_multi[,1]
+vl_est <- all_ant_multi[,2]
+vo_est <- all_ant_multi[,3]
+vv_est <- all_ant_multi[,4]
+cc_est <- all_ant_multi[,5]
+cl_est <- all_ant_multi[,6]
+co_est <- all_ant_multi[,7]
+cv_est <- all_ant_multi[,8]
+oc_est <- all_ant_multi[,9]
+ol_est <- all_ant_multi[,10]
+oo_est <- all_ant_multi[,11]
+ov_est <- all_ant_multi[,12]
+lc_est <- all_ant_multi[,13]
+ll_est <- all_ant_multi[,14]
+lo_est <- all_ant_multi[,15]
+lv_est <- all_ant_multi[,16]
+
+estimates <- cbind(vv_est, vc_est, vo_est, vl_est,
+                   cv_est, cc_est, co_est, cl_est,
+                   ov_est, oc_est, oo_est, ol_est, 
+                   lv_est, lc_est, lo_est, ll_est)
+
+#### previously vacant probabilities ########################
+## vv and vc -- p = 2.2e-16.   *** >
+t.test(estimates[,1],estimates[,2], alternative = "two.sided")
+## vv and vo -- p = 2.2e-16    *** >
+t.test(estimates[,1],estimates[,3], alternative = "two.sided")
+## vv and vl -- p = 2.2e-16.   *** >
+t.test(estimates[,1],estimates[,4], alternative = "two.sided")
+## vc and vo -- p = 0.00227.   *** >
+t.test(estimates[,2],estimates[,3], alternative = "two.sided")
+## vc and vl -- p = 3.828e-14. *** <
+t.test(estimates[,2],estimates[,4], alternative = "two.sided")
+## vo and vl -- p = 2.2e-16.   *** <
+t.test(estimates[,3],estimates[,4], alternative = "two.sided")
+
+#### previously crem probabilities ############################
+## cv and cc -- p = 2.2e-16.   *** >
+t.test(estimates[,5],estimates[,6], alternative = "two.sided")
+## cv and co -- p = 2.2e-16.   *** >
+t.test(estimates[,5],estimates[,7], alternative = "two.sided")
+## cv and cl -- p = 2.2e-16.   *** >
+t.test(estimates[,5],estimates[,8], alternative = "two.sided")
+## cc and co -- p = 3.797e-9.  *** >
+t.test(estimates[,6],estimates[,7], alternative = "two.sided")
+## cc and cl -- p = 2.2e-16.   *** >
+t.test(estimates[,6],estimates[,8], alternative = "two.sided")
+## co and cl -- p = 3.797e-9.  *** <
+t.test(estimates[,7],estimates[,8], alternative = "two.sided")
+
+#### previously other probabilities ###########################
+## ov and oc -- p = 2.2e-16   *** >
+t.test(estimates[,9],estimates[,10], alternative = "two.sided")
+## ov and oo -- p = 2.2e-16.  *** >
+t.test(estimates[,9],estimates[,11], alternative = "two.sided")
+## ov and ol -- p = 2.2e-16.  *** >
+t.test(estimates[,9],estimates[,12], alternative = "two.sided")
+## oc and oo -- p = 0.954.        <
+t.test(estimates[,10],estimates[,11], alternative = "two.sided")
+## oc and ol -- p = 6.256e-13 *** <
+t.test(estimates[,10],estimates[,12], alternative = "two.sided")
+## oo and ol -- p = 6.309e-12 *** <
+t.test(estimates[,11],estimates[,12], alternative = "two.sided")
+
+#### previously liom probabilities ############################
+## lv and lc -- p = 2.2e-16.  *** >
+t.test(estimates[,13],estimates[,14], alternative = "two.sided")
+## lv and lo -- p = 2.2e-16   *** >
+t.test(estimates[,13],estimates[,15], alternative = "two.sided")
+## lv and ll -- p = 2.2e-16.  *** >
+t.test(estimates[,13],estimates[,16], alternative = "two.sided")
+## lc and lo -- p = 0.007925  *** >
+t.test(estimates[,14],estimates[,15], alternative = "two.sided")
+## lc and ll -- p = 2.2e-16.  *** <
+t.test(estimates[,14],estimates[,16], alternative = "two.sided")
+## lo and ll -- p = 2.2e-16.  *** <
+t.test(estimates[,15],estimates[,16], alternative = "two.sided")
+
 
 ## Calculate the yrep counts vs the real counts
 x <- c(1,2,3,4)
