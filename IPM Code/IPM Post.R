@@ -18,10 +18,10 @@ gxy<-function(x,y,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   #Density probability function which uses the parameters that are ant specific 
-  g_vac = dnorm(y,mean=(params$grow_beta01) + (params$grow_beta11)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
-  g_liom = dnorm(y,mean=(params$grow_beta04) + (params$grow_beta14)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
-  g_crem = dnorm(y,mean=(params$grow_beta03) + (params$grow_beta13)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
-  g_other = dnorm(y,mean=(params$grow_beta02) + (params$grow_beta12)*xb,sd=exp((params$grow_sig0) + (params$grow_sig1)*xb))
+  g_vac = dsn(y,xi=(params$grow_beta01) + (params$grow_beta11)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  g_liom = dsn(y,xi=(params$grow_beta04) + (params$grow_beta14)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  g_crem = dsn(y,xi=(params$grow_beta03) + (params$grow_beta13)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  g_other = dsn(y,xi=(params$grow_beta02) + (params$grow_beta12)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
   #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
@@ -29,20 +29,41 @@ gxy<-function(x,y,i,params){
   if(i == "vacant"){ return(g_vac)}
 }
 
-##Check that it works properly
-i = c("vacant","crem","liom","other")
-x = c(-1,-5,3,4)
-y = c(-1,-4,3,4)
-g <- matrix(NA,ncol = length(i), nrow = 100)
-for(m in 1:nrow(params)){
-  for(n in seq(1:length(i))){
-    g[m,n] <- gxy(x[n],y[n],i[n],params[m,])
-    }
-}
-
-g
-gxy(1,1,"crem",params[1,])
-
+# ##Check that it works properly
+# i = c("vacant","crem","liom","other")
+# x = c(-1,-5,3,4)
+# y = c(-1,-4,3,4)
+# g <- matrix(NA,ncol = length(i), nrow = 1000)
+# for(m in 1:nrow(params)){
+#   for(n in seq(1:length(i))){
+#     g[m,n] <- gxy(x[n],y[n],i[n],params[m,])
+#     }
+# }
+# 
+# g
+# 
+# #### Plot the outputs of this compared to the vital rate functions 
+# size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
+# l = rep("liom",length(size_dummy))
+# o = rep("other",length(size_dummy))
+# c = rep("crem",length(size_dummy))
+# v = rep("vacant",length(size_dummy))
+# g_l <- matrix(NA,ncol = length(l), nrow = 1000)
+# g_c <- matrix(NA,ncol = length(l), nrow = 1000)
+# g_o <- matrix(NA,ncol = length(l), nrow = 1000)
+# g_v <- matrix(NA,ncol = length(l), nrow = 1000)
+# for(m in 1:nrow(params)){
+#   for(n in seq(1:length(i))){
+#     g_l[m,n] <- gxy(size_dummy[n],size_dummy[n],l[n],params[m,])
+#     g_o[m,n] <- gxy(size_dummy[n],size_dummy[n],o[n],params[m,])
+#     g_c[m,n] <- gxy(size_dummy[n],size_dummy[n],c[n],params[m,])
+#     g_v[m,n] <- gxy(size_dummy[n],size_dummy[n],v[n],params[m,])
+#   }
+# }
+# plot(size_dummy,colMeans(g_l), col = liomcol, type = "l",lwd = 2, xlim = c(-3.4,-3.2), ylim = c(0.00000000000001,0.000000000005))
+# lines(size_dummy, colMeans(g_o), col = othercol, lwd = 2)
+# lines(size_dummy, colMeans(g_v), col = vaccol, lwd = 2)
+# lines(size_dummy, colMeans(g_c), col = cremcol, lwd = 2)
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -66,17 +87,41 @@ sx<-function(x,i,params){
   if(i == "vacant"){ return(s_vac)}
 }
 
-##Check that it works properly
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-s <- matrix(NA,ncol = length(i), nrow = 100)
-for(m in 1:nrow(params)){
-  for(n in seq(1:length(i))){
-    s[m,n] <- sx(x[n],i[n],params[m,])
-  }
-}
-
-s
+# ##Check that it works properly
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# s <- matrix(NA,ncol = length(i), nrow = 1000)
+# for(m in 1:nrow(params)){
+#   for(n in seq(1:length(i))){
+#     s[m,n] <- sx(x[n],i[n],params[m,])
+#   }
+# }
+# 
+# s
+# 
+# ## Plot the outputs to make sure this is looking accurate
+# size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
+# l = rep("liom",length(size_dummy))
+# o = rep("other",length(size_dummy))
+# c = rep("crem",length(size_dummy))
+# v = rep("vacant",length(size_dummy))
+# s_l <- matrix(NA,ncol = length(l), nrow = 1000)
+# s_c <- matrix(NA,ncol = length(l), nrow = 1000)
+# s_o <- matrix(NA,ncol = length(l), nrow = 1000)
+# s_v <- matrix(NA,ncol = length(l), nrow = 1000)
+# for(m in 1:nrow(params)){
+#   for(n in seq(1:length(i))){
+#     s_l[m,n] <- sx(size_dummy[n],l[n],params[m,])
+#     s_o[m,n] <- sx(size_dummy[n],o[n],params[m,])
+#     s_c[m,n] <- sx(size_dummy[n],c[n],params[m,])
+#     s_v[m,n] <- sx(size_dummy[n],v[n],params[m,])
+#   }
+# }
+# 
+# plot(size_dummy,colMeans(s_l), col = liomcol, type = "l", lwd = 2)
+# lines(size_dummy, colMeans(s_o), col = othercol, lwd = 2)
+# lines(size_dummy, colMeans(s_v), col = vaccol, lwd = 2)
+# lines(size_dummy, colMeans(s_c), col = cremcol, lwd = 2)
 
 
 #################################################
@@ -89,18 +134,19 @@ pxy<-function(x,y,i,params){
   return(pxy)
 }
 
-##Check that it works properly
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4,3)
-px <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:Ndraws){
-  for(n in 1:length(i)){
-    px[m,n] <- pxy(x[n],y[n],i[n],params[m,])
-  }
-}
-
-px
+# ##Check that it works properly
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4,3)
+# px <- matrix(NA,ncol = length(i), nrow = (1000))
+# for(m in 1:1000){
+#   for(n in 1:length(i)){
+#     px[m,n] <- pxy(x[n],y[n],i[n],params[m,])
+#   }
+# }
+# 
+# ## The output of this should have columns summing to 1 or less than 1
+# colSums(px)
 
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
@@ -128,17 +174,42 @@ fx<-function(x,i,params){
   if(i == "vacant"){ return(f_vac)}
 }
 
-## Check if it works
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-f <- matrix(NA,ncol = length(i), nrow = 100)
-for(m in seq(1:nrow(params))){
-  for(n in seq(1:length(i))){
-    f[m,n] <- fx(x[n],i[n],params[m,])
-  }
-}
-f
+# ## Check if it works
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4.5,3.01)
+# f <- matrix(NA,ncol = length(i), nrow = 100)
+# for(m in seq(1:100)){
+#   for(n in seq(1:length(i))){
+#     f[m,n] <- fx(x[n],i[n],params[m,])
+#   }
+# }
+# f
+# 
+# ## Plot the outputs to make sure this is looking accurate
+# size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
+# l = rep("liom",length(size_dummy))
+# o = rep("other",length(size_dummy))
+# c = rep("crem",length(size_dummy))
+# v = rep("vacant",length(size_dummy))
+# f_l <- matrix(NA,ncol = length(l), nrow = 1000)
+# f_c <- matrix(NA,ncol = length(l), nrow = 1000)
+# f_o <- matrix(NA,ncol = length(l), nrow = 1000)
+# f_v <- matrix(NA,ncol = length(l), nrow = 1000)
+# for(m in 1:1000){
+#   for(n in seq(1:length(l))){
+#     f_l[m,n] <- fx(size_dummy[n],l[n],params[m,])
+#     f_o[m,n] <- fx(size_dummy[n],o[n],params[m,])
+#     f_c[m,n] <- fx(size_dummy[n],c[n],params[m,])
+#     f_v[m,n] <- fx(size_dummy[n],v[n],params[m,])
+#   }
+# }
+# 
+# plot(size_dummy,colMeans(f_l), col = liomcol, type = "l", lwd = 2, xlim = c(11,11.4), ylim = c(.5,.6))
+# lines(size_dummy, colMeans(f_o), col = othercol, lwd = 2)
+# lines(size_dummy, colMeans(f_v), col = vaccol, lwd = 2)
+# lines(size_dummy, colMeans(f_c), col = cremcol, lwd = 2)
+
 
 #####################################################
 #### Recruitment
@@ -147,17 +218,17 @@ recruits<-function(y,params){
   dnorm(yb, (params$rec_beta0),(params$rec_sig))
 }
 
-## Check if it works
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-r <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-  r[m,n] <- recruits(y[n],params[m,])
-    }
-  }
-r
+# ## Check if it works
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4.5,3.01)
+# r <- matrix(NA,ncol = length(i), nrow = (1000))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#   r[m,n] <- recruits(y[n],params[m,])
+#     }
+#   }
+# r
 
 
 ######################################################
@@ -227,20 +298,20 @@ transition.1<-function(x, i, j,params, scenario){
   }
 }
 
-## Scenario options == "othervac", "liomvac", "cremvac"
-## Check if it works
-i = c("liom","vacant","vacant")
-j = c("vacant","liom","vacant")
-x = c(-1,2,2)
-y = c(-1,2,3)
-scenario = c("liomvac")
-t1 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t1
+# ## Scenario options == "othervac", "liomvac", "cremvac"
+# ## Check if it works
+# i = c("liom","vacant","vacant")
+# j = c("vacant","liom","vacant")
+# x = c(-1,2,2)
+# y = c(-1,2,3)
+# scenario = c("liomvac")
+# t1 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario)
+#   }
+# }
+# t1
 
 ##########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (THREE STATES)
@@ -348,21 +419,20 @@ transition.2<-function(x, i, j, params,scenario){
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
   }
 }
-## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-## Check if it works
-i = c("liom","vacant","other","other")
-j = c("vacant","liom","other","liom")
-x = c(15,15,15,15)
-y = c(-1,-4,4.5,3.01)
-scenario = "liomvacother"
-t2 <- matrix(NA,ncol = length(i), nrow = (100))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t2[m,n] <- transition.2(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t2
-######## OUT OF BOUNDS PROBLEM HERE
+# ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
+# ## Check if it works
+# i = c("liom","vacant","other","other")
+# j = c("vacant","liom","other","liom")
+# x = c(15,15,15,15)
+# y = c(-1,-4,4.5,3.01)
+# scenario = "liomvacother"
+# t2 <- matrix(NA,ncol = length(i), nrow = (100))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t2[m,n] <- transition.2(x[n],i[n],j[n],params[m,],scenario)
+#   }
+# }
+# t2
 
 #######################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)
@@ -421,18 +491,18 @@ transition.3<-function(x, i, j,params){
   if(i == "vacant" & j == "crem"){return(vac_crem)}
   if(i == "vacant" & j == "vacant"){return(vac_vac)}
 }
-## Chekc if it works
-i = c("liom","liom")
-j = c("vacant","vacant")
-x = c(-1,-5)
-y = c(-1,-5)
-t3 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
-  }
-}
-t3
+# ## Chekc if it works
+# i = c("liom","liom")
+# j = c("vacant","vacant")
+# x = c(-1,-5)
+# y = c(-1,-5)
+# t3 <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
+#   }
+# }
+# t3
 
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE 
@@ -448,19 +518,19 @@ transition.x <- function(x,i,j,params,scenario){
   if(scenario == "othercremvac"){return(two)}
   if(scenario == "all"){return(three)}
 }
-## Check if it works
-i = c("liom","vacant","crem","other")
-j = c("vacant","crem","crem","liom")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4.5,3.01)
-scenario = "all"
-t <- matrix(NA,ncol = length(i), nrow = (Ndraws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t[m,n] <- transition.x(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t
+# ## Check if it works
+# i = c("liom","vacant","crem","other")
+# j = c("vacant","crem","crem","liom")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4.5,3.01)
+# scenario = "all"
+# t <- matrix(NA,ncol = length(i), nrow = (Ndraws))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t[m,n] <- transition.x(x[n],i[n],j[n],params[m,],scenario)
+#   }
+# }
+# t
 
 
 
@@ -506,14 +576,14 @@ bigmatrix.1 <- function(params,lower,upper,matsize){
   #lambda = Re(eigen(IPMmat)$values[1])
   #return(lambda)
 }
-i = c("liom","vacant")
-x <- c(1,1)
-lambda <- vector()
-big <- list()
-for(m in 1:10){
-    lambda[m] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize)$IPMmat)
-}
-lambda
+# i = c("liom","vacant")
+# x <- c(1,1)
+# lambda <- vector()
+# big <- list()
+# for(m in 1:10){
+#     lambda[m] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize)$IPMmat)
+# }
+# lambda
 
 
 #################################################################################################
@@ -548,12 +618,12 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
     Tmat[2,1]<-1-invlogit((params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-    Tmat[3:(n+2),1]<-invlogit((params$germ1_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),1]<-0
+    Tmat[3:(n+2),1]<-0
+    Tmat[(n+3):(2*n+2),1]<-invlogit((params$germ1_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-    Tmat[3:(n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),2]<-0
+    Tmat[3:(n+2),2]<-0
+    Tmat[(n+3):(2*n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
     # Growth/survival transitions among cts sizes
     ## liom-liom
     Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) 
@@ -624,16 +694,16 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
 }
-i = c("liom","vacant")
-x <- c(1,1)
-scenario = c("liomvac","othervac")
-lambda <- matrix(rep(NA,20),nrow = 10,ncol = 2)
-for(z in 1:length(i)){
-  for(m in 1:10){
-  lambda[m,z] <- lambda(bigmatrix.2(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
-    }
-  }
-lambda
+# i = c("liom","vacant")
+# x <- c(1,1)
+# scenario = c("liomvac","othervac")
+# lambda <- matrix(rep(NA,20),nrow = 10,ncol = 2)
+# for(z in 1:length(i)){
+#   for(m in 1:10){
+#   lambda[m,z] <- lambda(bigmatrix.2(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
+#     }
+#   }
+# lambda
 
 
 #################################################################################################
@@ -775,17 +845,17 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario){
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
 }
-## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-i = c("liom","vacant")
-x <- c(1,1)
-scenario = c("liomvacother","othercremvac")
-lambda <- matrix(rep(NA,20),nrow = 10,ncol = 2)
-for(z in 1:length(i)){
-  for(m in 1:10){
-    lambda[m,z] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
-  }
-}
-lambda
+# ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
+# i = c("liom","vacant")
+# x <- c(1,1)
+# scenario = c("liomvacother","othercremvac")
+# lambda <- matrix(rep(NA,20),nrow = 10,ncol = 2)
+# for(z in 1:length(i)){
+#   for(m in 1:10){
+#     lambda[m,z] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
+#   }
+# }
+# lambda
 
 
 
@@ -807,15 +877,14 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario){
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
   
-  # Fertility matricies -- Two Ant
+  # Fertility matricies 
   Fmat <- matrix(0,(4*n+2),(4*n+2))
-  # Growth/survival transition matricies -- Two Ant
+  # Growth/survival transition matricies 
   Tmat <- matrix(0,(4*n+2),(4*n+2))
   ## Full Matricies
   IPMmat <- matrix()
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-  Tmat[2,1]<-1-1 
-  #Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0)) 
+  Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0)) 
   ############################################# LIOM & CREM & OTHER & VAC ############################################
   ## Fecundity of plants
   Fmat[1,3:(n+2)]<-fx(y,params=params,"crem") ## Production of seeds from x sized mom with no ant visitor
@@ -826,14 +895,14 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario){
   Tmat[3:(n+2),1]<-0
   Tmat[(n+3):(2*n+2),1]<-0
   Tmat[(2*n+3):(3*n+2),1]<-0
-  Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
-  #Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+  #Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
+  Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),2]<-0
   Tmat[(n+3):(2*n+2),2]<-0
   Tmat[(2*n+3):(3*n+2),2]<-0
-  Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
-  #Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+  #Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
+  Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
   # Growth/survival transitions among cts sizes
   ##Top Row
   Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))   ## Top First
@@ -862,16 +931,16 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario){
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
 }
 
-i = c("liom","vacant")
-x <- c(1,1)
-scenario = c("all","all")
-lambda <- matrix(rep(NA,20),nrow = 10,ncol = 2)
-for(z in 1:length(i)){
-  for(m in 1:10){
-    lambda[m,z] <- lambda(bigmatrix.4(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
-  }
-}
-lambda
+# i = c("liom","vacant")
+# x <- c(1,1)
+# scenario = c("all","all")
+# lambda <- matrix(rep(NA,20),nrow = 10,ncol = 2)
+# for(z in 1:length(i)){
+#   for(m in 1:10){
+#     lambda[m,z] <- lambda(bigmatrix.4(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
+#   }
+# }
+# lambda
 
 
 #################################################################################################
@@ -932,7 +1001,7 @@ lambda(bigmatrix.2(params[14,],lower,upper,matsize,"cremvac")$IPMmat)
 lambda(bigmatrix(params[14,],lower,upper,matsize,"liomcremvac")$IPMmat)
 lambda(bigmatrix.3(params[14,],lower,upper,matsize,"liomcremvac")$IPMmat)
 ## all ant options
-bigmatrix(params,lower,upper,matsize,4,"crem","vacant","all")
-bigmatrix.4(params,lower,upper,matsize,4,"crem","vacant","all")
+lambda(bigmatrix(params[14,],lower,upper,matsize,"all")$IPMmat)
+lambda(bigmatrix.4(params[14,],lower,upper,matsize,"all")$IPMmat)
 
 

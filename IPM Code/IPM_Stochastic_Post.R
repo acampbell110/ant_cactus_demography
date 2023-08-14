@@ -596,17 +596,17 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
   if(scenario == "liomvac"){
     # Banked seeds go in top row (1 == liom, 2 == vacant)
     Fmat[1,3:(n+2)]<-fx(y,"liom",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
-    Fmat[1,(n+3):(2*n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
+    Fmat[1,(n+3):(2*n+2)]<-fx(y,"vac",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
     # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
     Tmat[2,1]<-1-invlogit((params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-    Tmat[3:(n+2),1]<-invlogit((params$germ1_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),1]<-0
+    Tmat[3:(n+2),1]<-0
+    Tmat[(n+3):(2*n+2),1]<-invlogit((params$germ1_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-    Tmat[3:(n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
-    Tmat[(n+3):(2*n+2),2]<-0
+    Tmat[3:(n+2),2]<-0
+    Tmat[(n+3):(2*n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
     # Growth/survival transitions among cts sizes
     ## liom-liom
     Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) 
@@ -891,14 +891,14 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
   Tmat[3:(n+2),1]<-0
   Tmat[(n+3):(2*n+2),1]<-0
   Tmat[(2*n+3):(3*n+2),1]<-0
-  Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
-  #Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+  #Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
+  Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),2]<-0
   Tmat[(n+3):(2*n+2),2]<-0
   Tmat[(2*n+3):(3*n+2),2]<-0
-  Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
-  #Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+  #Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
+  Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
   # Growth/survival transitions among cts sizes
   ##Top Row
   Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))   ## Top First
