@@ -85,7 +85,7 @@ grow.yrep <- grow_yrep[draws,]
 write.csv(grow.yrep, "grow.yrep.csv")
 ########### Check the posterior distribution of the model and the convergence of each of the parameters
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-#setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography/Figures")
+setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
 y <- stan_data_grow_skew$y
 ant <- stan_data_grow_skew$ant
@@ -123,9 +123,9 @@ for(i in 1:1000){
 }
 ## Plot the simulated data over the real data (separated by ant partners)
 ## This looks pretty good
-png(file = "grow_post_yrep.png")
+png(file = "grow_post_ysim.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_rep, group = ant) + xlim(-50,50)
+bayesplot::ppc_dens_overlay_grouped(y, y_sim, group = ant) + xlim(-50,50)
 dev.off()
 ## Plot the convergence of all chains for parameters
 ## They all converge
@@ -141,36 +141,36 @@ growth_data$logsize_t1 <- growth_data[["logsize_t1"]]
 bins <- mutate(growth_data,size_bin = cut_number(logsize_t, 10)) %>% 
   ## Group by the bins
   group_by(size_bin)
-bins2 <- mutate(growth_data,size_bin2 = cut(logsize_t, breaks = 10)) %>%
-  group_by(size_bin2)
 ## Calculate necessary stats -- mean, sd, skew, kurt, middle point of bins, number of rows of data per bin
 bins <- dplyr::summarize(bins, mean_t1 = mean(logsize_t1),
                          sd_t1 = sd(logsize_t1),
-                         #skew_t1 = skewness(logsize_t1),
-                         #kurt_t1 = Lkurtosis(logsize_t1),
+                         skew_t1 = skewness(logsize_t1),
+                         kurt_t1 = Lkurtosis(logsize_t1),
                          bin_mean = mean(logsize_t),
                          bin_n = n())
-bins2 <- dplyr::summarize(bins2, #mean_t1 = mean(logsize_t1),
-                          #sd_t1 = sd(logsize_t1),
-                          skew_t1 = skewness(logsize_t1),
-                          kurt_t1 = Lkurtosis(logsize_t1),
-                          bin_mean = mean(logsize_t),
-                          bin_n = n())
 ## Pull in the simulated data and bind it with logsize_t1
 ## Here every row is a data point and every column is an iteration (aka avery future size estimate is associated with the proper previous size est)
 #y_sim[1:10,1:10]
 sim_moments <- bind_cols(enframe(growth_data$logsize_t), as_tibble(t(y_sim))) %>% rename(logsize_t = value)
 #sim_moments[1:10,1:10]
 ## Now create the bin distinctions for this data
-a <- sim_moments[,c(1,2,30)]
 sim_bins <- mutate(sim_moments, size_bin = cut_number(logsize_t, 10)) %>%
   pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim")%>%
   ## Group by the bins
   group_by(size_bin)
+for(i in 1:nrow(y_sim)){
+  sim_bins <- dplyr::summarize(sim_bins,
+                                   mean_sim = mean(y_sim[1,]),
+                                   sd_sim = sd(y_sim[1,]),
+                                   skew_sim = skewness(y_sim[1,]),
+                                   kurt_sim = Lkurtosis(y_sim[1,]),
+                                   bin_mean = mean(logsize_t),
+                                   bin_n = n())
+}
 sim_bins <- dplyr:: summarize(sim_bins, mean_sim = mean(y_sim),
                               sd_sim = sd(y_sim),
-                              #skew_sim = skewness(y_sim),
-                              #kurt_sim = Lkurtosis(y_sim),
+                              skew_sim = skewness(y_sim),
+                              kurt_sim = Lkurtosis(y_sim),
                               bin_mean = mean(logsize_t),
                               bin_n = n())
 sim_bins2 <- mutate(sim_moments, size_bin = cut(logsize_t, breaks = 10)) %>%
@@ -201,8 +201,8 @@ points(x = sim_bins2$bin_mean, y = sim_bins2$kurt_sim, col = "pink", pch = 20,ce
 points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 dev.off()
 
-png("grow_moments_yrep.png")
-size_moments_ppc(growth_data, "logsize_t1",y_rep,10, title = NA)
+png("grow_moments_ysim.png")
+size_moments_ppc(growth_data, "logsize_t1",y_sim,10, title = NA)
 dev.off()
 
 
