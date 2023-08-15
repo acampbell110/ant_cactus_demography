@@ -91,23 +91,23 @@ y <- stan_data_grow_skew$y
 ant <- stan_data_grow_skew$ant
 ## Read in the data and format it properly to use to simulate data
 ## remove the first column which is the iteration id and format as a matrix.
-#outputs <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
-outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
+outputs <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
+#outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
 outputs <- outputs[,c(-1)]
 outs <- as.matrix(outputs)
 ########## xi
-#xi <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.xi.csv", header = TRUE,stringsAsFactors=T)
-xi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.xi.csv", header = TRUE,stringsAsFactors=T)
+xi <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.xi.csv", header = TRUE,stringsAsFactors=T)
+#xi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.xi.csv", header = TRUE,stringsAsFactors=T)
 xi <- xi[,c(-1)]
 xi <- as.matrix(xi)
 ########## omega
-omega <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.omega.csv", header = TRUE,stringsAsFactors=T)
-#omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.omega.csv", header = TRUE,stringsAsFactors=T)
+#omega <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.omega.csv", header = TRUE,stringsAsFactors=T)
+omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.omega.csv", header = TRUE,stringsAsFactors=T)
 omega <- omega[,c(-1)]
 omega <- as.matrix(omega)
 ########## alpha
-alpha <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.alpha.csv", header = TRUE,stringsAsFactors=T)
-#alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.alpha.csv", header = TRUE,stringsAsFactors=T)
+#alpha <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.alpha.csv", header = TRUE,stringsAsFactors=T)
+alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.alpha.csv", header = TRUE,stringsAsFactors=T)
 alpha <- alpha[,c(-1)]
 alpha <- as.matrix(alpha)
 ########## y_rep
@@ -123,9 +123,9 @@ for(i in 1:1000){
 }
 ## Plot the simulated data over the real data (separated by ant partners)
 ## This looks pretty good
-png(file = "grow_post1.png")
+png(file = "grow_post_yrep.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_sim, group = ant) + xlim(-50,50)
+bayesplot::ppc_dens_overlay_grouped(y, y_rep, group = ant) + xlim(-50,50)
 dev.off()
 ## Plot the convergence of all chains for parameters
 ## They all converge
@@ -201,8 +201,8 @@ points(x = sim_bins2$bin_mean, y = sim_bins2$kurt_sim, col = "pink", pch = 20,ce
 points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 dev.off()
 
-png("grow_moments_ysim.png")
-size_moments_ppc(growth_data, "logsize_t1",y_sim,10, title = NA)
+png("grow_moments_yrep.png")
+size_moments_ppc(growth_data, "logsize_t1",y_rep,10, title = NA)
 dev.off()
 
 
