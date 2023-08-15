@@ -1,15 +1,15 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.23)  27 JUL 2023 20:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  15 AUG 2023 16:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **ant_cactus_AmNat_Ali.tex
 (./ant_cactus_AmNat_Ali.tex
-LaTeX2e <2021-11-15> patch level 1
-L3 programming layer <2022-02-24>
-(/usr/local/texlive/2022/texmf-dist/tex/latex/base/article.cls
-Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
-(/usr/local/texlive/2022/texmf-dist/tex/latex/base/size11.clo
-File: size11.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+LaTeX2e <2022-11-01> patch level 1
+L3 programming layer <2023-02-22>
+(/usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
+(/usr/local/texlive/2023/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count185
 \c@section=\count186
@@ -19,70 +19,75 @@ File: size11.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
 \c@subparagraph=\count190
 \c@figure=\count191
 \c@table=\count192
-\abovecaptionskip=\skip47
-\belowcaptionskip=\skip48
-\bibindent=\dimen138
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen140
 )
-(/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/mathpazo.sty
+(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/mathpazo.sty
 Package: mathpazo 2020/03/25 PSNFSS-v9.3 Palatino w/ Pazo Math (D.Puga, WaS) 
 \symupright=\mathgroup4
 )
-(/usr/local/texlive/2022/texmf-dist/tex/latex/preprint/fullpage.sty
+(/usr/local/texlive/2023/texmf-dist/tex/latex/preprint/fullpage.sty
 Package: fullpage 1999/02/23 1.1 (PWD)
-\FP@margin=\skip49
+\FP@margin=\skip50
 )
-(/usr/local/texlive/2022/texmf-dist/tex/latex/natbib/natbib.sty
+(/usr/local/texlive/2023/texmf-dist/tex/latex/natbib/natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
-\bibhang=\skip50
-\bibsep=\skip51
+\bibhang=\skip51
+\bibsep=\skip52
 LaTeX Info: Redefining \cite on input line 694.
 \c@NAT@ctr=\count193
 )
-(/usr/local/texlive/2022/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2023/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2021/02/14 v1.3d Input encoding file
 \inpenc@prehook=\toks16
 \inpenc@posthook=\toks17
 )
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lineno/lineno.sty
-Package: lineno 2005/11/02 line numbers on paragraphs v4.41
+(/usr/local/texlive/2023/texmf-dist/tex/latex/lineno/lineno.sty
+Package: lineno 2023/01/19 line numbers on paragraphs v5.1
 \linenopenalty=\count194
 \output=\toks18
 \linenoprevgraf=\count195
-\linenumbersep=\dimen139
-\linenumberwidth=\dimen140
+\linenumbersep=\dimen141
+\linenumberwidth=\dimen142
 \c@linenumber=\count196
 \c@pagewiselinenumber=\count197
 \c@LN@truepage=\count198
 \c@internallinenumber=\count199
 \c@internallinenumbers=\count266
-\quotelinenumbersep=\dimen141
-\bframerule=\dimen142
-\bframesep=\dimen143
-\bframebox=\box50
-LaTeX Info: Redefining \\ on input line 3056.
+\quotelinenumbersep=\dimen143
+\bframerule=\dimen144
+\bframesep=\dimen145
+\bframebox=\box51
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count267
 )
-(/usr/local/texlive/2022/texmf-dist/tex/latex/titlesec/titlesec.sty
+LaTeX Info: Redefining \\ on input line 3131.
+)
+(/usr/local/texlive/2023/texmf-dist/tex/latex/titlesec/titlesec.sty
 Package: titlesec 2021/07/05 v2.14 Sectioning titles
-\ttl@box=\box51
-\beforetitleunit=\skip52
-\aftertitleunit=\skip53
-\ttl@plus=\dimen144
-\ttl@minus=\dimen145
+\ttl@box=\box52
+\beforetitleunit=\skip53
+\aftertitleunit=\skip54
+\ttl@plus=\dimen146
+\ttl@minus=\dimen147
 \ttl@toksa=\toks19
-\titlewidth=\dimen146
-\titlewidthlast=\dimen147
-\titlewidthfirst=\dimen148
+\titlewidth=\dimen148
+\titlewidthlast=\dimen149
+\titlewidthfirst=\dimen150
 )
 LaTeX Font Info:    Trying to load font information for OT1+pplx on input line 
 52.
 
-(/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/ot1pplx.fd
+(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ot1pplx.fd
 File: ot1pplx.fd 2004/09/06 font definitions for OT1/pplx.
 )
-(/usr/local/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
-File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count267
-\l__pdf_internal_box=\box52
+(/usr/local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count268
+\l__pdf_internal_box=\box53
 )
 (./ant_cactus_AmNat_Ali.aux
 
@@ -117,32 +122,33 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 52.
 LaTeX Font Info:    ... okay on input line 52.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 52.
 LaTeX Font Info:    ... okay on input line 52.
-\big@size=\dimen149
+\big@size=\dimen151
 LaTeX Font Info:    Trying to load font information for OML+zplm on input line 
 54.
- (/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/omlzplm.fd
+ (/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omlzplm.fd
 File: omlzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OML/zplm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+zplm on input line 
 54.
 
-(/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/omszplm.fd
+(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omszplm.fd
 File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+zplm on input line 
 54.
 
-(/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/omxzplm.fd
+(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omxzplm.fd
 File: omxzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMX/zplm.
 )
 LaTeX Font Info:    Trying to load font information for OT1+zplm on input line 
 54.
 
-(/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/ot1zplm.fd
+(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ot1zplm.fd
 File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 ) [1
 
-{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
+al/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}] [2]
 
 Package natbib Warning: Citation `Stanton2003' on page 3 undefined on input lin
 e 97.
@@ -522,24 +528,24 @@ Package natbib Warning: There were undefined citations.
 
 [25] (./ant_cactus_AmNat_Ali.aux) ) 
 Here is how much of TeX's memory you used:
- 1761 strings out of 478268
- 28106 string characters out of 5846347
- 328273 words of memory out of 5000000
- 19963 multiletter control sequences out of 15000+600000
- 502130 words of font info for 109 fonts, out of 8000000 for 9000
+ 2118 strings out of 476025
+ 33197 string characters out of 5790017
+ 1863388 words of memory out of 5000000
+ 22559 multiletter control sequences out of 15000+600000
+ 545158 words of font info for 113 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 33i,10n,44p,402b,321s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/en
-c/dvips/base/8r.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmss8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/mathpazo/f
-plmr.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/mathpazo/fplmri
-.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></
-usr/local/texlive/2022/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/loc
-al/texlive/2022/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on ant_cactus_AmNat_Ali.pdf (25 pages, 152314 bytes).
+ 42i,10n,48p,402b,323s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2023/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2023/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/pu
+blic/mathpazo/fplmr.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/
+mathpazo/fplmri.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/palatin
+o/uplb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/palatino/uplr8
+a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
+
+Output written on ant_cactus_AmNat_Ali.pdf (25 pages, 152287 bytes).
 PDF statistics:
  131 PDF objects out of 1000 (max. 8388607)
  85 compressed objects within 1 object stream
