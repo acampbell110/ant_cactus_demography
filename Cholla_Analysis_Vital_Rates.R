@@ -154,35 +154,34 @@ bins <- dplyr::summarize(bins, mean_t1 = mean(logsize_t1),
 sim_moments <- bind_cols(enframe(growth_data$logsize_t), as_tibble(t(y_sim))) %>% rename(logsize_t = value)
 #sim_moments[1:10,1:10]
 ## Now create the bin distinctions for this data
-sim_bins <- mutate(sim_moments, size_bin = cut_number(logsize_t, 10)) %>%
-  pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim")%>%
-  ## Group by the bins
-  group_by(size_bin)
-for(i in 1:nrow(y_sim)){
-  sim_bins <- dplyr::summarize(sim_bins,
-                                   mean_sim = mean(y_sim[1,]),
-                                   sd_sim = sd(y_sim[1,]),
-                                   skew_sim = skewness(y_sim[1,]),
-                                   kurt_sim = Lkurtosis(y_sim[1,]),
-                                   bin_mean = mean(logsize_t),
-                                   bin_n = n())
+a <- list()
+for(i in 1:(ncol(sim_moments)-2)){
+  a[[i]] <- mutate(sim_moments[,c(2,i+2)], size_bin = cut_number(logsize_t, 10)) %>%
+    pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim")%>%
+    ## Group by the bins
+    group_by(size_bin)
 }
-sim_bins <- dplyr:: summarize(sim_bins, mean_sim = mean(y_sim),
-                              sd_sim = sd(y_sim),
-                              skew_sim = skewness(y_sim),
-                              kurt_sim = Lkurtosis(y_sim),
-                              bin_mean = mean(logsize_t),
-                              bin_n = n())
-sim_bins2 <- mutate(sim_moments, size_bin = cut(logsize_t, breaks = 10)) %>%
-  pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim")%>%
-  ## Group by the bins
-  group_by(size_bin)
-sim_bins2 <- dplyr:: summarize(sim_bins2, #mean_sim = mean(y_sim),
-                               #sd_sim = sd(y_sim),
-                               skew_sim = skewness(y_sim),
-                               kurt_sim = Lkurtosis(y_sim),
-                               bin_mean = mean(logsize_t),
-                               bin_n = n())
+# sim_bins <- mutate(sim_moments, size_bin = cut_number(logsize_t, 10)) %>%
+#   pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim")%>%
+#   ## Group by the bins
+#   group_by(size_bin)
+b <- list()
+for(i in 1:3){#(ncol(sim_moments)-2)){
+  b[[i]] <- dplyr:: summarize(a[[i]], mean_sim = mean(y_sim),
+                                sd_sim = sd(y_sim),
+                                skew_sim = skewness(y_sim),
+                                kurt_sim = Lkurtosis(y_sim),
+                                bin_mean = mean(logsize_t),
+                                bin_n = n())
+}
+
+# sim_bins <- dplyr:: summarize(sim_bins, mean_sim = mean(y_sim),
+#                               sd_sim = sd(y_sim),
+#                               skew_sim = skewness(y_sim),
+#                               kurt_sim = Lkurtosis(y_sim),
+#                               bin_mean = mean(logsize_t),
+#                               bin_n = n())
+
 png("grow_moments.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4),
