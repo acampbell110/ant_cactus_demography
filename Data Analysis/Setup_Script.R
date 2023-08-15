@@ -30,6 +30,8 @@ library("posterior")
 library(gridExtra)
 library(grid)
 library(MASS)
+library(patchwork)
+library(tidyverse)
 # data management
 library(tidyverse)
 library(dplyr)

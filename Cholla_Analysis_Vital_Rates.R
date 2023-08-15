@@ -8,7 +8,10 @@
 ## First read the data in 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
+#setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography")
 cactus <- read.csv("cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
+
+
 
 levels(cactus$ant_t)
 levels(cactus$ant_t1)
@@ -31,7 +34,7 @@ plot(growth_data$logsize_t, growth_data$logsize_t1)
 points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
 ## Make a list of all necessary variables so they are properly formatted to feed into the stan model
 stan_data_grow_skew <- list(N = nrow(growth_data),                                ## number of observations
-                            vol = (growth_data$logsize_t-mean(growth_data$logsize_t)), ## predictor volume year t
+                            vol = (growth_data$logsize_t), ## predictor volume year t
                             y = (growth_data$logsize_t1),                              ## response volume next year
                             ant = as.integer(as.factor(growth_data$ant_t)),            ## predictor ant state
                             K = 4,                                                     ## number of ant states
@@ -43,7 +46,8 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
 ########## growth model with a skew normal distribution -- fixed effects: previous size and ant state, ##############
 ########## random effects: plot and year, size variation is included for both the omega and alpha estimates #########
 fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, 
-                      warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 2)
+                      warmup = 3000, iter = 20000, chains = 3, cores = 3, thin = 2)
+
 ########## extract the parameters from the model and save a random selection of the iterations
 ## list all parameters
 fit_grow_skew@model_pars
@@ -73,30 +77,44 @@ grow_alpha <- as.data.frame(grow_alpha)
 ## pull 1000 random rows from the data frame and export it
 grow.alpha <- grow_alpha[draws,]
 write.csv(grow.alpha, "grow.alpha.csv")
+########## Y reps
+grow_yrep <- rstan::extract(fit_grow_skew, pars = c("y_rep"))
+grow_yrep <- as.data.frame(grow_yrep)
+## pull 1000 random rows from the data frame and export it
+grow.yrep <- grow_yrep[draws,]
+write.csv(grow.yrep, "grow.yrep.csv")
 ########### Check the posterior distribution of the model and the convergence of each of the parameters
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+#setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography/Figures")
 #For overlay plots
 y <- stan_data_grow_skew$y
 ant <- stan_data_grow_skew$ant
 ## Read in the data and format it properly to use to simulate data
 ## remove the first column which is the iteration id and format as a matrix.
+#outputs <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
 outputs <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
 outputs <- outputs[,c(-1)]
 outs <- as.matrix(outputs)
 ########## xi
+#xi <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.xi.csv", header = TRUE,stringsAsFactors=T)
 xi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.xi.csv", header = TRUE,stringsAsFactors=T)
 xi <- xi[,c(-1)]
 xi <- as.matrix(xi)
 ########## omega
 omega <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.omega.csv", header = TRUE,stringsAsFactors=T)
-#omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_omega_skew.csv", header = TRUE,stringsAsFactors=T)
+#omega <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.omega.csv", header = TRUE,stringsAsFactors=T)
 omega <- omega[,c(-1)]
 omega <- as.matrix(omega)
 ########## alpha
 alpha <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.alpha.csv", header = TRUE,stringsAsFactors=T)
-#alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow_alpha_skew.csv", header = TRUE,stringsAsFactors=T)
+#alpha <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.alpha.csv", header = TRUE,stringsAsFactors=T)
 alpha <- alpha[,c(-1)]
 alpha <- as.matrix(alpha)
+########## y_rep
+y_rep <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.yrep.csv", header = TRUE,stringsAsFactors=T)
+#y_rep <- read.csv("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.yrep.csv", header = TRUE,stringsAsFactors=T)
+y_rep <- y_rep[,c(-1)]
+y_rep <- as.matrix(y_rep)
 ## Simulate data using the model outputs
 y_sim <- matrix(NA, 1000,length(y))
 dim(y_sim) ## Each row is an iteration, each column is a data point
@@ -107,7 +125,7 @@ for(i in 1:1000){
 ## This looks pretty good
 png(file = "grow_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_sim, group = ant) + xlim(-50,50)
+bayesplot::ppc_dens_overlay_grouped(y, y_rep, group = ant) + xlim(-50,50)
 dev.off()
 ## Plot the convergence of all chains for parameters
 ## They all converge
@@ -182,6 +200,11 @@ plot(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 points(x = sim_bins2$bin_mean, y = sim_bins2$kurt_sim, col = "pink", pch = 20,cex = 2)
 points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 dev.off()
+
+png("grow_moments2.png")
+size_moments_ppc(growth_data, "logsize_t1",y_rep,10, title = NA)
+dev.off()
+
 
 ###### Check the significance of the differences between survival rates
 ## create data set where each column is an estimated survival rate

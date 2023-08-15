@@ -56,7 +56,7 @@ model {
     y ~ skew_normal(xi,omega,alpha);
   //}
 }
-//generated quantities {
-//  real y_rep[N] = skew_normal_rng(xi,omega,alpha);
-//}
+generated quantities {
+  real y_rep[N] = skew_normal_rng(xi,omega,alpha);
+}
 
