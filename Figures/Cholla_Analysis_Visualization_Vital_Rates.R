@@ -1197,49 +1197,55 @@ dev.off()
 ######################################################################################################################
 ###################### Ant Partner Transitions #######################################################################
 ######################################################################################################################
+#### Create new column that is a unique ID for every
+#### plot and plant then select needed columns
 cactus$individual_ID <- paste(cactus$Plot,cactus$TagID)
 cactus_ants <- cactus[,c("Recruit","individual_ID","Year_t","ant_t1","Newplant","logsize_t1")]
 dim(cactus_ants)
 dim(cactus)
+## remove all NAs
 cactus_ants <- na.omit(cactus_ants)
+## Creat a new column that identifies the year the plant was first recorded
 cactus_ants$obs_yr <- NA
 
 #### Find the earliest year of observation for each individual plant
 cactus_ants %>%
   group_by(individual_ID)  %>%
   summarise(min_yr = min(Year_t)) -> order
-## and record this year as obs_yr in the dataset
 for(i in 1:nrow(cactus_ants)){
-  if(cactus_ants$Recruit[i] == 1| cactus_ants$Newplant[i] == 1 )
-    for(j in 1:nrow(order)){
-      if(cactus_ants$individual_ID[i] == order$individual_ID[j]) cactus_ants$obs_yr[i] <- order$min_yr[j]
-    }
-}
-
-
-for(i in 1:nrow(cactus_ants)){
-  #print(i)
-  #if(cactus_ants$Newplant[i] == 1 | cactus_ants$Recruit[i] == 1) print(i)
   for(j in 1:nrow(order)){
     if(cactus_ants$individual_ID[i] == order$individual_ID[j]) cactus_ants$obs_yr[i] <- order$min_yr[j]
   }
 }
-view(cactus_ants)
-cactus_ants <- subset(cactus_ants, Recruit == 1)
+#### Pull out a subset of plants that we have followed since they were recruits
+## first find the plant IDs of all those we have recruit info for
+cactus_rec <- subset(cactus_ants, Recruit == 1)
+cactus_ants$from_rec <- 0
+## Then match each ID to the actual dataset and mark as from recruit
+for(i in 1:nrow(cactus_rec)){
+  for(j in 1:nrow(cactus_ants)){
+    if(cactus_ants$individual_ID[j] == cactus_rec$individual_ID[i]) cactus_ants$from_rec[j] <- 1
+  }
+}
+cactus_ants <- subset(cactus_ants, cactus_ants$from_rec == 1)
 ## Now use this observed year to calculate the approximate age of the plant 
+#View(cactus_ants)
+#### Give them an age based on how many years in a row we have observed them
 cactus_ants$obs_age <- cactus_ants$Year_t - cactus_ants$obs_yr 
 ## Now calculate the highest age for each individual and order the rows by that max age
 cactus_ants %>%
   group_by(individual_ID) %>%
   summarise(max_age = max(obs_age)) -> ages
 cactus_ants$max_age <- 0
+## Assign the max age to each identified plant
 for(i in 1:nrow(cactus_ants)){
     for(j in 1:nrow(order)){
       if(cactus_ants$individual_ID[i] == ages$individual_ID[j]) cactus_ants$max_age[i] <- ages$max_age[j]
     }
 }
+## Reorder the dataset by age
 cactus_reorder <- cactus_ants[order(cactus_ants$max_age),] 
-View(cactus_reorder)
+#View(cactus_reorder)
 
 
 ## Plot the size of the cactus by the individual and track the ant partner across time
@@ -1261,29 +1267,6 @@ dim(ages_mat)
 rownames(ages_mat) <- unique(cactus_reorder$individual_ID)
 colnames(ages_mat) <- 0:13
 
-# for(i in 1:nrow(cactus_reorder)){
-#   for(j in 1:nrow(ages_mat)){
-#     ## if the individual IDs match
-#     if(cactus_reorder$individual_ID[i] == rownames(ages_mat)[j]) 
-#       for(m in 1:14){
-#         ## if the ages match
-#         if(cactus_reorder$obs_age[i] == as.integer(colnames(ages_mat)[m])) ages_mat[j,m] <- cactus_reorder$ant_t1[i]
-#       }
-#   }
-# }
-# view(ages_mat)
-# ## find row where the rowname matches an individual ID and the colname matches the age and put the ant value there
-# 
-# for(i in 1:nrow(ages_mat)){
-#   for(j in 1:ncol(ages_mat)){
-#     for(k in 1:nrow(cactus_reorder)){
-#       ## if rowname matches individual ID
-#       if(rownames(ages_mat)[i] == cactus_reorder$individual_ID[k] & as.integer(colnames(ages_mat)[j]) == cactus_reorder$obs_age[k]) 
-#         ages_mat[i,j] <- cactus_reorder$ant_t1[k]
-#     }
-#   }
-# }
-# view(ages_mat)
 
 as.integer(colnames(ages_mat))
 unique(cactus_reorder$obs_age)
@@ -1295,19 +1278,8 @@ unique(cactus_reorder$obs_age)
     }
 
 #ages_mat[cactus_reorder$individual_ID[1],as.character(cactus_reorder$obs_age[1])] <- cactus_reorder$ant_t1[1]
-view(ages_mat)
+#view(ages_mat)
 d <- melt(ages_mat)
-
-a <- as.data.frame(ages_mat)
-view(a)
-b<-cbind(rownames(ages_mat),a)
-view(b)
-c <- melt(b)
-
-
-png("tester.png")
-plot(ages_mat, col = c("red","blue","green","white","yellow"))
-dev.off()
 
 png("ant_transitions_rec_only.png")
 ggplot(data = d, aes(x = Var2, y = Var1, fill = value)) + 

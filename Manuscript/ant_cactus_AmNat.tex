@@ -174,18 +174,20 @@ A seed predator, \textit{Cahela ponderosella}, (Lepidoptera: Pyralidae) attacks 
 These predators can have significant negative impacts on the fitness of individual cholla and depress population growth \citep{Miller2009}.
 There is experimental evidence that tree cholla tended by \textit{L. apiculatum} and \textit{C. opuntiae} experience less herbivory than plants from which ants were excluded \citep{Miller2007}. 
 
-\subsection*{Data}
-\tom{}{Give this section a more informative title.}	
-The \tom{data collected are from a long-term dataset}{This grammar does not really make sense.} spanning 2004 to 2023 \tom{taken from 30 $\times$ 30 meter plots}{These plots only started in 2009.} at SEV-LTER. 
+\subsection*{Data Collection}
+We used a longterm dataset spanning 2004 to 2023 taken from natural plants (2004 -- 2008) and 30 $\times$ 30 meter plots (established in 2009) at SEV-LTER. 
 The data initially included 134 naturally occurring plants across 4 spatial blocks censused annually from 2004 to 2008.
 Six of the plots were established in 2009 by tagging all existing plants within a 30 $\times$ 30 meter area. 
 The final two plots were added to this census from 2011 onwards. 
 Annually, in May we surveyed all individuals in these plots, taking demographic and partner data. 
 For each cholla, we recorded plant survival from the last survey to the current survey. 
-For surviving plants, we recorded the height (cm), maximum crown width (cm), and crown width perpendicular to the maximum (cm), which are used to calculate plant volume ($cm^3$) based on the \tom{volume of a cone with the mean of maximum crown width and perpendicular crown width as the diameter}{Check your volume function but I think it is actually the volume of an elliptical cone.}. 
+For surviving plants, we recorded the height (cm), maximum crown width (cm), and crown width perpendicular to the maximum (cm), which are used to calculate plant volume ($cm^3$) based on the  elliptical volume of a cone with the mean of maximum crown width and perpendicular crown width as the diameter. 
 We recorded the total number of flower buds, including how many were aborted and how many were not. 
-\tom{We recorded all ant species present and the number of ants we could count in 30 seconds.}{Need to describe how plants were assigned to an ant state in the case of multiple ant species (rare, I know.)} 
+We recorded all ant species present and the number of ants we could count in 30 seconds.
+In the rare case that more than one species of ant was present, we recorded the ant state as the more prevalent of the species, and recorded the identity and number of the secondary species present in the comments. 
 We also recorded the numbers and species of herbivores on each plant.
+We conducted recruit and new plant surveys by splitting up each plot and walking the entire area to search for untagged plants. 
+Plants less than 1 cm tall were marked as recruits and larger plants as new plants, these were all tagged, GPS located, and recorded. 
 \tom{}{Also need to describe recruit data, seed banks, seed counts per fruit.}
 		
 \subsection*{Statistical Modeling}
@@ -223,7 +225,7 @@ Large differences in the two indicate a poor model fit and can be assessed visua
 \tom{All estimated parameters are described in table 1.}{I think I suggested this years ago but there are so many parameters in your model that I don't think it is particularly useful to report all of these in a table. Including publicly available data and code is good enough.}
 Data and code for all vital rate models is included in the supplemental information.
 
-\subsection*{Integral Projection Model Construction}
+\subsection*{Deterministic Integral Projection Model Construction and Analysis}
   
 Integral Projection Models describe population dynamics in discrete time, with functions that relate vital rates to continuous state variables. 
 While IPMs are a natural choice for populations with continuous size structure, they can also be modified to accommodate a combination of continuous and discrete state variables, as we do here. 
@@ -267,8 +269,6 @@ The second term reflects the changes in the population of the cholla which are n
 $G_j(y,x)$ gives the probability of growing from size $x$ in year $t$ to size $y$ in year $t+1$, respectively with partner $j$. 
 Finally, $\tau_{ij}$ is the probability of a cholla which is size $x$ with ant partner $i$ in year $t$ being tended by ant partner $j$ in year $t+1$.}{This is a good start but I think you need a more thorough description, since this model will be unfamiliar to many readers.}
 
-\subsection*{Deterministic IPM Analysis}
-  \tom{}{The model you show above is the deterministic model. The stochastic model is a different model with additional parameters that should be represented symbolically. So my point is that I would no introduce the model first and then describe deterministic and stochastic analysis. Each of those thngs corresponds to a different model.}
 Analyzing an IPM requires discretizing the composite IPM into a matrix to calculate the dominant eigenvalue. 
 \tom{Each component of the IPM (each set of ant partner specific vital rates) }{I don't think readers will understand what you are talking about here} can be discretized into its own $ 200 \times 200$ matrix as shown in figure ***. 
 The possibility of eviction, when individuals are predicted to grow outside of the possible size classes, was avoided by adding probabilities of growing smaller or larger than the existing boundaries, as done by many others***.
@@ -279,7 +279,7 @@ The \tom{relative distributions}{Unclear what this means} allowed us to determin
 Complementarity requires that the $r$ when all possible partners are present is greater than the $r$ of any other combination of partners or any single partner. 
 \tom{}{These last two sentences are very important -- laying out predictions under alternative hypotheses -- so it is work making them laser sharp. }
 
-\subsection*{Stochastic IPM Analysis}
+\subsection*{Stochastic Integral Projection Model Construction and Analysis}
   
 The third mechanism considered in this study requires annual variation to be explicitly considered in the IPM so we constructed a stochastic version of the IPM described above. 
 The year of record was a random effect in all vital rate models meaning we were able to include an intercept for specific years. 

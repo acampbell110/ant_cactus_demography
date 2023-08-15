@@ -123,9 +123,9 @@ for(i in 1:1000){
 }
 ## Plot the simulated data over the real data (separated by ant partners)
 ## This looks pretty good
-png(file = "grow_post.png")
+png(file = "grow_post1.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_rep, group = ant) + xlim(-50,50)
+bayesplot::ppc_dens_overlay_grouped(y, y_sim, group = ant) + xlim(-50,50)
 dev.off()
 ## Plot the convergence of all chains for parameters
 ## They all converge
@@ -201,8 +201,8 @@ points(x = sim_bins2$bin_mean, y = sim_bins2$kurt_sim, col = "pink", pch = 20,ce
 points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 dev.off()
 
-png("grow_moments2.png")
-size_moments_ppc(growth_data, "logsize_t1",y_rep,10, title = NA)
+png("grow_moments_ysim.png")
+size_moments_ppc(growth_data, "logsize_t1",y_sim,10, title = NA)
 dev.off()
 
 
