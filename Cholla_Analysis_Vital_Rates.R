@@ -116,16 +116,66 @@ y_rep <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualis
 y_rep <- y_rep[,c(-1)]
 y_rep <- as.matrix(y_rep)
 ## Simulate data using the model outputs
-y_sim <- matrix(NA, 1000,length(y))
-dim(y_sim) ## Each row is an iteration, each column is a data point
-for(i in 1:1000){
-  y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
+yc = stan_data_grow_skew$vol[stan_data_grow_skew$ant==1]
+yl = stan_data_grow_skew$vol[stan_data_grow_skew$ant==2]
+yo = stan_data_grow_skew$vol[stan_data_grow_skew$ant==3]
+yv = stan_data_grow_skew$vol[stan_data_grow_skew$ant==4]
+y_sim_c <- matrix(NA, 1000,length(yc))
+y_sim_l <- matrix(NA, 1000,length(yl))
+y_sim_o <- matrix(NA, 1000,length(yo))
+y_sim_v <- matrix(NA, 1000,length(yv))
+dim(y_sim_c) ## Each row is an iteration, each column is a data point
+# for(i in 1:1000){
+#   y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
+# }
+for(i in 1:100){
+  #for(j in 1:length(size_dummy)){
+    y_sim_c[i,] <- rsn(n=1, xi=outputs$beta0.1[i]+outputs$beta1.1[i]*yc,
+                     omega=outputs$d_0[i]+outputs$d_size[i]*yc,
+                     alpha=outputs$a_0[i]+outputs$a_size[i]*yc)
+    y_sim_l[i,] <- rsn(n=1, xi=outputs$beta0.2[i]+outputs$beta1.2[i]*yl,
+                        omega=outputs$d_0[i]+outputs$d_size[i]*yl,
+                        alpha=outputs$a_0[i]+outputs$a_size[i]*yl)
+    y_sim_o[i,] <- rsn(n=1, xi=outputs$beta0.3[i]+outputs$beta1.3[i]*yo,
+                        omega=outputs$d_0[i]+outputs$d_size[i]*yo,
+                        alpha=outputs$a_0[i]+outputs$a_size[i]*yo)
+    y_sim_v[i,] <- rsn(n=1, xi=outputs$beta0.4[i]+outputs$beta1.4[i]*yv,
+                        omega=outputs$d_0[i]+outputs$d_size[i]*yv,
+                        alpha=outputs$a_0[i]+outputs$a_size[i]*yv)
+  #}
 }
 ## Plot the simulated data over the real data (separated by ant partners)
 ## This looks pretty good
-png(file = "grow_post_ysim.png")
-bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, y_sim, group = ant) + xlim(-50,50)
+# png(file = "grow_post_ysim.png")
+# bayesplot::color_scheme_set(scheme = "pink")
+# bayesplot::ppc_dens_overlay(y, y_sim_c) + xlim(-50,50)
+# dev.off()
+png("grow_post_hand1.png")
+par(mfrow=c(2,2))
+## Crem 
+plot(density(y_sim_c[1,]))
+for(i in 1:100){
+  lines(density(y_sim_c[i,]), col = "pink")
+}
+lines(density(stan_data_grow_skew$y[stan_data_grow_skew$ant==1]), col = "maroon", lwd = 3)
+## Liom
+plot(density(y_sim_l[1,]))
+for(i in 1:100){
+  lines(density(y_sim_l[i,]), col = "pink")
+}
+lines(density(stan_data_grow_skew$y[stan_data_grow_skew$ant==2]), col = "maroon", lwd = 3)
+## Other
+plot(density(y_sim_o[1,]))
+for(i in 1:100){
+  lines(density(y_sim_o[i,]), col = "pink")
+}
+lines(density(stan_data_grow_skew$y[stan_data_grow_skew$ant==3]), col = "maroon", lwd = 3)
+## Vacant
+plot(density(y_sim_v[1,]))
+for(i in 1:100){
+  lines(density(y_sim_v[i,]), col = "pink")
+}
+lines(density(stan_data_grow_skew$y[stan_data_grow_skew$ant==4]), col = "maroon", lwd = 3)
 dev.off()
 ## Plot the convergence of all chains for parameters
 ## They all converge
@@ -201,7 +251,7 @@ points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
 dev.off()
 
 png("grow_moments_ysim.png")
-size_moments_ppc(growth_data, "logsize_t1",y_sim,10, title = NA)
+size_moments_ppc(subset(growth_data,ant == 4), "logsize_t1",y_sim_c,10, title = NA)
 dev.off()
 
 
