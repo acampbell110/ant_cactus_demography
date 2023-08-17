@@ -49,12 +49,7 @@ model {
   d_size ~ normal(0, 100);        // size sd
   a_0 ~ normal(0, 100);           // intercept skew 
   a_size ~ normal(0, 100);        // size skew
-  //beta0 ~ normal(0,100);          // ant beta
-  //sigma ~ gamma(.001,.001);
-  //Model
-  //for(i in 1:N){
-    y ~ skew_normal(xi,omega,alpha);
-  //}
+  y ~ skew_normal(xi,omega,alpha);
 }
 generated quantities {
   real y_rep[N] = skew_normal_rng(xi,omega,alpha);

@@ -193,8 +193,8 @@ dev.off()
 y = stan_data_grow_skew$y[stan_data_grow_skew$ant == 4]
 x = stan_data_grow_skew$vol[stan_data_grow_skew$ant == 4]
 ## All data together
-#y <- stan_data_grow_skew$y
-#x <- stan_data_grow_skew$vol
+y <- stan_data_grow_skew$y
+x <- stan_data_grow_skew$vol
 data <- data.frame(x=x,y=y)
 n_bins<-10
 require(tidyverse)
@@ -210,7 +210,7 @@ bins <- data %>%
                    kurt_t1 = Lkurtosis(y),
                    bin_mean = mean(x),
                    bin_n = n())
-sim_moments <- bind_cols(enframe(data$x), as_tibble(t(y_sim_v))) %>%
+sim_moments <- bind_cols(enframe(data$x), as_tibble(t(y_sim))) %>%
   rename(x = value) %>%
   arrange(x) %>%
   mutate(size_bin = cut_number(x, n_bins)) %>%
