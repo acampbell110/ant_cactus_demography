@@ -120,39 +120,43 @@ yc = stan_data_grow_skew$vol[stan_data_grow_skew$ant==1]
 yl = stan_data_grow_skew$vol[stan_data_grow_skew$ant==2]
 yo = stan_data_grow_skew$vol[stan_data_grow_skew$ant==3]
 yv = stan_data_grow_skew$vol[stan_data_grow_skew$ant==4]
-y_sim_c <- matrix(NA, 1000,length(yc))
-y_sim_l <- matrix(NA, 1000,length(yl))
-y_sim_o <- matrix(NA, 1000,length(yo))
-y_sim_v <- matrix(NA, 1000,length(yv))
+y_sim_c <- matrix(NA, 100,length(yc))
+y_sim_l <- matrix(NA, 100,length(yl))
+y_sim_o <- matrix(NA, 100,length(yo))
+y_sim_v <- matrix(NA, 100,length(yv))
+y_sim <- matrix(NA,100,length(y))
 dim(y_sim_c) ## Each row is an iteration, each column is a data point
 # for(i in 1:1000){
 #   y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
 # }
 for(i in 1:100){
   #for(j in 1:length(size_dummy)){
-    y_sim_c[i,] <- rsn(n=1, xi=outputs$beta0.1[i]+outputs$beta1.1[i]*yc,
-                     omega=outputs$d_0[i]+outputs$d_size[i]*yc,
+    y_sim_c[i,] <- rsn(n=length(yc), xi=outputs$beta0.1[i]+outputs$beta1.1[i]*yc,
+                     omega=exp(outputs$d_0[i]+outputs$d_size[i]*yc),
                      alpha=outputs$a_0[i]+outputs$a_size[i]*yc)
-    y_sim_l[i,] <- rsn(n=1, xi=outputs$beta0.2[i]+outputs$beta1.2[i]*yl,
-                        omega=outputs$d_0[i]+outputs$d_size[i]*yl,
+    y_sim_l[i,] <- rsn(n=length(yl), xi=outputs$beta0.2[i]+outputs$beta1.2[i]*yl,
+                        omega=exp(outputs$d_0[i]+outputs$d_size[i]*yl),
                         alpha=outputs$a_0[i]+outputs$a_size[i]*yl)
-    y_sim_o[i,] <- rsn(n=1, xi=outputs$beta0.3[i]+outputs$beta1.3[i]*yo,
-                        omega=outputs$d_0[i]+outputs$d_size[i]*yo,
+    y_sim_o[i,] <- rsn(n=length(yo), xi=outputs$beta0.3[i]+outputs$beta1.3[i]*yo,
+                        omega=exp(outputs$d_0[i]+outputs$d_size[i]*yo),
                         alpha=outputs$a_0[i]+outputs$a_size[i]*yo)
-    y_sim_v[i,] <- rsn(n=1, xi=outputs$beta0.4[i]+outputs$beta1.4[i]*yv,
-                        omega=outputs$d_0[i]+outputs$d_size[i]*yv,
+    y_sim_v[i,] <- rsn(n=length(yv), xi=outputs$beta0.4[i]+outputs$beta1.4[i]*yv,
+                        omega=exp(outputs$d_0[i]+outputs$d_size[i]*yv),
                         alpha=outputs$a_0[i]+outputs$a_size[i]*yv)
+    y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
   #}
 }
+
+
 ## Plot the simulated data over the real data (separated by ant partners)
 ## This looks pretty good
-# png(file = "grow_post_ysim.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::ppc_dens_overlay(y, y_sim_c) + xlim(-50,50)
-# dev.off()
-png("grow_post_hand1.png")
+png(file = "grow_post_ysim.png")
+bayesplot::color_scheme_set(scheme = "pink")
+bayesplot::ppc_dens_overlay_grouped(y, y_sim) + xlim(-50,50)
+dev.off()
+png("grow_post_hand.png")
 par(mfrow=c(2,2))
-## Crem 
+## Crem
 plot(density(y_sim_c[1,]))
 for(i in 1:100){
   lines(density(y_sim_c[i,]), col = "pink")
@@ -177,81 +181,75 @@ for(i in 1:100){
 }
 lines(density(stan_data_grow_skew$y[stan_data_grow_skew$ant==4]), col = "maroon", lwd = 3)
 dev.off()
+
 ## Plot the convergence of all chains for parameters
 ## They all converge
 png("grow_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_grow_skew, pars=c("beta0", "beta1","a_0","a_size","d_0","d_size")))
 dev.off()
-#### Plot the mean, standard deviation, skew, and kurtosis of the simulated and real data -- 
-## This looks good, mean, sd, and skew are all pretty well captured
-## Load in data
-growth_data$logsize_t1 <- growth_data[["logsize_t1"]]
-## Now create the bin distinctions for this data
-bins <- mutate(growth_data,size_bin = cut_number(logsize_t, 10)) %>% 
-  ## Group by the bins
-  group_by(size_bin)
-## Calculate necessary stats -- mean, sd, skew, kurt, middle point of bins, number of rows of data per bin
-bins <- dplyr::summarize(bins, mean_t1 = mean(logsize_t1),
-                         sd_t1 = sd(logsize_t1),
-                         skew_t1 = skewness(logsize_t1),
-                         kurt_t1 = Lkurtosis(logsize_t1),
-                         bin_mean = mean(logsize_t),
-                         bin_n = n())
-## Pull in the simulated data and bind it with logsize_t1
-## Here every row is a data point and every column is an iteration (aka avery future size estimate is associated with the proper previous size est)
-#y_sim[1:10,1:10]
-sim_moments <- bind_cols(enframe(growth_data$logsize_t), as_tibble(t(y_sim))) %>% rename(logsize_t = value)
-#sim_moments[1:10,1:10]
-## Now create the bin distinctions for this data
-a <- list()
-for(i in 1:(ncol(sim_moments)-2)){
-  a[[i]] <- mutate(sim_moments[,c(2,i+2)], size_bin = cut_number(logsize_t, 10)) %>%
-    pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim")%>%
-    ## Group by the bins
-    group_by(size_bin)
-}
-# sim_bins <- mutate(sim_moments, size_bin = cut_number(logsize_t, 10)) %>%
-#   pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "y_sim")%>%
-#   ## Group by the bins
-#   group_by(size_bin)
-b <- list()
-for(i in 1:3){#(ncol(sim_moments)-2)){
-  b[[i]] <- dplyr:: summarize(a[[i]], mean_sim = mean(y_sim),
-                                sd_sim = sd(y_sim),
-                                skew_sim = skewness(y_sim),
-                                kurt_sim = Lkurtosis(y_sim),
-                                bin_mean = mean(logsize_t),
-                                bin_n = n())
-}
 
-# sim_bins <- dplyr:: summarize(sim_bins, mean_sim = mean(y_sim),
-#                               sd_sim = sd(y_sim),
-#                               skew_sim = skewness(y_sim),
-#                               kurt_sim = Lkurtosis(y_sim),
-#                               bin_mean = mean(logsize_t),
-#                               bin_n = n())
+#### Check the mean, sd, skew, and kurtosis fits of the model across sizes
+y = stan_data_grow_skew$y[stan_data_grow_skew$ant == 4]
+x = stan_data_grow_skew$vol[stan_data_grow_skew$ant == 4]
+## All data together
+#y <- stan_data_grow_skew$y
+#x <- stan_data_grow_skew$vol
+data <- data.frame(x=x,y=y)
+n_bins<-10
+require(tidyverse)
+require(patchwork)
+bins <- data %>%
+  ungroup() %>% 
+  arrange(x) %>% 
+  mutate(size_bin = cut_number(x, n_bins)) %>% 
+  group_by(size_bin)  %>% 
+  dplyr::summarize(mean_t1 = mean(y),
+                   sd_t1 = sd(y),
+                   skew_t1 = skewness(y),
+                   kurt_t1 = Lkurtosis(y),
+                   bin_mean = mean(x),
+                   bin_n = n())
+sim_moments <- bind_cols(enframe(data$x), as_tibble(t(y_sim_v))) %>%
+  rename(x = value) %>%
+  arrange(x) %>%
+  mutate(size_bin = cut_number(x, n_bins)) %>%
+  pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "sim") %>%
+  group_by(size_bin, post_draw) %>%
+  summarize( mean_sim = mean((sim)),
+             sd_sim = sd((sim)),
+             skew_sim = skewness((sim)),
+             kurt_sim = Lkurtosis((sim)),
+             bin_mean = mean(x),
+             bin_n = n())
+sim_medians <- sim_moments %>%
+  group_by(size_bin, bin_mean) %>%
+  summarize(median_mean_sim = median(mean_sim),
+            median_sd_sim = median(sd_sim),
+            median_skew_sim = median(skew_sim),
+            median_kurt_sim = median(kurt_sim))
+meanplot <-  ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = mean_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_mean_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = mean_t1), shape = 1, color = "gray72") +
+  theme_classic()
+sdplot <-  ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = sd_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_sd_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = sd_t1), shape = 1, color = "gray72") + theme_classic()
+skewplot <-  ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = skew_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_skew_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = skew_t1), shape = 1, color = "gray72") + theme_classic()
+kurtplot <- ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = kurt_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_kurt_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = kurt_t1), shape = 1, color = "gray72") + theme_classic()
+size_ppc_plot <- meanplot+ sdplot+skewplot+ kurtplot
+size_ppc_plot
 
-png("grow_moments.png")
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-layout(matrix(c(1,2,3,4),
-              ncol = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
-plot(x = bins$bin_mean, y = bins$mean_t1, col = "grey")
-points(x = sim_bins$bin_mean, y = sim_bins$mean_sim, col = "pink", pch = 20,cex = 2)
-points(x = bins$bin_mean, y = bins$mean_t1, col = "grey")
-plot(x = bins$bin_mean, y = bins$sd_t1, col = "grey")
-points(x = sim_bins$bin_mean, y = sim_bins$sd_sim, col = "pink", pch = 20,cex = 2)
-points(x = bins$bin_mean, y = bins$sd_t1, col = "grey")
-plot(x = bins2$bin_mean, y = bins2$skew_t1, col = "grey")
-points(x = sim_bins2$bin_mean, y = sim_bins2$skew_sim, col = "pink", pch = 20,cex = 2)
-points(x = bins2$bin_mean, y = bins2$skew_t1, col = "grey")
-plot(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
-points(x = sim_bins2$bin_mean, y = sim_bins2$kurt_sim, col = "pink", pch = 20,cex = 2)
-points(x = bins2$bin_mean, y = bins2$kurt_t1, col = "grey")
-dev.off()
-
-png("grow_moments_ysim.png")
-size_moments_ppc(subset(growth_data,ant == 4), "logsize_t1",y_sim_c,10, title = NA)
+png("grow_moments_vac.png")
+size_ppc_plot
 dev.off()
 
 
