@@ -9,7 +9,7 @@
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 #setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography")
-cactus <- read.csv("cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
 
 
 
@@ -35,6 +35,7 @@ points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
 ## Make a list of all necessary variables so they are properly formatted to feed into the stan model
 stan_data_grow_skew <- list(N = nrow(growth_data),                                ## number of observations
                             vol = (growth_data$logsize_t), ## predictor volume year t
+                            vol2 = (growth_data$logsize_t)^2,
                             y = (growth_data$logsize_t1),                              ## response volume next year
                             ant = as.integer(as.factor(growth_data$ant_t)),            ## predictor ant state
                             K = 4,                                                     ## number of ant states
@@ -46,13 +47,13 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
 ########## growth model with a skew normal distribution -- fixed effects: previous size and ant state, ##############
 ########## random effects: plot and year, size variation is included for both the omega and alpha estimates #########
 fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, 
-                      warmup = 3000, iter = 20000, chains = 3, cores = 3, thin = 2)
+                      warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 2)
 
 ########## extract the parameters from the model and save a random selection of the iterations
 ## list all parameters
 fit_grow_skew@model_pars
 ## pull all iterations for parameters and save as a data frame
-grow_outputs <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","a_0","a_size","sigma_w","sigma_u"))
+grow_outputs <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","a_0","a_size","a_size2","sigma_w","sigma_u"))
 grow_outputs <- as.data.frame(grow_outputs)
 ## pull 1000 random rows from the data frame and export it
 draws<-sample(nrow(grow_outputs),1000)
@@ -72,7 +73,7 @@ grow_omega <- as.data.frame(grow_omega)
 grow.omega <- grow_omega[draws,]
 write.csv(grow.omega, "grow.omega.csv")
 ########## Alpha
-grow_alpha <- rstan::extract(fit_grow_skew, pars = c("xi"))
+grow_alpha <- rstan::extract(fit_grow_skew, pars = c("alpha"))
 grow_alpha <- as.data.frame(grow_alpha)
 ## pull 1000 random rows from the data frame and export it
 grow.alpha <- grow_alpha[draws,]
@@ -133,20 +134,23 @@ for(i in 1:100){
   #for(j in 1:length(size_dummy)){
     y_sim_c[i,] <- rsn(n=length(yc), xi=outputs$beta0.1[i]+outputs$beta1.1[i]*yc,
                      omega=exp(outputs$d_0[i]+outputs$d_size[i]*yc),
-                     alpha=outputs$a_0[i]+outputs$a_size[i]*yc)
+                     alpha=outputs$a_0[i]+outputs$a_size[i]*yc+outputs$a_size2[i]*yc^2)
     y_sim_l[i,] <- rsn(n=length(yl), xi=outputs$beta0.2[i]+outputs$beta1.2[i]*yl,
                         omega=exp(outputs$d_0[i]+outputs$d_size[i]*yl),
-                        alpha=outputs$a_0[i]+outputs$a_size[i]*yl)
+                        alpha=outputs$a_0[i]+outputs$a_size[i]*yl+outputs$a_size2[i]*yl^2)
     y_sim_o[i,] <- rsn(n=length(yo), xi=outputs$beta0.3[i]+outputs$beta1.3[i]*yo,
                         omega=exp(outputs$d_0[i]+outputs$d_size[i]*yo),
-                        alpha=outputs$a_0[i]+outputs$a_size[i]*yo)
+                        alpha=outputs$a_0[i]+outputs$a_size[i]*yo+outputs$a_size2[i]*yo^2)
     y_sim_v[i,] <- rsn(n=length(yv), xi=outputs$beta0.4[i]+outputs$beta1.4[i]*yv,
                         omega=exp(outputs$d_0[i]+outputs$d_size[i]*yv),
-                        alpha=outputs$a_0[i]+outputs$a_size[i]*yv)
+                        alpha=outputs$a_0[i]+outputs$a_size[i]*yv+outputs$a_size2[i]*yv^2)
     y_sim[i,] <- rsn(n=length(y), xi = (xi[i,]), omega = (omega[i,]), alpha = alpha[i,])
   #}
 }
 
+rsn(n=1,xi=c(10,40,80))
+
+y_sim<-cbind(y_sim_c,y_sim_l,y_sim_o,y_sim_v)
 
 ## Plot the simulated data over the real data (separated by ant partners)
 ## This looks pretty good
@@ -196,7 +200,7 @@ x = stan_data_grow_skew$vol[stan_data_grow_skew$ant == 4]
 y <- stan_data_grow_skew$y
 x <- stan_data_grow_skew$vol
 data <- data.frame(x=x,y=y)
-n_bins<-10
+n_bins<-5
 require(tidyverse)
 require(patchwork)
 bins <- data %>%

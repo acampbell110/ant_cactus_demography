@@ -4,6 +4,7 @@ data {
   int <lower = 1> K;                   // number of ant states
   vector[N] y;                         // survival in year t1
   vector[N] vol;	                     //size in year t
+  vector[N] vol2;
   int <lower = 1, upper = K> ant[N];   // the list of ant species 
   int<lower=1> N_Year;                 //number of plots
   int<lower=1> N_Plot;                 //number of years
@@ -22,7 +23,7 @@ parameters {
   real d_size;                // Error size
   real a_0;                   // skew intercept
   real a_size;                // skew size
-  //real alpha;
+  real a_size2;
   //real < lower = 0 > omega;
   }
 
@@ -34,7 +35,7 @@ transformed parameters{
   for(i in 1:N){
     xi[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[ant[i],year[i]];
     omega[i] = exp(d_0 + d_size * vol[i]);
-    alpha[i] = a_0 + a_size * vol[i];
+    alpha[i] = a_0 + a_size * vol[i] + a_size2*vol2[i];
   }
 }
 model {
