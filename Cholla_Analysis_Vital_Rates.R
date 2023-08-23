@@ -2,7 +2,8 @@
 ##
 ##                  The purpose of this file is to run each vital rate sub model separately,
 ##                          save the outputs, and check the posterior distributions 
-##
+##                  TM: the header here should make it clear which scripts need to be run before
+##                      running this one (for example, there are packages needed here but none are loaded)
 #######################################################################################################
 
 ## First read the data in 
@@ -10,7 +11,12 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 #setwd("/Users/Labuser/Documents/GitHub/ant_cactus_demography")
 cactus <- read.csv("cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
-
+## re-assign the seedling plots ("HT1B1" etc) to transects 1-3
+levels(cactus$Plot)<-c(levels(cactus$Plot),"T4")
+cactus$Plot[cactus$Plot=="HT1B1"]<-"T1"
+cactus$Plot[cactus$Plot=="HT2B3"]<-"T2"
+cactus$Plot[cactus$Plot=="HT3B1" | cactus$Plot=="HT3B2" | cactus$Plot=="HT3B3"]<-"T3"
+cactus$Plot[cactus$Plot=="HT4B1" | cactus$Plot=="HT4B2"]<-"T4"
 
 
 levels(cactus$ant_t)
@@ -26,6 +32,8 @@ levels(cactus$ant_t1)
 ## ready to feed into the stan model
 growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
 growth_data <- na.omit(growth_data_orig)
+
+
 ## Lose 2032 rows (due to plant death & recruit status)
 nrow(growth_data_orig)
 nrow(growth_data)
