@@ -18,11 +18,6 @@ cactus$Plot[cactus$Plot=="HT2B3"]<-"T2"
 cactus$Plot[cactus$Plot=="HT3B1" | cactus$Plot=="HT3B2" | cactus$Plot=="HT3B3"]<-"T3"
 cactus$Plot[cactus$Plot=="HT4B1" | cactus$Plot=="HT4B2"]<-"T4"
 
-
-levels(cactus$ant_t)
-levels(cactus$ant_t1)
-
-
 ##############################################################################################
 ##
 ##   Skew Growth Model -- What size will the cacti be next time step?
@@ -48,8 +43,8 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
                             ant = as.integer(as.factor(growth_data$ant_t)),            ## predictor ant state
                             K = 4,                                                     ## number of ant states
                             N_Year = max(as.integer(as.factor(growth_data$Year_t))),   ## number of years
-                            N_Plot = max(as.integer(as.factor(growth_data$Plot))),     ## number of plots
-                            plot = as.integer(as.factor(growth_data$Plot)),            ## predictor plots
+                            N_Plot = max(as.integer(growth_data$Plot)),     ## number of plots
+                            plot = as.integer(growth_data$Plot),            ## predictor plots
                             year = as.integer(as.factor(growth_data$Year_t))           ## predictor years
 )
 ########## growth model with a skew normal distribution -- fixed effects: previous size and ant state, ##############
