@@ -23,7 +23,6 @@ parameters {
   real d_size;                // Error size
   real a_0;                   // skew intercept
   real a_size;                // skew size
-  real a_size2;
   //real < lower = 0 > omega;
   }
 
@@ -35,7 +34,7 @@ transformed parameters{
   for(i in 1:N){
     xi[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[ant[i],year[i]];
     omega[i] = exp(d_0 + d_size * vol[i]);
-    alpha[i] = a_0 + a_size * vol[i] + a_size2*vol2[i];
+    alpha[i] = a_0 + a_size * vol[i];
   }
 }
 model {
@@ -44,15 +43,11 @@ model {
   for(i in 1:K){
     w[i,] ~ normal(0,sigma_w);    // year random effects
   }
-  beta0 ~ normal(0,100);          // ant beta
-  beta1 ~ normal(0,100);          // size & ant beta
-  d_0 ~ normal(0, 100);           // intercept sd 
-  d_size ~ normal(0, 100);        // size sd
-  a_0 ~ normal(0, 100);           // intercept skew 
-  a_size ~ normal(0, 100);        // size skew
+  beta0 ~ normal(0,10);          // ant beta
+  beta1 ~ normal(0,10);          // size & ant beta
+  d_0 ~ normal(0, 10);           // intercept sd 
+  d_size ~ normal(0, 10);        // size sd
+  a_0 ~ normal(0, 10);           // intercept skew 
+  a_size ~ normal(0, 10);        // size skew
   y ~ skew_normal(xi,omega,alpha);
 }
-generated quantities {
-  real y_rep[N] = skew_normal_rng(xi,omega,alpha);
-}
-
