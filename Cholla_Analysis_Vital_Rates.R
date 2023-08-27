@@ -49,19 +49,74 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
 )
 ########## growth model with a skew normal distribution -- fixed effects: previous size and ant state, ##############
 ########## random effects: plot and year, size variation is included for both the omega and alpha estimates #########
-fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, 
-                      warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 2)
+grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
+fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
+                        control = list(adapt_delta=0.99,stepsize=0.1),
+                        iter=10000,cores=3,thin=2,
+                        pars = c("u","w",          # plot and year random effects
+                                  "beta0","beta1", #location coefficients
+                                 "d_0","d_size", #scale coefficiences
+                                 "a_0","a_size"), #shape coefficients
+                        save_warmup=F)
+#for control parameters see:
+#https://github.com/stan-dev/stan/issues/1504#issuecomment-114685444
+#https://mc-stan.org/rstanarm/reference/adapt_delta.html
+#saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+fit_grow_skew<-readRDS("C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+
+mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size"))
+mcmc_trace(fit_grow_skew,pars=c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
+mcmc_trace(fit_grow_skew,pars=c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
+## happy with convergence
+
+## simulate data 
+## pull params
+grow_params <- rstan::extract(fit_grow_skew)
+
+## one simulated dataset
+n_draws=3
+grow_sim<-matrix(NA,n_draws,stan_data_grow_skew$N)
+for(i in 1:n_draws){
+for(n in 1:stan_data_grow_skew$N){
+grow_sim[i,n]<-rsn(n=1,
+              xi=grow_params$beta0[i,stan_data_grow_skew$ant[n]]+
+                grow_params$beta1[i,stan_data_grow_skew$ant[n]]*stan_data_grow_skew$vol[n]+
+                grow_params$u[i,stan_data_grow_skew$plot[n]]+
+                grow_params$w[i,stan_data_grow_skew$ant[n],stan_data_grow_skew$year[n]],
+              omega=exp(grow_params$d_0[i]+grow_params$d_size[i]*stan_data_grow_skew$vol[n]),
+              alpha=grow_params$a_0[i]+grow_params$a_size[i]*stan_data_grow_skew$vol[n])
+}
+}
+
+plot(stan_data_grow_skew$vol,grow_sim[1,],col="red",pch=".")
+points(stan_data_grow_skew$vol,grow_sim[2,],col="blue",pch=".")
+points(stan_data_grow_skew$vol,grow_sim[3,],col="green",pch=".")
+points(stan_data_grow_skew$vol,stan_data_grow_skew$y,pch=".")
+
+test<-matrix(1:16,4,4)
+v<-sample.int(16)
 
 ########## extract the parameters from the model and save a random selection of the iterations
 ## list all parameters
+fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, 
+                      warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 2)
+
+
 fit_grow_skew@model_pars
 ## pull all iterations for parameters and save as a data frame
-grow_outputs <- rstan::extract(fit_grow_skew, pars = c("w","beta0","beta1","u","d_0","d_size","a_0","a_size","a_size2","sigma_w","sigma_u"))
+grow_outputs <- rstan::extract(fit_grow_skew, pars = c("beta0","beta1","d_0","d_size","a_0","a_size","a_size2","sigma_w","sigma_u"))
 grow_outputs <- as.data.frame(grow_outputs)
 ## pull 1000 random rows from the data frame and export it
 draws<-sample(nrow(grow_outputs),1000)
 grow.params <- grow_outputs[draws,]
 write.csv(grow.params, "grow.params.csv")
+
+
+
+
+
+
+
 ########## Xi
 ## pull all iterations for parameters and save as a data frame
 grow_xi <- rstan::extract(fit_grow_skew, pars = c("xi"))
