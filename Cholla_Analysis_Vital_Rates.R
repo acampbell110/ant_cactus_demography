@@ -5,6 +5,17 @@
 ##                  TM: the header here should make it clear which scripts need to be run before
 ##                      running this one (for example, there are packages needed here but none are loaded)
 #######################################################################################################
+library(quantreg)
+library(qgam)
+## quantile-based moments
+Q.mean<-function(q.25,q.50,q.75){(q.25+q.50+q.75)/3}
+Q.sd<-function(q.25,q.75){(q.75-q.25)/1.35}
+Q.skewness<-function(q.10,q.50,q.90){(q.10 + q.90 - 2*q.50)/(q.90 - q.10)}
+Q.kurtosis<-function(q.05,q.25,q.75,q.95){
+  qN = qnorm(c(0.05,0.25,0.75,0.95))
+  KG = (qN[4]-qN[1])/(qN[3]-qN[2])
+  return(((q.95-q.05)/(q.75-q.25))/KG - 1)
+}
 
 ## First read the data in 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
@@ -54,47 +65,103 @@ fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
                         control = list(adapt_delta=0.99,stepsize=0.1),
                         iter=10000,cores=3,thin=2,
                         pars = c("u","w",          # plot and year random effects
-                                  "beta0","beta1", #location coefficients
+                                  "beta0","beta1","beta2", #location coefficients
                                  "d_0","d_size", #scale coefficiences
                                  "a_0","a_size"), #shape coefficients
                         save_warmup=F)
+#saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 #for control parameters see:
 #https://github.com/stan-dev/stan/issues/1504#issuecomment-114685444
 #https://mc-stan.org/rstanarm/reference/adapt_delta.html
-#saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 fit_grow_skew<-readRDS("C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 
 mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size"))
 mcmc_trace(fit_grow_skew,pars=c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
 mcmc_trace(fit_grow_skew,pars=c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
+mcmc_trace(fit_grow_skew,pars=c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
 ## happy with convergence
+
+## real data moments
+q.fit<-matrix(NA,7,length(stan_data_grow_skew$vol))
+q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
+q.fit[2,]<-predict(qgam(y~s(vol),qu=0.10,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
+q.fit[3,]<-predict(qgam(y~s(vol),qu=0.25,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
+q.fit[4,]<-predict(qgam(y~s(vol),qu=0.5,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
+q.fit[5,]<-predict(qgam(y~s(vol),qu=0.75,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
+q.fit[6,]<-predict(qgam(y~s(vol),qu=0.90,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
+q.fit[7,]<-predict(qgam(y~s(vol),qu=0.95,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
+
+obs_mean<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,])
+obs_sd<-Q.sd(q.fit[3,],q.fit[5,])
+obs_skew<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
+obs_kurt<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
+
+plot(stan_data_grow_skew$vol,stan_data_grow_skew$y,pch=".",col="red")
+points(stan_data_grow_skew$vol,q.fit[1,],col="black",pch=".")
+points(stan_data_grow_skew$vol,q.fit[2,],col="black",pch=".")
+points(stan_data_grow_skew$vol,q.fit[3,],col="black",pch=".")
+points(stan_data_grow_skew$vol,q.fit[4,],col="black",pch=".")
+points(stan_data_grow_skew$vol,q.fit[5,],col="black",pch=".")
+points(stan_data_grow_skew$vol,q.fit[6,],col="black",pch=".")
+points(stan_data_grow_skew$vol,q.fit[7,],col="black",pch=".")
 
 ## simulate data 
 ## pull params
 grow_params <- rstan::extract(fit_grow_skew)
 
 ## one simulated dataset
-n_draws=3
+n_draws=25
 grow_sim<-matrix(NA,n_draws,stan_data_grow_skew$N)
+sim_mean<-sim_sd<-sim_skew<-sim_kurt<-matrix(NA,n_draws,stan_data_grow_skew$N)
 for(i in 1:n_draws){
 for(n in 1:stan_data_grow_skew$N){
 grow_sim[i,n]<-rsn(n=1,
               xi=grow_params$beta0[i,stan_data_grow_skew$ant[n]]+
                 grow_params$beta1[i,stan_data_grow_skew$ant[n]]*stan_data_grow_skew$vol[n]+
+                grow_params$beta2[i,stan_data_grow_skew$ant[n]]*stan_data_grow_skew$vol2[n]+
                 grow_params$u[i,stan_data_grow_skew$plot[n]]+
                 grow_params$w[i,stan_data_grow_skew$ant[n],stan_data_grow_skew$year[n]],
               omega=exp(grow_params$d_0[i]+grow_params$d_size[i]*stan_data_grow_skew$vol[n]),
               alpha=grow_params$a_0[i]+grow_params$a_size[i]*stan_data_grow_skew$vol[n])
 }
+  q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
+  q.fit[2,]<-predict(qgam(y~s(vol),qu=0.10,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
+  q.fit[3,]<-predict(qgam(y~s(vol),qu=0.25,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
+  q.fit[4,]<-predict(qgam(y~s(vol),qu=0.5,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
+  q.fit[5,]<-predict(qgam(y~s(vol),qu=0.75,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
+  q.fit[6,]<-predict(qgam(y~s(vol),qu=0.90,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
+  q.fit[7,]<-predict(qgam(y~s(vol),qu=0.95,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
+
+  sim_mean[i,]<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,]) 
+  sim_sd[i,]<-Q.sd(q.fit[3,],q.fit[5,])  
+  sim_skew[i,]<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
+  sim_kurt[i,]<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
+
+print(i/n_draws)  
 }
 
-plot(stan_data_grow_skew$vol,grow_sim[1,],col="red",pch=".")
-points(stan_data_grow_skew$vol,grow_sim[2,],col="blue",pch=".")
-points(stan_data_grow_skew$vol,grow_sim[3,],col="green",pch=".")
-points(stan_data_grow_skew$vol,stan_data_grow_skew$y,pch=".")
+plot(stan_data_grow_skew$vol,grow_sim[1,],pch=".",col="red")
+points(stan_data_grow_skew$vol,stan_data_grow_skew$y,pch=".",col="black")
 
-test<-matrix(1:16,4,4)
-v<-sample.int(16)
+
+bayesplot::ppc_dens_overlay(stan_data_grow_skew$y, grow_sim)
+
+matplot(stan_data_grow_skew$vol,t(sim_mean),pch=".",col="gray")
+points(stan_data_grow_skew$vol,obs_mean)
+
+matplot(stan_data_grow_skew$vol,t(sim_sd),pch=".",col="gray")
+points(stan_data_grow_skew$vol,obs_sd)
+
+matplot(stan_data_grow_skew$vol,t(sim_skew),pch=".",col="gray")
+points(stan_data_grow_skew$vol,obs_skew)
+
+matplot(stan_data_grow_skew$vol,t(sim_kurt),pch=".",col="gray")
+points(stan_data_grow_skew$vol,obs_kurt)
+
+
+
+
+
 
 ########## extract the parameters from the model and save a random selection of the iterations
 ## list all parameters
@@ -112,6 +179,62 @@ grow.params <- grow_outputs[draws,]
 write.csv(grow.params, "grow.params.csv")
 
 
+#### Check the mean, sd, skew, and kurtosis fits of the model across sizes
+require(tidyverse)
+require(patchwork)
+y <- stan_data_grow_skew$y
+x <- stan_data_grow_skew$vol
+data <- data.frame(x=x,y=y)
+n_bins<-5
+
+bins <- data %>%
+  ungroup() %>% 
+  arrange(x) %>% 
+  mutate(size_bin = cut_number(x, n_bins)) %>% 
+  group_by(size_bin)  %>% 
+  dplyr::summarize(mean_t1 = mean(y),
+                   sd_t1 = sd(y),
+                   skew_t1 = skewness(y),
+                   kurt_t1 = kurtosis(y),
+                   bin_mean = mean(x),
+                   bin_n = n())
+sim_moments <- bind_cols(enframe(data$x), as_tibble(t(y_sim))) %>%
+  rename(x = value) %>%
+  arrange(x) %>%
+  mutate(size_bin = cut_number(x, n_bins)) %>%
+  pivot_longer(., cols = starts_with("V"), names_to = "post_draw", values_to = "sim") %>%
+  group_by(size_bin, post_draw) %>%
+  summarize( mean_sim = mean((sim)),
+             sd_sim = sd((sim)),
+             skew_sim = skewness((sim)),
+             kurt_sim = Lkurtosis((sim)),
+             bin_mean = mean(x),
+             bin_n = n())
+sim_medians <- sim_moments %>%
+  group_by(size_bin, bin_mean) %>%
+  summarize(median_mean_sim = median(mean_sim),
+            median_sd_sim = median(sd_sim),
+            median_skew_sim = median(skew_sim),
+            median_kurt_sim = median(kurt_sim))
+meanplot <-  ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = mean_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_mean_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = mean_t1), shape = 1, color = "gray72") +
+  theme_classic()
+sdplot <-  ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = sd_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_sd_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = sd_t1), shape = 1, color = "gray72") + theme_classic()
+skewplot <-  ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = skew_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_skew_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = skew_t1), shape = 1, color = "gray72") + theme_classic()
+kurtplot <- ggplot(data = bins)+
+  geom_point(data = sim_moments, aes(x = bin_mean, y = kurt_sim), color = "pink") +
+  geom_point(data = sim_medians, aes(x = bin_mean, y = median_kurt_sim),shape = 1, color = "black") +
+  geom_point(aes(x = bin_mean, y = kurt_t1), shape = 1, color = "gray72") + theme_classic()
+size_ppc_plot <- meanplot+ sdplot+skewplot+ kurtplot
+size_ppc_plot
 
 
 
