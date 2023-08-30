@@ -22,8 +22,10 @@ parameters {
   real < lower = 0 > sigma_u; // plot SD
   real d_0;                   // Error intercept
   real d_size;                // Error size
+  real d_size2;
   real a_0;                   // skew intercept
   real a_size;                // skew size
+  real a_size2;
   //real < lower = 0 > omega;
   }
 
@@ -34,8 +36,8 @@ transformed parameters{
 
   for(i in 1:N){
     xi[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + beta2[ant[i]] * vol2[i] + u[plot[i]] + w[ant[i],year[i]];
-    omega[i] = exp(d_0 + d_size * vol[i]);
-    alpha[i] = a_0 + a_size * vol[i];
+    omega[i] = exp(d_0 + d_size * vol[i] + d_size2 * vol2[i]);
+    alpha[i] = a_0 + a_size * vol[i] + a_size2 * vol2[i];
   }
 }
 model {

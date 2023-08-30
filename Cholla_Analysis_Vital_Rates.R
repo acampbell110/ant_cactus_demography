@@ -66,19 +66,22 @@ fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
                         iter=10000,cores=3,thin=2,
                         pars = c("u","w",          # plot and year random effects
                                   "beta0","beta1","beta2", #location coefficients
-                                 "d_0","d_size", #scale coefficiences
-                                 "a_0","a_size"), #shape coefficients
+                                 "d_0","d_size","d_size2", #scale coefficiences
+                                 "a_0","a_size","a_size2"), #shape coefficients
                         save_warmup=F)
-#saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+saveRDS(fit_grow_skew, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 #for control parameters see:
 #https://github.com/stan-dev/stan/issues/1504#issuecomment-114685444
 #https://mc-stan.org/rstanarm/reference/adapt_delta.html
 fit_grow_skew<-readRDS("C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+fit_grow_skew<-readRDS("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 
-mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size"))
-mcmc_trace(fit_grow_skew,pars=c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
-mcmc_trace(fit_grow_skew,pars=c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
-mcmc_trace(fit_grow_skew,pars=c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("a_size2","d_size2"))
 ## happy with convergence
 
 ## real data moments

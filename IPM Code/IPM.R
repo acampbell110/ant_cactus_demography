@@ -33,16 +33,38 @@ gxy<-function(x,y,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   #Density probability function which uses the parameters that are ant specific 
-  g_vac = dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*xb, omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
-  g_liom = dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*xb, omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
-  g_crem = dsn(y,xi=mean(params$grow_beta03) + mean(params$grow_beta13)*xb, omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
-  g_other = dsn(y,xi=mean(params$grow_beta02) + mean(params$grow_beta12)*xb, omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
+  g_vac = dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(params$grow_beta21)*xb^2, 
+              omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+              alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
+  g_liom = dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*xb + mean(params$grow_beta24)*xb^2, 
+               omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+               alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
+  g_crem = dsn(y,xi=mean(params$grow_beta03) + mean(params$grow_beta13)*xb + mean(params$grow_beta23)*xb^2, 
+               omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+               alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
+  g_other = dsn(y,xi=mean(params$grow_beta02) + mean(params$grow_beta12)*xb + mean(params$grow_beta22)*xb^2, 
+                omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+                alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
   #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
   if(i == "other"){ return(g_other)}
   if(i == "vacant"){ return(g_vac)}
 }
+
+gxy(4,3,"crem",params)
+
+x = c(1,2,-5,8,1,2,-5,8,1,2,-5,8,1,2,-5,8)
+y = c(2,3,0,7,2,3,0,7,2,3,0,7,2,3,0,7)
+i = c("crem","crem","crem","crem",
+      "liom","liom","liom","liom",
+      "other","other","other","other",
+      "vacant","vacant","vacant","vacant")
+gx <- vector()
+for(n in 1:length(i)){
+  gx[n] = gxy(x[n],y[n],i[n],params)
+}
+gx
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -83,11 +105,7 @@ x <- c(1,2,3,4)
 y <- c(3,4,5,6)
 p <- vector()
 i <- c("vacant","liom","crem","other")
-for(a in 1:4){
-  xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-  p[a] <- pxy(x[a],y[a],i[a],params)
-}
-p
+
 
 
 #################################################################
@@ -403,8 +421,8 @@ bigmatrix.1 <- function(params,lower,upper,matsize,lower.extension=0,upper.exten
   ###################################################################################################
   #Applying the midpoint rule
   n<-matsize
-  L<-lower - lower.extension 
-  U<-upper + upper.extension
+  L<-lower 
+  U<-upper
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
