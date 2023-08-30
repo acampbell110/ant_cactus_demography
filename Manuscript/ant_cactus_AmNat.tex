@@ -186,46 +186,68 @@ The ant partners defend the cacti from herbivores, meaning their presence can le
 The biological sources of variance (including spatial, and annual variance) are accounted for by including year-to-year and plot-to-plot random effects in the models. 
 Unless otherwise mentioned, all models use vague priors. 
 
-\tom{The growth model ($G(y,x,i)$) estimates the size of cholla, with fixed effects of the previous size and ant partner and random effects of plot and year, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. }{I think you need to explain this more thoroughly, and also explain why you used a Skewed Normal. Omega and alpha need to be defined and explained, and this is best done showing the full notation of the model.}
-A skew normal distribution was chosen here because the data was skewed.
+The growth model \ali{($G(x',x,i)$) estimates the size of cholla $y^G$}{This is where I get a little confused between the x and x' sizes and the ys. Should this all be noted like this?} in year $t+1$, with fixed effects of the previous size $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
+A skew normal distribution was chosen here because the data had evidence of skew and previous efforts using a gaussian distribution poorly predicted the sizes of these plants, overestimating the next sizes for large plants.
 $\omega$ denotes the scale of the data in a Skew Normal distribution while $\alpha$ denotes the slant, when $\alpha$ is 0, the $\omega$ is equivalent to the sd of a Normal distribution. 
 The $\omega$ and $\alpha$ estimates vary across size because the scale and skew of the data varied across size. 
+$$y^G ~ Skew N(\hat{G},\hat{\omega},\hat{\alpha})$$
+$$\hat{G} = \beta_{0}^{G} + \beta_{1}^{G} \times x + \beta_{2}^{G} \times i + \beta_{4}^{G} \times x \times i + u + w$$
+$$\hat{\omega} = \beta_{0}^{\omega} + \beta_{1}^{\omega} \times x$$
+$$\hat{\alpha} = \beta_{0}^{\omega} + \beta_{1}^{\omega} \times x + \beta_{2}^{\omega} \times x^2$$
+where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 Ants are included as a predictor here because ant partners defend plants from herbivory, therefore decreasing the likelihood of segment loss.
 
-The survival model ($S(i,x)$) estimates the probability of survival from year $t$ to year $t1$, with fixed effects of the previous size of the cholla and ant partner and random effects of plot and year, using a Bernoulli distribution:
+The survival model ($S(i,x)$) estimates the probability of survival $y^S$ from year $t$ to year $t+1$, with fixed effects of the previous size of the cholla $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Bernoulli distribution:
 $$y^S ~ Bern(\hat{S})$$
 $$logit(\hat{S} = \beta_{0}^{S}) + \beta_{1}^{S} \times x + \beta_{2}^{S} \times i + \beta_{3}^{S} \times x \times i + u + w$$
-where $y_S$ is the probability of survival in year $t1$, $x$ is the size of the plant in the previous year $t$, $i$ is the ant partner of the plant in year $t$, $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
+where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 A Bernoulli distribution was chosen here because the only two possible outcomes are survival or death. 
 Ants are included as predictors here because ant partners defend cholla from herbivores and predators, decreasing the likelihood of mortality due to either of these. 
 
-The reproduction model ($P(y)$) estimates the probability of reproducing each year, with fixed effects for the size and random effects of plot and year, using a Bernoulli distribution:
+The reproduction model ($P(x')$) estimates the probability of reproducing $y^P$ in year $t+1$, with fixed effects for the size $x'$ in year $t+1$ and random effects of plot $w$ and year $u$, using a Bernoulli distribution:
 $$y^P ~ Bern(\hat{P})$$
-$$logit(\hat{P}) = \beta_{0}^{P} + \beta_{1}^{P} \times y + u + w$$
-where $y^P$ is the probability of reproducing in year $t1$, $y$ is the size of the plant in the year $t1$, $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
+$$logit(\hat{P}) = \beta_{0}^{P} + \beta_{1}^{P} \times x' + u + w$$
+where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 
-The total flowers model ($F(x)$) estimates the total flowers produced by a plant, with fixed effects of size and random effects of plot and year, using a Negative Binomial distribution:
-$$y^{F} ~ Negative Binom(\hat{F})$$
+The total flowers model ($F(x)$) estimates the total flowers produced by a plant $y^F$ in year $t+1$, with fixed effects of size $x$ in year $t$ and random effects of plot $w$ and year $u$, using a Negative Binomial distribution:
+$$y^{F} ~ Negative Binom(\hat{F},\hat{\phi})$$
 $$log(\hat{F}) = \beta_{0}^{F} + \beta_{1}^{F} \times x + u + w$$
-where $y^{F}$ is the number of flowers produced by a plant in year $t1$, $x$ is the size of the plant in year $t$, $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
+$$log(\hat{\phi}) = \beta_{0}^{\phi}$$
+where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 
-The viability model ($V_i(x)$) estimates the proportion of flowers produced by a plant which are viable (not aborted), with fixed effects of the ant partner of the cactus and random effects of plot and year, using a Binomial distribution:
+The viability model ($V_i(x)$) estimates the proportion of flowers produced by a plant which are viable (not aborted) $y^V$ in year $t+1$, with fixed effects of the ant partner of the cactus $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Binomial distribution:
 $$y^{V} ~ Binom(\hat{V})$$
 $$logit(\hat{V}) = \beta_{0}^{V} \times i + u + w$$
-where $y^{V}$ is the proportion of flowerbuds produced that remain viable in year $t1$, $i$ is the ant partner of the plant in year $t$,  $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
+where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 Ants are included as predictors here because they defend the cacti from seed predation which can lead to floral abortion. 
 
-The ant transition rates model ($\tau_{i,j}(x)$) estimates the probability of a cactus being visited by an ant partner, with fixed effects of the previous size of the cholla and the previous ant partner and random effects of plot and year, using a Multinomial distribution.  
+The ant transition rates model ($\tau_(x,i,j)$) estimates the probability of a cactus being visited by an ant partner $j$ $y^{\tau}$, with fixed effects of the previous size of the cholla $x$  and the previous ant partner $i$  in year $t$ and random effects of plot $w$ and year $u$, using a Multinomial distribution: 
+$$y^{\tau} ~ Multinomial(\hat{\tau})$$
+$$logit(\tau) = \beta_{0}^{\tau} + \beta_{1}^{\tau} \times x + \beta_{2}^{\tau} \times i + \beta_{3}^{\tau} \times x \times i + u + w$$
+where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 Ant partners are included as predictors here because partners may choose to return to the same cholla repeatedly or choose new ones, therefore the previous partner may be a good indicator of the next partner. 
 
-The recruit size model ($n_j(x)$) estimates the size distribution of all recruits from a given year, with no fixed or random effects, using a Normal distribution. 
-With germination data from Miller et al., 2009, we fit two Bayesian generalized linear models for the probability of germinating from a seed in the first year ($\gamma_1$) or the second year ($1 - \gamma_1$), with no fixed or random effects, using a Binomial distribution.
+The recruit size model ($n_j(x)$) estimates the size distribution of all recruits $y^{\eta}$ from a given year $t+1$, with no fixed or random effects, using a Normal distribution: 
+$$y^{\eta} ~ N(\hat{\eta},\hat{\sigma})$$
+$$\hat{eta} = \beta_{0}^{\eta}$$
+where $\hat{\sigma}$ is estimated with a non-informative prior. 
 
-With data collected in a 2005-2006 recruit census, we fit a Bayesian generalized linear model for the probability of a seedling surviving to May ($\delta$) (accounting for missed mortality events), with fixed effects of the previous size and random effects of the transect, using a Bernoulli distribution. 
+With germination data from Miller et al., 2009****, we fit two Bayesian generalized linear models for the probability of germinating from a seed in the first year ($\gamma_1$) or the second year ($1 - \gamma_1$) in year $t+1$, with no fixed or random effects, using a Binomial distribution:
+$$y^{\gamma_1} ~ Binomial(\hat{\gamma_1})$$
+$$y^{\gamma_2} ~ Binomial(\hat{\gamma_2})$$
+$$logit(\hat{\gamma_1}) = \beta_{0}^{\gamma_1}$$
+$$logit(\hat{\gamma_2}) = \beta_{0}^{\gamma_2}$$
 
-With data from Miller 2007, we fit a Bayesian generalized linear model for the number of seeds produced by every flower on a cholla ($\kappa$) based on the ant partner, using a Negative Binomial distribution. 
+With data collected in a 2005-2006 recruit census, we fit a Bayesian generalized linear model for the probability of a seedling surviving to May ($\delta$) of year $t+1$ (accounting for missed mortality events), with fixed effects of the previous size $x$ and random effects of the transect $m$, using a Bernoulli distribution: 
+$$y^{\delta} ~ Bern(\hat{\delta})$$
+$$logit(\hat{\delta}) = \beta_{0}^{\delta} + m$$
+ where $m ~ N(0, \sigma_{transect}^2)$ is the random effect of transect where the recruited individual was analyzed for survival.
+
+With data from Miller 2007, we fit a Bayesian generalized linear model for the number of seeds produced by every flower on a cholla ($\kappa$) in year $t+1$ based on the ant partner $i$ in year $t+1$, using a Negative Binomial distribution:
+$$y^{\kappa} ~ Negative Binomial(\hat{L},\hat{\phi})$$
+$$\hat{L} = \beta_{0}^{L} \times j$$
+$$\hat{\phi} = \beta_{0}^{\phi}$$
 Ant partners are included as predictors here because they reduce floral abortion rates and therefore may lead to higher numbers of seeds. 
-\tom{}{General comment here is that each of these models needs to be described in greater detail and shown in reproducible notation. You also need to describe the idea of transitions in size x,y and ant state i,j since this sets the stage for the structure of the IPM.}
 
 To obtain posterior estimates of the demographic parameters, we fit models using Markov chain Monte Carlo (MCMC) simulations via STAN run through version 4.0.2 of R \tom{}{You need to cite R and RStan}
 For each model, we obtained 3 chains of 10,000 iterations, each with randomly chosen initial conditions. 
@@ -234,76 +256,114 @@ We did not thin the chains, thus all samples were retained.
 To assess the convergence of our models we assessed between and within chain convergence, the resulting figures are included in supplemental documents. 
 To assess the overall model fit we carried out posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data.
 Large differences in the two indicate a poor model fit and can be assessed visually (figures included in supplemental documents). 
-\tom{All estimated parameters are described in table 1.}{I think I suggested this years ago but there are so many parameters in your model that I don't think it is particularly useful to report all of these in a table. Including publicly available data and code is good enough.}
+All estimated parameters are available in the data. 
 Data and code for all vital rate models is included in the supplemental information.
 
 \subsection*{Deterministic Integral Projection Model Construction and Analysis}
   
 Integral Projection Models describe population dynamics in discrete time, with functions that relate vital rates to continuous state variables. 
 While IPMs are a natural choice for populations with continuous size structure, they can also be modified to accommodate a combination of continuous and discrete state variables, as we do here. 
-We constructed a composite IPM which allows us to analyze the long term population growth rate of cholla with ant transition dynamics explicitly included.
-%Many of the vital rate models are dependent not only on continuous size variables, but also on discrete variables representing the ant partner present.
-%There is also a transition rate which determines what proportion of cholla are tended by each ant in a given year based on the previous ant partner and the size of the plants. 
-This novel structure allows us to determine the individual effects of each ant species as well as the composite effects of several partners across the cholla population. 
+We constructed a deterministic composite IPM which allows us to analyze the long term population growth rate of cholla with ant transition dynamics explicitly included.
+This novel structure allows us to determine the individual effects of each ant species and the composite effects of several partners across the cholla population. 
 
-Following previous studies of this population, we modeled the life cycle of cholla using continuously size-structured plants, $n_i(x)$, where $x$ is the size of the cholla and $i$ is the ant partner, and two discrete seed banks ($B_{1,t}$ and $B_{2,t}$) corresponding to 1 and 2-year old seeds.
-The dynamics of these 1 and 2-year old seedbanks are given by the following equations: \tom{}{Rather than ``hard-code'' 4 in the summation, I would create a parameter for number of possible ant states, maybe $n_{A}$.}
+Following previous studies of this population, we modeled the life cycle of cholla using continuously size-structured plants, $n(x',j,t+1)$, where $x'$ is the size of the cholla in year $t+1$ and $j$ is the ant partner in year $t+1$, and two discrete seed banks ($B_{1}(t+1)$ and $B_{2}(t+1)$) corresponding to 1 and 2-year old seeds.
+The dynamics of these 1 and 2-year old seedbanks are given by the following equations:
 
   \begin{linenomath*}
 		$$
-		B_{1, t+1} = \kappa \delta \sum_{i}^{4} \int_L^U P(x) V_i(x) F(x) n_i(x) dx \\
+		B_1(t+1) = \delta \sum_{i}^{K} \int_L^U  \kappa(i) P(x') V(i) F(x) n(x,i,t) dx \\
 		$$
 		$$
-		B_{2,t+1} =  (1 - \gamma_1)B_{1,t}\\
+		B_2(t+1) =  (1 - \gamma_1)B_1(t)\\
 		$$
   \end{linenomath*}
 
-The functions $P(x)$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $x$ and the year $t$. 
-The proportion of flowerbuds which will produce seeds ($V_i(x)$) is dependent on the plant size $x$ and the ant species present on the plant $i$ in year $t$. 
-The integral is multiplied by the number of seeds per fruit ($\kappa$) and the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the one-year old seed bank. 
+The functions $P(y)$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $y$ in year $t+1$ and $x$ in year $t$ respectively. 
+The proportion of flowerbuds which will produce seeds ($V(i)$) is dependent on the ant species present on the plant $i$ in year $t$. 
+The function for the number of seeds per fruit ($\kappa(i)$)  is dependent on the ant partner present $i$ in year $t$.
+These functions are integrated across size, from the smallest observed size $L$ to the largest observed size $U$. \ali{}{I know that technically L is smaller than the smallest size and U is larger, but I am not sure if here is the place to put it. }
+The integral is multiplied by the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the one-year old seed bank. 
 Parameters $U$ and $L$ are the upper and lower bounds, respectively, of the plant size distribution. 
 Plants can recruit out of the one-year seed bank with the probability of $\gamma_1$ or transition to the two-year seed bank with a probability of $1 - \gamma_1$. 
 Seeds in the two-year seed bank are assumed to either germinate with a probability of $\gamma_2$ or die. 
 		
-The \tom{size dynamics}{It is not just size dynamics, it is size and ant dynamics. That needs to be communicated more clearly.} of the cholla are given by:
+The size and ant dynamics of the cholla are given by:
 		
 	\begin{linenomath*}
 		$$
-		n(y,i)_{t+1} = (\gamma_1 B_{1,t} + \gamma_2 B_{2,t}) \eta(y) \omega \beta_i  + \\
+		n(y,j,t+1) = (\gamma_1 B_1(t) + \gamma_2 B_2(t)) \eta(y) \omega \rho_j  + \\
 		$$
 		$$
-		\sum_{j}^{4} \int_L^U S_j(x) G_j(y,x) \tau_{ij}(x) n_j(x) dx \\
+		\sum_{j}^{K} \int_L^U S(x,i) G(y,x,i) \tau(x,i,j) n(x,i,t) dx \\
 		$$
 	\end{linenomath*}
 	
-\tom{The first term gives the recruitment from one and two-year seed banks to a plant of size $y$, where $\eta(y) ~ N(***)$ gives the seedling size distribution and $\omega ~ ***$ gives the proportion of seedlings which surive from germination (late summer) to the census (May).
-The second term reflects the changes in the population of the cholla which are not recruits, where $S_j(x)$ gives the probability of a plant of size $x$ in year $t$ surviving to year $t+1$ with partner $j$.
-$G_j(y,x)$ gives the probability of growing from size $x$ in year $t$ to size $y$ in year $t+1$, respectively with partner $j$. 
-Finally, $\tau_{ij}$ is the probability of a cholla which is size $x$ with ant partner $i$ in year $t$ being tended by ant partner $j$ in year $t+1$.}{This is a good start but I think you need a more thorough description, since this model will be unfamiliar to many readers.}
+$n(y,j,t+1)$  explains the dynamics of all plants of size $y$ with ant partner $j$ at time $t+1$. 
+The first term in the equation shows how many of these plants come from the seedbank, either year one or year two seed banks, while the second term describes how many of these plants come from previously existing plants. 
+The larger size $y$ is the less likely these plants were recently in the seedbanks. 
+The number of recruits generated from year-one seedbanks is given by the number of seeds in the seedbank $B_1(t)$ multiplied by the year-one seed bank germination rate $\gamma_1$.
+The number of recruits generated from year-two seedbanks is calculated in a similar way with year-two specific estimates. 
+The first term estimates the number of individuals recruited from a one or two-year seed bank to a plant of size $y$ as the number of individuals germinated from a first year seed bank $\gamma_1 B_1(t)$ and a second year seed bank $\gamma_2 B_2(t)$ multiplied by the recruit size distribution term $\eta(y)$, the proportion of seedlings which survive from germination (late summer) to the census (May) $\omega$.
+Finally, this term is multiplied by $\rho_j$, which is an ant specific term which is 1 when $j$ indicates vacancy and 0 when $j$ indicates any ant presence, to ensure all new recruits are vacant as observed in nature. 
+Plants not coming from the seedbank to size $y$ and ant state $j$ were previously existing plants $n(x,i,t)$ of size $x$ and ant state $i$.
+The number of these plants can be described by the proportion of plants of size $x$ and ant state $i$ in year $t$ ($n(x,i,t)$)which survive to year $t+1$ ($S(x,i)$), from from size $x$ to size $y$ ($G(y,x,i)$), and transition from ant partner $i$ to $j$ ($\tau(x,i,j)$).
 
 Analyzing an IPM requires discretizing the composite IPM into a matrix to calculate the dominant eigenvalue. 
-\tom{Each component of the IPM (each set of ant partner specific vital rates) }{I don't think readers will understand what you are talking about here} can be discretized into its own $ 200 \times 200$ matrix as shown in figure ***. 
-The possibility of eviction, when individuals are predicted to grow outside of the possible size classes, was avoided by adding probabilities of growing smaller or larger than the existing boundaries, as done by many others***.
-We used the composite IPM to quantify the effects of partner diversity on the intrinsic growth rate of cholla, $r$ $ln(\lambda)$. 
-We calculated the $r$ for each combination of ant partners: complete vacancy; \textit{L. apiculatum} and vacancy; \textit{C. opuntiae} and vacancy; other and vacancy; \textit{L. apiculatum}, \textit{C. opuntiae}, and vacancy, \textit{L. apiculatum}, other, and vacancy; \textit{C. opuntiae}, other, and vacancy; and all ant partners and vacancy.
-The \tom{relative distributions}{Unclear what this means} allowed us to determine if either complementarity or sampling effect were at play in the tree cholla-ant defense system.
-\tom{Sampling Effect requires}{I don't think this is the right grammar (``requires'')} that the $r$ when all possible partners are present is \tom{equal to}{What if it is less than?} the $r$ of the cholla population when only the best partner is present.
-Complementarity requires that the $r$ when all possible partners are present is greater than the $r$ of any other combination of partners or any single partner. 
-\tom{}{These last two sentences are very important -- laying out predictions under alternative hypotheses -- so it is work making them laser sharp. }
+In a traditional IPM $x$ is discretized into $b$ bins, replacing the continuous kernel into a $b \times b$ matrix, in this case there is additional complexity in the form of transitions between ant partners. 
+Each combination of previous ant state $i$ and next ant state $j$ represents a unique set of plants in the popualtion and therefore must be discritized individually, leading to a matrix size of $m b \times m b$ where $m$ is the number of unique combinations of $i$ and $j$ (how many possible ant transitions there are). 
+In this model we have two additional discrete states (year one and year two seed banks) leading to a final matrix size of $m(b+2) \times m(b+2)$.
+We used $b = 200$ bins.
+We extend the integration limits $L$ and $U$ to avoid unintentional eviction \cite{Williams2012}.
+We estimate the asymptotic population growth rate $\lambda$ as the dominant eigenvalue of the discrete kernel for each combination of ant partners: complete vacancy; \textit{C. opuntiae} and vacancy; other and vacancy; \textit{L. apiculatum}, \textit{C. opuntiae}, and vacancy, \textit{L. apiculatum}, other, and vacancy; \textit{C. opuntiae}, other, and vacancy; and all ant partners and vacancy.
+Rather than estimating a single $\lambda$ value for each possible population, we used 1,000 random parameter estimations from iterations of our bayesian statistical models to estimate 1,000 $\lambda$ values as a distribution.
+We compare the distributions of $\lambda$ across each combination of ant partners to whether sampling effect or complementarity is at play in the system.
+To compare the distributions of two hypothetical populations, A and B, we subtract the vector of 1,000 $\lambda_A$ estimations of one population from the 1,000 $\lambda_B$ estimations of the other ($\lambda_A - \lambda_B$).
+If the average of these differences is positive, population A has a higher $\lambda$ than B, if the average is 0, they are equal, and if the average is negative, population B has a higher $\lambda$ than A. 
+
+To determine if sampling effect is at play in a system, we must first determine if there is a "best" partner, by determining which single ant association is correlated with the highest $\lambda$ estimation.
+We can do this by comparing the distributions of each $\lambda$ and finding the one which is larger than all others.
+Then we must show that the $\lambda$ of a population with all possible partners is equal to that of $\lambda$ of a population with only the "best" partner, by comparing the distributions as described earlier.
+If it is significantly larger then complementarity is potentially at play (more on this in the next paragraph).
+If it is significantly smaller, this indicates that rather than positive effects of partner diversity, there are actually important costs of partner diversity that dampen the population growth rate.
+
+To determine if complementarity is at play in a system, we must determine if the partner scenario which leads to the highest $\lambda$ is the most partner diverse scenario.
+We can do this by comparing the distribution of $\lambda$ of a population with all possible partners to the distribution of $\lambda$ of all other populations.
+If the $\lambda$ of a population with all possible partners is the largest, it indicates that complementarity is at play.
+If neither the conditions for sampling effect or complimentarity, it indicates that rather than positive effects of partner diversity, there are actuallly costs of diversity.
 
 \subsection*{Stochastic Integral Projection Model Construction and Analysis}
   
 The third mechanism considered in this study requires annual variation to be explicitly considered in the IPM so we constructed a stochastic version of the IPM described above. 
-The year of record was a random effect in all vital rate models meaning we were able to include an intercept for specific years. 
-In order to include stochasticity in the analysis,\tom{ we randomly sampled from the year-random effect intercepts 1,000 times}{I don't think you have communicated, in either words or notation, that the random intercepts are unique to ant state.}.
-For each of these 1,000 iterations we calculated the $r$ for every possible combination of ant partners. 
-With these values we calculated $\delta r$ between the scenario with all possible partners and the scenario with no partners.
-This $\delta r$ measures the net benefits offered by partner diversity with annual variation.
-We also calculated the $\delta r$ of the deterministic IPM to measure the net benefits offered by partner diversity without annual variation. 
-These two relative differences allow us to determine if portfolio effect is at play.
-\tom{Portfolio effect is demonstrated when the net benefit with annual variation is larger than the net benefit without annual variation.}{This is good and would make a good figure (posteriors of delta r with and without annual variation.)} 
-			
-    
+This stochastic IPM draws from the same statistical models as the deterministic version, and is described below:
+
+ \begin{linenomath*}
+	$$
+	B_1(t+1) = \delta \sum_{i}^{K} \int_L^U  \kappa(i) P(y,u,w) V(i,u,w) F(x,u,w) n(x,i,t) dx \\
+	$$
+	$$
+	B_2(t+1) =  (1 - \gamma_1)B_1(t)\\
+	$$
+	$$
+	n(y,j,t+1) = (\gamma_1 B_1(t) + \gamma_2 B_2(t)) \eta(y) \omega \rho_j  + \\
+	$$
+	$$
+	\sum_{j}^{K} \int_L^U S(x,i,u,w) G(y,x,i,u,w) \tau(x,i,j,u,w) n(x,i,t) dx \\
+	$$
+\end{linenomath*}
+
+This system of equations still describes the contribution of seedbanks and existing plants to the group of plants of size $y$ and ant partner $j$ in year $t+1$, but now includes the random effects of plot $u$ and year $w$. 
+These effects are included in the form of linear scales on each statistical model where they were biologically relevant.
+Year effects $w$ are both year and ant speciifc, meaning for each year there are different ant and year-specific linear scales for each year of data. 
+When calculating stochastic $\lambda$, every one of the 1,000 parameter-iteration associated $\lambda$s actually come from the mean of 1,000 year-specific estimations. 
+For each parameter estimate taken from the bayesian models we calculate 1,000 estimations of $\lambda$, each associated with a year random effect which was randomly selected from the *******18 years of data.
+The mean of these estimations become the parameter-iteraction specific $\lambda$ estimation. 
+This is repeated 1,000 times for each iteration of parameters to get the stochastic posterior distribution of $\lambda$.
+We compare the stochastic distributions to the deterministic ones to determine if portfolio effect is at play in this system. 
+
+To determine if portfolio effect is at play we must show that partner diversity buffers the population from environmental variation (in our case annual variation assessed by the inclusion of year random effects). 
+We can estimate the effects of partner diversity on the focal mutualist by calculating the difference in $\lambda$ distributions between populations with no partners and populations with all partners present.
+Then we compare the difference in the effects of partner diversity on the focal mutualist with and without stochasticity.
+If the stochastic difference in the effects of partner diversity is greater than the deterministic difference, this indicates that partner diversity is more beneficial under varying environments and therefore portfolio effect is at play.  
   
 \section*{Results}
 \subsection*{Statistical Modeling}
@@ -320,6 +380,93 @@ Plants tended by \textit{C. opuntiae} ants experienced positive growth rates acr
 They experienced significantly higher mean growth than vacant plants ($p = 4.88 \times 10^{-14}$).
 Plants tended by \textit{L. apiculatum} experienced positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}c.
 Vacant plants experienced the lowest observed growth, except at the largest sizes where they are less likely to shrink than tended plants \cite{fig:growth}d. 
+
+%% Survival Model
+%\begin{figure}[h]
+%	\includegraphics[width=0.95\linewidth]{surv_panels.png}
+%	\caption{asdasdf}
+%	\label{fig:surv}
+%\end{figure}
+Plants tended by \textit{C. opuntiae} ants experienced significantly higher mean survival rates than \textit{L. apiculatum} tended plants ($p = 2.908 \times 10^{-14}$), plants tended by other ants ($p = 4.488 \times 10^{-14}$), and vacant plants ($p = 2.2 \times 10^{-16}$) \cite{fig:surv}. 
+These \textit{C. opuntiae} plants have the highest mean survival at small sizes before reaching a mean survival rate of about 100\% when medium to large.
+Plants tended by \textit{L. apiculatum} experienced similar mean survival rates to plants tended by other ants and vacant plants.
+\textit{L. apiculatum} tended plants and other tended plants reached a mean survival rate of nearly 100\% by medium sizes, with other tended plants reaching this rate slower. 
+Vacant plants never reach mean survival rates of 100\%. 
+
+%% Flowers Model
+There is a clear size effect on the number of flowers produced. 
+The mean number of flowers produced by a plant remains at 0 until the plant reachesmedium sizes after which the mean number of flower produced increases eponentially to about 40 at large sizes.
+
+
+%% Viability Model
+%\begin{figure}[h]
+%	\includegraphics[width=0.95\linewidth]{Viability.png}
+%	\caption{asdasdf}
+%	\label{fig:comp-samp}
+%\end{figure}
+Plants tended by \textit{L. apiculatum} ants experienced the highest viability rates, significantly higher than \textit{C. opuntiae} tended plants ($p = 2.2 \times 10^{-16}$), other tended plants ($p = 2.2 \times 10^{-16}$), and vacant plants ($p = 2.2 \times 10^{-16}$).
+The mean viability rate of \textit{L. apiculatum} tended plants was 84.888\%.
+Plants tended by \textit{C. opuntiae} ants experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$), but not than other tended plants ($p = 0.1168$).
+The mean viability rate of \textit{C. opuntiae} plants was 75.934\%.
+Plants tended by other ants also experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$).
+The mean viability rate of other tended plants was 76.367\%.
+The mean viability rate of vacant plants was 70.442\%.
+
+%% Reproduction Model
+The probability of a plant reproducing in a given year is highly size dependent. 
+The mean probability of reproducing remains at about 0\% until the plant reaches a medium size, after which the mean probability of reproducing increases steadily before reaching about 100\% at large sizes. 
+
+%% Seeds Produced
+The mean number of seeds produced by \textit{C. opuntiae} tended plants is significantly lower than the mean number of seeds produced by \textit{L. apiculatum} plants ($p = 2.2 \times 10^{-16}$) and vacant plants ($p = 2.2 \times 10^{-16}$). 
+\textit{C. opuntiae} tended plants produce a mean of 2.561 seeds per flower. 
+The mean number of seeds produced by \textit{L. apiculatum} tended plants is slightly higher than the mean number produced by vacant plants ($p = 0.02521$). 
+\textit{L. apiculatum} tended plants produce a mean of 3.563 seeds per flower. 
+Vacant plants produce a mean of 3.435 seeds per flower. 
+
+%% Precensus Survival
+The mean pre-census seed survival rate is 16.99\% with 90\% of model iterations landing between 1.13\% and 40.72\%. 
+
+%% Germination
+Seeds have a significantly higher probability of germinating in year one than in year two ($p = 2.2 \times 10^{-16}$).
+Seeds in year one have a mean germination rate of 0.578\% and seeds in year two have a mean germination rate of 0.221\%. 
+
+%% Recruit size distribution
+The mean size of new recruits is -1.88 log($cm^3$) with 90\% of new recruits falling between the sizes of -2.12 log($cm^3$) and -1.64 log($cm^3$).
+
+%% Ant Transition Rates
+% previously vacant
+Plants that were previously vacant will most likely remain vacant until large. 
+These plants have significantly higher probabilities of being vacant rather than becoming tended  by \textit{C. opuntiae}, \textit{L. apiculatum}, or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
+The probability of previously vacant plants becoming tended by \textit{L. apiculatum} ants is significantly higher than the probabilities of becoming tended by \textit{C. opuntiae} or other ants (respecitvely, $p = 3.83 \times 10^{-14}$, $p = 2.2 \times 10^{-16}$).
+The probability of previously vacant plants becoming tended by other ants is significantly lower than the probability of becoming tended by \textit{C. opuntiae} ($p = 0.00227$).
+
+% previously crem
+Plants that were previously tended by \textit{C. opuntiae} will most likely remain vacant until large. 
+These plants have significantly higher probabilities of becoming vacant rather than remaining tended by \textit{C. opuntiae} or becoming tended by \textit{L. apiculatum} or other ants (repsectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$ ).
+The probability of these plants remaining tended by \textit{C. opuntiae} ants is significantly higher than the probability of becoming tended by \textit{L. apiculatum} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 3.797 \times 10^{-9}$).
+The probability of these plants becoming tended by \textit{L. apiculatum} is significantly higher than the probability of becoming tended by other ants ($p = 3.797 \times 10^{-9}$).
+
+% previously liom
+Plants that were previously tended by \textit{L. apiculatum} ants will most likely remain vacant until large. 
+These plants have significantly higher probabilities of becoming vacant than remaining tended by \textit{L. apiculatum} or becoming tended by \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
+These plants have significantly higher probabilities of remaining tended by \textit{L. apiculatum} ants than becoming tended by  \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
+The probability of these plants becoming tended by \textit{C. opuntiae} ants is significantly higher than the probability of them becoming tended by other ants ($p = 0.007925$).
+
+% previously other
+Plants that were previously tended by other ants will most likely remain vacant until they are large. 
+These plants have significantly higher probabilities of becoming vacant rather than remaining tended by other ants or becoming tended by \textit{C. opuntiae} or \textit{L. apiculatum} ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
+The probability of these plants becoming tended by \textit{L. apiculatum} ants is significantly higher than the probability of remaining tended by other ants or becomnig tended by \textit{C. opuntiae} (respectively, $p = 6.309 \times 10^{-12}$, $p = 6.256 \times 10^{-13}$).
+The probability of these plants remaining tended by other ants is not higher than the probability of becoming tended by \textit{C. opuntiae} ants ($p = 0.954$). 
+
+%% All cases/trends
+In all plants ,the most likely scenario is vacancy.
+In most cases, the second most likely next ant partner is \textit{L. apiculatum} with the exception of plants which were previously tended by \textit{C. opuntiae} who are second most likely to retain \textit{C. opuntiae} as their partners in successive years.
+The only case where two next partners do not have statistically significantly different probabilities is when previously other tended plants either remain tended by other ants or become tended by \textit{C. opuntiae}. 
+
+\subsection*{Deterministic IPM}
+
+\subsection*{Stochastic IPM}
+
 
 \section*{Discussion}
 
