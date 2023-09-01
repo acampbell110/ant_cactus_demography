@@ -76,8 +76,9 @@ saveRDS(fit_grow_skew, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutuali
 #https://mc-stan.org/rstanarm/reference/adapt_delta.html
 fit_grow_skew<-readRDS("C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 fit_grow_skew<-readRDS("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
-
-bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size"))
+fit_grow_skew<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+fit_grow_skew@model_pars
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","d_size2","a_0","a_size","a_size2"))
 bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
 bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
 bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
