@@ -186,20 +186,20 @@ The ant partners defend the cacti from herbivores, meaning their presence can le
 The biological sources of variance (including spatial, and annual variance) are accounted for by including year-to-year and plot-to-plot random effects in the models. 
 Unless otherwise mentioned, all models use vague priors. 
 
-The growth model \ali{($G(x',x,i)$) estimates the size of cholla $y^G$}{This is where I get a little confused between the x and x' sizes and the ys. Should this all be noted like this?} in year $t+1$, with fixed effects of the previous size $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
+The growth model \ali{($G(x',x,a)$) estimates the size of cholla $y^G$}{This is where I get a little confused between the x and x' sizes and the ys. Should this all be noted like this?} in year $t+1$, with fixed effects of the previous size $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
 A skew normal distribution was chosen here because the data had evidence of skew and previous efforts using a gaussian distribution poorly predicted the sizes of these plants, overestimating the next sizes for large plants.
 $\omega$ denotes the scale of the data in a Skew Normal distribution while $\alpha$ denotes the slant, when $\alpha$ is 0, the $\omega$ is equivalent to the sd of a Normal distribution. 
 The $\omega$ and $\alpha$ estimates vary across size because the scale and skew of the data varied across size. 
 $$y^G ~ Skew N(\hat{G},\hat{\omega},\hat{\alpha})$$
-$$\hat{G} = \beta_{0}^{G} + \beta_{1}^{G} \times x + \beta_{2}^{G} \times i + \beta_{4}^{G} \times x \times i + u + w$$
+$$\hat{G} = \beta_{0}^{G} + \beta_{1}^{G} \times x + \beta_{2}^{G} \times a + \beta_{4}^{G} \times x \times a + u + w$$
 $$\hat{\omega} = \beta_{0}^{\omega} + \beta_{1}^{\omega} \times x$$
 $$\hat{\alpha} = \beta_{0}^{\omega} + \beta_{1}^{\omega} \times x + \beta_{2}^{\omega} \times x^2$$
 where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 Ants are included as a predictor here because ant partners defend plants from herbivory, therefore decreasing the likelihood of segment loss.
 
-The survival model ($S(i,x)$) estimates the probability of survival $y^S$ from year $t$ to year $t+1$, with fixed effects of the previous size of the cholla $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Bernoulli distribution:
+The survival model ($S(a,x)$) estimates the probability of survival $y^S$ from year $t$ to year $t+1$, with fixed effects of the previous size of the cholla $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Bernoulli distribution:
 $$y^S ~ Bern(\hat{S})$$
-$$logit(\hat{S} = \beta_{0}^{S}) + \beta_{1}^{S} \times x + \beta_{2}^{S} \times i + \beta_{3}^{S} \times x \times i + u + w$$
+$$logit(\hat{S} = \beta_{0}^{S}) + \beta_{1}^{S} \times x + \beta_{2}^{S} \times a + \beta_{3}^{S} \times x \times a + u + w$$
 where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 A Bernoulli distribution was chosen here because the only two possible outcomes are survival or death. 
 Ants are included as predictors here because ant partners defend cholla from herbivores and predators, decreasing the likelihood of mortality due to either of these. 
@@ -217,17 +217,17 @@ where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific va
 
 The viability model ($V_i(x)$) estimates the proportion of flowers produced by a plant which are viable (not aborted) $y^V$ in year $t+1$, with fixed effects of the ant partner of the cactus $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Binomial distribution:
 $$y^{V} ~ Binom(\hat{V})$$
-$$logit(\hat{V}) = \beta_{0}^{V} \times i + u + w$$
+$$logit(\hat{V}) = \beta_{0}^{V} \times a + u + w$$
 where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 Ants are included as predictors here because they defend the cacti from seed predation which can lead to floral abortion. 
 
-The ant transition rates model ($\tau_(x,i,j)$) estimates the probability of a cactus being visited by an ant partner $j$ $y^{\tau}$, with fixed effects of the previous size of the cholla $x$  and the previous ant partner $i$  in year $t$ and random effects of plot $w$ and year $u$, using a Multinomial distribution: 
+The ant transition rates model ($\tau_(x,a,a')$) estimates the probability of a cactus being visited by an ant partner $a'$ $y^{\tau}$, with fixed effects of the previous size of the cholla $x$  and the previous ant partner $a$  in year $t$ and random effects of plot $w$ and year $u$, using a Multinomial distribution: 
 $$y^{\tau} ~ Multinomial(\hat{\tau})$$
-$$logit(\tau) = \beta_{0}^{\tau} + \beta_{1}^{\tau} \times x + \beta_{2}^{\tau} \times i + \beta_{3}^{\tau} \times x \times i + u + w$$
+$$logit(\tau) = \beta_{0}^{\tau} + \beta_{1}^{\tau} \times x + \beta_{2}^{\tau} \times a + \beta_{3}^{\tau} \times x \times a + u + w$$
 where $u ~ N(0,\sigma_{yr}^{2})$ is the year random effect with year specific variance of $\sigma_{yr}$ in year $t$, and $w ~ N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$.
 Ant partners are included as predictors here because partners may choose to return to the same cholla repeatedly or choose new ones, therefore the previous partner may be a good indicator of the next partner. 
 
-The recruit size model ($n_j(x)$) estimates the size distribution of all recruits $y^{\eta}$ from a given year $t+1$, with no fixed or random effects, using a Normal distribution: 
+The recruit size model ($n(x,a')$) estimates the size distribution of all recruits $y^{\eta}$ from a given year $t+1$, with no fixed or random effects, using a Normal distribution: 
 $$y^{\eta} ~ N(\hat{\eta},\hat{\sigma})$$
 $$\hat{eta} = \beta_{0}^{\eta}$$
 where $\hat{\sigma}$ is estimated with a non-informative prior. 
@@ -266,21 +266,21 @@ While IPMs are a natural choice for populations with continuous size structure, 
 We constructed a deterministic composite IPM which allows us to analyze the long term population growth rate of cholla with ant transition dynamics explicitly included.
 This novel structure allows us to determine the individual effects of each ant species and the composite effects of several partners across the cholla population. 
 
-Following previous studies of this population, we modeled the life cycle of cholla using continuously size-structured plants, $n(x',j,t+1)$, where $x'$ is the size of the cholla in year $t+1$ and $j$ is the ant partner in year $t+1$, and two discrete seed banks ($B_{1}(t+1)$ and $B_{2}(t+1)$) corresponding to 1 and 2-year old seeds.
+Following previous studies of this population, we modeled the life cycle of cholla using continuously size-structured plants, $n(x',a',t+1)$, where $x'$ is the size of the cholla in year $t+1$ and $a'$ is the ant partner in year $t+1$, and two discrete seed banks ($B_{1}(t+1)$ and $B_{2}(t+1)$) corresponding to 1 and 2-year old seeds.
 The dynamics of these 1 and 2-year old seedbanks are given by the following equations:
 
   \begin{linenomath*}
 		$$
-		B_1(t+1) = \delta \sum_{i}^{K} \int_L^U  \kappa(i) P(x') V(i) F(x) n(x,i,t) dx \\
+		B_1(t+1) = \delta \sum_{a}^{A} \int_L^U  \kappa(a) P(x') V(a) F(x) n(x,a,t) dx \\
 		$$
 		$$
 		B_2(t+1) =  (1 - \gamma_1)B_1(t)\\
 		$$
   \end{linenomath*}
 
-The functions $P(y)$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $y$ in year $t+1$ and $x$ in year $t$ respectively. 
-The proportion of flowerbuds which will produce seeds ($V(i)$) is dependent on the ant species present on the plant $i$ in year $t$. 
-The function for the number of seeds per fruit ($\kappa(i)$)  is dependent on the ant partner present $i$ in year $t$.
+The functions $P(x')$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $x'$ in year $t+1$ and $x$ in year $t$ respectively. 
+The proportion of flowerbuds which will produce seeds ($V(a)$) is dependent on the ant species present on the plant $i$ in year $t$. 
+The function for the number of seeds per fruit ($\kappa(a)$)  is dependent on the ant partner present $a$ in year $t$.
 These functions are integrated across size, from the smallest observed size $L$ to the largest observed size $U$. \ali{}{I know that technically L is smaller than the smallest size and U is larger, but I am not sure if here is the place to put it. }
 The integral is multiplied by the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the one-year old seed bank. 
 Parameters $U$ and $L$ are the upper and lower bounds, respectively, of the plant size distribution. 
@@ -291,26 +291,26 @@ The size and ant dynamics of the cholla are given by:
 		
 	\begin{linenomath*}
 		$$
-		n(y,j,t+1) = (\gamma_1 B_1(t) + \gamma_2 B_2(t)) \eta(y) \omega \rho_j  + \\
+		n(x',a',t+1) = (\gamma_1 B_1(t) + \gamma_2 B_2(t)) \eta(x') \omega \rho_{a'}  + \\
 		$$
 		$$
-		\sum_{j}^{K} \int_L^U S(x,i) G(y,x,i) \tau(x,i,j) n(x,i,t) dx \\
+		\sum_{a'}^{A} \int_L^U S(x,a) G(x',x,a) \tau(x,a,a') n(x,a,t) dx \\
 		$$
 	\end{linenomath*}
 	
-$n(y,j,t+1)$  explains the dynamics of all plants of size $y$ with ant partner $j$ at time $t+1$. 
+$n(x',a',t+1)$  explains the dynamics of all plants of size $x'$ with ant partner $x'$ at time $t+1$. 
 The first term in the equation shows how many of these plants come from the seedbank, either year one or year two seed banks, while the second term describes how many of these plants come from previously existing plants. 
-The larger size $y$ is the less likely these plants were recently in the seedbanks. 
+The larger size $x'$ is the less likely these plants were recently in the seedbanks. 
 The number of recruits generated from year-one seedbanks is given by the number of seeds in the seedbank $B_1(t)$ multiplied by the year-one seed bank germination rate $\gamma_1$.
 The number of recruits generated from year-two seedbanks is calculated in a similar way with year-two specific estimates. 
-The first term estimates the number of individuals recruited from a one or two-year seed bank to a plant of size $y$ as the number of individuals germinated from a first year seed bank $\gamma_1 B_1(t)$ and a second year seed bank $\gamma_2 B_2(t)$ multiplied by the recruit size distribution term $\eta(y)$, the proportion of seedlings which survive from germination (late summer) to the census (May) $\omega$.
-Finally, this term is multiplied by $\rho_j$, which is an ant specific term which is 1 when $j$ indicates vacancy and 0 when $j$ indicates any ant presence, to ensure all new recruits are vacant as observed in nature. 
-Plants not coming from the seedbank to size $y$ and ant state $j$ were previously existing plants $n(x,i,t)$ of size $x$ and ant state $i$.
-The number of these plants can be described by the proportion of plants of size $x$ and ant state $i$ in year $t$ ($n(x,i,t)$)which survive to year $t+1$ ($S(x,i)$), from from size $x$ to size $y$ ($G(y,x,i)$), and transition from ant partner $i$ to $j$ ($\tau(x,i,j)$).
+The first term estimates the number of individuals recruited from a one or two-year seed bank to a plant of size $x'$ as the number of individuals germinated from a first year seed bank $\gamma_1 B_1(t)$ and a second year seed bank $\gamma_2 B_2(t)$ multiplied by the recruit size distribution term $\eta(x')$, the proportion of seedlings which survive from germination (late summer) to the census (May) $\omega$.
+Finally, this term is multiplied by $\rho_{a'}$, which is an ant specific term which is 1 when $a'$ indicates vacancy and 0 when $a'$ indicates any ant presence, to ensure all new recruits are vacant as observed in nature. 
+Plants not coming from the seedbank to size $x'$ and ant state $a'$ were previously existing plants $n(x,a,t)$ of size $x$ and ant state $a$.
+The number of these plants can be described by the proportion of plants of size $x$ and ant state $a$ in year $t$ ($n(x,a,t)$)which survive to year $t+1$ ($S(x,a)$), from from size $x$ to size $x'$ ($G(x',x,a)$), and transition from ant partner $a$ to $a'$ ($\tau(x,a,a')$).
 
 Analyzing an IPM requires discretizing the composite IPM into a matrix to calculate the dominant eigenvalue. 
 In a traditional IPM $x$ is discretized into $b$ bins, replacing the continuous kernel into a $b \times b$ matrix, in this case there is additional complexity in the form of transitions between ant partners. 
-Each combination of previous ant state $i$ and next ant state $j$ represents a unique set of plants in the popualtion and therefore must be discritized individually, leading to a matrix size of $m b \times m b$ where $m$ is the number of unique combinations of $i$ and $j$ (how many possible ant transitions there are). 
+Each combination of previous ant state $a$ and next ant state $a'$ represents a unique set of plants in the popualtion and therefore must be discritized individually, leading to a matrix size of $m b \times m b$ where $m$ is the number of unique combinations of $a$ and $a'$ (how many possible ant transitions there are). 
 In this model we have two additional discrete states (year one and year two seed banks) leading to a final matrix size of $m(b+2) \times m(b+2)$.
 We used $b = 200$ bins.
 We extend the integration limits $L$ and $U$ to avoid unintentional eviction \cite{Williams2012}.
@@ -338,20 +338,20 @@ This stochastic IPM draws from the same statistical models as the deterministic 
 
  \begin{linenomath*}
 	$$
-	B_1(t+1) = \delta \sum_{i}^{K} \int_L^U  \kappa(i) P(y,u,w) V(i,u,w) F(x,u,w) n(x,i,t) dx \\
+	B_1(t+1) = \delta \sum_{a}^{A} \int_L^U  \kappa(a) P(x',u,w) V(a,u,w) F(x,u,w) n(x,a,t) dx \\
 	$$
 	$$
 	B_2(t+1) =  (1 - \gamma_1)B_1(t)\\
 	$$
 	$$
-	n(y,j,t+1) = (\gamma_1 B_1(t) + \gamma_2 B_2(t)) \eta(y) \omega \rho_j  + \\
+	n(x',a',t+1) = (\gamma_1 B_1(t) + \gamma_2 B_2(t)) \eta(x') \omega \rho_{a'}  + \\
 	$$
 	$$
-	\sum_{j}^{K} \int_L^U S(x,i,u,w) G(y,x,i,u,w) \tau(x,i,j,u,w) n(x,i,t) dx \\
+	\sum_{a}^{A} \int_L^U S(x,a,u,w) G(x',x,a,u,w) \tau(x,a,a',u,w) n(x,a,t) dx \\
 	$$
 \end{linenomath*}
 
-This system of equations still describes the contribution of seedbanks and existing plants to the group of plants of size $y$ and ant partner $j$ in year $t+1$, but now includes the random effects of plot $u$ and year $w$. 
+This system of equations still describes the contribution of seedbanks and existing plants to the group of plants of size $x'$ and ant partner $a'$ in year $t+1$, but now includes the random effects of plot $u$ and year $w$. 
 These effects are included in the form of linear scales on each statistical model where they were biologically relevant.
 Year effects $w$ are both year and ant speciifc, meaning for each year there are different ant and year-specific linear scales for each year of data. 
 When calculating stochastic $\lambda$, every one of the 1,000 parameter-iteration associated $\lambda$s actually come from the mean of 1,000 year-specific estimations. 
