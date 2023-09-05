@@ -25,6 +25,9 @@ upper<- cholla_max
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
 mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#Lab
+mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+
 # grow.params <- read.csv(paste0(mcmc_dir,"grow.params.csv"), header = TRUE,stringsAsFactors=T)    
 # surv.params <- read.csv("surv.params.csv", header = TRUE,stringsAsFactors=T)    
 # flow.params <- read.csv("flow.params.csv", header = TRUE,stringsAsFactors=T)    
@@ -38,7 +41,8 @@ mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Mo
 # rec.params <- read.csv(paste0(mcmc_dir,"rec.params.csv"), header = TRUE,stringsAsFactors=T)    
 
 ##These files contain all draws from the posterior distributions of all parameters
-grow.params <- read.csv(paste0(mcmc_dir,"grow.params.csv"), header = TRUE,stringsAsFactors=T)
+grow.params <- rstan::extract(fit_grow_skew)
+draws <- sample(7500,1000,replace=F)
 surv.params <- read.csv(paste0(mcmc_dir,"surv.params.csv"), header = TRUE,stringsAsFactors=T)
 flow.params <- read.csv(paste0(mcmc_dir,"flow.params.csv"), header = TRUE,stringsAsFactors=T)
 flow.phi <- read.csv(paste0(mcmc_dir,"flow.phi.csv"), header = TRUE,stringsAsFactors=T)
@@ -62,24 +66,28 @@ params<-params[,-1]
 ## Check the names of the parameters
 #head(grow.params)
 #### No specific ant
-params$grow_sig0 <- grow.params$d_0           ## growth error intercept
-params$grow_sig1 <- grow.params$d_size        ## ## growth error size
-params$grow_alp0 <- grow.params$a_0
-params$grow_alp1 <- grow.params$a_size
-params$grow_sig_u<-grow.params$sigma_u
-params$grow_sig_w<-grow.params$sigma_w
+params$grow_sig0 <- grow.params$d_0[draws]           ## growth error intercept
+params$grow_sig1 <- grow.params$d_size[draws]        ## ## growth error size
+params$grow_alp0 <- grow.params$a_0[draws]
+params$grow_alp1 <- grow.params$a_size[draws]
+params$grow_sig_u<-grow.params$sigma_u[draws]
+params$grow_sig_w<-grow.params$sigma_w[draws]
 ####Ant 1 (vacant)
-params$grow_beta01<-grow.params$beta0.1     	  ## growth intercept
-params$grow_beta11<-grow.params$beta1.1				## growth slope
+params$grow_beta01<-grow.params$beta0[draws,4]     	  ## growth intercept
+params$grow_beta11<-grow.params$beta1[draws,4]				## growth slope
+params$grow_beta21<-grow.params$beta2[draws,4]				## growth slope
 ####Ant 2 (other)
-params$grow_beta02<-grow.params$beta0.2     	  ## growth intercept
-params$grow_beta12<-grow.params$beta1.2				## growth slope
+params$grow_beta02<-grow.params$beta0[draws,3]     	  ## growth intercept
+params$grow_beta12<-grow.params$beta1[draws,3]				## growth slope
+params$grow_beta22<-grow.params$beta2[draws,3]				## growth slope
 ####Ant 3 (crem)
-params$grow_beta03<-grow.params$beta0.3     	  ## growth intercept
-params$grow_beta13<-grow.params$beta1.3				## growth slope
+params$grow_beta03<-grow.params$beta0[draws,1]     	  ## growth intercept
+params$grow_beta13<-grow.params$beta1[draws,1]				## growth slope
+params$grow_beta23<-grow.params$beta2[draws,1]				## growth slope
 ####Ant 4 (liom)
-params$grow_beta04<-grow.params$beta0.4     	## growth intercept
-params$grow_beta14<-grow.params$beta1.4				## growth slope
+params$grow_beta04<-grow.params$beta0[draws,2]     	## growth intercept
+params$grow_beta14<-grow.params$beta1[draws,2]				## growth slope
+params$grow_beta24<-grow.params$beta2[draws,2]				## growth slope
 #### --- Year Random Effects --- ####
 
 ####Ant 1 (prev vacant)

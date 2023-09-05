@@ -292,7 +292,6 @@ dev.off()
 growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
 growth_data <- na.omit(growth_data_orig)
 #extract from original data
-
 y_subset <- growth_data[,c("logsize_t1","ant_t", "logsize_t")]
 y_crem_subset_grow <- subset(y_subset, ant_t == "crem")
 y_liom_subset_grow <- subset(y_subset, ant_t == "liom")
@@ -304,21 +303,19 @@ size_liom <- seq(min(y_liom_subset_grow$logsize_t, na.rm = TRUE), max(y_liom_sub
 size_other <- seq(min(y_other_subset_grow$logsize_t, na.rm = TRUE), max(y_other_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 size_vac <- seq(min(y_vac_subset_grow$logsize_t, na.rm = TRUE), max(y_vac_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-grow_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/grow.params.csv", header = TRUE,stringsAsFactors=T)
-grow_out <- read.csv("grow.params.csv", header = TRUE,stringsAsFactors=T)
-## Formulas
-## Other
-y_other_mean_grow <- quantile(grow_out$beta0.3,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.5)
-## Crem
-y_crem_mean_grow <- quantile(grow_out$beta0.1,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.5)
-## Liom
-y_liom_mean_grow <- quantile(grow_out$beta0.2,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.5)
-## Vac
-y_vac_mean_grow <-  quantile(grow_out$beta0.4,0.5) + (size_dummy-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.5)
 
-grow_sd <- mean(grow_out$d_0) + (size_dummy) * mean(grow_out$d_size)
-range(grow_sd)
+fit_grow_skew<-readRDS("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+grow_out <- rstan::extract(fit_grow_skew)
+# Formulas
+# Other
+y_other_mean_grow <- quantile(grow_out$beta0[,3],0.5) + (size_dummy) * quantile(grow_out$beta1[,3],0.5) + (size_dummy)^2 * quantile(grow_out$beta2[,3],0.5)
+## Crem
+y_crem_mean_grow <- quantile(grow_out$beta0[,1],0.5) + (size_dummy) * quantile(grow_out$beta1[,1],0.5) + (size_dummy)^2 * quantile(grow_out$beta2[,1],0.5)
+## Liom
+y_liom_mean_grow <- quantile(grow_out$beta0[,2],0.5) + (size_dummy) * quantile(grow_out$beta1[,2],0.5) + (size_dummy)^2 * quantile(grow_out$beta2[,2],0.5)
+## Vac
+y_vac_mean_grow <-  quantile(grow_out$beta0[,4],0.5) + (size_dummy) * quantile(grow_out$beta1[,4],0.5) + (size_dummy)^2 * quantile(grow_out$beta2[,4],0.5)
+
 
 ## create the panel figure
 ## For posters
@@ -386,7 +383,6 @@ plot.new()
 text(0.5,0.3,"Crem. Offer Higher Growth \n Rates for Small Cacti
 ",cex=4,font=2)
 # Other (2)
-samp <- sample(nrow(grow_out), 50)
 plot(x = size_dummy  ,y = y_other_mean_grow, type = "l", col = othercol, lwd = 4,
      main = "Other",cex.main = 2) 
 points(y_other_subset_grow$logsize_t,y_other_subset_grow$logsize_t1,pch=16,col= alpha("black", 0.4))
@@ -409,12 +405,11 @@ lines(x = size_dummy  ,y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 4)
 # All together
 plot(x = size_dummy  ,y = y_other_mean_grow, type = "l",lwd = 2,col = othercol,
      main = "All Ants",cex.main = 2,
-     ylim = c(9,11), xlim = c(9,11))  
+     ylim = c(-5,7), xlim = c(-5,7))  
 lines(x = size_dummy, y = y_crem_mean_grow, type = "l", col = cremcol, lwd = 2) 
 lines(x = size_dummy, y = y_liom_mean_grow, type = "l", col = liomcol,lwd = 2) 
 lines(x = size_dummy, y = y_vac_mean_grow, type = "l", col = vaccol, lwd = 2) 
 lines(x = size_dummy, y = size_dummy, type= "l", col = "darkgrey", lwd = 2, lty = 2)
-abline(a = 1, b = 1, col = "darkgrey", lty = 20)
 legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16,
        cex=1.6)
 mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
@@ -429,22 +424,30 @@ y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), len
 other <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.3,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.3,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,3],0.5) + (x) * quantile(grow_out$beta1[,3],0.5) + (x)^2 * quantile(grow_out$beta2[,3],0.5), 
+                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
 );
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.4,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.4,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,4],0.5) + (x) * quantile(grow_out$beta1[,4],0.5) + (x)^2 * quantile(grow_out$beta2[,4],0.5), 
+                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
 );
 liom <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.2,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.2,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,2],0.5) + (x) * quantile(grow_out$beta1[,2],0.5) + (x)^2 * quantile(grow_out$beta2[,2],0.5), 
+                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
 );
 crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0.1,0.5) + (x-mean(growth_data$logsize_t)) * quantile(grow_out$beta1.1,0.5), omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*x), alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*x)
+  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,1],0.5) + (x) * quantile(grow_out$beta1[,1],0.5) + (x)^2 * quantile(grow_out$beta2[,1],0.5), 
+                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
 );
 
 ## Contour plots
@@ -471,7 +474,7 @@ contour(x,y,vacant, nlevels = 10, col = "darkgrey", xlim = c(2,10), ylim = c(0,1
         main = "d)      Vacant                ", cex.main = 2) 
 lines(size_dummy, y_vac_mean_grow, col = vaccol, lwd = 3)
 ## All together
-plot(size_dummy, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(5,6), ylim = c(5.3,6.5), 
+plot(size_dummy, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(-5,6), ylim = c(-5,6), 
      main = "e)                      All Ants                           ", cex.main = 2) 
 lines(size_dummy, y_liom_mean_grow, col = liomcol, lwd = 3)
 lines(size_dummy, y_other_mean_grow, col = othercol, lwd = 3)
