@@ -7,6 +7,7 @@
 #######################################################################################################
 library(quantreg)
 library(qgam)
+library()
 ## quantile-based moments
 Q.mean<-function(q.25,q.50,q.75){(q.25+q.50+q.75)/3}
 Q.sd<-function(q.25,q.75){(q.75-q.25)/1.35}
@@ -85,6 +86,13 @@ bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta2[1]","beta2[2]","beta2[3]","bet
 bayesplot::mcmc_trace(fit_grow_skew,pars=c("a_size2","d_size2"))
 ## happy with convergence
 
+fit_grow_stud<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
+fit_grow_stud@model_pars
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
+
 ## real data moments
 q.fit<-matrix(NA,7,length(stan_data_grow_skew$vol))
 q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=stan_data_grow_skew$y,vol=stan_data_grow_skew$vol)))
@@ -111,22 +119,22 @@ points(stan_data_grow_skew$vol,q.fit[7,],col="black",pch=".")
 
 ## simulate data 
 ## pull params
-grow_params <- rstan::extract(fit_grow_skew)
-
+grow_params <- rstan::extract(fit_grow_stud)
+fit_grow_stud@model_pars
 ## one simulated dataset
 n_draws=25
 grow_sim<-matrix(NA,n_draws,stan_data_grow_skew$N)
 sim_mean<-sim_sd<-sim_skew<-sim_kurt<-matrix(NA,n_draws,stan_data_grow_skew$N)
 for(i in 1:n_draws){
 for(n in 1:stan_data_grow_skew$N){
-grow_sim[i,n]<-rsn(n=1,
-              xi=grow_params$beta0[i,stan_data_grow_skew$ant[n]]+
+grow_sim[i,n]<-rlst(n=1,
+              mu=grow_params$beta0[i,stan_data_grow_skew$ant[n]]+
                 grow_params$beta1[i,stan_data_grow_skew$ant[n]]*stan_data_grow_skew$vol[n]+
                 grow_params$beta2[i,stan_data_grow_skew$ant[n]]*stan_data_grow_skew$vol2[n]+
                 grow_params$u[i,stan_data_grow_skew$plot[n]]+
                 grow_params$w[i,stan_data_grow_skew$ant[n],stan_data_grow_skew$year[n]],
-              omega=exp(grow_params$d_0[i]+grow_params$d_size[i]*stan_data_grow_skew$vol[n]),
-              alpha=grow_params$a_0[i]+grow_params$a_size[i]*stan_data_grow_skew$vol[n])
+              sigma=exp(grow_params$d_0[i]+grow_params$d_size[i]*stan_data_grow_skew$vol[n]),
+              df=grow_params$a_0[i]+grow_params$a_size[i]*stan_data_grow_skew$vol[n])
 }
   q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
   q.fit[2,]<-predict(qgam(y~s(vol),qu=0.10,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_skew$vol)))
@@ -163,17 +171,6 @@ matplot(stan_data_grow_skew$vol,t(sim_kurt),pch=".",col="gray")
 points(stan_data_grow_skew$vol,obs_kurt)
 
 
-
-
-
-
-########## extract the parameters from the model and save a random selection of the iterations
-## list all parameters
-fit_grow_skew <- stan(file = "Data Analysis/STAN Models/grow_skew.stan", data = stan_data_grow_skew, 
-                      warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 2)
-
-
-fit_grow_skew@model_pars
 ## pull all iterations for parameters and save as a data frame
 grow_outputs <- rstan::extract(fit_grow_skew, pars = c("beta0","beta1","d_0","d_size","a_0","a_size","a_size2","sigma_w","sigma_u"))
 grow_outputs <- as.data.frame(grow_outputs)
@@ -240,7 +237,8 @@ kurtplot <- ggplot(data = bins)+
 size_ppc_plot <- meanplot+ sdplot+skewplot+ kurtplot
 size_ppc_plot
 
-
+################################## Student T Dist ##############################
+fit
 
 
 
