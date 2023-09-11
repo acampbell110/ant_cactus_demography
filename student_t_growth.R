@@ -10,6 +10,7 @@ library(bayesplot)
 library(quantreg)
 library(qgam)
 library(stevemisc)
+library(extraDistr)
 ## quantile-based moments
 Q.mean<-function(q.25,q.50,q.75){(q.25+q.50+q.75)/3}
 Q.sd<-function(q.25,q.75){(q.75-q.25)/1.35}
@@ -114,13 +115,13 @@ grow_params <- rstan::extract(fit_grow_st,permuted=FALSE)
 hist(grow_params[,3,"w[2,5]"])
 
 ## one simulated dataset
-n_draws<-25
+n_draws<-10
 draws=sample.int(n=dim(grow_params)[1],size=n_draws,replace = F)
 grow_sim<-matrix(NA,n_draws,stan_data_grow_skew$N)
 sim_mean<-sim_sd<-sim_skew<-sim_kurt<-matrix(NA,n_draws,stan_data_grow_skew$N)
 for(i in 1:n_draws){
 for(n in 1:stan_data_grow_skew$N){
-grow_sim[i,n]<-rst(n=1,
+grow_sim[i,n]<-rlst(n=1,
                    df=exp(grow_params[draws[i],3,"a_0"] + grow_params[draws[i],3,"a_size"] * stan_data_grow_skew$vol[n]),
                    mu=grow_params[draws[i],3,paste0("beta0[",stan_data_grow_skew$ant[n],"]")]+
                       grow_params[draws[i],3,paste0("beta1[",stan_data_grow_skew$ant[n],"]")]*stan_data_grow_skew$vol[n]+
