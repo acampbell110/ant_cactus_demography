@@ -14,37 +14,22 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 ## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
 ## will get a vector of probabilities.                                                               ####
 #########################################################################################################
-# gxy<-function(x,y,i,params){
-#   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-#   xb=pmin(pmax(x,cholla_min),cholla_max) 
-#   #Density probability function which uses the parameters that are ant specific 
-#   g_vac = dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb,sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-#   g_liom = dnorm(y,mean=mean(params$grow_beta04) + mean(params$grow_beta14)*xb,sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-#   g_crem = dnorm(y,mean=mean(params$grow_beta03) + mean(params$grow_beta13)*xb,sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-#   g_other = dnorm(y,mean=mean(params$grow_beta02) + mean(params$grow_beta12)*xb,sd=exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
-#   #Return the probability of growing from size x to y
-#   if(i == "crem"){ return(g_crem)}
-#   if(i == "liom"){ return(g_liom)}
-#   if(i == "other"){ return(g_other)}
-#   if(i == "vacant"){ return(g_vac)}
-# }
-
 gxy<-function(x,y,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   #Density probability function which uses the parameters that are ant specific 
-  g_vac = dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(params$grow_beta21)*xb^2, 
-              omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
-              alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
-  g_liom = dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*xb + mean(params$grow_beta24)*xb^2, 
-               omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
-               alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
-  g_crem = dsn(y,xi=mean(params$grow_beta03) + mean(params$grow_beta13)*xb + mean(params$grow_beta23)*xb^2, 
-               omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
-               alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
-  g_other = dsn(y,xi=mean(params$grow_beta02) + mean(params$grow_beta12)*xb + mean(params$grow_beta22)*xb^2, 
-                omega = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
-                alpha = mean(params$grow_alp0) + mean(params$grow_alp1)*xb)
+  g_vac = dlst(y,mu=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(params$grow_beta21)*xb^2, 
+              sigma = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+              df = exp(mean(params$grow_alp0) + mean(params$grow_alp1)*xb))
+  g_liom = dlst(y,mu=mean(params$grow_beta04) + mean(params$grow_beta14)*xb + mean(params$grow_beta24)*xb^2, 
+               sigma = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+               df = exp(mean(params$grow_alp0) + mean(params$grow_alp1)*xb))
+  g_crem = dlst(y,mu=mean(params$grow_beta03) + mean(params$grow_beta13)*xb + mean(params$grow_beta23)*xb^2, 
+               sigma = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+               df = exp(mean(params$grow_alp0) + mean(params$grow_alp1)*xb))
+  g_other = dlst(y,mu=mean(params$grow_beta02) + mean(params$grow_beta12)*xb + mean(params$grow_beta22)*xb^2, 
+                sigma = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+                df = exp(mean(params$grow_alp0) + mean(params$grow_alp1)*xb))
   #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
@@ -52,19 +37,44 @@ gxy<-function(x,y,i,params){
   if(i == "vacant"){ return(g_vac)}
 }
 
-gxy(4,3,"crem",params)
+# gxy<-function(x,y,params){
+#   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+#   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
+#   #Density probability function which uses the parameters that are ant specific 
+#   dnorm(y,mean=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(params$grow_beta21)*xb^2, 
+#                sd = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb))
+# }
+# gxy(4,3,"crem",params)
+# 
+# x = c(1,2,-5,8,1,2,-5,8,1,2,-5,8,1,2,-5,8)
+# y = c(2,3,0,7,2,3,0,7,2,3,0,7,2,3,0,7)
+# i = c("crem","crem","crem","crem",
+#       "liom","liom","liom","liom",
+#       "other","other","other","other",
+#       "vacant","vacant","vacant","vacant")
+# gx <- vector()
+# for(n in 1:length(i)){
+#   gx[n] = gxy(x[n],y[n],i[n],params)
+# }
+# gx
 
-x = c(1,2,-5,8,1,2,-5,8,1,2,-5,8,1,2,-5,8)
-y = c(2,3,0,7,2,3,0,7,2,3,0,7,2,3,0,7)
-i = c("crem","crem","crem","crem",
-      "liom","liom","liom","liom",
-      "other","other","other","other",
-      "vacant","vacant","vacant","vacant")
-gx <- vector()
-for(n in 1:length(i)){
-  gx[n] = gxy(x[n],y[n],i[n],params)
-}
-gx
+hist(extraDistr::dlst(x=seq(-10,10,0.01),df=2,mu = -5))
+integrate(dlst,-Inf,Inf, df = 10)
+
+
+## Tom checking out growth model predictions from min and max initial sizes
+n<-matsize
+L<-lower
+U<-upper
+h<-(U-L)/n                   #Bin size
+b<-L+c(0:n)*h;               #Lower boundaries of bins 
+y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
+par(mfrow=c(2,1))
+plot(y,gxy(0,y,"vacant",params),type="l",ylim = c(0,.5)
+     ,col="blue",ylab="gxy()");abline(v=0,col="blue",lty=2,)
+lines(y,gxy(10,y,"vacant",params),type="l",col="red");abline(v=10,col="red",lty=2)
+hist(cactus$logsize_t1[cactus$logsize_t< 0],xlim=c(-5,15))
+hist(cactus$logsize_t1[cactus$logsize_t>10],add=T)
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
@@ -95,17 +105,10 @@ pxy<-function(x,y,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
   #Multiply the probabilities of survival and growth together to get the survival growth kernel
-  pxy = sx(xb,i,params)*gxy(xb,y,i,params)
+  #pxy =sx(xb,i,params)*gxy(xb,y,i,params)
+  pxy = gxy(xb,y,i,params)
   return(pxy)
 }
-
-## The columns of this function should sum to 1 or less
-## test x & y
-x <- c(1,2,3,4)
-y <- c(3,4,5,6)
-p <- vector()
-i <- c("vacant","liom","crem","other")
-
 
 
 #################################################################
@@ -420,9 +423,9 @@ bigmatrix.1 <- function(params,lower,upper,matsize,lower.extension=0,upper.exten
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
   #Applying the midpoint rule
-  n<-matsize
-  L<-lower 
-  U<-upper
+  n<-400
+  L<-lower
+  U<-upper+10
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
@@ -446,17 +449,11 @@ bigmatrix.1 <- function(params,lower,upper,matsize,lower.extension=0,upper.exten
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params))*h 
   # Put it all together
   IPMmat<-Fmat+Tmat  
+  colSums(Tmat[3:(n+2),3:(n+2)])
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y))
   #lambda = Re(eigen(IPMmat)$values[1])
   #return(lambda)
 }
-
-## Tom checking out growth model predictions from min and max initial sizes
-par(mfrow=c(2,1))
-plot(y,gxy(U,y,"vacant",params),type="l",col="blue",ylab="gxy()");abline(v=U,col="blue",lty=2)
-lines(y,gxy(L,y,"vacant",params),type="l",col="red");abline(v=L,col="red",lty=2)
-hist(cactus$logsize_t1[cactus$logsize_t< -3],xlim=c(-5,15))
-hist(cactus$logsize_t1[cactus$logsize_t>14],add=T)
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
