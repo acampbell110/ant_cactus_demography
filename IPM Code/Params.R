@@ -41,7 +41,8 @@ mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/
 # rec.params <- read.csv(paste0(mcmc_dir,"rec.params.csv"), header = TRUE,stringsAsFactors=T)    
 
 ##These files contain all draws from the posterior distributions of all parameters
-grow.params <- rstan::extract(fit_grow_skew)
+fit_grow_stud<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
+grow.params <- rstan::extract(fit_grow_stud)
 draws <- sample(7500,1000,replace=F)
 surv.params <- read.csv(paste0(mcmc_dir,"surv.params.csv"), header = TRUE,stringsAsFactors=T)
 flow.params <- read.csv(paste0(mcmc_dir,"flow.params.csv"), header = TRUE,stringsAsFactors=T)
