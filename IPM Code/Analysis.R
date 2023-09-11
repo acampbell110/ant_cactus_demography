@@ -77,10 +77,10 @@ lams$scenario_abv <- c("None","C","L","O","L,C","L,O","O,C","All")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_det_mean.png")
 plot(1:8,lams$means, col = cols, 
-     pch = 20, cex = 6,xlim = c(0,9),ylim = c(0.950,1.1),cex.main = 2.3,
+     pch = 20, cex = 6,xlim = c(0,9),ylim = c(0.96,1),cex.main = 2.3,
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
- text(x = 1:8-0.2, y = lams$means+0.004,cex = 2,
+ text(x = 1:8-0.2, y = lams$means+0.002,cex = 2,
       labels = lams$scenario_abv,
       srt = 35)
  legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),
