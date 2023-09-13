@@ -63,9 +63,9 @@ integrate(dlst,-Inf,Inf, df = 10)
 
 
 ## Tom checking out growth model predictions from min and max initial sizes
-n<-matsize
-L<-lower
-U<-upper
+n<-400
+L<-lower-30
+U<-upper+10
 h<-(U-L)/n                   #Bin size
 b<-L+c(0:n)*h;               #Lower boundaries of bins 
 y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
@@ -73,8 +73,20 @@ par(mfrow=c(2,1))
 plot(y,gxy(0,y,"vacant",params),type="l",ylim = c(0,.5)
      ,col="blue",ylab="gxy()");abline(v=0,col="blue",lty=2,)
 lines(y,gxy(10,y,"vacant",params),type="l",col="red");abline(v=10,col="red",lty=2)
-hist(cactus$logsize_t1[cactus$logsize_t< 0],xlim=c(-5,15))
-hist(cactus$logsize_t1[cactus$logsize_t>10],add=T)
+#hist(cactus$logsize_t1[cactus$logsize_t< 0],xlim=c(-5,15))
+#hist(cactus$logsize_t1[cactus$logsize_t>10],add=T)
+## does the growth function integrate to 1 at both ends of the size distribution?
+sum(gxy(lower,y,"vacant",params)*h)
+sum(gxy(upper,y,"vacant",params)*h)
+## do the colsums of the growth kernel sum to 1?
+colSums(t(outer(y,y,gxy,i = "vacant",params))*h)
+
+## let's a simpler dummy function for just one ant state
+xb=0
+probden<-dlst(y,mu=mean(params$grow_beta01) + mean(params$grow_beta11)*xb + mean(params$grow_beta21)*xb^2, 
+     sigma = exp(mean(params$grow_sig0) + mean(params$grow_sig1)*xb), 
+     df = exp(mean(params$grow_alp0) + mean(params$grow_alp1)*xb))
+sum(probden*h)
 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
