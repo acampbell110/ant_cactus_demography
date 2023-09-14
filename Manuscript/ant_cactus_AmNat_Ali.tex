@@ -145,259 +145,259 @@ Specifically, we asked:
 We used a hierarchical Bayesian statistical approach to estimate demographic vital rates for hosts in different states of ant occupancy, and to quantify state-dependent partner turnover. 
 We then used a multi-state integral projection model (IPM) that combines diverse effects on vital rates and pathways of partner turnover to quantify effects of partner diversity on plant fitness. 
 
-\section*{Methods}
-\subsection*{Study System}
-  
-This study was conducted in the Los Pi$\tilde{n}$os mountains, a small mountain chain located on the Sevilleta National Wildlife Refuge, a Long-term Ecological Research (LTER) site in central New Mexico.
-This is an area characterized by steep, rocky slopes, and perennial vegetation like cacti and junipers. 
-Tree cholla cacti are common in high Chihuahuan desert habitats, with their native range spanning the southwestern USA \citep{Benson1982}. 
-These arborescent cholla produce cylindrical segments with large spines. 
-In the growing season, May to August in New Mexico, the plants initiate new vegetative segments and flower buds at the ends of existing segments. 
-While most plants produce new segments every season, only those which are reproductively mature produce flower buds. 
-Tree cholla generally reach at least 9 years of age before beginning to reproduce \citep{Ohm2014}.
-Like other EFN-bearing cacti, tree cholla secrete nectar from specialized glands on young vegetative and reproductive structures \citep{Ness2006,Oliveira1999}.
-
-This EFN is harvested by various ant species in return for defense. 
-At the Sevilleta, the cholla are visited primarily by two species of ground-nesting ants from the formicoid clade, \textit{Crematogaster opuntiae} and \textit{Liometopum apiculatum}, as well as other rarer species, including \textit{Forelius pruinosus}, an \textit{Aphaenogaster spp.}, and a \textit{Camponotus spp.}.
-\textit{L. apiculatum} are the most frequent visitors with $25\% - 60\%$ of tree cholla tended by these ants, followed by \textit{C. opuntiae} visiting between $0\% - 20\%$ of cacti \citep{Donald2022} depending on the year. Up to $80\%$ of cacti remain vacant in any given year. 
-
-These ants rarely co-occur on a plant, probably due to interspecific competition \citep{Miller2007}.
-Each cholla is visited by a single ant species for the duration of a season, and the species of the visitors can change from one season to the next. 
-At the beginning of the growing season, when EFN production begins, the ground-nesting ants will begin visiting tree cholla.
-They will visit the cholla every day during the season around the clock, with the most acticity around sunrise or sunset \citep{Ohm2014}. 
-Smaller cholla are less likely to be visited because they produce very little EFN, so larger cholla are generally more highly tended \citep{Miller2014}. 
-In late August, the tree cholla stop producing EFN and the ants vacate until the next growing season. 
-
-There are a variety of insect herbivores and seed predators which attack the cholla, focusing either on the vegetative segments and the reproductive segments \citep{Mann1969}. 
-An unidentified weevil of the genus \textit{Gerstaekeria} feeds on vegetative and reproductive structures and implants their larvae within the plant tissue for the winter. 
-A cactus bug, \textit{Narnia pallidicornis}, (Hemiptera: Coreidae) feeds on all cholla parts with a preference for the reproductive structures \citep{Miller2006}.
-A seed predator, \textit{Cahela ponderosella}, (Lepidoptera: Pyralidae) attacks developing fruits pre-dispersal and oviposits in open flowers mid-growing season where larvae burrow into the ripening ovary. 
-These predators can have significant negative impacts on the fitness of individual cholla and depress population growth \citep{Miller2009}.
-There is experimental evidence that tree cholla tended by \textit{L. apiculatum} and \textit{C. opuntiae} experience less herbivory from all of the mentioned insect predators \citep{Miller2007}. 
-
-\subsection*{Data}
-	
-The data collected are from a long-term dataset spanning 2004 to 2023 taken from 30 $\times$ 30 meter plots at the Sevilleta LTER. 
-The data initially included 134 naturally occurring plants across 4 spatial blocks censused annually from 2004 to 2008.
-Six of the plots were established in 2009 by tagging all existing plants within a 30 $\times$ 30 meter area. 
-The final two plots were added to this census from 2011 onwards. 
-Annually, in May we surveyed these plots, taking many types of demographic and partner data. 
-For each cholla, we recorded plant survival from the last survey to the current survey. 
-We recorded the height (cm), maximum crown width, and crown width perpendicular to the maximum, which are used to calculate plant volume ($cm^3$) based on the volume of a cone with the mean of maximum crown width and perpendicular crown width as the diameter. 
-We recorded the total number of flower buds, including how many were aborted and how many were not. We recorded all ant species present and the number of ants we could count in 30 seconds. 
-We also recorded the species of herbivore and the number present on the plant.
-		
-\subsection*{Statistical Modeling -- Construction}
-	
-With the data described above we fit a series of generalized linear mixed models (GLMMs) in a hierarchical Bayesian framework with both fixed and random effects.
-Many of the vital rates are estimated as a function of plant size, ant partner, or both.
-Ant partner type is included as a predictor only where there are biological pathways through which ants could impact the outcome of that process. 
-The biological sources of variance (including individual, spatial, and annual variance) are accounted for by including year-to-year and plot-to-plot random effects in the models. 
-Unless otherwise mentioned, all models use vague priors. 
-The growth model ($G_j(y,x)$) estimates the size of cholla, with fixed effects of the previous size and ant partner and random effects of plot and year, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
-Ants are included as a predictor here because ant partners defend plants from herbivory, therefore decreasing the likelihood of segment loss.
-The survival model ($S_j(x)$) estimates the probability of survival, with fixed effects of the previous size of the cholla and ant partner and random effects of plot and year, using a Bernoulli distribution. 
-Ants are included as predictors here because ant partners defend cholla from herbivores and predators, decreasing the likelihood of mortality due to either of these. 
-The reproduction model ($P(x)$) estimates the probability of reproducing each year, with fixed effects for the size and random effects of plot and year, using a Bernoulli distribution. 
-The total flowers model ($F(x)$) estimates the total flowers produced by a plant, with fixed effects of size and random effects of plot and year, using a Negative Binomial distribution. 
-The viability model ($V_i(x)$) estimates the proportion of flowers produced by a plant which are viable (not aborted), with fixed effects of the ant partner of the cactus and random effects of plot and year, using a Binomial distribution.
-Ants are included as predictors here because they defend the cacti from seed predation which can lead to floral abortion. 
-The ant transition rates model ($\tau_{i,j}(x)$) estimates the probability of a cactus being visited by an ant partner, with fixed effects of the previous size of the cholla and the previous ant partner and random effects of plot and year, using a Multinomial distribution.  
-Ant partners are included as predictors here because partners may choose to return to the same cholla repeatedly or choose new ones, therefore the previous partner may be a good indicator of the next partner. 
-The recruit size model ($n_j(x)$) estimates the size distribution of all recruits from a given year, with no fixed or random effects, using a Normal distribution. 
-With germination data from Miller et al., 2009, we fit two Bayesian generalized linear models for the probability of germinating from a seed in the first year ($\gamma_1$) or the second year ($1 - \gamma_1$), with no fixed or random effects, using a Binomial distribution.
-With data collected in a 2005-2006 recruit census, we fit a Bayesian generalized linear model for the probability of a seedling surviving to May ($\delta$) (accounting for missed mortality events), with fixed effects of the previous size and random effects of the transect, using a Bernoulli distribution. 
-With data from Miller 2007, we fit a Bayesian generalized linear model for the number of seeds produced by every flower on a cholla ($\kappa$) based on the ant partner, using a Negative Binomial distribution. 
-Ant partners are included as predictors here because they reduce floral abortion rates and therefore may lead to higher numbers of seeds. 
-
-To obtain posterior estimates of the demographic parameters, we fit models using Markov chain Monte Carlo (MCMC) simulations via STAN run through version 4.0.2 of R 
-For each model, we obtained 3 chains of 10,000 iterations, each with randomly chosen initial conditions. 
-The first 1,500 iterations were discarded as burn-in to eliminate transience associated with initial conditions. 
-We did not thin the chains, thus all samples were retained. 
-To assess the convergence of our models we assessed between and within chain convergence, the resulting figures are included in supplemental documents. 
-To assess the overall model fit we carried out posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data.
-Large differences in the two indicate a poor model fit and can be assessed visually (figures included in supplemental documents). 
-All estimated parameters are described in table 1.
-Data and code for all vital rate models is included in the supplemental information.
-
-\subsection*{Integral Projection Model Construction}
-  
-Integral Projection Models describe population dynamics in discrete time, with continuous functions that relate vital rates to continuous and discrete state variables. 
-We constructed a composite IPM which allows us to analyze the long term population growth rate of cholla with ant transition dynamics explicitly included.
-Many of the vital rate models are dependent not only on continuous size variables, but also on discrete variables representing the ant partner present.
-There is also a transition rate which determines what proportion of cholla are tended by each ant in a given year based on the previous ant partner and the size of the plants. 
-This unique composite structure allows us to determine the individual effects of each ant species as well as the composite effects of several partners across the cholla population. 
-
-Following previous studies, we modeled the life cycle of cholla using continuously size-structured plants, $n_i(x)$, where x is the size of the cholla and i is the ant partner, and two discrete seed banks ($B_{1,t}$ and $B_{2,t}$) corresponding to 1 and 2-year old seeds.
-The dynamics of these 1 and 2-year old seedbanks are given by the following equations: 
-
-  \begin{linenomath*}
-		$$
-		B_{1, t+1} = \kappa \delta \sum_{i}^{4} \int_L^U P(x) V_i(x) F(x) n_i(x) dx \\
-		$$
-		$$
-		B_{2,t+1} =  (1 - \gamma_1)B_{1,t}\\
-		$$
-  \end{linenomath*}
-
-The functions $P(x)$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $x$ and the year $t$. 
-The proportion of flowerbuds which will produce seeds ($V_i(x)$) is dependent on the plant size $x$ and the ant species present on the plant $i$ in year $t$. 
-The integral is multiplied by the number of seeds per fruit ($\kappa$) and the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the one-year old seed bank. 
-Parameters $U$ and $L$ are the upper and lower bounds, respectively, of the plant size distribution. 
-Plants can recruit out of the one-year seed bank with the probability of $\gamma_1$ or transition to the two-year seed bank with a probability of $1 - \gamma_1$. 
-Seeds in the two-year seed bank are assumed to either germinate with a probability of $\gamma_2$ or die. 
-		
-The size dynamics of the cholla are given by:
-		
-	\begin{linenomath*}
-		$$
-		n(y,i)_{t+1} = (\gamma_1 B_{1,t} + \gamma_2 B_{2,t}) \eta(y) \omega \beta_i  + \\
-		$$
-		$$
-		\sum_{j}^{4} \int_L^U S_j(x) G_j(y,x) \tau_{ij}(x) n_j(x) dx \\
-		$$
-	\end{linenomath*}
-	
-The first term gives the recruitment from one and two-year seed banks to a plant of size $y$, where $\eta(y) ~ N(***)$ gives the seedling size distribution and $\omega ~ ***$ gives the proportion of seedlings which surive from germination (late summer) to the census (May).
-The second term reflects the changes in the population of the cholla which are not recruits, where $S_j(x)$ gives the probability of a plant of size $x$ in year $t$ surviving to year $t+1$ with partner $j$.
-$G_j(y,x)$ gives the probability of growing from size $x$ in year $t$ to size $y$ in year $t+1$, respectively with partner $j$. 
-Finally, $\tau_{ij}$ is the probability of a cholla which is size $x$ with ant partner $i$ in year $t$ being tended by ant partner $j$ in year $t+1$.
-
-\subsection*{Deterministic IPM Analysis}
-  
-Analyzing an IPM requires discretizing the composite IPM into a matrix to calculate the dominant eigenvalue. 
-Each component of the IPM (each set of ant partner specific vital rates) can be discretized into its own $ 200 \times 200$ matrix as shown in figure ***. 
-The possibility of eviction, when individuals are predicted to grow outside of the possible size classes, was avoided by adding probabilities of growing smaller or larger than the existing boundaries, as done by many others***.
-We used the composite IPM to quantify the effects of partner diversity on the intrinsic growth rate of cholla, $r$ $ln(\lambda)$. 
-We calculated the $r$ for each combination of ant partners: complete vacancy; \textit{L. apiculatum} and vacancy; \textit{C. opuntiae} and vacancy; other and vacancy; \textit{L. apiculatum}, \textit{C. opuntiae}, and vacancy, \textit{L. apiculatum}, other, and vacancy; \textit{C. opuntiae}, other, and vacancy; and all ant partners and vacancy.
-The relative distributions allowed us to determine if either complementarity or sampling effect were at play in the tree cholla-ant defense system.
-Sampling Effect requires that the $r$ when all possible partners are present is equal to the $r$ of the cholla population when only the best partner is present.
-Complementarity requires that the $r$ when all possible partners are present is greater than the $r$ of any other combination of partners or any single partner. 
-
-
-\subsection*{Stochastic IPM Analysis}
-  
-The third mechanism considered in this study requires annual variation to be explicitly considered in the IPM so we constructed a stochastic version of the IPM described above. 
-The year of record was a random effect in all vital rate models meaning we were able to include an intercept for specific years. 
-In order to include stochasticity in the analysis, we randomly sampled from the year-random effect intercepts 1,000 times.
-For each of these 1,000 iterations we calculated the $r$ for every possible combination of ant partners. 
-With these values we calculated $\delta r$ between the scenario with all possible partners and the scenario with no partners.
-This $\delta r$ measures the net benefits offered by partner diversity with annual variation.
-We also calculated the $\delta r$ of the deterministic IPM to measure the net benefits offered by partner diversity without annual variation. 
-These two relative differences allow us to determine if portfolio effect is at play.
-Portfolio effect is demonstrated when the net benefit with annual variation is larger than the net benefit without annual variation. 
-			
-    
-  
-\section*{Results}
-\subsection*{Statistical Modeling}
-
-%% Growth Model
-%\begin{figure}[h]
-%	\includegraphics[width=0.95\linewidth]{grow_contour_lines_color.png}
-%	\caption{asdasdf}
-%	\label{fig:growth}
-%\end{figure}
-Plants tended by other ants experiened positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}a.
-They experienced significantly higher growth than vacant plants ($p = 2.2 \times 10^{-16}$), and similar mean growth to \textit{L. apiculatum} tended plants ($p = 0.9135$) and \textit{C. opuntiae} tended plants ($p = 0.4864$).  
-Plants tended by \textit{C. opuntiae} ants experienced positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}b.
-They experienced significantly higher mean growth than vacant plants ($p = 4.88 \times 10^{-14}$).
-Plants tended by \textit{L. apiculatum} experienced positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}c.
-Vacant plants experienced the lowest observed growth, except at the largest sizes where they are less likely to shrink than tended plants \cite{fig:growth}d. 
-
-%% Survival Model
-%\begin{figure}[h]
-%	\includegraphics[width=0.95\linewidth]{surv_panels.png}
-%	\caption{asdasdf}
-%	\label{fig:surv}
-%\end{figure}
-Plants tended by \textit{C. opuntiae} ants experienced significantly higher mean survival rates than \textit{L. apiculatum} tended plants ($p = 2.908 \times 10^{-14}$), plants tended by other ants ($p = 4.488 \times 10^{-14}$), and vacant plants ($p = 2.2 \times 10^{-16}$) \cite{fig:surv}. 
-These \textit{C. opuntiae} plants have the highest mean survival at small sizes before reaching a mean survival rate of about 100\% when medium to large.
-Plants tended by \textit{L. apiculatum} experienced similar mean survival rates to plants tended by other ants and vacant plants.
-\textit{L. apiculatum} tended plants and other tended plants reached a mean survival rate of nearly 100\% by medium sizes, with other tended plants reaching this rate slower. 
-Vacant plants never reach mean survival rates of 100\%. 
-
-%% Flowers Model
-There is a clear size effect on the number of flowers produced. 
-The mean number of flowers produced by a plant remains at 0 until the plant reachesmedium sizes after which the mean number of flower produced increases eponentially to about 40 at large sizes.
-
-
-%% Viability Model
-%\begin{figure}[h]
-%	\includegraphics[width=0.95\linewidth]{Viability.png}
-%	\caption{asdasdf}
-%	\label{fig:comp-samp}
-%\end{figure}
-Plants tended by \textit{L. apiculatum} ants experienced the highest viability rates, significantly higher than \textit{C. opuntiae} tended plants ($p = 2.2 \times 10^{-16}$), other tended plants ($p = 2.2 \times 10^{-16}$), and vacant plants ($p = 2.2 \times 10^{-16}$).
-The mean viability rate of \textit{L. apiculatum} tended plants was 84.888\%.
-Plants tended by \textit{C. opuntiae} ants experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$), but not than other tended plants ($p = 0.1168$).
-The mean viability rate of \textit{C. opuntiae} plants was 75.934\%.
-Plants tended by other ants also experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$).
-The mean viability rate of other tended plants was 76.367\%.
-The mean viability rate of vacant plants was 70.442\%.
-
-%% Reproduction Model
-The probability of a plant reproducing in a given year is highly size dependent. 
-The mean probability of reproducing remains at about 0\% until the plant reaches a medium size, after which the mean probability of reproducing increases steadily before reaching about 100\% at large sizes. 
-
-%% Seeds Produced
-The mean number of seeds produced by \textit{C. opuntiae} tended plants is significantly lower than the mean number of seeds produced by \textit{L. apiculatum} plants ($p = 2.2 \times 10^{-16}$) and vacant plants ($p = 2.2 \times 10^{-16}$). 
-\textit{C. opuntiae} tended plants produce a mean of 2.561 seeds per flower. 
-The mean number of seeds produced by \textit{L. apiculatum} tended plants is slightly higher than the mean number produced by vacant plants ($p = 0.02521$). 
-\textit{L. apiculatum} tended plants produce a mean of 3.563 seeds per flower. 
-Vacant plants produce a mean of 3.435 seeds per flower. 
-
-%% Precensus Survival
-The mean pre-census seed survival rate is 16.99\% with 90\% of model iterations landing between 1.13\% and 40.72\%. 
-
-%% Germination
-Seeds have a significantly higher probability of germinating in year one than in year two ($p = 2.2 \times 10^{-16}$).
-Seeds in year one have a mean germination rate of 0.578\% and seeds in year two have a mean germination rate of 0.221\%. 
-
-%% Recruit size distribution
- The mean size of new recruits is -1.88 log($cm^3$) with 90\% of new recruits falling between the sizes of -2.12 log($cm^3$) and -1.64 log($cm^3$).
- 
-%% Ant Transition Rates
-% previously vacant
-Plants that were previously vacant will most likely remain vacant until large. 
-These plants have significantly higher probabilities of being vacant rather than becoming tended  by \textit{C. opuntiae}, \textit{L. apiculatum}, or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
-The probability of previously vacant plants becoming tended by \textit{L. apiculatum} ants is significantly higher than the probabilities of becoming tended by \textit{C. opuntiae} or other ants (respecitvely, $p = 3.83 \times 10^{-14}$, $p = 2.2 \times 10^{-16}$).
-The probability of previously vacant plants becoming tended by other ants is significantly lower than the probability of becoming tended by \textit{C. opuntiae} ($p = 0.00227$).
-
-% previously crem
-Plants that were previously tended by \textit{C. opuntiae} will most likely remain vacant until large. 
-These plants have significantly higher probabilities of becoming vacant rather than remaining tended by \textit{C. opuntiae} or becoming tended by \textit{L. apiculatum} or other ants (repsectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$ ).
-The probability of these plants remaining tended by \textit{C. opuntiae} ants is significantly higher than the probability of becoming tended by \textit{L. apiculatum} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 3.797 \times 10^{-9}$).
-The probability of these plants becoming tended by \textit{L. apiculatum} is significantly higher than the probability of becoming tended by other ants ($p = 3.797 \times 10^{-9}$).
-
-% previously liom
-Plants that were previously tended by \textit{L. apiculatum} ants will most likely remain vacant until large. 
-These plants have significantly higher probabilities of becoming vacant than remaining tended by \textit{L. apiculatum} or becoming tended by \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
-These plants have significantly higher probabilities of remaining tended by \textit{L. apiculatum} ants than becoming tended by  \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
-The probability of these plants becoming tended by \textit{C. opuntiae} ants is significantly higher than the probability of them becoming tended by other ants ($p = 0.007925$).
-
-% previously other
-Plants that were previously tended by other ants will most likely remain vacant until they are large. 
-These plants have significantly higher probabilities of becoming vacant rather than remaining tended by other ants or becoming tended by \textit{C. opuntiae} or \textit{L. apiculatum} ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
-The probability of these plants becoming tended by \textit{L. apiculatum} ants is significantly higher than the probability of remaining tended by other ants or becomnig tended by \textit{C. opuntiae} (respectively, $p = 6.309 \times 10^{-12}$, $p = 6.256 \times 10^{-13}$).
-The probability of these plants remaining tended by other ants is not higher than the probability of becoming tended by \textit{C. opuntiae} ants ($p = 0.954$). 
-
-%% All cases/trends
-In all plants ,the most likely scenario is vacancy.
-In most cases, the second most likely next ant partner is \textit{L. apiculatum} with the exception of plants which were previously tended by \textit{C. opuntiae} who are second most likely to retain \textit{C. opuntiae} as their partners in successive years.
-The only case where two next partners do not have statistically significantly different probabilities is when previously other tended plants either remain tended by other ants or become tended by \textit{C. opuntiae}. 
-
-\subsection*{Deterministic IPM}
-
-\subsection*{Stochastic IPM}
-
-
-\section*{Discussion}
-
-
-\section*{Conclusion}
-
-\section*{Acknowledgments}
+%\section*{Methods}
+%\subsection*{Study System}
+%  
+%This study was conducted in the Los Pi$\tilde{n}$os mountains, a small mountain chain located on the Sevilleta National Wildlife Refuge, a Long-term Ecological Research (LTER) site in central New Mexico.
+%This is an area characterized by steep, rocky slopes, and perennial vegetation like cacti and junipers. 
+%Tree cholla cacti are common in high Chihuahuan desert habitats, with their native range spanning the southwestern USA \citep{Benson1982}. 
+%These arborescent cholla produce cylindrical segments with large spines. 
+%In the growing season, May to August in New Mexico, the plants initiate new vegetative segments and flower buds at the ends of existing segments. 
+%While most plants produce new segments every season, only those which are reproductively mature produce flower buds. 
+%Tree cholla generally reach at least 9 years of age before beginning to reproduce \citep{Ohm2014}.
+%Like other EFN-bearing cacti, tree cholla secrete nectar from specialized glands on young vegetative and reproductive structures \citep{Ness2006,Oliveira1999}.
+%
+%This EFN is harvested by various ant species in return for defense. 
+%At the Sevilleta, the cholla are visited primarily by two species of ground-nesting ants from the formicoid clade, \textit{Crematogaster opuntiae} and \textit{Liometopum apiculatum}, as well as other rarer species, including \textit{Forelius pruinosus}, an \textit{Aphaenogaster spp.}, and a \textit{Camponotus spp.}.
+%\textit{L. apiculatum} are the most frequent visitors with $25\% - 60\%$ of tree cholla tended by these ants, followed by \textit{C. opuntiae} visiting between $0\% - 20\%$ of cacti \citep{Donald2022} depending on the year. Up to $80\%$ of cacti remain vacant in any given year. 
+%
+%These ants rarely co-occur on a plant, probably due to interspecific competition \citep{Miller2007}.
+%Each cholla is visited by a single ant species for the duration of a season, and the species of the visitors can change from one season to the next. 
+%At the beginning of the growing season, when EFN production begins, the ground-nesting ants will begin visiting tree cholla.
+%They will visit the cholla every day during the season around the clock, with the most acticity around sunrise or sunset \citep{Ohm2014}. 
+%Smaller cholla are less likely to be visited because they produce very little EFN, so larger cholla are generally more highly tended \citep{Miller2014}. 
+%In late August, the tree cholla stop producing EFN and the ants vacate until the next growing season. 
+%
+%There are a variety of insect herbivores and seed predators which attack the cholla, focusing either on the vegetative segments and the reproductive segments \citep{Mann1969}. 
+%An unidentified weevil of the genus \textit{Gerstaekeria} feeds on vegetative and reproductive structures and implants their larvae within the plant tissue for the winter. 
+%A cactus bug, \textit{Narnia pallidicornis}, (Hemiptera: Coreidae) feeds on all cholla parts with a preference for the reproductive structures \citep{Miller2006}.
+%A seed predator, \textit{Cahela ponderosella}, (Lepidoptera: Pyralidae) attacks developing fruits pre-dispersal and oviposits in open flowers mid-growing season where larvae burrow into the ripening ovary. 
+%These predators can have significant negative impacts on the fitness of individual cholla and depress population growth \citep{Miller2009}.
+%There is experimental evidence that tree cholla tended by \textit{L. apiculatum} and \textit{C. opuntiae} experience less herbivory from all of the mentioned insect predators \citep{Miller2007}. 
+%
+%\subsection*{Data}
+%	
+%The data collected are from a long-term dataset spanning 2004 to 2023 taken from 30 $\times$ 30 meter plots at the Sevilleta LTER. 
+%The data initially included 134 naturally occurring plants across 4 spatial blocks censused annually from 2004 to 2008.
+%Six of the plots were established in 2009 by tagging all existing plants within a 30 $\times$ 30 meter area. 
+%The final two plots were added to this census from 2011 onwards. 
+%Annually, in May we surveyed these plots, taking many types of demographic and partner data. 
+%For each cholla, we recorded plant survival from the last survey to the current survey. 
+%We recorded the height (cm), maximum crown width, and crown width perpendicular to the maximum, which are used to calculate plant volume ($cm^3$) based on the volume of a cone with the mean of maximum crown width and perpendicular crown width as the diameter. 
+%We recorded the total number of flower buds, including how many were aborted and how many were not. We recorded all ant species present and the number of ants we could count in 30 seconds. 
+%We also recorded the species of herbivore and the number present on the plant.
+%		
+%\subsection*{Statistical Modeling -- Construction}
+%	
+%With the data described above we fit a series of generalized linear mixed models (GLMMs) in a hierarchical Bayesian framework with both fixed and random effects.
+%Many of the vital rates are estimated as a function of plant size, ant partner, or both.
+%Ant partner type is included as a predictor only where there are biological pathways through which ants could impact the outcome of that process. 
+%The biological sources of variance (including individual, spatial, and annual variance) are accounted for by including year-to-year and plot-to-plot random effects in the models. 
+%Unless otherwise mentioned, all models use vague priors. 
+%The growth model ($G_j(y,x)$) estimates the size of cholla, with fixed effects of the previous size and ant partner and random effects of plot and year, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
+%Ants are included as a predictor here because ant partners defend plants from herbivory, therefore decreasing the likelihood of segment loss.
+%The survival model ($S_j(x)$) estimates the probability of survival, with fixed effects of the previous size of the cholla and ant partner and random effects of plot and year, using a Bernoulli distribution. 
+%Ants are included as predictors here because ant partners defend cholla from herbivores and predators, decreasing the likelihood of mortality due to either of these. 
+%The reproduction model ($P(x)$) estimates the probability of reproducing each year, with fixed effects for the size and random effects of plot and year, using a Bernoulli distribution. 
+%The total flowers model ($F(x)$) estimates the total flowers produced by a plant, with fixed effects of size and random effects of plot and year, using a Negative Binomial distribution. 
+%The viability model ($V_i(x)$) estimates the proportion of flowers produced by a plant which are viable (not aborted), with fixed effects of the ant partner of the cactus and random effects of plot and year, using a Binomial distribution.
+%Ants are included as predictors here because they defend the cacti from seed predation which can lead to floral abortion. 
+%The ant transition rates model ($\tau_{i,j}(x)$) estimates the probability of a cactus being visited by an ant partner, with fixed effects of the previous size of the cholla and the previous ant partner and random effects of plot and year, using a Multinomial distribution.  
+%Ant partners are included as predictors here because partners may choose to return to the same cholla repeatedly or choose new ones, therefore the previous partner may be a good indicator of the next partner. 
+%The recruit size model ($n_j(x)$) estimates the size distribution of all recruits from a given year, with no fixed or random effects, using a Normal distribution. 
+%With germination data from Miller et al., 2009, we fit two Bayesian generalized linear models for the probability of germinating from a seed in the first year ($\gamma_1$) or the second year ($1 - \gamma_1$), with no fixed or random effects, using a Binomial distribution.
+%With data collected in a 2005-2006 recruit census, we fit a Bayesian generalized linear model for the probability of a seedling surviving to May ($\delta$) (accounting for missed mortality events), with fixed effects of the previous size and random effects of the transect, using a Bernoulli distribution. 
+%With data from Miller 2007, we fit a Bayesian generalized linear model for the number of seeds produced by every flower on a cholla ($\kappa$) based on the ant partner, using a Negative Binomial distribution. 
+%Ant partners are included as predictors here because they reduce floral abortion rates and therefore may lead to higher numbers of seeds. 
+%
+%To obtain posterior estimates of the demographic parameters, we fit models using Markov chain Monte Carlo (MCMC) simulations via STAN run through version 4.0.2 of R 
+%For each model, we obtained 3 chains of 10,000 iterations, each with randomly chosen initial conditions. 
+%The first 1,500 iterations were discarded as burn-in to eliminate transience associated with initial conditions. 
+%We did not thin the chains, thus all samples were retained. 
+%To assess the convergence of our models we assessed between and within chain convergence, the resulting figures are included in supplemental documents. 
+%To assess the overall model fit we carried out posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data.
+%Large differences in the two indicate a poor model fit and can be assessed visually (figures included in supplemental documents). 
+%All estimated parameters are described in table 1.
+%Data and code for all vital rate models is included in the supplemental information.
+%
+%\subsection*{Integral Projection Model Construction}
+%  
+%Integral Projection Models describe population dynamics in discrete time, with continuous functions that relate vital rates to continuous and discrete state variables. 
+%We constructed a composite IPM which allows us to analyze the long term population growth rate of cholla with ant transition dynamics explicitly included.
+%Many of the vital rate models are dependent not only on continuous size variables, but also on discrete variables representing the ant partner present.
+%There is also a transition rate which determines what proportion of cholla are tended by each ant in a given year based on the previous ant partner and the size of the plants. 
+%This unique composite structure allows us to determine the individual effects of each ant species as well as the composite effects of several partners across the cholla population. 
+%
+%Following previous studies, we modeled the life cycle of cholla using continuously size-structured plants, $n_i(x)$, where x is the size of the cholla and i is the ant partner, and two discrete seed banks ($B_{1,t}$ and $B_{2,t}$) corresponding to 1 and 2-year old seeds.
+%The dynamics of these 1 and 2-year old seedbanks are given by the following equations: 
+%
+%  \begin{linenomath*}
+%		$$
+%		B_{1, t+1} = \kappa \delta \sum_{i}^{4} \int_L^U P(x) V_i(x) F(x) n_i(x) dx \\
+%		$$
+%		$$
+%		B_{2,t+1} =  (1 - \gamma_1)B_{1,t}\\
+%		$$
+%  \end{linenomath*}
+%
+%The functions $P(x)$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $x$ and the year $t$. 
+%The proportion of flowerbuds which will produce seeds ($V_i(x)$) is dependent on the plant size $x$ and the ant species present on the plant $i$ in year $t$. 
+%The integral is multiplied by the number of seeds per fruit ($\kappa$) and the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the one-year old seed bank. 
+%Parameters $U$ and $L$ are the upper and lower bounds, respectively, of the plant size distribution. 
+%Plants can recruit out of the one-year seed bank with the probability of $\gamma_1$ or transition to the two-year seed bank with a probability of $1 - \gamma_1$. 
+%Seeds in the two-year seed bank are assumed to either germinate with a probability of $\gamma_2$ or die. 
+%		
+%The size dynamics of the cholla are given by:
+%		
+%	\begin{linenomath*}
+%		$$
+%		n(y,i)_{t+1} = (\gamma_1 B_{1,t} + \gamma_2 B_{2,t}) \eta(y) \omega \beta_i  + \\
+%		$$
+%		$$
+%		\sum_{j}^{4} \int_L^U S_j(x) G_j(y,x) \tau_{ij}(x) n_j(x) dx \\
+%		$$
+%	\end{linenomath*}
+%	
+%The first term gives the recruitment from one and two-year seed banks to a plant of size $y$, where $\eta(y) ~ N(***)$ gives the seedling size distribution and $\omega ~ ***$ gives the proportion of seedlings which surive from germination (late summer) to the census (May).
+%The second term reflects the changes in the population of the cholla which are not recruits, where $S_j(x)$ gives the probability of a plant of size $x$ in year $t$ surviving to year $t+1$ with partner $j$.
+%$G_j(y,x)$ gives the probability of growing from size $x$ in year $t$ to size $y$ in year $t+1$, respectively with partner $j$. 
+%Finally, $\tau_{ij}$ is the probability of a cholla which is size $x$ with ant partner $i$ in year $t$ being tended by ant partner $j$ in year $t+1$.
+%
+%\subsection*{Deterministic IPM Analysis}
+%  
+%Analyzing an IPM requires discretizing the composite IPM into a matrix to calculate the dominant eigenvalue. 
+%Each component of the IPM (each set of ant partner specific vital rates) can be discretized into its own $ 200 \times 200$ matrix as shown in figure ***. 
+%The possibility of eviction, when individuals are predicted to grow outside of the possible size classes, was avoided by adding probabilities of growing smaller or larger than the existing boundaries, as done by many others***.
+%We used the composite IPM to quantify the effects of partner diversity on the intrinsic growth rate of cholla, $r$ $ln(\lambda)$. 
+%We calculated the $r$ for each combination of ant partners: complete vacancy; \textit{L. apiculatum} and vacancy; \textit{C. opuntiae} and vacancy; other and vacancy; \textit{L. apiculatum}, \textit{C. opuntiae}, and vacancy, \textit{L. apiculatum}, other, and vacancy; \textit{C. opuntiae}, other, and vacancy; and all ant partners and vacancy.
+%The relative distributions allowed us to determine if either complementarity or sampling effect were at play in the tree cholla-ant defense system.
+%Sampling Effect requires that the $r$ when all possible partners are present is equal to the $r$ of the cholla population when only the best partner is present.
+%Complementarity requires that the $r$ when all possible partners are present is greater than the $r$ of any other combination of partners or any single partner. 
+%
+%
+%\subsection*{Stochastic IPM Analysis}
+%  
+%The third mechanism considered in this study requires annual variation to be explicitly considered in the IPM so we constructed a stochastic version of the IPM described above. 
+%The year of record was a random effect in all vital rate models meaning we were able to include an intercept for specific years. 
+%In order to include stochasticity in the analysis, we randomly sampled from the year-random effect intercepts 1,000 times.
+%For each of these 1,000 iterations we calculated the $r$ for every possible combination of ant partners. 
+%With these values we calculated $\delta r$ between the scenario with all possible partners and the scenario with no partners.
+%This $\delta r$ measures the net benefits offered by partner diversity with annual variation.
+%We also calculated the $\delta r$ of the deterministic IPM to measure the net benefits offered by partner diversity without annual variation. 
+%These two relative differences allow us to determine if portfolio effect is at play.
+%Portfolio effect is demonstrated when the net benefit with annual variation is larger than the net benefit without annual variation. 
+%			
+%    
+%  
+%\section*{Results}
+%\subsection*{Statistical Modeling}
+%
+%%% Growth Model
+%%\begin{figure}[h]
+%%	\includegraphics[width=0.95\linewidth]{grow_contour_lines_color.png}
+%%	\caption{asdasdf}
+%%	\label{fig:growth}
+%%\end{figure}
+%Plants tended by other ants experiened positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}a.
+%They experienced significantly higher growth than vacant plants ($p = 2.2 \times 10^{-16}$), and similar mean growth to \textit{L. apiculatum} tended plants ($p = 0.9135$) and \textit{C. opuntiae} tended plants ($p = 0.4864$).  
+%Plants tended by \textit{C. opuntiae} ants experienced positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}b.
+%They experienced significantly higher mean growth than vacant plants ($p = 4.88 \times 10^{-14}$).
+%Plants tended by \textit{L. apiculatum} experienced positive growth rates across all sizes, with the highest chances of shrinking occurring at the largest sizes \cite{fig:growth}c.
+%Vacant plants experienced the lowest observed growth, except at the largest sizes where they are less likely to shrink than tended plants \cite{fig:growth}d. 
+%
+%%% Survival Model
+%%\begin{figure}[h]
+%%	\includegraphics[width=0.95\linewidth]{surv_panels.png}
+%%	\caption{asdasdf}
+%%	\label{fig:surv}
+%%\end{figure}
+%Plants tended by \textit{C. opuntiae} ants experienced significantly higher mean survival rates than \textit{L. apiculatum} tended plants ($p = 2.908 \times 10^{-14}$), plants tended by other ants ($p = 4.488 \times 10^{-14}$), and vacant plants ($p = 2.2 \times 10^{-16}$) \cite{fig:surv}. 
+%These \textit{C. opuntiae} plants have the highest mean survival at small sizes before reaching a mean survival rate of about 100\% when medium to large.
+%Plants tended by \textit{L. apiculatum} experienced similar mean survival rates to plants tended by other ants and vacant plants.
+%\textit{L. apiculatum} tended plants and other tended plants reached a mean survival rate of nearly 100\% by medium sizes, with other tended plants reaching this rate slower. 
+%Vacant plants never reach mean survival rates of 100\%. 
+%
+%%% Flowers Model
+%There is a clear size effect on the number of flowers produced. 
+%The mean number of flowers produced by a plant remains at 0 until the plant reachesmedium sizes after which the mean number of flower produced increases eponentially to about 40 at large sizes.
+%
+%
+%%% Viability Model
+%%\begin{figure}[h]
+%%	\includegraphics[width=0.95\linewidth]{Viability.png}
+%%	\caption{asdasdf}
+%%	\label{fig:comp-samp}
+%%\end{figure}
+%Plants tended by \textit{L. apiculatum} ants experienced the highest viability rates, significantly higher than \textit{C. opuntiae} tended plants ($p = 2.2 \times 10^{-16}$), other tended plants ($p = 2.2 \times 10^{-16}$), and vacant plants ($p = 2.2 \times 10^{-16}$).
+%The mean viability rate of \textit{L. apiculatum} tended plants was 84.888\%.
+%Plants tended by \textit{C. opuntiae} ants experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$), but not than other tended plants ($p = 0.1168$).
+%The mean viability rate of \textit{C. opuntiae} plants was 75.934\%.
+%Plants tended by other ants also experienced significantly higher viability rates than vacant plants ($p = 2.2 \times 10^{-16}$).
+%The mean viability rate of other tended plants was 76.367\%.
+%The mean viability rate of vacant plants was 70.442\%.
+%
+%%% Reproduction Model
+%The probability of a plant reproducing in a given year is highly size dependent. 
+%The mean probability of reproducing remains at about 0\% until the plant reaches a medium size, after which the mean probability of reproducing increases steadily before reaching about 100\% at large sizes. 
+%
+%%% Seeds Produced
+%The mean number of seeds produced by \textit{C. opuntiae} tended plants is significantly lower than the mean number of seeds produced by \textit{L. apiculatum} plants ($p = 2.2 \times 10^{-16}$) and vacant plants ($p = 2.2 \times 10^{-16}$). 
+%\textit{C. opuntiae} tended plants produce a mean of 2.561 seeds per flower. 
+%The mean number of seeds produced by \textit{L. apiculatum} tended plants is slightly higher than the mean number produced by vacant plants ($p = 0.02521$). 
+%\textit{L. apiculatum} tended plants produce a mean of 3.563 seeds per flower. 
+%Vacant plants produce a mean of 3.435 seeds per flower. 
+%
+%%% Precensus Survival
+%The mean pre-census seed survival rate is 16.99\% with 90\% of model iterations landing between 1.13\% and 40.72\%. 
+%
+%%% Germination
+%Seeds have a significantly higher probability of germinating in year one than in year two ($p = 2.2 \times 10^{-16}$).
+%Seeds in year one have a mean germination rate of 0.578\% and seeds in year two have a mean germination rate of 0.221\%. 
+%
+%%% Recruit size distribution
+% The mean size of new recruits is -1.88 log($cm^3$) with 90\% of new recruits falling between the sizes of -2.12 log($cm^3$) and -1.64 log($cm^3$).
+% 
+%%% Ant Transition Rates
+%% previously vacant
+%Plants that were previously vacant will most likely remain vacant until large. 
+%These plants have significantly higher probabilities of being vacant rather than becoming tended  by \textit{C. opuntiae}, \textit{L. apiculatum}, or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
+%The probability of previously vacant plants becoming tended by \textit{L. apiculatum} ants is significantly higher than the probabilities of becoming tended by \textit{C. opuntiae} or other ants (respecitvely, $p = 3.83 \times 10^{-14}$, $p = 2.2 \times 10^{-16}$).
+%The probability of previously vacant plants becoming tended by other ants is significantly lower than the probability of becoming tended by \textit{C. opuntiae} ($p = 0.00227$).
+%
+%% previously crem
+%Plants that were previously tended by \textit{C. opuntiae} will most likely remain vacant until large. 
+%These plants have significantly higher probabilities of becoming vacant rather than remaining tended by \textit{C. opuntiae} or becoming tended by \textit{L. apiculatum} or other ants (repsectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$ ).
+%The probability of these plants remaining tended by \textit{C. opuntiae} ants is significantly higher than the probability of becoming tended by \textit{L. apiculatum} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 3.797 \times 10^{-9}$).
+%The probability of these plants becoming tended by \textit{L. apiculatum} is significantly higher than the probability of becoming tended by other ants ($p = 3.797 \times 10^{-9}$).
+%
+%% previously liom
+%Plants that were previously tended by \textit{L. apiculatum} ants will most likely remain vacant until large. 
+%These plants have significantly higher probabilities of becoming vacant than remaining tended by \textit{L. apiculatum} or becoming tended by \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, and $p = 2.2 \times 10^{-16}$).
+%These plants have significantly higher probabilities of remaining tended by \textit{L. apiculatum} ants than becoming tended by  \textit{C. opuntiae} or other ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
+%The probability of these plants becoming tended by \textit{C. opuntiae} ants is significantly higher than the probability of them becoming tended by other ants ($p = 0.007925$).
+%
+%% previously other
+%Plants that were previously tended by other ants will most likely remain vacant until they are large. 
+%These plants have significantly higher probabilities of becoming vacant rather than remaining tended by other ants or becoming tended by \textit{C. opuntiae} or \textit{L. apiculatum} ants (respectively, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$, $p = 2.2 \times 10^{-16}$).
+%The probability of these plants becoming tended by \textit{L. apiculatum} ants is significantly higher than the probability of remaining tended by other ants or becomnig tended by \textit{C. opuntiae} (respectively, $p = 6.309 \times 10^{-12}$, $p = 6.256 \times 10^{-13}$).
+%The probability of these plants remaining tended by other ants is not higher than the probability of becoming tended by \textit{C. opuntiae} ants ($p = 0.954$). 
+%
+%%% All cases/trends
+%In all plants ,the most likely scenario is vacancy.
+%In most cases, the second most likely next ant partner is \textit{L. apiculatum} with the exception of plants which were previously tended by \textit{C. opuntiae} who are second most likely to retain \textit{C. opuntiae} as their partners in successive years.
+%The only case where two next partners do not have statistically significantly different probabilities is when previously other tended plants either remain tended by other ants or become tended by \textit{C. opuntiae}. 
+%
+%\subsection*{Deterministic IPM}
+%
+%\subsection*{Stochastic IPM}
+%
+%
+%\section*{Discussion}
+%
+%
+%\section*{Conclusion}
+%
+%\section*{Acknowledgments}
 
 %%%%%%%%%%%%%%%%%%%%%
 % Statement of Authorship
@@ -464,53 +464,53 @@ The only case where two next partners do not have statistically significantly di
 \renewcommand{\thetable}{\arabic{table}}
 \setcounter{table}{0}
 
-% I am creating a table here to include all parameter estimations and descriptions
-  \begin{table}[]
-  \begin{tabular}{l|l|l}
-    \textbf{Parameter} & \textbf{Median ($95\%$ CI)} & \textbf{Prior Distribution} \\
-    \hline
-    %% Growth Parameters
-    growth xi intercept vacant $\Beta_{01}^g$ & -5.210899 (-5.686865, -5.491787) & \\
-    growth xi intercept other $\Beta_{02}^g$ & -5.8288 (-5.956217, 1.766021) & \\
-    growth xi intercept \textit{C. opuntiae} $\Beta_{03}^g$ & -4.529523 (-6.0770390, 0.1222112) & \\
-    growth xi intercept \textit{L. apiculatum} $\Beta_{04}^g$ & -5.106802 (-5.4499944, 0.5453901) & \\
-    growth xi size dependent vacant $\Beta_{11}^g$ & & \\
-    growth xi size dependent other $\Beta_{12}^g$ & & \\
-    growth xi size dependent \textit{C. opuntiae} $\Beta_{13}^g$ & & \\
-    growth xi size dependent \textit{L. apiculatum} $\Beta_{14}^g$ & & \\
-    growth omega intercept $\omega_0^g$ & & \\
-    growth omega size dependent $\omega_1^g$ & & \\
-    growth alpha intercept $\alpha_0^g$ & & \\
-    growth alpha size dependent $\alpha_1^g$ & & \\
-    \hline
-    %% Germination Parameters
-    1-year germination intercept $\alpha^{\gamma_1}$ & -5.144627 (-5.370185, -4.966587) & \\
-    2-year germination intercept $\alpha^{\gamma_2}$ & -6.155088 (-6.417991, -5.786996) & \\
-    \hline
-    %% Survival Parameters
-    survival intercept vacant $\Beta_{01}^s$ & 0.46375959 (0.07778875, 0.86267803) & \\
-    survival intercept other $\Beta_{02}^s$ & 0.2677732 (-1.7939375, 2.5857164) & \\
-    survival intercept \textit{C.opuntiae} $\Beta_{03}^s$ & 2.2690061 (0.7347587, 3.9967755) & \\
-    survival intercept \textit{L. apiculatum} $\Beta_{04}^s$ & 0.0538502 (-1.0054015, 1.3153753) & \\
-    survival size dependent vacant $\Beta_{11}^s$ & 0.86267803 (0.2696006, 0.3217293) & \\
-    survival size dependent other $\Beta_{12}^s$ & 0.4387909 (0.1953732, 0.7325813) & \\
-    survival size dependent \textit{C. opuntiae} $\Beta_{13}^s$ & 0.28392994 (0.08742771, 0.47423484) & \\
-    survival size dependent \textit{L. apiculatum} $\Beta_{14}^s$ & 0.5150193 (0.5150193, 0.6492092) & \\
-    \hline
-    %% Probability of Flowering Parameters
-    flowering intercept $\Beta_0^f$ & -4.611414 (-5.119275, -4.082511) & \\
-    flowering size dependent $\Beta_1^f$ & 0.5693555 (0.5239602, 0.6104472) & \\
-    \hline
-    %% Floral Viability Parameters
-    viability intercept vacant $\Beta_01^v$ & 1.0930266 (0.5002784, 1.6629479) & \\
-    viability intercept other $\Beta02^v$ & 1.1102242 (0.5073163, 1.7414692) & \\
-    viability intercept \textit{C. opuntiae} $\Beta_03^v$ & 1.3605548 (0.7372043, 1.9359609) & \\
-    viability intercept \textit{L. apiculatum} $\Beta_04^v$ & 2.023599 (1.461603, 2.534776) & 
-  \end{tabular}
-  \end{table}
-\bigskip{}
-\\
-\end{table}
+%% I am creating a table here to include all parameter estimations and descriptions
+%  \begin{table}[]
+%  \begin{tabular}{l|l|l}
+%    \textbf{Parameter} & \textbf{Median ($95\%$ CI)} & \textbf{Prior Distribution} \\
+%    \hline
+%    %% Growth Parameters
+%    growth xi intercept vacant $\Beta_{01}^g$ & -5.210899 (-5.686865, -5.491787) & \\
+%    growth xi intercept other $\Beta_{02}^g$ & -5.8288 (-5.956217, 1.766021) & \\
+%    growth xi intercept \textit{C. opuntiae} $\Beta_{03}^g$ & -4.529523 (-6.0770390, 0.1222112) & \\
+%    growth xi intercept \textit{L. apiculatum} $\Beta_{04}^g$ & -5.106802 (-5.4499944, 0.5453901) & \\
+%    growth xi size dependent vacant $\Beta_{11}^g$ & & \\
+%    growth xi size dependent other $\Beta_{12}^g$ & & \\
+%    growth xi size dependent \textit{C. opuntiae} $\Beta_{13}^g$ & & \\
+%    growth xi size dependent \textit{L. apiculatum} $\Beta_{14}^g$ & & \\
+%    growth omega intercept $\omega_0^g$ & & \\
+%    growth omega size dependent $\omega_1^g$ & & \\
+%    growth alpha intercept $\alpha_0^g$ & & \\
+%    growth alpha size dependent $\alpha_1^g$ & & \\
+%    \hline
+%    %% Germination Parameters
+%    1-year germination intercept $\alpha^{\gamma_1}$ & -5.144627 (-5.370185, -4.966587) & \\
+%    2-year germination intercept $\alpha^{\gamma_2}$ & -6.155088 (-6.417991, -5.786996) & \\
+%    \hline
+%    %% Survival Parameters
+%    survival intercept vacant $\Beta_{01}^s$ & 0.46375959 (0.07778875, 0.86267803) & \\
+%    survival intercept other $\Beta_{02}^s$ & 0.2677732 (-1.7939375, 2.5857164) & \\
+%    survival intercept \textit{C.opuntiae} $\Beta_{03}^s$ & 2.2690061 (0.7347587, 3.9967755) & \\
+%    survival intercept \textit{L. apiculatum} $\Beta_{04}^s$ & 0.0538502 (-1.0054015, 1.3153753) & \\
+%    survival size dependent vacant $\Beta_{11}^s$ & 0.86267803 (0.2696006, 0.3217293) & \\
+%    survival size dependent other $\Beta_{12}^s$ & 0.4387909 (0.1953732, 0.7325813) & \\
+%    survival size dependent \textit{C. opuntiae} $\Beta_{13}^s$ & 0.28392994 (0.08742771, 0.47423484) & \\
+%    survival size dependent \textit{L. apiculatum} $\Beta_{14}^s$ & 0.5150193 (0.5150193, 0.6492092) & \\
+%    \hline
+%    %% Probability of Flowering Parameters
+%    flowering intercept $\Beta_0^f$ & -4.611414 (-5.119275, -4.082511) & \\
+%    flowering size dependent $\Beta_1^f$ & 0.5693555 (0.5239602, 0.6104472) & \\
+%    \hline
+%    %% Floral Viability Parameters
+%    viability intercept vacant $\Beta_01^v$ & 1.0930266 (0.5002784, 1.6629479) & \\
+%    viability intercept other $\Beta02^v$ & 1.1102242 (0.5073163, 1.7414692) & \\
+%    viability intercept \textit{C. opuntiae} $\Beta_03^v$ & 1.3605548 (0.7372043, 1.9359609) & \\
+%    viability intercept \textit{L. apiculatum} $\Beta_04^v$ & 2.023599 (1.461603, 2.534776) & 
+%  \end{tabular}
+%  \end{table}
+%\bigskip{}
+%\\
+%\end{table}
 
 \newpage{}
 
