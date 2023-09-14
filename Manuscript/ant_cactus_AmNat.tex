@@ -1,13 +1,14 @@
 \documentclass[11pt]{article}
 \usepackage[sc]{mathpazo} %Like Palatino with extensive math support
 \usepackage{fullpage}
-\usepackage[authoryear,sectionbib,sort]{natbib}
+%\usepackage[authoryear,sectionbib,sort]{natbib}
+\usepackage[square,sort,comma,numbers]{natbib}
 \linespread{1.7}
 \usepackage[utf8]{inputenc}
 \usepackage{lineno}
 \usepackage{titlesec}
-\newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}}
-\newcommand{\ali}[2]{{\color{pink}{#1}}\footnote{\textit{\color{pink}{#2}}}}  
+%\newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}}
+%\newcommand{\ali}[2]{{\color{pink}{#1}}\footnote{\textit{\color{pink}{#2}}}}  
 
 
 \titleformat{\section}[block]{\Large\bfseries\filcenter}{\thesection}{1em}{}
@@ -175,7 +176,7 @@ In the rare case that more than one species of ant was present, we recorded the 
 We also recorded the numbers and species of herbivores on each plant.
 We conducted recruit and new plant surveys by splitting up each plot and walking the entire area to search for untagged plants. 
 Plants less than 1 cm tall were marked as recruits and larger plants as new plants, these were all tagged, GPS located, and recorded. 
-\tom{}{Also need to describe recruit data, seed banks, seed counts per fruit.}
+%\tom{}{Also need to describe recruit data, seed banks, seed counts per fruit.}
 		
 \subsection*{Statistical Modeling}
 	
@@ -186,7 +187,7 @@ The ant partners defend the cacti from herbivores, meaning their presence can le
 The biological sources of variance (including spatial, and annual variance) are accounted for by including year-to-year and plot-to-plot random effects in the models. 
 Unless otherwise mentioned, all models use vague priors. 
 
-The growth model \ali{($G(x',x,a)$) estimates the size of cholla $y^G$}{This is where I get a little confused between the x and x' sizes and the ys. Should this all be noted like this?} in year $t+1$, with fixed effects of the previous size $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
+The growth model %\ali{($G(x',x,a)$) estimates the size of cholla $y^G$}{This is where I get a little confused between the x and x' sizes and the ys. Should this all be noted like this?} in year $t+1$, with fixed effects of the previous size $x$ and ant partner $i$ in year $t$ and random effects of plot $w$ and year $u$, using a Skew Normal distribution, with $\omega$ and $\alpha$ varying with the previous size. 
 A skew normal distribution was chosen here because the data had evidence of skew and previous efforts using a gaussian distribution poorly predicted the sizes of these plants, overestimating the next sizes for large plants.
 $\omega$ denotes the scale of the data in a Skew Normal distribution while $\alpha$ denotes the slant, when $\alpha$ is 0, the $\omega$ is equivalent to the sd of a Normal distribution. 
 The $\omega$ and $\alpha$ estimates vary across size because the scale and skew of the data varied across size. 
@@ -249,7 +250,7 @@ $$\hat{L} = \beta_{0}^{L} \times j$$
 $$\hat{\phi} = \beta_{0}^{\phi}$$
 Ant partners are included as predictors here because they reduce floral abortion rates and therefore may lead to higher numbers of seeds. 
 
-To obtain posterior estimates of the demographic parameters, we fit models using Markov chain Monte Carlo (MCMC) simulations via STAN run through version 4.0.2 of R \tom{}{You need to cite R and RStan}
+To obtain posterior estimates of the demographic parameters, we fit models using Markov chain Monte Carlo (MCMC) simulations via STAN run through version 4.0.2 of R %\tom{}{You need to cite R and RStan}
 For each model, we obtained 3 chains of 10,000 iterations, each with randomly chosen initial conditions. 
 The first 1,500 iterations were discarded as burn-in to eliminate transience associated with initial conditions. 
 We did not thin the chains, thus all samples were retained. 
@@ -281,7 +282,7 @@ The dynamics of these 1 and 2-year old seedbanks are given by the following equa
 The functions $P(x')$ and $F(x)$ give the probability of flowering, the number of flowerbuds produced based on the plant size $x'$ in year $t+1$ and $x$ in year $t$ respectively. 
 The proportion of flowerbuds which will produce seeds ($V(a)$) is dependent on the ant species present on the plant $i$ in year $t$. 
 The function for the number of seeds per fruit ($\kappa(a)$)  is dependent on the ant partner present $a$ in year $t$.
-These functions are integrated across size, from the smallest observed size $L$ to the largest observed size $U$. \ali{}{I know that technically L is smaller than the smallest size and U is larger, but I am not sure if here is the place to put it. }
+These functions are integrated across size, from the smallest observed size $L$ to the largest observed size $U$. %\ali{}{I know that technically L is smaller than the smallest size and U is larger, but I am not sure if here is the place to put it. }
 The integral is multiplied by the probability of seed dispersal/survival ($\delta$) to give the number of seeds that enter the one-year old seed bank. 
 Parameters $U$ and $L$ are the upper and lower bounds, respectively, of the plant size distribution. 
 Plants can recruit out of the one-year seed bank with the probability of $\gamma_1$ or transition to the two-year seed bank with a probability of $1 - \gamma_1$. 
@@ -582,11 +583,6 @@ The only case where two next partners do not have statistically significantly di
     viability intercept \textit{L. apiculatum} $\beta_04^v$ & & 
   \end{tabular}
   \end{table}
-\bigskip{}
-\\
-\end{table}
-
-\newpage{}
 
 \section*{Figure legends}
 
