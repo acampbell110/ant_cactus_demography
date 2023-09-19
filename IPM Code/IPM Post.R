@@ -18,10 +18,18 @@ gxy<-function(x,y,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   #Density probability function which uses the parameters that are ant specific 
-  g_vac = dsn(y,xi=(params$grow_beta01) + (params$grow_beta11)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
-  g_liom = dsn(y,xi=(params$grow_beta04) + (params$grow_beta14)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
-  g_crem = dsn(y,xi=(params$grow_beta03) + (params$grow_beta13)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
-  g_other = dsn(y,xi=(params$grow_beta02) + (params$grow_beta12)*xb, omega = exp((params$grow_sig0) + (params$grow_sig1)*xb), alpha = (params$grow_alp0) + (params$grow_alp1)*xb)
+  g_vac = dlst(y,mu=(params$grow_beta01) + (params$grow_beta11)*xb + (params$grow_beta21)*xb^2, 
+               sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
+               df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
+  g_liom = dlst(y,mu=(params$grow_beta04) + (params$grow_beta14)*xb + (params$grow_beta24)*xb^2, 
+                sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
+                df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
+  g_crem = dlst(y,mu=(params$grow_beta03) + (params$grow_beta13)*xb + (params$grow_beta23)*xb^2, 
+                sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
+                df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
+  g_other = dlst(y,mu=(params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2, 
+                 sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
+                 df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
   #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
@@ -131,6 +139,7 @@ pxy<-function(x,y,i,params){
   xb=pmin(pmax(x,cholla_min),cholla_max)
   #Multiply the probabilities of survival and growth together to get the survival growth kernel
   pxy = sx(x,i,params)*gxy(x,y,i,params)
+  #pxy = gxy(x,y,i,params)
   return(pxy)
 }
 
@@ -153,26 +162,28 @@ pxy<-function(x,y,i,params){
 fx<-function(x,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
-  p.flow<-invlogit((params$repro_beta0) + (params$repro_beta1)*xb)     ## Probability of Reproducing
-  nflow<-exp((params$flow_beta0) + (params$flow_beta1)*xb)     ## Number of FLowers produced
-  flow.surv_crem<-invlogit((params$viab_beta01)) ## Proportion of Flowers survive to fruit
-  flow.surv_vac<-invlogit((params$viab_beta04)) ## Proportion of Flowers survive to fruit
-  flow.surv_other<-invlogit((params$viab_beta03)) ## Proportion of Flowers survive to fruit
-  flow.surv_liom<-invlogit((params$viab_beta02)) ## Proportion of Flowers survive to fruit
-  seeds.per.fruit_crem<-(params$seed_beta01)                     ## Number of Seeds per Fruit
-  seeds.per.fruit_liom<-(params$seed_beta02)                     ## Number of Seeds per Fruit
-  seeds.per.fruit_vac<-(params$seed_beta03)                     ## Number of Seeds per Fruit
-  seed.survival<-invlogit((params$preseed_beta0))^2           ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
+  p.flow<-invlogit((params$repro_beta0) + (params$repro_beta1)*xb)      ## Probability of Reproducing
+  nflow<-exp((params$flow_beta0) + (params$flow_beta1)*xb)      ## Number of FLowers produced
+  flow.surv_crem<-invlogit((params$viab_beta03))      ## Proportion of Flowers survive to fruit
+  flow.surv_vac<-invlogit((params$viab_beta01))       ## Proportion of Flowers survive to fruit
+  flow.surv_other<-invlogit((params$viab_beta02))       ## Proportion of Flowers survive to fruit
+  flow.surv_liom<-invlogit((params$viab_beta04))      ## Proportion of Flowers survive to fruit
+  seeds.per.fruit_crem<-(params$seed_beta01)      ## Number of Seeds per Fruit
+  seeds.per.fruit_liom<-(params$seed_beta03)      ## Number of Seeds per Fruit
+  seeds.per.fruit_vac<-(params$seed_beta02)     ## Number of Seeds per Fruit
+  seed.survival<-invlogit((params$preseed_beta0))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
   #Calculate the fecundity probabilities by ant species
   f_crem = p.flow*nflow*flow.surv_crem*seeds.per.fruit_crem*seed.survival
   f_vac = p.flow*nflow*flow.surv_vac*seeds.per.fruit_vac*seed.survival
   f_other = p.flow*nflow*flow.surv_other*seeds.per.fruit_vac*seed.survival
   f_liom = p.flow*nflow*flow.surv_liom*seeds.per.fruit_liom*seed.survival
+  #Return the correct value
   if(i == "crem"){ return(f_crem)}
   if(i == "liom"){ return(f_liom)}
   if(i == "other"){ return(f_other)}
   if(i == "vacant"){ return(f_vac)}
 }
+
 
 # ## Check if it works
 # i = c("liom","vacant","crem","other")
@@ -547,8 +558,9 @@ bigmatrix.1 <- function(params,lower,upper,matsize){
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
   #Applying the midpoint rule
-  n<-matsize
-  L<-lower; U<-upper
+  n<-400
+  L<-lower - 30
+  U<-upper + 10
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
@@ -572,9 +584,8 @@ bigmatrix.1 <- function(params,lower,upper,matsize){
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params))*h 
   # Put it all together
   IPMmat<-Fmat+Tmat  
-  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
-  #lambda = Re(eigen(IPMmat)$values[1])
-  #return(lambda)
+  colSums(Tmat[3:(n+2),3:(n+2)])
+  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y))
 }
 # i = c("liom","vacant")
 # x <- c(1,1)
@@ -584,8 +595,8 @@ bigmatrix.1 <- function(params,lower,upper,matsize){
 #     lambda[m] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize)$IPMmat)
 # }
 # lambda
-
-
+# 
+# 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
@@ -597,8 +608,9 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
-  n<-matsize
-  L<-lower; U<-upper
+  n<-300
+  L<-lower - 25
+  U<-upper + 15
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
@@ -618,15 +630,15 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
     Tmat[2,1]<-1-invlogit((params$germ1_beta0))
     # Graduation from 1-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-    Tmat[3:(n+2),1]<-0
     Tmat[(n+3):(2*n+2),1]<-invlogit((params$germ1_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
+    Tmat[3:(n+2),1]<-0
     # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
     # Set the non-vacant recruit size to 0 because we are forcing all new plants to be vacant
-    Tmat[3:(n+2),2]<-0
     Tmat[(n+3):(2*n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
+    Tmat[3:(n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ## liom-liom
-    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac")) 
+    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac"))
     ## liom-vacant
     Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
     ## vacant-liom
@@ -634,13 +646,14 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
     ## vacant-vacant
     Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
     # Put it all together
+    colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat
     # Calculate the lambda
     # lambda = Re(eigen(IPMmat)$values[1])
     # return(lambda)
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
-  ############################################ CREM ###############################################
+  ########################################### CREM ###############################################
   if(scenario == "cremvac"){
     # Banked seeds go in top row (1 == crem, 2 == vacant)
     Fmat[1,3:(n+2)]<-fx(y,"crem",params)
@@ -661,6 +674,7 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
     Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac"))
     Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac"))
     # Put it all together
+    colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat# Calculate the lambda
     # lambda = Re(eigen(IPMmat)$values[1])
     # return(lambda)
@@ -687,6 +701,7 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario){
     Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
     Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac"))
     # Put it all together
+    colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat
     # Calculate the lambda
     # lambda = Re(eigen(IPMmat)$values[1])
@@ -718,8 +733,9 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario){
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
-  n<-matsize
-  L<-lower; U<-upper
+  n<-400
+  L<-lower - 40
+  U<-upper + 35
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
@@ -760,12 +776,13 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario){
     Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac"))   ## Bottom Second
     Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac"))   ## Bottom Third
     # Put it all together
+    colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
     # return(lambda)
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
   }
-  ############################################# LIOM & OTHER & VAC ###########################################
+  ############################################ LIOM & OTHER & VAC ###########################################
   if(scenario == "liomvacother"){
     ## Fecundity of plants
     Fmat[1,3:(n+2)]<-fx(y,params=params,"vacant") ## Production of seeds from x sized mom with no ant visitor
@@ -804,6 +821,7 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario){
     #other-other
     Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother"))   ## Bottom Third
     # Put it all together
+    colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
     # return(lambda)
@@ -839,6 +857,7 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario){
     Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac"))   ## Bottom Second
     Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac"))   ## Bottom Third
     # Put it all together
+    colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
     # lambda = Re(eigen(IPMmat)$values[1])
     # return(lambda)
@@ -871,20 +890,22 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario){
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
   ###################################################################################################
-  n<-matsize
-  L<-lower; U<-upper
+  n<-400
+  L<-lower - 40
+  U<-upper + 35
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins 
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
   
-  # Fertility matricies 
+  # Fertility matricies -- Two Ant
   Fmat <- matrix(0,(4*n+2),(4*n+2))
-  # Growth/survival transition matricies 
+  # Growth/survival transition matricies -- Two Ant
   Tmat <- matrix(0,(4*n+2),(4*n+2))
   ## Full Matricies
   IPMmat <- matrix()
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
-  Tmat[2,1]<-1-invlogit(mean(params$germ1_beta0)) 
+  #Tmat[2,1]<-1-1 
+  Tmat[2,1]<-1-invlogit((params$germ1_beta0)) 
   ############################################# LIOM & CREM & OTHER & VAC ############################################
   ## Fecundity of plants
   Fmat[1,3:(n+2)]<-fx(y,params=params,"crem") ## Production of seeds from x sized mom with no ant visitor
@@ -895,14 +916,12 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario){
   Tmat[3:(n+2),1]<-0
   Tmat[(n+3):(2*n+2),1]<-0
   Tmat[(2*n+3):(3*n+2),1]<-0
-  #Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
-  Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ1_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+  Tmat[(3*n+3):(4*n+2),1]<-invlogit((params$germ1_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
   # Graduation from 2-yo bank to cts size = germination * size distn * pre-census survival
   Tmat[3:(n+2),2]<-0
   Tmat[(n+3):(2*n+2),2]<-0
   Tmat[(2*n+3):(3*n+2),2]<-0
-  #Tmat[(3*n+3):(4*n+2),1]<-recruits(y,params)*h
-  Tmat[(3*n+3):(4*n+2),1]<-invlogit(mean(params$germ2_beta0))*recruits(y,params)*h*invlogit(mean(params$preseed_beta0))
+  Tmat[(3*n+3):(4*n+2),1]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
   # Growth/survival transitions among cts sizes
   ##Top Row
   Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))   ## Top First
@@ -925,6 +944,8 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario){
   Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))   ## Top Third
   Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
   # Put it all together
+  colSums(Tmat[3:(4*n+2),3:(4*n+2)])
+  colSums(Tmat[3:(4*n+2),3:(4*n+2)])[1000:1200]
   IPMmat<-Fmat+Tmat
   # lambda = Re(eigen(IPMmat)$values[1])
   # return(lambda)

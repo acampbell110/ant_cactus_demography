@@ -77,7 +77,7 @@ lams$scenario_abv <- c("None","C","L","O","L,C","L,O","O,C","All")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 png("lambda_det_mean.png")
 plot(1:8,lams$means, col = cols, 
-     pch = 20, cex = 6,xlim = c(0,9),ylim = c(0.96,1),cex.main = 2.3,
+     pch = 20, cex = 6,xlim = c(0,9),ylim = c(0.985,1.01),cex.main = 2.3,
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
  text(x = 1:8-0.2, y = lams$means+0.002,cex = 2,
@@ -118,11 +118,11 @@ par(mar=c(4,4,1.01,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1))
 plot(density(lams[,1]), col = vcol, xlab = "",ylab = "", lwd = 3,cex.main = 2,  main = "a)                                                                                                       ",
-     ylim = c(0,10), xlim = c(.9,1.2))
+     ylim = c(0,100), xlim = c(.9,1.2))
 abline(v = mean(lams[,1]),col = vcol, lty = 2, lwd =3)
 legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
 plot(density(lams[,2]), col = ccol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "b)                                                                                                       ",
-     ylim = c(0,10), xlim = c(.9,1.2))
+     ylim = c(0,100), xlim = c(.9,1.2))
 abline(v = mean(lams[,2]),col = ccol, lty = 2, lwd =3)
 lines(density(lams[,3]), col = lcol, lwd = 3)
 abline(v = mean(lams[,3]),col = lcol, lty = 2, lwd =3)
@@ -130,7 +130,7 @@ lines(density(lams[,4]), col = ocol, lwd = 3)
 abline(v = mean(lams[,4]),col = ocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crem.","Liom.", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
 plot(density(lams[,5]), col = lccol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "c)                                                                                                       ",
-     ylim = c(0,10), xlim = c(.9,1.2))
+     ylim = c(0,100), xlim = c(.9,1.2))
 abline(v = mean(lams[,5]),col = lccol, lty = 4, lwd =3)
 lines(density(lams[,6]), col = locol, lwd = 3)
 abline(v = mean(lams[,6]),col = locol, lty = 2, lwd =3)
@@ -138,7 +138,7 @@ lines(density(lams[,7]), col = cocol, lwd = 3)
 abline(v = mean(lams[,7]),col = cocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crem. and Liom.","Liom. and Other", "Crem. and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
 plot(density(lams[,8]), col = acol, xlab = "",ylab = "", lwd = 3,cex.main = 2, main = "d)                                                                                                       ",
-     ylim = c(0,10), xlim = c(.9,1.2))
+     ylim = c(0,100), xlim = c(.9,1.2))
 abline(v = mean(lams[,8]),col = acol, lty = 2, lwd =3)
 mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
@@ -150,40 +150,40 @@ dev.off()
 
 
 
-[##############################################################################
+##############################################################################
 ###### STOCHASTIC POSTERIOR IPM ##############################################
 ##############################################################################
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 max_rep = 100 ## Posterior Draws from vital rate models
 #scenario = c("none","all")
-max_yrs = 1000 ## Years of randomly sampled annual effects
-lam <- matrix(nrow = max_rep, ncol = max_scenario)
+max_yrs = 100 ## Years of randomly sampled annual effects
+lams <- matrix(nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){
-  print(n)
-  for(m in 1:100){
-    lam[m,n] <- lambdaSim(params = params[m,],                                  ## parameters
-                          grow_rfx1=grow_rfx1,
-                          grow_rfx2=grow_rfx2,
-                          grow_rfx3=grow_rfx3,
-                          grow_rfx4=grow_rfx4, ## growth model year rfx
-                          surv_rfx1=surv_rfx1,
-                          surv_rfx2=surv_rfx2,
-                          surv_rfx3=surv_rfx3,
-                          surv_rfx4=surv_rfx4, ## survival model year rfx
-                          flow_rfx=flow_rfx,                                ## flower model year rfx
-                          repro_rfx=repro_rfx,                               ## repro model year rfx
-                          viab_rfx1=viab_rfx1,
-                          viab_rfx2=viab_rfx2,
-                          viab_rfx3=viab_rfx3,
-                          viab_rfx4=viab_rfx4, ## viability model year rfx
-                          max_yrs = 1000,                                 ## the # years you want to iterate
+  print(scenario[n])
+  for(m in 1:max_rep){
+    lams[m,n] <- lambdaSim(params = params[m,],                                  ## parameters
+                          grow_rfx1 = grow_rfx1[m,],
+                          grow_rfx2 = grow_rfx2[m,],
+                          grow_rfx3 = grow_rfx3[m,],
+                          grow_rfx4 = grow_rfx4[m,],
+                          surv_rfx1 = surv_rfx1[m,],
+                          surv_rfx2 = surv_rfx2[m,],
+                          surv_rfx3 = surv_rfx3[m,],
+                          surv_rfx4 = surv_rfx4[m,],
+                          flow_rfx = flow_rfx[m,],
+                          repro_rfx = repro_rfx[m,],
+                          viab_rfx1 = viab_rfx1[m,],
+                          viab_rfx2 = viab_rfx2[m,],
+                          viab_rfx3 = viab_rfx3[m,],
+                          viab_rfx4 = viab_rfx4[m,],## viability model year rfx
+                          max_yrs = max_yrs,                                 ## the # years you want to iterate
                           matsize=matsize,                                 ## size of transition matrix
                           scenario = scenario[n],                                ## partner diversity scenario
                           lower=lower,upper=upper  )
   }
 }
-
+lams
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
