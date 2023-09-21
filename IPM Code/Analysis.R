@@ -183,7 +183,8 @@ for(n in 1:max_scenario){
                           lower=lower,upper=upper  )
   }
 }
-lams
+
+lams_stoch <- lams
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
@@ -191,30 +192,82 @@ png("lambda_st_full.png")
 par(mar=c(4,4,1,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lam[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,25), xlim = c(0.9,1.6))
-abline(v = mean(lams[,1]),col = vcol, lty = 2, lwd =3)
+plot(density(lams_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.97,1.02))
+abline(v = mean(lams_stoch[,1]),col = vcol, lty = 2, lwd =3)
 legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lam[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,25), xlim = c(0.9,1.6))
-abline(v = mean(lams[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lam[,3]), col = lcol, lwd =3)
-abline(v = mean(lams[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lam[,4]), col = ocol, lwd =3)
-abline(v = mean(lams[,4]),col = ocol, lty = 2, lwd =3)
+plot(density(lams_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.97,1.02))
+abline(v = mean(lams_stoch[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams_stoch[,3]), col = lcol, lwd =3)
+abline(v = mean(lams_stoch[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams_stoch[,4]), col = ocol, lwd =3)
+abline(v = mean(lams_stoch[,4]),col = ocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lam[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,25), xlim = c(0.9,1.6))
-abline(v = mean(lams[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lam[,6]), col = locol, lwd =3)
-abline(v = mean(lams[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lam[,7]), col = cocol, lwd =3)
-abline(v = mean(lams[,7]),col = cocol, lty = 2, lwd =3)
+plot(density(lams_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.97,1.02))
+abline(v = mean(lams_stoch[,5]),col = lccol, lty = 2, lwd =3)
+lines(density(lams_stoch[,6]), col = locol, lwd =3)
+abline(v = mean(lams_stoch[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams_stoch[,7]), col = cocol, lwd =3)
+abline(v = mean(lams_stoch[,7]),col = cocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lam[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ")
-abline(v = mean(lams[,8]),col = acol, lty = 2, lwd =3)
+plot(density(lams_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.97,1.02))
+abline(v = mean(lams_stoch[,8]),col = acol, lty = 2, lwd =3)
 mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
 legend("topright",legend = c("All Ants"),fill = c(acol),
        cex = 1.5)
 dev.off()
 
+###### Calculate the difference in the between the posterior distributions of lambda
+all_vac <- lams_stoch[,8] - lams_stoch[,1]
+cl_vac <- lams_stoch[,5] - lams_stoch[,1]
+lo_vac <- lams_stoch[,6] - lams_stoch[,1]
+co_vac <- lams_stoch[,7] - lams_stoch[,1]
+c_vac <- lams_stoch[,2] - lams_stoch[,1]
+l_vac <- lams_stoch[,3] - lams_stoch[,1]
+o_vac <- lams_stoch[,4] - lams_stoch[,1]
+vac_vac <- lams_stoch[,1] - lams_stoch[,1]
 
+#plot them
+par(mar=c(1,1,1,1))
+layout(matrix(c(1,2,3,4,5,6,7),
+              ncol = 1, nrow = 7), heights = c(1,1,1,1,1,1,1))
+## All
+plot(density(all_vac), col = acol, xlim = c(-0.025,0.04))
+abline(v = 0, col = acol, lty = 2)
+## Crem and Liom
+plot(density(cl_vac), col = lccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lccol, lty = 2)
+## Other and Liom
+plot(density(lo_vac), col = locol, xlim = c(-0.025,0.04))
+abline(v = 0, col = locol, lty = 2)
+## Other and Crem
+plot(density(co_vac), col = cocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = cocol, lty = 2)
+## Crem
+plot(density(c_vac), col = ccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ccol, lty = 2)
+## Liom
+plot(density(l_vac), col = lcol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lcol, lty = 2)
+## Other
+plot(density(o_vac), col = ocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ocol, lty = 2)
+
+#calculate what proportion of each is > 0
+#aka what proportion of lambda estimations are greater than when vacant
+proportions <- vector()
+proportions[1] <- 0
+proportions[2] <- length(subset(c_vac, c_vac>0))/100
+proportions[3] <- length(subset(l_vac, l_vac>0))/100
+proportions[4] <- length(subset(o_vac, o_vac>0))/100
+proportions[5] <- length(subset(cl_vac, cl_vac>0))/100
+proportions[6] <- length(subset(lo_vac, lo_vac>0))/100
+proportions[7] <- length(subset(co_vac, co_vac>0))/100
+proportions[8] <- length(subset(all_vac, all_vac>0))/100
+
+proportions
+prop <- as.data.frame(matrix(rep(NA,8), ncol = 8))
+colnames(prop) <- scenario
+prop[1,] <- proportions
+prop
 

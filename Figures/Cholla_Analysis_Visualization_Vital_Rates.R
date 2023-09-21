@@ -304,8 +304,9 @@ size_other <- seq(min(y_other_subset_grow$logsize_t, na.rm = TRUE), max(y_other_
 size_vac <- seq(min(y_vac_subset_grow$logsize_t, na.rm = TRUE), max(y_vac_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 
 
-fit_grow_skew<-readRDS("/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
-grow_out <- rstan::extract(fit_grow_skew)
+fit_grow_stud<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
+grow_out <- rstan::extract(fit_grow_stud)
+fit_grow_stud@model_pars
 # Formulas
 # Other
 y_other_mean_grow <- quantile(grow_out$beta0[,3],0.5) + (size_dummy) * quantile(grow_out$beta1[,3],0.5) + (size_dummy)^2 * quantile(grow_out$beta2[,3],0.5)
@@ -424,30 +425,30 @@ y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), len
 other <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,3],0.5) + (x) * quantile(grow_out$beta1[,3],0.5) + (x)^2 * quantile(grow_out$beta2[,3],0.5), 
-                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
-                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
-);
+  function (x, y)   dlst(y,mu=quantile(grow_out$beta0[,3],0.5) + quantile(grow_out$beta1[,3],0.5)*x + quantile(grow_out$beta2[,3],0.5)*x^2, 
+                         sigma = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                         df = exp(quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5)))
+  );
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,4],0.5) + (x) * quantile(grow_out$beta1[,4],0.5) + (x)^2 * quantile(grow_out$beta2[,4],0.5), 
-                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
-                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
+  function (x, y)   dlst(y,mu=quantile(grow_out$beta0[,4],0.5) + quantile(grow_out$beta1[,4],0.5)*x + quantile(grow_out$beta2[,4],0.5)*x^2, 
+                         sigma = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                         df = exp(quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5)))
 );
 liom <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,2],0.5) + (x) * quantile(grow_out$beta1[,2],0.5) + (x)^2 * quantile(grow_out$beta2[,2],0.5), 
-                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
-                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
+  function (x, y)   dlst(y,mu=quantile(grow_out$beta0[,2],0.5) + quantile(grow_out$beta1[,2],0.5)*x + quantile(grow_out$beta2[,2],0.5)*x^2, 
+                         sigma = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                         df = exp(quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5)))
 );
 crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi = quantile(grow_out$beta0[,1],0.5) + (x) * quantile(grow_out$beta1[,1],0.5) + (x)^2 * quantile(grow_out$beta2[,1],0.5), 
-                        omega = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
-                        alpha = quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5))
+  function (x, y)   dlst(y,mu=quantile(grow_out$beta0[,1],0.5) + quantile(grow_out$beta1[,1],0.5)*x + quantile(grow_out$beta2[,1],0.5)*x^2, 
+                         sigma = exp(quantile(grow_out$d_0,0.5) + x * quantile(grow_out$d_size,0.5)), 
+                         df = exp(quantile(grow_out$a_0,0.5) + x * quantile(grow_out$a_size,0.5)))
 );
 
 ## Contour plots
