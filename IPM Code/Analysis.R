@@ -158,11 +158,11 @@ max_scenario = length(scenario)
 max_rep = 100 ## Posterior Draws from vital rate models
 #scenario = c("none","all")
 max_yrs = 100 ## Years of randomly sampled annual effects
-lams <- matrix(nrow = max_rep, ncol = max_scenario)
+lams_stoch <- matrix(nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){
   print(scenario[n])
   for(m in 1:max_rep){
-    lams[m,n] <- lambdaSim(params = params[m,],                                  ## parameters
+    lams_stoch[m,n] <- lambdaSim(params = params[m,],                                  ## parameters
                           grow_rfx1 = grow_rfx1[m,],
                           grow_rfx2 = grow_rfx2[m,],
                           grow_rfx3 = grow_rfx3[m,],
@@ -184,7 +184,7 @@ for(n in 1:max_scenario){
   }
 }
 
-lams_stoch <- lams
+write.csv(lams_stoch,"stoch_post_lambda.csv")
 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
