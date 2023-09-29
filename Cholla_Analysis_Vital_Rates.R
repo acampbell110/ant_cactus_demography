@@ -442,7 +442,9 @@ t.test(estimates[,2],estimates[,4], alternative = "two.sided")
 t.test(estimates[,3],estimates[,4], alternative = "two.sided")
 
 #####################################################################################################
-##### Reproductive State Model -- Prob of reproducing at next time step #############################
+##### 
+#####        Reproductive State Model -- Prob of reproducing at next time step           #############################
+##### 
 #####################################################################################################
 ## Repro Data Set
 reproductive_data_orig <- cactus[ , c("flower1_YN","logsize_t","Year_t","Plot", "logsize_t1")]
