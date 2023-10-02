@@ -1039,64 +1039,9 @@ lambdaSim=function(params,                                  ## parameters
   if(scenario == "liomcremvac"|scenario == "liomvacother"|scenario == "othercremvac"){K_t <- matrix(0,3*400+2,3*400+2)}
   if(scenario == "all"){K_t <- matrix(0,4*400+2,4*400+2)}
   matdim        <- ncol(K_t)
-  rtracker      <- (rep(0,max_yrs*1))  ## Empty vector to store growth rates in
-  n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
-
-  for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then
-    ## scale this to the stochastic growth rate
-    ## Randomly sample the years we have data for by calling column r in all matricies of
-    ## the year random effects
-    r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17),1,replace = TRUE,prob = NULL)
-
-    ## Create and store matrix
-    K_t[,]<-bigmatrix(params,lower,upper,matsize,scenario,
-                      grow_rfx1[,r],grow_rfx2[,r],grow_rfx3[,r],grow_rfx4[,r],
-                      surv_rfx1[,r],surv_rfx2[,r],surv_rfx3[,r],surv_rfx4[,r],
-                      flow_rfx[,r],
-                      repro_rfx[,r],
-                      viab_rfx1[,r],viab_rfx2[,r],viab_rfx3[,r],viab_rfx4[,r])$IPMmat
-    ## At each time step call the IPM for the proper Year
-
-    n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
-    N  <- sum(n0) ## This gives the growth rate of the population
-    rtracker[t]<-log(N) ## Store the growth rate for each year in the r tracker vector?
-    n0 <-n0/N ## Update scaling for next iteration
-   }
-#
-  #discard initial values (to get rid of transient)
-  burnin    <- round(max_yrs*0.1)
-  rtracker  <- rtracker[-c(1:burnin)]
-
-  #Finish and return
-  #print(proc.time() - ptm)
-  lambdaS<-exp(mean(rtracker))
-  return(lambdaS)
-    return(list(K_t = K_t, matdim = matdim, rtracker = rtracker, n0 = n0))
-}
-
-
-
-lambdaSim=function(params,                                  ## parameters
-                   grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
-                   surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
-                   flow_rfx,                                ## flower model year rfx
-                   repro_rfx,                               ## repro model year rfx
-                   viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
-                   max_yrs,                                 ## the # years you want to iterate
-                   matsize,                                 ## size of transition matrix
-                   scenario,                                ## partner diversity scenario
-                   lower,upper                              ## extensions to avoid eviction
-){
-  
-  ## Create an actual matrix filled with 0 of the right size based on scenarios
-  if(scenario == "none"){K_t <- matrix(0,400+2,400+2)}
-  if(scenario == "cremvac"|scenario == "liomvac"|scenario == "othervac"){K_t <- matrix(0,2*300+2,2*300+2)}
-  if(scenario == "liomcremvac"|scenario == "liomvacother"|scenario == "othercremvac"){K_t <- matrix(0,3*400+2,3*400+2)}
-  if(scenario == "all"){K_t <- matrix(0,4*400+2,4*400+2)}
-  matdim        <- ncol(K_t)
   rtracker      <- (rep(0,max_yrs))  ## Empty vector to store growth rates in
   n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
-  # 
+  #
   for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then
   #   ## scale this to the stochastic growth rate
   #   ## Randomly sample the years we have data for by calling column r in all matricies of
@@ -1130,7 +1075,7 @@ lambdaSim=function(params,                                  ## parameters
 
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario) #n
-max_yrs = 10
+max_yrs = 100
 max_rep = 1
 lam <- matrix(data = NA, nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){
