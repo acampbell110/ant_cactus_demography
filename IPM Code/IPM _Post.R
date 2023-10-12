@@ -2,7 +2,6 @@
 ##            This will be an IPM which allows you to choose how many ants are present
 #########################################################################################################
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
-source("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code/Params.R")
 ## ----------- Miscellany...we'll need an inverse logit functions ------------- ##
 invlogit<-function(x){exp(x)/(1+exp(x))}
 
@@ -18,16 +17,16 @@ gxy<-function(x,y,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   #Density probability function which uses the parameters that are ant specific 
-  g_vac = dlst(y,mu=(params$grow_beta01) + (params$grow_beta11)*xb + (params$grow_beta21)*xb^2, 
+  g_vac = dlst(y,mu=(params$grow_beta04) + (params$grow_beta14)*xb + (params$grow_beta24)*xb^2, 
                sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
                df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
-  g_liom = dlst(y,mu=(params$grow_beta04) + (params$grow_beta14)*xb + (params$grow_beta24)*xb^2, 
+  g_liom = dlst(y,mu=(params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2, 
                 sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
                 df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
-  g_crem = dlst(y,mu=(params$grow_beta03) + (params$grow_beta13)*xb + (params$grow_beta23)*xb^2, 
+  g_crem = dlst(y,mu=(params$grow_beta01) + (params$grow_beta11)*xb + (params$grow_beta21)*xb^2, 
                 sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
                 df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
-  g_other = dlst(y,mu=(params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2, 
+  g_other = dlst(y,mu=(params$grow_beta03) + (params$grow_beta13)*xb + (params$grow_beta23)*xb^2, 
                  sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb), 
                  df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
   #Return the probability of growing from size x to y
@@ -84,10 +83,10 @@ sx<-function(x,i,params){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
   #Transform the ant specific parameters to the probability of survival
-  s_crem = invlogit((params$surv_beta03) + (params$surv_beta13)*xb)
-  s_vac = invlogit((params$surv_beta01) + (params$surv_beta11)*xb)
-  s_other = invlogit((params$surv_beta02) + (params$surv_beta12)*xb)
-  s_liom = invlogit((params$surv_beta04) + (params$surv_beta14)*xb)
+  s_other = invlogit((params$surv_beta03) + (params$surv_beta13)*xb)
+  s_crem = invlogit((params$surv_beta01) + (params$surv_beta11)*xb)
+  s_liom = invlogit((params$surv_beta02) + (params$surv_beta12)*xb)
+  s_vac = invlogit((params$surv_beta04) + (params$surv_beta14)*xb)
   #Return the survival probabilities
   if(i == "crem"){ return(s_crem)}
   if(i == "liom"){ return(s_liom)}
@@ -164,10 +163,10 @@ fx<-function(x,i,params){
   xb=pmin(pmax(x,cholla_min),cholla_max)
   p.flow<-invlogit((params$repro_beta0) + (params$repro_beta1)*xb)      ## Probability of Reproducing
   nflow<-exp((params$flow_beta0) + (params$flow_beta1)*xb)      ## Number of FLowers produced
-  flow.surv_crem<-invlogit((params$viab_beta03))      ## Proportion of Flowers survive to fruit
-  flow.surv_vac<-invlogit((params$viab_beta01))       ## Proportion of Flowers survive to fruit
-  flow.surv_other<-invlogit((params$viab_beta02))       ## Proportion of Flowers survive to fruit
-  flow.surv_liom<-invlogit((params$viab_beta04))      ## Proportion of Flowers survive to fruit
+  flow.surv_crem<-invlogit((params$viab_beta01))      ## Proportion of Flowers survive to fruit
+  flow.surv_vac<-invlogit((params$viab_beta04))       ## Proportion of Flowers survive to fruit
+  flow.surv_other<-invlogit((params$viab_beta03))       ## Proportion of Flowers survive to fruit
+  flow.surv_liom<-invlogit((params$viab_beta02))      ## Proportion of Flowers survive to fruit
   seeds.per.fruit_crem<-(params$seed_beta01)      ## Number of Seeds per Fruit
   seeds.per.fruit_liom<-(params$seed_beta03)      ## Number of Seeds per Fruit
   seeds.per.fruit_vac<-(params$seed_beta02)     ## Number of Seeds per Fruit
@@ -1014,15 +1013,19 @@ bigmatrix<-function(params,lower,upper,matsize,scenario){
 } 
 ## One ant option
 lambda(bigmatrix(params[14,], lower, upper, matsize, "none")$IPMmat)
-lambda(bigmatrix.1(params[14,], lower, upper, matsize)$IPMmat)
+#lambda(bigmatrix.1(params[14,], lower, upper, matsize)$IPMmat)
 ## 2 ant options
 lambda(bigmatrix(params[14,],lower,upper,matsize,"cremvac")$IPMmat)
-lambda(bigmatrix.2(params[14,],lower,upper,matsize,"cremvac")$IPMmat)
+#lambda(bigmatrix.2(params[14,],lower,upper,matsize,"cremvac")$IPMmat)
+lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvac")$IPMmat)
+lambda(bigmatrix(params[14,],lower,upper,matsize,"othervac")$IPMmat)
 ## 3 ant options
 lambda(bigmatrix(params[14,],lower,upper,matsize,"liomcremvac")$IPMmat)
-lambda(bigmatrix.3(params[14,],lower,upper,matsize,"liomcremvac")$IPMmat)
+#lambda(bigmatrix.3(params[14,],lower,upper,matsize,"liomcremvac")$IPMmat)
+lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvacother")$IPMmat)
+lambda(bigmatrix(params[14,],lower,upper,matsize,"othercremvac")$IPMmat)
 ## all ant options
 lambda(bigmatrix(params[14,],lower,upper,matsize,"all")$IPMmat)
-lambda(bigmatrix.4(params[14,],lower,upper,matsize,"all")$IPMmat)
+#lambda(bigmatrix.4(params[14,],lower,upper,matsize,"all")$IPMmat)
 
 

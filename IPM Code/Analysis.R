@@ -1,8 +1,8 @@
-########################################################################################################
-########################################################################################################
-##                            Call the IPM and understand the outputs                                 ##
-########################################################################################################
-########################################################################################################
+#######################################################################################################
+#######################################################################################################
+##                            Call the IPM and understand the outputs                                ##
+#######################################################################################################
+#######################################################################################################
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 ## Set the colors for the visuals
 vcol <- "#ad90ec"
@@ -15,11 +15,11 @@ cocol <- "#ab59c8"
 acol <- "#5d906b"
 cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
 
-########################################################################################################
-############################### DETERMINISTIC POST IPM  ################################################
-##                        Calculate the lambda posterior distributions                          ########                                                                                  ##
-########################################################################################################
-########################################################################################################
+######################################################################################################
+############################### DETERMINISTIC POST IPM ###############################################
+##                        Calculate the lambda posterior distributions                              ##
+######################################################################################################
+######################################################################################################
 #### Calculate the lambda posterior distributions
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Post.R
 # Rows correspond to parameter iterations
@@ -37,11 +37,11 @@ lams_dpost
 colnames(lams_dpost) <- scenario
 write.csv(lams_dpost,"det_post_lambda.csv")
 
-########################################################################################################
-################################## STOCHASTIC POST IPM  ################################################
-##                       Calculate the lambda posterior distributions                           ########                                                                                  ##
-########################################################################################################
-########################################################################################################
+######################################################################################################
+################################## STOCHASTIC POST IPM ###############################################
+##                       Calculate the lambda posterior distributions                         ########
+######################################################################################################
+######################################################################################################
 #### Calculate the lambda posterior distributions with stochasticity
 # Set the order or the scenarios
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
@@ -82,11 +82,11 @@ for(n in 1:max_scenario){
 colnames(lams_stoch) <- scenario
 write.csv(lams_stoch,"stoch_post_lambda.csv")
 
-########################################################################################################
-################################## STOCHASTIC NULL POST IPM  ###########################################
-##                       Calculate the lambda posterior distributions                           ########                                                                                  ##
-########################################################################################################
-########################################################################################################
+######################################################################################################
+################################## STOCHASTIC NULL POST IPM ##########################################
+##                       Calculate the lambda posterior distributions                               ##
+######################################################################################################
+######################################################################################################
 #### Calculate the lambda posterior distributions with stochasticity and no possible synchronicity of 
 #### ant effects
 # Set the order or the scenarios
@@ -163,6 +163,7 @@ plot(c(1,3,5,7,9,11,13,15),colMeans(lams_dpost),
      legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),cex = 1.5)
 points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch),
        col = cols, cex = 5)
+points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch_null), cex = 5, pch = 20)
 dev.off()
 
 ## plot the distributions of the deterministic distribution 
@@ -438,11 +439,16 @@ png("portfolio_effect.png")
 plot(density(all_vac_stoch_null), lwd = 3, col = "chartreuse4", ylim = c(0,60))
 lines(density(all_vac_stoch), lwd = 3, col = "violet")
 abline(v = 0, lty = 2, lwd = 3)
+legend("topleft",legend = c("Synchronicity Possible","Synchronicity Excluded"), fill = c("violet","chartreuse4"))
 dev.off()
+# check the mean density 
+mean(all_vac_stoch_null>0)
+mean(all_vac_stoch>0)
+# there appears to be a stronger fitness effect when the ants can fluctuate independently -- not a very strong portfolio effect
+
 # What proprotion of the difference in these is >0
+# 62% confident that there is a fitness boost from partner diversity
 length(subset((all_vac_stoch-all_vac_stoch_null), (all_vac_stoch-all_vac_stoch_null)>0))/100
-
-
 
 
 
