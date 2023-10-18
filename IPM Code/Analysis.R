@@ -153,17 +153,17 @@ lams_stoch_null <- lams_stoch_null[,-c(1)]
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
 ## Plot the means of the deterministic and stochastic distributions together
-png("lambda_means.png")
-plot(c(1,3,5,7,9,11,13,15),colMeans(lams_dpost),
-     col = cols, pch = 20, cex = 5,
-     xlim = c(0,16), ylim = c(0.985,1.01),
+png("lambda_portfolios.png")
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_stoch),
+     col = cols, pch = 1, cex = 5,
+     xlim = c(0,16), ylim = c(0.985,1.0),
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
-     text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_dpost)+0.002,cex = 2, labels = lams$scenario_abv,srt = 35)
+     text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_stoch)+0.002,cex = 2, labels = lams$scenario_abv,srt = 35)
      legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),cex = 1.5)
-points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch),
-       col = cols, cex = 5)
-points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch_null), cex = 5, pch = 20)
+#points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch),
+       #col = cols, cex = 5)
+points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch_null), cex = 5, pch = 18, col = cols)
 dev.off()
 
 ## plot the distributions of the deterministic distribution 
@@ -258,6 +258,18 @@ mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
 legend("topright",legend = c("All Ants"),fill = c(acol),
        cex = 1.5)
+dev.off()
+
+## Plot the portfolio effect result
+group <- c("Real","Real","Null","Null")
+scenario <- c("Vacant","All","Vacant","All")
+values <- c(colMeans(lams_stoch[1]),colMeans(lams_stoch[8]),colMeans(lams_stoch_null[1]),colMeans(lams_stoch_null[8]))
+a <- data.frame(group,scenario,values)
+a
+png("lambda_portfolios.png")
+ggplot(a,aes(fill = scenario, x = group, y = values)) + 
+  geom_bar(position="dodge", stat="identity") + 
+  coord_cartesian(ylim=c(0.985,0.995))
 dev.off()
 
 ######################################################################################################
