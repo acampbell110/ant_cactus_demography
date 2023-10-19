@@ -4,26 +4,27 @@ cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize
 Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
 iter <- 1000
-matsize<-200
+matsize<-400
 ## This code was creating strange size boundaries
 #floor.extend=0.9*cholla_min
 #ceiling.extend=1.1*cholla_max
 lower<- cholla_min
 upper<- cholla_max
 
-
+N_draws <- 1000
+draws <- sample(7500,N_draws, replace=F)
 ## -------- read in MCMC output ---------------------- ##
 #Ali
-#mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
-mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 
 ##These files contain all draws from the posterior distributions of all parameters
 fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
 grow.params <- rstan::extract(fit_grow_stud)
-draws <- sample(7500,1000,replace=F)
+#draws <- sample(7500,1000,replace=F)
 surv.params <- read.csv(paste0(mcmc_dir,"surv.params.csv"), header = TRUE,stringsAsFactors=T)
 flow.params <- read.csv(paste0(mcmc_dir,"flow.params.csv"), header = TRUE,stringsAsFactors=T)
 flow.phi <- read.csv(paste0(mcmc_dir,"flow.phi.csv"), header = TRUE,stringsAsFactors=T)
@@ -41,7 +42,7 @@ multi.params <- read.csv(paste0(mcmc_dir,"multi.params.csv"), header = TRUE,stri
 
 ## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
 ## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
-params <- data.frame(matrix(NA,nrow=1000,ncol=1))
+params <- data.frame(matrix(NA,nrow=N_draws,ncol=1))
 params<-params[,-1]
 ##----------------------Growth Parameters----------------## 
 ## Check the names of the parameters
@@ -72,29 +73,29 @@ params$grow_beta22<-grow.params$beta2[draws,2]				## growth slope
 #### --- Year Random Effects --- ####
 
 ####Ant 1 (prev crem)
-grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,100),rep(0,100),
+grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
                    grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
                    grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
                    grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],grow.params$w[draws,1,15],
-                   rep(0,100),rep(0,100))
+                   rep(0,N_draws),rep(0,N_draws))
 ####Ant 2 (prev liom)
-grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,100),rep(0,100),
+grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
                    grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
                    grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
                    grow.params$w[draws,2,12],grow.params$w[draws,2,13],grow.params$w[draws,2,14],grow.params$w[draws,2,15],
-                   rep(0,100),rep(0,100))
+                   rep(0,N_draws),rep(0,N_draws))
 ####Ant 3 (prev other)
-grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,100),rep(0,100),
+grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
                    grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
                    grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
                    grow.params$w[draws,3,12],grow.params$w[draws,3,13],grow.params$w[draws,3,14],grow.params$w[draws,3,15],
-                   rep(0,100),rep(0,100))
+                   rep(0,N_draws),rep(0,N_draws))
 ####Ant 4 (prev vac)
-grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,100),rep(0,100),
+grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
                    grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
                    grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
                    grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],grow.params$w[draws,4,15],
-                   rep(0,100),rep(0,100))
+                   rep(0,N_draws),rep(0,N_draws))
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -115,29 +116,29 @@ params$surv_beta02<-surv.params$beta0.2     	  ## surv intercept
 params$surv_beta12<-surv.params$beta1.2				##surv slope
 #### --- Year Random Effects --- ####
 ####Ant 1 (prev crem)
-surv_rfx1 <- cbind(surv.params$w.1.1,surv.params$w.1.2,surv.params$w.1.3,rep(0,100),rep(0,100),
+surv_rfx1 <- cbind(surv.params$w.1.1,surv.params$w.1.2,surv.params$w.1.3,rep(0,N_draws),rep(0,N_draws),
                    surv.params$w.1.4,surv.params$w.1.5,surv.params$w.1.6,surv.params$w.1.7,
                    surv.params$w.1.8,surv.params$w.1.9,surv.params$w.1.10,surv.params$w.1.11,
                    surv.params$w.1.12,surv.params$w.1.13,surv.params$w.1.14,surv.params$w.1.15,
-                   surv.params$w.1.16,rep(0,100))
+                   surv.params$w.1.16,rep(0,N_draws))
 ####Ant 2 (prev liom)
-surv_rfx2 <- cbind(surv.params$w.2.1,surv.params$w.2.2,surv.params$w.2.3,rep(0,100),rep(0,100),
+surv_rfx2 <- cbind(surv.params$w.2.1,surv.params$w.2.2,surv.params$w.2.3,rep(0,N_draws),rep(0,N_draws),
                    surv.params$w.2.4,surv.params$w.2.5,surv.params$w.2.6,surv.params$w.2.7,
                    surv.params$w.2.8,surv.params$w.2.9,surv.params$w.2.10,surv.params$w.2.11,
                    surv.params$w.2.12,surv.params$w.2.13,surv.params$w.2.14,surv.params$w.2.15,
-                   surv.params$w.2.16,rep(0,100))
+                   surv.params$w.2.16,rep(0,N_draws))
 ####Ant 3 (prev other)
-surv_rfx3 <- cbind(surv.params$w.3.1,surv.params$w.3.2,surv.params$w.3.3,rep(0,100),rep(0,100),
+surv_rfx3 <- cbind(surv.params$w.3.1,surv.params$w.3.2,surv.params$w.3.3,rep(0,N_draws),rep(0,N_draws),
                    surv.params$w.3.4,surv.params$w.3.5,surv.params$w.3.6,surv.params$w.3.7,
                    surv.params$w.3.8,surv.params$w.3.9,surv.params$w.3.10,surv.params$w.3.11,
                    surv.params$w.3.12,surv.params$w.3.13,surv.params$w.3.14,surv.params$w.3.15,
-                   surv.params$w.3.16,rep(0,100))
+                   surv.params$w.3.16,rep(0,N_draws))
 ####Ant 4 (prev vac)
-surv_rfx4 <- cbind(surv.params$w.4.1,surv.params$w.4.2,surv.params$w.4.3,rep(0,100),rep(0,100),
+surv_rfx4 <- cbind(surv.params$w.4.1,surv.params$w.4.2,surv.params$w.4.3,rep(0,N_draws),rep(0,N_draws),
                    surv.params$w.4.4,surv.params$w.4.5,surv.params$w.4.6,surv.params$w.4.7,
                    surv.params$w.4.8,surv.params$w.4.9,surv.params$w.4.10,surv.params$w.4.11,
                    surv.params$w.4.12,surv.params$w.4.13,surv.params$w.4.14,surv.params$w.4.15,
-                   surv.params$w.4.16,rep(0,100))
+                   surv.params$w.4.16,rep(0,N_draws))
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
@@ -149,8 +150,8 @@ params$flow_sig_w<-flow.params$sigma_w        ## flow sigma w
 params$flow_beta0<-flow.params$beta0          ## flow intercept
 params$flow_beta1<-flow.params$beta1          ## flow slopes
 #### --- Year Random Effects --- ####
-flow_rfx <- cbind(flow.params$w.1,flow.params$w.2,flow.params$w.3,flow.params$w.4,rep(0,100),
-                  rep(0,100),rep(0,100),rep(0,100),rep(0,100),flow.params$w.5,flow.params$w.6,
+flow_rfx <- cbind(flow.params$w.1,flow.params$w.2,flow.params$w.3,flow.params$w.4,rep(0,N_draws),
+                  rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),flow.params$w.5,flow.params$w.6,
                   flow.params$w.7,flow.params$w.8,flow.params$w.9,flow.params$w.10,flow.params$w.11,
                   flow.params$w.12,flow.params$w.13,flow.params$w.14)
 
@@ -165,7 +166,7 @@ params$repro_sig_w<-repro.params$sigma_w    ## repro sigma w
 
 
 repro_rfx <- cbind(repro.params$w.1,repro.params$w.2,repro.params$w.3,repro.params$w.4,
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),repro.params$w.5,repro.params$w.6,
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),repro.params$w.5,repro.params$w.6,
                    repro.params$w.7,repro.params$w.8,repro.params$w.9,repro.params$w.10,repro.params$w.11,
                    repro.params$w.12,repro.params$w.11,repro.params$w.13,repro.params$w.14)
 ##-----------------------Viability Parameters-----------------## 
@@ -184,26 +185,26 @@ params$viab_beta01<-viab.params$beta0.1     	  ## viab intercept
 params$viab_beta02<-viab.params$beta0.2     	  ## viab intercept
 #### --- Year Random Effects --- ####
 ####Ant 1 (prev crem)
-viab_rfx1 <- cbind(rep(0,100),viab.params$w.1.1,viab.params$w.1.2,viab.params$w.1.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.1.4,
+viab_rfx1 <- cbind(rep(0,N_draws),viab.params$w.1.1,viab.params$w.1.2,viab.params$w.1.3,rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.1.4,
                    viab.params$w.1.5,viab.params$w.1.6, viab.params$w.1.7,viab.params$w.1.8,
                    viab.params$w.1.9,viab.params$w.1.10,viab.params$w.1.11,viab.params$w.1.12,
                    viab.params$w.1.13)
 ####Ant 2 (prev liom)
-viab_rfx2 <- cbind(rep(0,100),viab.params$w.2.1,viab.params$w.2.2,viab.params$w.2.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.2.4,
+viab_rfx2 <- cbind(rep(0,N_draws),viab.params$w.2.1,viab.params$w.2.2,viab.params$w.2.3,rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.2.4,
                    viab.params$w.2.5,viab.params$w.2.6, viab.params$w.2.7,viab.params$w.2.8,
                    viab.params$w.2.9,viab.params$w.2.10,viab.params$w.2.11,viab.params$w.2.12,
                    viab.params$w.2.13)
 ####Ant 3 (prev other)
-viab_rfx3 <- cbind(rep(0,100),viab.params$w.3.1,viab.params$w.3.2,viab.params$w.3.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.3.4,
+viab_rfx3 <- cbind(rep(0,N_draws),viab.params$w.3.1,viab.params$w.3.2,viab.params$w.3.3,rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.3.4,
                    viab.params$w.3.5,viab.params$w.3.6, viab.params$w.3.7,viab.params$w.3.8,
                    viab.params$w.3.9,viab.params$w.3.10,viab.params$w.3.11,viab.params$w.3.12,
                    viab.params$w.3.13)
 ####Ant 2 (prev vac)
-viab_rfx4 <- cbind(rep(0,100),viab.params$w.4.1,viab.params$w.4.2,viab.params$w.4.3,rep(0,100),
-                   rep(0,100),rep(0,100),rep(0,100),rep(0,100),viab.params$w.4.4,
+viab_rfx4 <- cbind(rep(0,N_draws),viab.params$w.4.1,viab.params$w.4.2,viab.params$w.4.3,rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.4.4,
                    viab.params$w.4.5,viab.params$w.4.6, viab.params$w.4.7,viab.params$w.4.8,
                    viab.params$w.4.9,viab.params$w.4.10,viab.params$w.4.11,viab.params$w.4.12,
                    viab.params$w.4.13)
@@ -274,39 +275,34 @@ params$multi_betalc <- multi.params$beta.2.1
 params$multi_betall <- multi.params$beta.2.2
 params$multi_betal <- multi.params$beta.5.2
 
-multi_rfx1 <- cbind(rep(0,100),rep(0,100),rep(0,100),rep(0,100),
-                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),
-                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),
-                    rep(0,100),rep(0,100),rep(0,100),rep(0,100),
-                    rep(0,100))
 
 
 
 
 
 
-######################## Tests nothing else ----
-## Crem Random Effects
-c <- rbind(grow_rfx1,surv_rfx1,viab_rfx1)
-colMeans(c)
-mean(c)
-# 0.001281196 -- slightly positive overall mean
-## Liom Random Effects
-l <- rbind(grow_rfx2,surv_rfx2,viab_rfx2)
-colMeans(l)
-mean(l)
-# -0.002160359 -- slightly negative overall mean. 2x the magnitude of crem
-## Other Random Effects
-o <- rbind(grow_rfx3,surv_rfx3,viab_rfx3)
-colMeans(o)
-mean(o)
-# -0.002048737 -- slightly negative overall mean. Very close to liom, but slightly smaller magnitude
-## Vacant Random Effects
-v <- rbind(grow_rfx4,surv_rfx4,viab_rfx4)
-colMeans(v)
-mean(v)
-# -0.0008365305 -- slightly negative overall mean. Smallest magnitude by far
-
+# ######################## Tests nothing else ----
+# ## Crem Random Effects
+# c <- rbind(grow_rfx1,surv_rfx1,viab_rfx1)
+# colMeans(c)
+# mean(c)
+# # 0.001281196 -- slightly positive overall mean
+# ## Liom Random Effects
+# l <- rbind(grow_rfx2,surv_rfx2,viab_rfx2)
+# colMeans(l)
+# mean(l)
+# # -0.002160359 -- slightly negative overall mean. 2x the magnitude of crem
+# ## Other Random Effects
+# o <- rbind(grow_rfx3,surv_rfx3,viab_rfx3)
+# colMeans(o)
+# mean(o)
+# # -0.002048737 -- slightly negative overall mean. Very close to liom, but slightly smaller magnitude
+# ## Vacant Random Effects
+# v <- rbind(grow_rfx4,surv_rfx4,viab_rfx4)
+# colMeans(v)
+# mean(v)
+# # -0.0008365305 -- slightly negative overall mean. Smallest magnitude by far
+# 
 
 
 # IPM functions -----------------------------------------------------------
@@ -1305,18 +1301,18 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
 # big
 
 
-## One ant option
-lambda(bigmatrix(params[14,], lower, upper, matsize, "none",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-## 2 ant options
-lambda(bigmatrix(params[14,],lower,upper,matsize,"cremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"othervac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-## 3 ant options
-lambda(bigmatrix(params[14,],lower,upper,matsize,"liomcremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvacother",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"othercremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-## all ant options
-lambda(bigmatrix(params[14,],lower,upper,matsize,"all",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## One ant option
+# lambda(bigmatrix(params[14,], lower, upper, matsize, "none",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## 2 ant options
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"cremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"othervac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## 3 ant options
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomcremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvacother",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"othercremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## all ant options
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"all",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
 
 
 #########################################################################################################
@@ -1378,36 +1374,36 @@ lambdaSim=function(params,                                  ## parameters
   return(lambdaS)
 }
 
-scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-max_scenario = length(scenario) #n
-max_yrs = 100
-max_rep = 1
-lam <- matrix(data = NA, nrow = max_rep, ncol = max_scenario)
-for(n in 1:max_scenario){
-  print(scenario[n])
-  for(m in 1:max_rep){
-    lam[m,n] <- lambdaSim(params = params[m,],
-                          grow_rfx1 = grow_rfx1[m,],
-                          grow_rfx2 = grow_rfx2[m,],
-                          grow_rfx3 = grow_rfx3[m,],
-                          grow_rfx4 = grow_rfx4[m,],
-                          surv_rfx1 = surv_rfx1[m,],
-                          surv_rfx2 = surv_rfx2[m,],
-                          surv_rfx3 = surv_rfx3[m,],
-                          surv_rfx4 = surv_rfx4[m,],
-                          flow_rfx = flow_rfx[m,],
-                          repro_rfx = repro_rfx[m,],
-                          viab_rfx1 = viab_rfx1[m,],
-                          viab_rfx2 = viab_rfx2[m,],
-                          viab_rfx3 = viab_rfx3[m,],
-                          viab_rfx4 = viab_rfx4[m,],
-                          max_yrs,
-                          matsize = 400,
-                          scenario = scenario[n],
-                          lower,
-                          upper
-    )
-  }
-}
-lam
+# scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+# max_scenario = length(scenario) #n
+# max_yrs = 100
+# max_rep = 1
+# lam <- matrix(data = NA, nrow = max_rep, ncol = max_scenario)
+# for(n in 1:max_scenario){
+#   print(scenario[n])
+#   for(m in 1:max_rep){
+#     lam[m,n] <- lambdaSim(params = params[m,],
+#                           grow_rfx1 = grow_rfx1[m,],
+#                           grow_rfx2 = grow_rfx2[m,],
+#                           grow_rfx3 = grow_rfx3[m,],
+#                           grow_rfx4 = grow_rfx4[m,],
+#                           surv_rfx1 = surv_rfx1[m,],
+#                           surv_rfx2 = surv_rfx2[m,],
+#                           surv_rfx3 = surv_rfx3[m,],
+#                           surv_rfx4 = surv_rfx4[m,],
+#                           flow_rfx = flow_rfx[m,],
+#                           repro_rfx = repro_rfx[m,],
+#                           viab_rfx1 = viab_rfx1[m,],
+#                           viab_rfx2 = viab_rfx2[m,],
+#                           viab_rfx3 = viab_rfx3[m,],
+#                           viab_rfx4 = viab_rfx4[m,],
+#                           max_yrs,
+#                           matsize = 400,
+#                           scenario = scenario[n],
+#                           lower,
+#                           upper
+#     )
+#   }
+# }
+# lam
 

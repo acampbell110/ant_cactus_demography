@@ -32,8 +32,8 @@ library(reshape2)
 knitr::opts_chunk$set(echo = TRUE)
 options(mc.cores = parallel::detectCores())
 
-
-
+getwd()
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 ## import the data -- Cacti (main) 
 #cactus_uncleaned <- read.csv("cholla_demography_20042021.csv", header = TRUE,stringsAsFactors=T)
 cactus <- read.csv("Data Analysis/cholla_demography_20042021.csv", header = TRUE,stringsAsFactors=T)

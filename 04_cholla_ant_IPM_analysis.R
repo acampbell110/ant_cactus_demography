@@ -30,7 +30,11 @@ scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother",
 for(z in 1:length(scenario)){
   print(z)
   #for(m in 1:100){
-  lams_dpost[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
+  lams_dpost[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z],
+                                      grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
+                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+                                      flow_rfx=0,repro_rfx=0,
+                                      viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
   #}
 }
 lams_dpost
