@@ -24,23 +24,51 @@ cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios
-lams_dpost <- matrix(rep(NA, 1*8), nrow = 1, ncol = 8)
+lams_dpost <- matrix(rep(NA, 2*8), nrow = 2, ncol = 8)
 m=1
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-for(z in 1:length(scenario)){
+for(z in 1){
   print(z)
   #for(m in 1:100){
-  lams_dpost[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z],
+  lams_dpost[1,z] <- lambda(bigmatrix(params=params[m,],lower,upper,matsize,scenario[z],
                                       grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                                       surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                                       flow_rfx=0,repro_rfx=0,
                                       viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+  
+  lams_dpost[2,z] <- lambdaSim(params=params[m,],lower=lower,upper=upper,matsize=matsize,scenario=scenario[z],
+                                      grow_rfx1=rep(0,19),grow_rfx2=rep(0,19),grow_rfx3=rep(0,19),grow_rfx4=rep(0,19),
+                                      surv_rfx1=rep(0,19),surv_rfx2=rep(0,19),surv_rfx3=rep(0,19),surv_rfx4=rep(0,19),
+                                      flow_rfx=rep(0,19),repro_rfx=rep(0,19),
+                                      viab_rfx1=rep(0,19),viab_rfx2=rep(0,19),viab_rfx3=rep(0,19),viab_rfx4=rep(0,19),
+                               max_yrs = 1000)
+  
   #}
 }
 lams_dpost
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_dpost) <- scenario
 write.csv(lams_dpost,"det_post_lambda.csv")
+
+lambdaSim(params = params[m,],## parameters
+          grow_rfx1 = rep(0,19),
+          grow_rfx2 = rep(0,19),
+          grow_rfx3 = rep(0,19),
+          grow_rfx4 = rep(0,19),
+          surv_rfx1 = rep(0,19),
+          surv_rfx2 = rep(0,19),
+          surv_rfx3 = rep(0,19),
+          surv_rfx4 = rep(0,19),
+          flow_rfx = rep(0,19),
+          repro_rfx = rep(0,19),
+          viab_rfx1 = rep(0,19),
+          viab_rfx2 = rep(0,19),
+          viab_rfx3 = rep(0,19),
+          viab_rfx4 = rep(0,19),## viability model year rfx
+          max_yrs = max_yrs,        ## the # years you want to iterate
+          matsize=matsize,          ## size of transition matrix
+          scenario = scenario[1],   ## partner diversity scenario
+          lower=lower,upper=upper  )
 
 ######################################################################################################
 ################################## STOCHASTIC POST IPM ###############################################

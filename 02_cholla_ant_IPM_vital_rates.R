@@ -57,7 +57,7 @@ stan_data_grow_stud <- list(N = nrow(growth_data),                              
 #for control parameters see:
 #https://github.com/stan-dev/stan/issues/1504#issuecomment-114685444
 #https://mc-stan.org/rstanarm/reference/adapt_delta.html
-fit_grow_stud<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
+#fit_grow_stud<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
 
 # fit_grow_stud@model_pars
 # bayesplot::mcmc_trace(fit_grow_stud,pars=c("d_0","d_size","a_0","a_size"))
