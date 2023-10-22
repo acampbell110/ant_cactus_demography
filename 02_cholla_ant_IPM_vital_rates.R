@@ -1,50 +1,39 @@
-
-## quantile-based moments
-Q.mean<-function(q.25,q.50,q.75){(q.25+q.50+q.75)/3}
-Q.sd<-function(q.25,q.75){(q.75-q.25)/1.35}
-Q.skewness<-function(q.10,q.50,q.90){(q.10 + q.90 - 2*q.50)/(q.90 - q.10)}
-Q.kurtosis<-function(q.05,q.25,q.75,q.95){
-  qN = qnorm(c(0.05,0.25,0.75,0.95))
-  KG = (qN[4]-qN[1])/(qN[3]-qN[2])
-  return(((q.95-q.05)/(q.75-q.25))/KG - 1)
-}
-
-
+################################################################################
+################################################################################
+## The purpose of this script is to load in the "cleaned" data, subset it 
+## properly, run the data through the stan models, and export the outputs as RDS
+## files.
+################################################################################
+################################################################################
+## Read the data in
 cactus <- read.csv("Data Analysis/cholla_demography_20042021_cleaned.csv", header = TRUE,stringsAsFactors=T)
 
-##############################################################################################
-##
+################################################################################
 ##   Skew Growth Model -- What size will the cacti be next time step?
-##
-##############################################################################################
-## Pull all necessary variables together, remove NAs, and put them into a list so they are
-## ready to feed into the stan model
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
-growth_data <- na.omit(growth_data_orig)
-
-
-## Lose 2032 rows (due to plant death & recruit status)
-#nrow(growth_data_orig)
-#nrow(growth_data)
+growth_data <- na.omit(growth_data_orig) # Lose 2032 rows (due to plant death & recruit status)
+# nrow(growth_data_orig)
+# nrow(growth_data)
 # check that you are happy with the subsetting by plotting the original and cleaned data
-#plot(growth_data$logsize_t, growth_data$logsize_t1)
-#points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
+# plot(growth_data$logsize_t, growth_data$logsize_t1)
+# points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
 ## Make a list of all necessary variables so they are properly formatted to feed into the stan model
-stan_data_grow_stud <- list(N = nrow(growth_data),                                ## number of observations
-                            vol = (growth_data$logsize_t), ## predictor volume year t
-                            vol2 = (growth_data$logsize_t)^2,
+stan_data_grow_stud <- list(N = nrow(growth_data),                                     ## number of observations
+                            vol = (growth_data$logsize_t),                             ## predictor volume year t
+                            vol2 = (growth_data$logsize_t)^2,                          ## non linear volume year t predictor
                             y = (growth_data$logsize_t1),                              ## response volume next year
                             ant = as.integer(as.factor(growth_data$ant_t)),            ## predictor ant state
                             K = 4,                                                     ## number of ant states
                             N_Year = max(as.integer(as.factor(growth_data$Year_t))),   ## number of years
-                            N_Plot = max(as.integer(growth_data$Plot)),     ## number of plots
-                            plot = as.integer(growth_data$Plot),            ## predictor plots
+                            N_Plot = max(as.integer(growth_data$Plot)),                ## number of plots
+                            plot = as.integer(growth_data$Plot),                       ## predictor plots
                             year = as.integer(as.factor(growth_data$Year_t))           ## predictor years
 )
-########## growth model with a student t distribution -- fixed effects: previous size and ant state, ##############
-########## random effects: plot and year, size variation is included for both the omega and alpha estimates #########
-#grow_stud_model <- stan_model("Data Analysis/STAN Models/grow_student_t.stan")
-#fit_grow_stud<-sampling(grow_stud_model,data = stan_data_grow_stud,chains=3,
+# ## Run the growth model with a student t distribution -- fixed effects: previous size and a non linear previous size variable and ant state; random effects: plot and year; size variation is included for both the omega and alpha estimates
+# grow_stud_model <- stan_model("Data Analysis/STAN Models/grow_student_t.stan")
+# fit_grow_stud<-sampling(grow_stud_model,data = stan_data_grow_stud,chains=3,
 #                        control = list(adapt_delta=0.99,stepsize=0.1),
 #                        iter=10000,cores=3,thin=2,
 #                        pars = c("u","w",          # plot and year random effects
@@ -52,462 +41,162 @@ stan_data_grow_stud <- list(N = nrow(growth_data),                              
 #                                 "d_0","d_size","d_size2", #scale coefficiences
 #                                 "a_0","a_size","a_size2"), #shape coefficients
 #                        save_warmup=F)
-#saveRDS(fit_grow_stud, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
-#saveRDS(fit_grow_stud, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
-#for control parameters see:
-#https://github.com/stan-dev/stan/issues/1504#issuecomment-114685444
-#https://mc-stan.org/rstanarm/reference/adapt_delta.html
-fit_grow_stud<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_grow_stud, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
 
-# fit_grow_stud@model_pars
-# bayesplot::mcmc_trace(fit_grow_stud,pars=c("d_0","d_size","a_0","a_size"))
-# bayesplot::mcmc_trace(fit_grow_stud,pars=c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
-# bayesplot::mcmc_trace(fit_grow_stud,pars=c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
-# bayesplot::mcmc_trace(fit_grow_stud,pars=c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
-# 
-# ## real data moments
-# q.fit<-matrix(NA,7,length(stan_data_grow_stud$vol))
-# q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[2,]<-predict(qgam(y~s(vol),qu=0.10,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[3,]<-predict(qgam(y~s(vol),qu=0.25,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[4,]<-predict(qgam(y~s(vol),qu=0.5,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[5,]<-predict(qgam(y~s(vol),qu=0.75,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[6,]<-predict(qgam(y~s(vol),qu=0.90,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[7,]<-predict(qgam(y~s(vol),qu=0.95,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# 
-# obs_mean<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,])
-# obs_sd<-Q.sd(q.fit[3,],q.fit[5,])
-# obs_skew<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
-# obs_kurt<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
-# 
-# plot(stan_data_grow_stud$vol,stan_data_grow_stud$y,pch=".",col="red")
-# points(stan_data_grow_stud$vol,q.fit[1,],col="black",pch=".")
-# points(stan_data_grow_stud$vol,q.fit[2,],col="black",pch=".")
-# points(stan_data_grow_stud$vol,q.fit[3,],col="black",pch=".")
-# points(stan_data_grow_stud$vol,q.fit[4,],col="black",pch=".")
-# points(stan_data_grow_stud$vol,q.fit[5,],col="black",pch=".")
-# points(stan_data_grow_stud$vol,q.fit[6,],col="black",pch=".")
-# points(stan_data_grow_stud$vol,q.fit[7,],col="black",pch=".")
-# 
-# ## simulate data 
-# ## pull params
-# grow_params <- rstan::extract(fit_grow_stud)
-# fit_grow_stud@model_pars
-# ## one simulated dataset
-# n_draws=25
-# grow_sim<-matrix(NA,n_draws,stan_data_grow_stud$N)
-# sim_mean<-sim_sd<-sim_skew<-sim_kurt<-matrix(NA,n_draws,stan_data_grow_stud$N)
-# for(i in 1:n_draws){
-#   for(n in 1:stan_data_grow_stud$N){
-#     grow_sim[i,n]<-rlst(n=1,
-#                         mu=grow_params$beta0[i,stan_data_grow_stud$ant[n]]+
-#                           grow_params$beta1[i,stan_data_grow_stud$ant[n]]*stan_data_grow_stud$vol[n]+
-#                           grow_params$beta2[i,stan_data_grow_stud$ant[n]]*stan_data_grow_stud$vol2[n]+
-#                           grow_params$u[i,stan_data_grow_stud$plot[n]]+
-#                           grow_params$w[i,stan_data_grow_stud$ant[n],stan_data_grow_stud$year[n]],
-#                         sigma=exp(grow_params$d_0[i]+grow_params$d_size[i]*stan_data_grow_stud$vol[n]),
-#                         df=grow_params$a_0[i]+grow_params$a_size[i]*stan_data_grow_stud$vol[n])
-#   }
-#   q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[2,]<-predict(qgam(y~s(vol),qu=0.10,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[3,]<-predict(qgam(y~s(vol),qu=0.25,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[4,]<-predict(qgam(y~s(vol),qu=0.5,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[5,]<-predict(qgam(y~s(vol),qu=0.75,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[6,]<-predict(qgam(y~s(vol),qu=0.90,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[7,]<-predict(qgam(y~s(vol),qu=0.95,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   
-#   sim_mean[i,]<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,]) 
-#   sim_sd[i,]<-Q.sd(q.fit[3,],q.fit[5,])  
-#   sim_skew[i,]<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
-#   sim_kurt[i,]<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
-#   
-#   print(i/n_draws)  
-# }
-# 
-# plot(stan_data_grow_stud$vol,grow_sim[1,],pch=".",col="red")
-# points(stan_data_grow_stud$vol,stan_data_grow_stud$y,pch=".",col="black")
-# 
-# 
-# bayesplot::ppc_dens_overlay(stan_data_grow_stud$y, grow_sim)
-# 
-# matplot(stan_data_grow_stud$vol,t(sim_mean),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_mean)
-# 
-# matplot(stan_data_grow_stud$vol,t(sim_sd),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_sd)
-# 
-# matplot(stan_data_grow_stud$vol,t(sim_skew),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_skew)
-# 
-# matplot(stan_data_grow_stud$vol,t(sim_kurt),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_kurt)
 
-#######################################################################################################
-#######################################################################################################
-##
+################################################################################
 ##  Survival Model -- What is the probability of surviving to the next time step?   
-##
-#######################################################################################################
-#######################################################################################################
-## Pull all necessary variables together, remove NAs, and put them into a list so they are
-## ready to feed into the stan model
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 survival_data_orig <- subset(cactus, is.na(Survival_t1) == FALSE,c("Plot","Year_t","Survival_t1","ant_t","logsize_t"))
 survival_data_orig <- cactus[,c("Plot","Year_t","Survival_t1","ant_t","logsize_t")]
 survival_data <- na.omit(survival_data_orig)
 survival_data <- subset(survival_data, survival_data$Survival_t1 != 2)
-levels(survival_data$ant_t)
-## Lose 1619 rows due to recruit status 
+# levels(survival_data$ant_t)
+# # check how many rows of data your lose: 1619 rows due to recruit status
 # nrow(survival_data_orig)
 # nrow(survival_data)
-# Create Stan Data
-stan_data_surv <- list(N = nrow(survival_data), ## number of observations
-                       vol = (survival_data$logsize_t), ## predictors volume
-                       y_surv = (survival_data$Survival_t1), ## response survival next year
-                       ant = as.integer(as.factor(survival_data$ant_t)),## predictors ants
-                       K = 4, ## number of ant states
-                       N_Year = max(as.integer(as.factor(survival_data$Year_t))), ## number of years
-                       N_Plot = max(as.integer(as.factor(survival_data$Plot))), ## number of plots
-                       plot = as.integer(as.factor(survival_data$Plot)), ## predictor plots
-                       year = as.integer(as.factor(survival_data$Year_t)) ## predictor years
+## Create Stan Data
+stan_data_surv <- list(N = nrow(survival_data),                                    ## number of observations
+                       vol = (survival_data$logsize_t),                            ## predictors volume
+                       y_surv = (survival_data$Survival_t1),                       ## response survival next year
+                       ant = as.integer(as.factor(survival_data$ant_t)),           ## predictors ants
+                       K = 4,                                                      ## number of ant states
+                       N_Year = max(as.integer(as.factor(survival_data$Year_t))),  ## number of years
+                       N_Plot = max(as.integer(as.factor(survival_data$Plot))),    ## number of plots
+                       plot = as.integer(as.factor(survival_data$Plot)),           ## predictor plots
+                       year = as.integer(as.factor(survival_data$Year_t))          ## predictor years
 ) 
+# ## Run the survival model with a bernoulli distribution ---- fixed effects: previous size and ant state; random effects: plot and year
+# surv_model <- stan_model("Data Analysis/STAN Models/surv_code.stan")
+# fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0","beta1"   #location coefficients)
+#                                                          ,save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
 
-## Run the Model
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-# fit_surv <- stan(file = "Data Analysis/STAN Models/surv_code.stan", data = stan_data_surv, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
-# ########## extract the parameters from the model and save a random selection of the iterations
-# ## list all parameters
-# fit_surv@model_pars
-# ## pull all iterations for parameters and save as a data frame
-# surv_outputs <- rstan::extract(fit_surv, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
-# surv_outputs <- as.data.frame(surv_outputs)
-# ## pull 1000 random rows from the data frame and export it
-# draws<-sample(nrow(surv_outputs),1000)
-# surv.params <- surv_outputs[draws,]
-# write.csv(surv.params, "surv.params.csv")
-# ## mu
-# surv_mu <- rstan::extract(fit_surv, pars = c("mu"))
-# surv_mu <- as.data.frame(surv_mu)
-# ## pull 1000 random rows from the data frame and export it
-# surv.mu <- surv_mu[draws,]
-# write.csv(surv.mu, "surv.mu.csv")
-# ## sigma
-# surv_sigma <- rstan::extract(fit_surv, pars = c("sigma"))
-# surv_sigma <- as.data.frame(surv_sigma)
-# ## pull 1000 random rows from the data frame and export it
-# surv.sigma <- surv_sigma[draws,]
-# write.csv(surv.sigma, "surv.sigma.csv")
-# 
-# ## Visualize the posterior distributions
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-# #overlay plot data
-# y <- stan_data_surv$y_surv
-# ant <- stan_data_surv$ant
-# surv_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv.params.csv", header = TRUE,stringsAsFactors=T)
-# surv_data <- surv_data[,c(-1)]
-# surv_data <- as.matrix(surv_data)
-# surv_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv.mu.csv", header = TRUE,stringsAsFactors=T)
-# surv_mu <- surv_mu[,c(-1)]
-# surv_mu <- as.matrix(surv_mu)
-# y_sim <- matrix(NA, 1000,length(y))
-# for(i in 1:1000){
-#   #y_sim[i,] <- rbinom(n=length(y), mean = surv_yrep[i,], sd = surv_sigma[i,])
-#   y_sim[i,] <- rbinom(n=length(y), size=1, prob = invlogit(mean(surv_mu[i,])))
-# }
-# view(y_sim)
-# ## Overlay Plots
-# png(file = "surv_post.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::ppc_dens_overlay_grouped(y, y_sim,group = ant)
-# dev.off()
-# ## Convergence Plots
-# png(file = "surv_conv.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))
-# dev.off()
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
-###### Check the significance of the differences between survival rates
-## create data set where each column is an estimated survival rate
-# surv_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/surv.params.csv", header = TRUE,stringsAsFactors=T)
-# crem_est <- invlogit(mean(surv_out$beta0.1) + mean(surv_out$beta1.1)*size_dummy)
-# liom_est <- invlogit(mean(surv_out$beta0.2) + mean(surv_out$beta1.2)*size_dummy)
-# other_est <- invlogit(mean(surv_out$beta0.3) + mean(surv_out$beta1.3)*size_dummy)
-# vac_est <- invlogit(mean(surv_out$beta0.4) + mean(surv_out$beta1.4)*size_dummy)
-# estimates <- cbind(crem_est, liom_est, other_est, vac_est)
-# ## crem and liom -- p = 2.908 e-14  *** 
-# t.test(estimates[,1],estimates[,2], alternative = "two.sided")
-# ## crem and other -- p = 4.488 e-14 ***
-# t.test(estimates[,1],estimates[,3], alternative = "two.sided")
-# ## crem and vac -- p = 2.2e-16      ***
-# t.test(estimates[,1],estimates[,4], alternative = "two.sided")
-# ## liom and other -- p = 0.4864 
-# t.test(estimates[,2],estimates[,3], alternative = "two.sided")
-# ## liom and vac -- p = 0.3899
-# t.test(estimates[,2],estimates[,4], alternative = "two.sided")
-# ## other and vac -- p = 0.9135
-# t.test(estimates[,3],estimates[,4], alternative = "two.sided")
-
-######################################################################################################
-######################################################################################################
-####
-#### Flowering Model -- What are the total number of fruits produced in the next time step? ##########
-####
-######################################################################################################
-######################################################################################################
+################################################################################
+## Flowering Model -- What are the total number of fruits produced in the next time step?
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 flower_data_orig <- cactus[ , c("TotFlowerbuds_t", "logsize_t","Year_t","Plot")]
 flower_data_orig <- subset(flower_data_orig, TotFlowerbuds_t > 0)
 flower_data <- na.omit(flower_data_orig)
-## Lose 6605 rows of data due to no flower data
+# # Lose 6605 rows of data due to no flower data
 # nrow(flower_data_orig)
 # nrow(flower_data)
 # # check that you're happy with the subsetting
 # plot(flower_data$logsize_t, flower_data$TotFlowerbuds_t)
 # points(cactus$logsize_t, cactus$TotFlowerbuds_t, col = "red")
-# ## Create Stan Data
-stan_data_flow_trunc <- list(N = nrow(flower_data), ## number of observations
-                             lower_limit = 1, ## we want the 0s to be removed
-                             vol = (flower_data$logsize_t), ## predictors volume
-                             y_flow = flower_data$TotFlowerbuds_t, ## response flowers next year
-                             N_Year = max(as.integer(as.factor(flower_data$Year_t))), ## number of years
-                             N_Plot = max(as.integer(as.factor(flower_data$Plot))), ## number of plots
-                             plot = as.integer(as.factor(flower_data$Plot)), ## predictor plots
-                             year = as.integer(as.factor(flower_data$Year_t)) ## predictor years
-) 
-## Run the Model
-# fit_flow_trunc <- stan(file = "Data Analysis/STAN Models/flower_trunc_code.stan", data = stan_data_flow_trunc, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
-# fit_flow_trunc@model_pars
-# draws<-sample(nrow(surv_outputs),1000)
-# ########## extract the parameters from the model and save a random selection of the iterations
-# ## list all parameters
-# ## pull all iterations for parameters and save as a data frame
-# flow_outputs <- rstan::extract(fit_flow_trunc, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
-# flow_outputs <- as.data.frame(flow_outputs)
-# ## pull 1000 random rows from the data frame and export it
-# flow.params <- flow_outputs[draws,]
-# write.csv(flow.params, "flow.params.csv")
-# #### Phi
-# flow_phi <- rstan::extract(fit_flow_trunc, pars = c("phi"))
-# flow_phi <- as.data.frame(flow_phi)
-# ## pull 1000 random rows from the data frame and export it
-# flow.phi <- flow_phi[draws,]
-# write.csv(flow.phi, "flow.phi.csv")
-# #### Mu
-# flow_mu <- rstan::extract(fit_flow_trunc, pars = c("mu"))
-# flow_mu <- as.data.frame(flow_mu)
-# ## pull 1000 random rows from the data frame and export it
-# flow.mu <- flow_mu[draws,]
-# write.csv(flow.mu, "flow.mu.csv")
-# ## Check the posterior distributions
-# y <- flower_data$TotFlowerbuds_t
-# #flow_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/flow.params.csv", header = TRUE,stringsAsFactors=T)
-# flow_data <- read.csv("flow.params.csv", header = TRUE,stringsAsFactors=T)
-# # Create the y rep (needs to be done outside of STAN because of the 0 truncation)
-# y_sim <- matrix(NA,1000,length(y))
-# for(i in 1:1000){
-#   for(j in 1:length(y)){
-#     y_sim[i,j] <- sample(x=1:1000,size=1,replace=T,prob=dnbinom(1:1000, mu = exp(flow.mu[i,j]), size=flow.phi[i]) / (1 - dnbinom(0, mu = exp(flow.mu[i,j]), size=flow.phi[i])))
-#   }
-# }
-# ## Plot the posterior distributions
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-# png("flow_post.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::ppc_dens_overlay(y, y_sim)
-# dev.off()
-# ## Convergence Plots
-# png(file = "flow_conv.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::mcmc_trace(As.mcmc.list(fit_flow_trunc, pars=c("beta0", "beta1")))
-# dev.off()
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-
-#######################################################################################################
-#### Viability Model -- What proportion of fruit are viable? ##########################################
-#######################################################################################################
 ## Create Stan Data
+stan_data_flow_trunc <- list(N = nrow(flower_data),                                   ## number of observations
+                             lower_limit = 1,                                         ## we want the 0s to be removed
+                             vol = (flower_data$logsize_t),                           ## predictors volume
+                             y_flow = flower_data$TotFlowerbuds_t,                    ## response flowers next year
+                             N_Year = max(as.integer(as.factor(flower_data$Year_t))), ## number of years
+                             N_Plot = max(as.integer(as.factor(flower_data$Plot))),   ## number of plots
+                             plot = as.integer(as.factor(flower_data$Plot)),          ## predictor plots
+                             year = as.integer(as.factor(flower_data$Year_t))         ## predictor years
+) 
+# ## Run the flower model with a negative binomial distribution ---- fixed effects: previous size; random effects: plot and year
+# flow_model <- stan_model("Data Analysis/STAN Models/flower_trunc_code.stan")
+# fit_flow<-sampling(flow_model, data = stan_data_flow_trunc,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0","beta1",  #location coefficients
+#                                                          "phi"),save_warmup=F)
+# fit_flow@model_pars
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_flow, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_flow.rds")
+
+################################################################################
+## Viability Model -- What proportion of fruit are viable? 
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 viability_data_orig <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "logsize_t","Year_t","Plot")]
 viability_data_orig <- subset(viability_data_orig, TotFlowerbuds_t1 > 0)
 viability_data <- na.omit(viability_data_orig)
 # levels(viability_data$ant_t)
 # unique(viability_data_orig$Year_t)
-# ## Lose __ Rows of data
+# # Lose Rows of data
 # view(viability_data_orig)
 # nrow(viability_data)
 # # check if you're happy with the subsetting
 # plot(viability_data$logsize_t, viability_data$ABFlowerbuds_t1)
-# plot(viability_data_orig$logsize_t, viability_data_orig$ABFlowerbuds_t1, col = "red") 
-
-stan_data_viab <- list(N = nrow(viability_data), ## number of observations
-                       good = viability_data$Goodbuds_t1,
-                       abort = viability_data$ABFlowerbuds_t1, ## aborted buds data
-                       tot = viability_data$TotFlowerbuds_t1, ## number of trials
-                       ant = as.integer(as.factor(viability_data$ant)),## predictors ants
-                       K = 4, ## number of ant states
+# plot(viability_data_orig$logsize_t, viability_data_orig$ABFlowerbuds_t1, col = "red")
+## Create stan data subset
+stan_data_viab <- list(N = nrow(viability_data),                                   ## number of observations
+                       good = viability_data$Goodbuds_t1,                          ## number of good flowerbuds 
+                       abort = viability_data$ABFlowerbuds_t1,                     ## aborted buds data
+                       tot = viability_data$TotFlowerbuds_t1,                      ## number of trials
+                       ant = as.integer(as.factor(viability_data$ant)),            ## predictors ants
+                       K = 4,                                                      ## number of ant states
                        N_Year = max(as.integer(as.factor(viability_data$Year_t))), ## number of years
-                       N_Plot = max(as.integer(as.factor(viability_data$Plot))), ## number of plots
-                       plot = as.integer(as.factor(viability_data$Plot)), ## predictor plots
-                       year = as.integer(as.factor(viability_data$Year_t)) ## predictor years
+                       N_Plot = max(as.integer(as.factor(viability_data$Plot))),   ## number of plots
+                       plot = as.integer(as.factor(viability_data$Plot)),          ## predictor plots
+                       year = as.integer(as.factor(viability_data$Year_t))         ## predictor years
 ) 
-## Run the Model
-# fit_viab <- stan(file = "Data Analysis/STAN Models/viab_code.stan", data = stan_data_viab, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
-# fit_viab@model_pars
-# draws<-sample(nrow(surv_outputs),1000)
-# ## list all parameters
-# ## pull all iterations for parameters and save as a data frame
-# viab_outputs <- rstan::extract(fit_viab, pars = c("w","beta0","u","sigma_w","sigma_u"))
-# viab_outputs <- as.data.frame(viab_outputs)
-# ## pull 1000 random rows from the data frame and export it
-# viab.params <- viab_outputs[draws,]
-# write.csv(viab.params, "viab.params.csv")
-# ## pull all iterations for parameters and save as a data frame
-# viab_sigma <- rstan::extract(fit_viab, pars = c("sigma"))
-# viab_sigma <- as.data.frame(viab_sigma)
-# ## pull 1000 random rows from the data frame and export it
-# viab.sigma <- viab_sigma[draws,]
-# write.csv(viab.sigma, "viab.sigma.csv")
-# ## pull all iterations for parameters and save as a data frame
-# viab_mu <- rstan::extract(fit_viab, pars = c("mu"))
-# viab_mu <- as.data.frame(viab_mu)
-# ## pull 1000 random rows from the data frame and export it
-# viab.mu <- viab_mu[draws,]
-# write.csv(viab.mu, "viab.mu.csv")
-# 
-# ## Check the Posterior Distribution
-# y <- viability_data$Goodbuds_t1
-# #viab_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.params.csv", header = TRUE,stringsAsFactors=T)
-# viab_data <- read.csv("viab.params.csv", header = TRUE,stringsAsFactors=T)
-# viab_data <- viab_data[,c(-1)]
-# viab_data <- as.matrix(viab_data)
-# #viab_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.mu.csv", header = TRUE,stringsAsFactors=T)
-# viab_mu <- read.csv("viab.mu.csv", header = TRUE,stringsAsFactors=T)
-# viab_mu <- viab_mu[,c(-1)]
-# viab_mu <- as.matrix(viab_mu)
-# y_sim <- matrix(NA,1000,length(y))
-# for(i in 1:1000){
-#   y_sim[i,] <- rbern(n = length(y), prob = invlogit(mean(viab_mu[i,])))
-# }
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-# ## Overlay Plots
-# png(file = "viab_post.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::ppc_dens_overlay(y, y_sim)
-# dev.off()
-# png(file = "viab_ant_post.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::ppc_dens_overlay_grouped(y, y_sim,group = as.integer(as.factor(viability_data$ant)))
-# dev.off()
-# ## Convergence Plots
-# png(file = "viab_conv.png")
-# bayesplot::color_scheme_set(scheme = "pink")
-# bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
-# dev.off()
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-# 
-# ###### Check the significance of the differences between survival rates
-# ## create data set where each column is an estimated survival rate
-# viab_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/viab.params.csv", header = TRUE,stringsAsFactors=T)
-# crem_est <- (invlogit(viab_out$beta0.3))
-# liom_est <- (invlogit(viab_out$beta0.4))
-# other_est <- (invlogit(viab_out$beta0.2))
-# vac_est <- (invlogit(viab_out$beta0.1))
-# estimates <- cbind(crem_est, liom_est, other_est, vac_est)
-# ## crem and liom -- p = 2.2 e-16  *** 
-# t.test(estimates[,1],estimates[,2], alternative = "two.sided")
-# ## crem and other -- p = 0.1168
-# t.test(estimates[,1],estimates[,3], alternative = "two.sided")
-# ## crem and vac -- p = 2.2e-16    ***
-# t.test(estimates[,1],estimates[,4], alternative = "two.sided")
-# ## liom and other -- p = 2.2 e-16 
-# t.test(estimates[,2],estimates[,3], alternative = "two.sided")
-# ## liom and vac -- p = 2.2 e-16.  ***
-# t.test(estimates[,2],estimates[,4], alternative = "two.sided")
-# ## other and vac -- p = 2.2 e-16. ***
-# t.test(estimates[,3],estimates[,4], alternative = "two.sided")
+# ## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
+# viab_model <- stan_model("Data Analysis/STAN Models/viab_code.stan")
+# fit_viab<-sampling(viab_model, data = stan_data_viab,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0"           #location coefficients
+#                                                          ),save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_viab, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
 
-#####################################################################################################
-##### 
-#####        Reproductive State Model -- Prob of reproducing at next time step           #############################
-##### 
-#####################################################################################################
-## Repro Data Set
+
+
+################################################################################
+## Reproductive State Model -- Prob of reproducing at next time step   
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 reproductive_data_orig <- cactus[ , c("flower1_YN","logsize_t","Year_t","Plot", "logsize_t1")]
 reproductive_data <- na.omit(reproductive_data_orig)
-# check that you're happy with the subsetting
+# # check that you're happy with the subsetting
 # plot(reproductive_data$logsize_t, reproductive_data$flower1_YN)
 # points(cactus$logsize_t, cactus$flower1_YN, col = "red")
-# ## Lose 3332 rows of data because only including 
+# # Lose 3332 rows of data because only including
 # nrow(reproductive_data_orig)
 # nrow(reproductive_data)
-# ## Create Stan Data
-stan_data_repro <- list(N = nrow(reproductive_data), ## number of observations
-                        vol = reproductive_data$logsize_t1, ## predictors volume
-                        y_repro = reproductive_data$flower1_YN, ## response volume next year
+## Create Stan Data
+stan_data_repro <- list(N = nrow(reproductive_data),                                   ## number of observations
+                        vol = reproductive_data$logsize_t1,                            ## predictors volume
+                        y_repro = reproductive_data$flower1_YN,                        ## response volume next year
                         N_Year = max(as.integer(as.factor(reproductive_data$Year_t))), ## number of years
-                        N_Plot = max(as.integer(as.factor(reproductive_data$Plot))), ## number of plots
-                        plot = as.integer(as.factor(reproductive_data$Plot)), ## predictor plots
-                        year = as.integer(as.factor(reproductive_data$Year_t)) ## predictor years
+                        N_Plot = max(as.integer(as.factor(reproductive_data$Plot))),   ## number of plots
+                        plot = as.integer(as.factor(reproductive_data$Plot)),          ## predictor plots
+                        year = as.integer(as.factor(reproductive_data$Year_t))         ## predictor years
 ) 
-## Run the Model
-#Check if the model is written to the right place
-#stanc("STAN Models/repro_mix_ant.stan")
-# fit_repro <- stan(file = "Data Analysis/STAN Models/repro_code.stan", data = stan_data_repro, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
-# fit_repro@model_pars
-# ########## extract the parameters from the model and save a random selection of the iterations
-# ## list all parameters
-# ## pull all iterations for parameters and save as a data frame
-# repro_outputs <- rstan::extract(fit_repro, pars = c("w","beta0","beta1","u","sigma_w","sigma_u"))
-# repro_outputs <- as.data.frame(repro_outputs)
-# ## pull 1000 random rows from the data frame and export it
-# draws<-sample(nrow(repro_outputs),1000)
-# repro.params <- repro_outputs[draws,]
-# write.csv(repro.params, "repro.params.csv")
-# ## Mu
-# ## pull all iterations for parameters and save as a data frame
-# repro_mu <- rstan::extract(fit_repro, pars = c("mu"))
-# repro_mu <- as.data.frame(repro_mu)
-# ## pull 1000 random rows from the data frame and export it
-# repro.mu <- repro_mu[draws,]
-# write.csv(repro.mu, "repro.mu.csv")
-# ## Sigma
-# ## pull all iterations for parameters and save as a data frame
-# repro_sigma <- rstan::extract(fit_repro, pars = c("sigma"))
-# repro_sigma <- as.data.frame(repro_sigma)
-# ## pull 1000 random rows from the data frame and export it
-# repro.sigma <- repro_sigma[draws,]
-# write.csv(repro.sigma, "repro.sigma.csv")
-# ## Check the Posteriors
-# #repro_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.params.csv", header = TRUE,stringsAsFactors=T)
-# repro_data <- read.csv("repro.params.csv", header = TRUE,stringsAsFactors=T)
-# repro_data <- repro_data[,c(-1)]
-# repro_data <- as.matrix(repro_data)
-# #repro_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/repro.mu.csv", header = TRUE,stringsAsFactors=T)
-# repro_mu <- read.csv("repro.mu.csv", header = TRUE,stringsAsFactors=T)
-# repro_mu <- repro_mu[,c(-1)]
-# repro_mu <- as.matrix(repro_mu)
-# y <- as.numeric(reproductive_data$flower1_YN)
-# y_sim <- matrix(NA,1000,length(y))
-# for(i in 1:1000){
-#   y_sim[i,] <- rbern(n = length(y), prob = invlogit(mean(repro_mu[i,])))
-# }
-# ## Overlay Plots
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-# png(file = "repro_post.png")
-# bayesplot::ppc_dens_overlay(y, y_sim)
-# dev.off()
-# ## Convergence Plots
-# png(file = "repro_conv.png")
-# bayesplot::mcmc_trace(As.mcmc.list(fit_repro, pars=c("beta0","beta1","sigma_u","sigma_w")))
-# dev.off()
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+# ## Run the reproductive Model with a bernoulli distribution ---- fixed effects: previous size ; random effects: plot and year
+# repro_model <- stan_model("Data Analysis/STAN Models/repro_code.stan")
+# fit_repro<-sampling(repro_model, data = stan_data_repro,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0","beta1"   #location coefficients
+#                                                          ),save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_repro, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
+
 
 ######################################################################################################
 #### Seeds Model -- # Seeds per fruit/flower #########################################################
 ######################################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 seed_uncleaned <- read.csv("Data Analysis/JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
-## PEAA = Ant Access
-## PAAA = Ant Access
-## PEAE = Ant Exclusion
-## PAAE = Ant Exclusion
+# PEAA = Ant Access
+# PAAA = Ant Access
+# PEAE = Ant Exclusion
+# PAAE = Ant Exclusion
 seed <- subset(seed_uncleaned, treatment == "PAAA" | treatment == "PAAE")
 #make the column for the ant state of the part of the plant producing seeds
 for(i in 1:nrow(seed)){
@@ -528,7 +217,6 @@ for(i in 1:nrow(seed)){
     seed$ant_state[i] <- "Liom"
   }
 }
-
 seed_data <- seed
 seed_data <- na.omit(seed_data)
 seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
@@ -540,139 +228,54 @@ seed_data <- subset(seed_data, seed_count > 0)
 # points(seed_data$fruit_number, col = "red")
 # nrow(seed)
 # nrow(seed_data)
-# ## Create Stan Data
-stan_data_seed <- list(N = nrow(seed_data),
-                       K = 3,
-                       ant = as.integer(as.factor(seed_data$ant)),
-                       seed = seed_data$seed_count)
+## Create Stan Data
+stan_data_seed <- list(N = nrow(seed_data),                            ## number of observations
+                       K = 3,                                          ## number of ant states
+                       ant = as.integer(as.factor(seed_data$ant)),     ## ant partners data
+                       seed = seed_data$seed_count)                    ## number of seeds data
+# ## Run the seeds Model with a negative binomial distribution ---- fixed effects: ant partner ;
+# seed_model <- stan_model("Data Analysis/STAN Models/seed_code.stan")
+# fit_seed<-sampling(seed_model, data = stan_data_seed,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("beta0","phi"   #location coefficients
+#                                                          ),save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_seed, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed.rds")
 
-## Run the model
-# fit_seed <- stan(file = "Data Analysis/STAN Models/seed_code.stan", data = stan_data_seed, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
-# fit_seed@model_pars
-# ## pull all iterations for parameters and save as a data frame
-# seed_outputs <- rstan::extract(fit_seed, pars = c("beta0"))
-# seed_outputs <- as.data.frame(seed_outputs)
-# ## pull 1000 random rows from the data frame and export it
-# seed.params <- seed_outputs[draws,]
-# write.csv(seed.params, "seed.params.csv")
-# ## mu
-# seed_mu <- rstan::extract(fit_seed, pars = c("mu"))
-# seed_mu <- as.data.frame(seed_mu)
-# ## pull 1000 random rows from the data frame and export it
-# seed.mu <- seed_mu[draws,]
-# write.csv(seed.mu, "seed.mu.csv")
-# ## sigma
-# seed_sigma <- rstan::extract(fit_seed, pars = c("sigma"))
-# seed_sigma <- as.data.frame(seed_sigma)
-# ## pull 1000 random rows from the data frame and export it
-# seed.sigma <- seed_sigma[draws,]
-# write.csv(seed.sigma, "seed.sigma.csv")
-# ## phi
-# seed_phi <- rstan::extract(fit_seed, pars = c("phi"))
-# seed_phi <- as.data.frame(seed_phi)
-# ## pull 1000 random rows from the data frame and export it
-# seed.phi <- seed_phi[draws,]
-# write.csv(seed.phi, "seed.phi.csv")
-# ## Check the Posteriors
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-# seed_data <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.params.csv", header = TRUE,stringsAsFactors=T)
-# seed_data <- seed_data[,c(-1)]
-# seed_data <- as.matrix(seed_data)
-# seed_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.mu.csv", header = TRUE,stringsAsFactors=T)
-# seed_mu <- seed_mu[,c(-1)]
-# seed_mu <- as.matrix(seed_mu)
-# seed_phi <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.phi.csv", header = TRUE,stringsAsFactors=T)
-# seed_phi <- seed_phi[,c(-1)]
-# seed_phi <- as.matrix(seed_phi)
-# y <- stan_data_seed$seed
-# ant = stan_data_seed$ant
-# y_sim <- matrix(NA,1000,length(y))
-# for(i in 1:1000){
-#   y_sim[i,] <- rnegbin(n = length(y), mu = seed_mu[i,], theta = seed_phi[i,])
-# }
-# ## Overlay Plots
-# png(file = "seed_post.png")
-# bayesplot::ppc_dens_overlay(y, y_sim)
-# dev.off()
-# png(file = "seed_ant_post.png")
-# bayesplot::ppc_dens_overlay_grouped(y, y_sim,group = ant)
-# dev.off()
-# ## Convergence Plots
-# png(file = "seed_conv.png")
-# bayesplot::mcmc_trace(As.mcmc.list(fit_seed, pars=c("beta0")))
-# dev.off()
-# 
-# ###### Check the significance of the differences between survival rates
-# ## create data set where each column is an estimated survival rate
-# seed_out <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.params.csv", header = TRUE,stringsAsFactors=T)
-# crem_est <- (exp(viab_out$beta0.1))
-# liom_est <- (exp(viab_out$beta0.2))
-# vac_est <- (exp(viab_out$beta0.3))
-# estimates <- cbind(crem_est, liom_est, vac_est)
-# ## crem and liom -- p = 2.2 e-16  *** 
-# t.test(estimates[,1],estimates[,2], alternative = "two.sided")
-# ## crem and vac -- p = 2.2e-16    ***
-# t.test(estimates[,1],estimates[,3], alternative = "two.sided")
-# ## liom and vac -- p = 0.02521 
-# t.test(estimates[,2],estimates[,3], alternative = "two.sided")
-# 
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
-###############################################################################################################################
-#### Seed Survival Pre Census -- Proportion of seeds that survive from germination to Census ##################################
-###############################################################################################################################
+################################################################################
+## Seed Survival Pre Census -- Proportion of seeds that survive from germination to Census
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 precensus.dat.orig<-read.csv("Data Analysis/PrecensusSurvival.csv") 
 precensus.dat <- precensus.dat.orig[ , c("Transect","Seed","Log.size","survive0405")]
 precensus.dat <- na.omit(precensus.dat)
-## You lose no data here, but it is still a small dataset. 
+# # You lose no data here, but it is still a small dataset.
 # nrow(precensus.dat)
 # nrow(precensus.dat.orig)
 # # check that you're happy with the subsetting
 # plot(precensus.dat$Log.size, jitter(precensus.dat$survive0405))
 # points(precensus.dat.orig$Log.size, jitter(precensus.dat.orig$survive0405), col = "red")
 ## Create Stan Data
-stan_data_seed_surv <- list(N = nrow(precensus.dat),
-                            N_Transect = length(unique(precensus.dat$Transect)),
-                            transect = as.integer(as.factor(precensus.dat$Transect)),
-                            y = precensus.dat$survive0405)
-
-## Run the model
-# fit_seed_surv <- stan(file = "Data Analysis/STAN Models/seed_surv_code.stan", data = stan_data_seed_surv, warmup = 1500, iter = 10000, chains = 3, cores = 3, thin = 1)
-# fit_seed_surv@model_pars
-# ## pull all iterations for parameters and save as a data frame
-# seed_surv_outputs <- rstan::extract(fit_seed_surv, pars = c("beta0","w","sigma_w","mu","sigma"))
-# seed_surv_outputs <- as.data.frame(seed_surv_outputs)
-# ## pull 1000 random rows from the data frame and export it
-# seed.surv.params <- seed_surv_outputs[draws,]
-# write.csv(seed.surv.params, "seed.surv.params.csv")
-# ## yrep
-# seed_surv_yrep <- rstan::extract(fit_seed_surv, pars = c("y_rep"))
-# seed_surv_yrep <- as.data.frame(seed_surv_yrep)
-# ## pull 1000 random rows from the data frame and export it
-# seed.surv.yrep <- seed_surv_yrep[draws,]
-# write.csv(seed.surv.yrep, "seed.surv.yrep.csv")
-# summary(fit_seed_surv)[1]
-# ## Check the Posteriors
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-# y <- precensus.dat$survive0405
-# seed_surv_mu <- read.csv("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/seed.surv.yrep.csv", header = TRUE,stringsAsFactors=T)
-# seed_surv_mu <- seed_surv_mu[,c(-1)]
-# seed_surv_mu <- as.matrix(seed_surv_mu)
-# ## Overlay Plots
-# png(file = "seed_surv_post.png")
-# bayesplot::ppc_dens_overlay(y, seed_surv_mu)
-# dev.off()
-# ## Convergence Plots
-# png(file = "seed_surv_conv.png")
-# bayesplot::mcmc_trace(As.mcmc.list(fit_seed_surv, pars=c("beta0")))
-# dev.off()
-# setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-# 
+stan_data_seed_surv <- list(N = nrow(precensus.dat),                                  ## number of observations
+                            N_Transect = length(unique(precensus.dat$Transect)),      ## Number of transects
+                            transect = as.integer(as.factor(precensus.dat$Transect)), ## transect
+                            y = precensus.dat$survive0405)                            ## survival data
+# ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
+# seed_surv_model <- stan_model("Data Analysis/STAN Models/seed_surv_code.stan")
+# fit_seed<-sampling(seed_surv_model, data = stan_data_seed_surv,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("beta0","phi"   #location coefficients
+#                                                          ),save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_seed_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
 
 
-######################################################################################################
-#### Germination -- Probability of germinating by the next time step (yr 1&2) ########################
-######################################################################################################
+################################################################################
+## Germination -- Probability of germinating by the next time step (yr 1&2) 
+################################################################################
 germ.dat_orig<-read.csv("Data Analysis/Germination.csv") 
 germ.dat_orig$rate <- 0
 for(i in 1:nrow(germ.dat_orig)){
