@@ -4,7 +4,7 @@ data {
   int<lower=1> D; // Number of fixed effect predictor variables
   int<lower=1> P; // Number of random effect predictor variables
   int<lower=1> N_Year; // Number of Years
-  int<lower=1, upper=K> y[N]; // Outcomes
+  int<lower=1,upper=K> y[N]; // Outcomes
   matrix[N, D] x; // All fixed effect predictor variables as a matrix
   matrix[N, P] z; // All random effect predictor variables
 }
@@ -29,13 +29,13 @@ model {
     matrix[N, K] x_beta = (x * beta); // fixed effects
     matrix[N, K] z_theta = (z * theta); // random effects
   // Priors
-  for(i in 1:(K-1)){
-   theta_raw[,i] ~ normal(0,sigma_w[i]);
- }
+  //for(i in 1:(K-1)){
+  // theta_raw[,i] ~ normal(0,sigma_w[i]);
+ //}
   //to_vector(beta) ~ normal(0, 5); 
 
-  for (n in 1:N) {
-    y[n] ~ categorical_logit(x_beta[n]' + z_theta[n]');
+  for (m in 1:N) {
+    y[m] ~ categorical_logit(x_beta[m]');
 
   }
 }
