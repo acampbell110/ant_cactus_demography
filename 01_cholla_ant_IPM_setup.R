@@ -12,6 +12,7 @@
 library(rstan)
 library(sn)
 library(sgt)
+library(qgam)
 # ipm analysis
 library(popbio)
 # max likelihood models
