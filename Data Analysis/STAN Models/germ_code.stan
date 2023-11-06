@@ -6,7 +6,6 @@ data {
   int<lower=1> trials[N]; // number of seeds put out
 }
 parameters {
-  real < lower = 1> phi;
   real beta0; //intercept
   real < lower = 0 > sigma; // Error SD
 }
