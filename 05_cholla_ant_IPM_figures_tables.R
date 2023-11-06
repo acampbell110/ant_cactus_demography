@@ -288,20 +288,7 @@ dev.off()
 #########################################################################################################################
 #### Growth Visuals #####################################################################################################
 ##########################################################################################################################################################################################################
-## Extract & Format Data
-growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
-growth_data <- na.omit(growth_data_orig)
-#extract from original data
-y_subset <- growth_data[,c("logsize_t1","ant_t", "logsize_t")]
-y_crem_subset_grow <- subset(y_subset, ant_t == "crem")
-y_liom_subset_grow <- subset(y_subset, ant_t == "liom")
-y_vac_subset_grow <- subset(y_subset, ant_t == "vacant")
-y_other_subset_grow <- subset(y_subset, ant_t == "other")
-## Size dummies for each subset
-size_crem <- seq(min(y_crem_subset_grow$logsize_t, na.rm = TRUE), max(y_crem_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
-size_liom <- seq(min(y_liom_subset_grow$logsize_t, na.rm = TRUE), max(y_liom_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
-size_other <- seq(min(y_other_subset_grow$logsize_t, na.rm = TRUE), max(y_other_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
-size_vac <- seq(min(y_vac_subset_grow$logsize_t, na.rm = TRUE), max(y_vac_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
+
 
 
 fit_grow_stud<-readRDS("/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
@@ -668,7 +655,7 @@ surv_plot_vac$N_mod <- log(surv_plot_vac$N)
 ## Panel Plots
 ## For paper -- No title and separated into panels by ant partner
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-png("surv_panels2021.png")
+png("surv_panels.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
