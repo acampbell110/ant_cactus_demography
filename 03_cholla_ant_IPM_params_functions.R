@@ -1,144 +1,155 @@
+## Set conditions for the IPM 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
-
 Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
 iter <- 1000
 matsize<-400
-## This code was creating strange size boundaries
-#floor.extend=0.9*cholla_min
-#ceiling.extend=1.1*cholla_max
 lower<- cholla_min
 upper<- cholla_max
-
+set.seed(333) # picked random number
 N_draws <- 1000
 draws <- sample(7500,N_draws, replace=F)
+years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
+## Choose your pathway to pull from 
 #Ali
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
 #mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
-
-##These files contain all draws from the posterior distributions of all parameters
+## These files contain all draws from the posterior distributions of all parameters
+# growth model
 fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
 grow.params <- rstan::extract(fit_grow_stud)
-#draws <- sample(7500,1000,replace=F)
-surv.params <- read.csv(paste0(mcmc_dir,"surv.params.csv"), header = TRUE,stringsAsFactors=T)
-flow.params <- read.csv(paste0(mcmc_dir,"flow.params.csv"), header = TRUE,stringsAsFactors=T)
-flow.phi <- read.csv(paste0(mcmc_dir,"flow.phi.csv"), header = TRUE,stringsAsFactors=T)
-viab.params <- read.csv(paste0(mcmc_dir,"viab.params.csv"), header = TRUE,stringsAsFactors=T)
-repro.params <- read.csv(paste0(mcmc_dir,"repro.params.csv"), header = TRUE,stringsAsFactors=T)
-seed.params <- read.csv(paste0(mcmc_dir,"seed.params.csv"), header = TRUE,stringsAsFactors=T)
-pre.seed.params <- read.csv(paste0(mcmc_dir,"seed.surv.params.csv"), header = TRUE,stringsAsFactors=T)
-germ1.params <- read.csv(paste0(mcmc_dir,"germ1.params.csv"), header = TRUE,stringsAsFactors=T)
-germ2.params <- read.csv(paste0(mcmc_dir,"germ2.params.csv"), header = TRUE,stringsAsFactors=T)
-rec.params <- read.csv(paste0(mcmc_dir,"rec.params.csv"), header = TRUE,stringsAsFactors=T)
-
-
-##This file contains random draws from the posterior distributions of the transition models 
-multi.params <- read.csv(paste0(mcmc_dir,"multi.params.csv"), header = TRUE,stringsAsFactors=T)
-
-## 'cholla' is a matrix where rows are vital rate coefficients and columns are posterior draws
-## below, we will loop over columns, sending each set of coefficients into the stochastic IPM
+# survival model
+fit_surv<-readRDS(paste0(mcmc_dir,"fit_surv.rds"))
+surv.params <- rstan::extract(fit_surv)
+# flowers produced model
+fit_flow<-readRDS(paste0(mcmc_dir,"fit_flow.rds"))
+flow.params <- rstan::extract(fit_flow)
+# viability of flowers model
+fit_viab<-readRDS(paste0(mcmc_dir,"fit_viab.rds"))
+viab.params <- rstan::extract(fit_viab)
+# reproducing model
+fit_repro<-readRDS(paste0(mcmc_dir,"fit_repro.rds"))
+repro.params <- rstan::extract(fit_repro)
+# seeds per flower model
+fit_seed<-readRDS(paste0(mcmc_dir,"fit_seed.rds"))
+seed.params <- rstan::extract(fit_seed)
+# pre census seed survival model
+fit_seed_surv<-readRDS(paste0(mcmc_dir,"fit_seed_surv.rds"))
+pre.seed.params <- rstan::extract(fit_seed_surv)
+# germination year 1 model
+fit_germ1<-readRDS(paste0(mcmc_dir,"fit_germ1.rds"))
+germ1.params <- rstan::extract(fit_germ1)
+# germination year 2 model
+fit_germ2<-readRDS(paste0(mcmc_dir,"fit_germ2.rds"))
+germ2.params <- rstan::extract(fit_germ2)
+# recruit size distribution model
+fit_rec<-readRDS(paste0(mcmc_dir,"fit_rec.rds"))
+rec.params <- rstan::extract(fit_rec)
+# ant transitions model
+fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi.rds"))
+multi.params <- rstan::extract(fit_multi)
+## 'params' is a matrix where rows are vital rate coefficients and columns are posterior draws
+# below, we will loop over columns, sending each set of coefficients into the IPM
 params <- data.frame(matrix(NA,nrow=N_draws,ncol=1))
 params<-params[,-1]
 ##----------------------Growth Parameters----------------## 
-## Check the names of the parameters
-#head(grow.params)
-#### No specific ant
+# No specific ant
 params$grow_sig0 <- grow.params$d_0[draws]           ## growth error intercept
 params$grow_sig1 <- grow.params$d_size[draws]        ## ## growth error size
 params$grow_alp0 <- grow.params$a_0[draws]
 params$grow_alp1 <- grow.params$a_size[draws]
 params$grow_sig_u<-grow.params$sigma_u[draws]
 params$grow_sig_w<-grow.params$sigma_w[draws]
-####Ant 1 (vacant)
+# Ant 4 (vacant)
 params$grow_beta04<-grow.params$beta0[draws,4]     	  ## growth intercept
 params$grow_beta14<-grow.params$beta1[draws,4]				## growth slope
 params$grow_beta24<-grow.params$beta2[draws,4]				## growth slope
-####Ant 2 (other)
+# Ant 3 (other)
 params$grow_beta03<-grow.params$beta0[draws,3]     	  ## growth intercept
 params$grow_beta13<-grow.params$beta1[draws,3]				## growth slope
 params$grow_beta23<-grow.params$beta2[draws,3]				## growth slope
-####Ant 3 (crem)
+# Ant 1 (crem)
 params$grow_beta01<-grow.params$beta0[draws,1]     	  ## growth intercept
 params$grow_beta11<-grow.params$beta1[draws,1]				## growth slope
 params$grow_beta21<-grow.params$beta2[draws,1]				## growth slope
-####Ant 4 (liom)
-params$grow_beta02<-grow.params$beta0[draws,2]     	## growth intercept
+# Ant 2 (liom)
+params$grow_beta02<-grow.params$beta0[draws,2]      	## growth intercept
 params$grow_beta12<-grow.params$beta1[draws,2]				## growth slope
 params$grow_beta22<-grow.params$beta2[draws,2]				## growth slope
-#### --- Year Random Effects --- ####
-
-####Ant 1 (prev crem)
-grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
-                   grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
-                   grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],grow.params$w[draws,1,15],
-                   rep(0,N_draws),rep(0,N_draws))
-####Ant 2 (prev liom)
-grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
-                   grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
-                   grow.params$w[draws,2,12],grow.params$w[draws,2,13],grow.params$w[draws,2,14],grow.params$w[draws,2,15],
-                   rep(0,N_draws),rep(0,N_draws))
-####Ant 3 (prev other)
-grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
-                   grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
-                   grow.params$w[draws,3,12],grow.params$w[draws,3,13],grow.params$w[draws,3,14],grow.params$w[draws,3,15],
-                   rep(0,N_draws),rep(0,N_draws))
-####Ant 4 (prev vac)
-grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
-                   grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
-                   grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],grow.params$w[draws,4,15],
-                   rep(0,N_draws),rep(0,N_draws))
+## Year Random Effects
+# Create a dataframe for random effects where the columns are the year name and the rows are the iterations
+# Ant 1 (prev crem)
+grow_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 18))
+colnames(grow_rfx1) <- years
+grow_rfx1$'2004' <- grow.params$w[draws,1,1];grow_rfx1$'2005' <- grow.params$w[draws,1,2];grow_rfx1$'2006' <- grow.params$w[draws,1,3];grow_rfx1$'2009' <- grow.params$w[draws,1,4];grow_rfx1$'2010' <- grow.params$w[draws,1,5];grow_rfx1$'20011' <- grow.params$w[draws,1,6];
+grow_rfx1$'2012' <- grow.params$w[draws,1,7];grow_rfx1$'2013' <- grow.params$w[draws,1,8];grow_rfx1$'2014' <- grow.params$w[draws,1,9];grow_rfx1$'2015' <- grow.params$w[draws,1,10];grow_rfx1$'2016' <- grow.params$w[draws,1,11];grow_rfx1$'2017' <- grow.params$w[draws,1,12];grow_rfx1$'2018' <- grow.params$w[draws,1,13];grow_rfx1$'2019' <- grow.params$w[draws,1,14];grow_rfx1$'2021' <- grow.params$w[draws,1,15]
+# Ant 2 (prev liom)
+grow_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+colnames(grow_rfx2) <- years
+grow_rfx2$'2004' <- grow.params$w[draws,2,1];grow_rfx2$'2005' <- grow.params$w[draws,2,2];grow_rfx2$'2006' <- grow.params$w[draws,2,3];grow_rfx2$'2009' <- grow.params$w[draws,2,4];grow_rfx2$'2010' <- grow.params$w[draws,2,5];grow_rfx2$'20011' <- grow.params$w[draws,2,6];
+grow_rfx2$'2012' <- grow.params$w[draws,2,7];grow_rfx2$'2013' <- grow.params$w[draws,2,8];grow_rfx2$'2014' <- grow.params$w[draws,2,9];grow_rfx2$'2015' <- grow.params$w[draws,2,10];grow_rfx2$'2016' <- grow.params$w[draws,2,11];grow_rfx2$'2017' <- grow.params$w[draws,2,12];grow_rfx2$'2018' <- grow.params$w[draws,2,13];grow_rfx2$'2019' <- grow.params$w[draws,2,14];grow_rfx2$'2021' <- grow.params$w[draws,2,15]
+# Ant 3 (prev other)
+grow_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+colnames(grow_rfx3) <- years
+grow_rfx3$'2004' <- grow.params$w[draws,3,1];grow_rfx3$'2005' <- grow.params$w[draws,3,2];grow_rfx3$'2006' <- grow.params$w[draws,3,3];grow_rfx3$'2009' <- grow.params$w[draws,3,4];grow_rfx3$'2010' <- grow.params$w[draws,3,5];grow_rfx3$'20011' <- grow.params$w[draws,3,6];
+grow_rfx3$'2012' <- grow.params$w[draws,3,7];grow_rfx3$'2013' <- grow.params$w[draws,3,8];grow_rfx3$'2014' <- grow.params$w[draws,3,9];grow_rfx3$'2015' <- grow.params$w[draws,3,10];grow_rfx3$'2016' <- grow.params$w[draws,3,11];grow_rfx3$'2017' <- grow.params$w[draws,3,12];grow_rfx3$'2018' <- grow.params$w[draws,3,13];grow_rfx3$'2019' <- grow.params$w[draws,3,14];grow_rfx3$'2021' <- grow.params$w[draws,3,15]
+# Ant 4 (prev vac)
+grow_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+colnames(grow_rfx4) <- years
+grow_rfx4$'2004' <- grow.params$w[draws,4,1];grow_rfx4$'2005' <- grow.params$w[draws,4,2];grow_rfx4$'2006' <- grow.params$w[draws,4,3];grow_rfx4$'2009' <- grow.params$w[draws,4,4];grow_rfx4$'2010' <- grow.params$w[draws,4,5];grow_rfx4$'20011' <- grow.params$w[draws,4,6];
+grow_rfx4$'2012' <- grow.params$w[draws,4,7];grow_rfx4$'2013' <- grow.params$w[draws,4,8];grow_rfx4$'2014' <- grow.params$w[draws,4,9];grow_rfx4$'2015' <- grow.params$w[draws,4,10];grow_rfx4$'2016' <- grow.params$w[draws,4,11];grow_rfx4$'2017' <- grow.params$w[draws,4,12];grow_rfx4$'2018' <- grow.params$w[draws,4,13];grow_rfx4$'2019' <- grow.params$w[draws,4,14];grow_rfx4$'2021' <- grow.params$w[draws,4,15]
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
 #head(surv.params)
-params$surv_sig_u<-surv.params$sigma_u        ## surv sigma u
-params$surv_sig_w<-surv.params$sigma_w        ## surv sigma w
-####Ant 1 (vacant)
-params$surv_beta04<-surv.params$beta0.4     	  ## surv intercept
-params$surv_beta14<-surv.params$beta1.4				## surv slope
-####Ant 2 (other)
-params$surv_beta03<-surv.params$beta0.3     	  ## surv intercept
-params$surv_beta13<-surv.params$beta1.3				## surv slope
-####Ant 3 (crem)
-params$surv_beta01<-surv.params$beta0.1     	  ## surv intercept
-params$surv_beta11<-surv.params$beta1.1				## surv slope
-####Ant 4 (liom)
-params$surv_beta02<-surv.params$beta0.2     	  ## surv intercept
-params$surv_beta12<-surv.params$beta1.2				##surv slope
-#### --- Year Random Effects --- ####
-####Ant 1 (prev crem)
-surv_rfx1 <- cbind(surv.params$w.1.1,surv.params$w.1.2,surv.params$w.1.3,rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w.1.4,surv.params$w.1.5,surv.params$w.1.6,surv.params$w.1.7,
-                   surv.params$w.1.8,surv.params$w.1.9,surv.params$w.1.10,surv.params$w.1.11,
-                   surv.params$w.1.12,surv.params$w.1.13,surv.params$w.1.14,surv.params$w.1.15,
-                   surv.params$w.1.16,rep(0,N_draws))
-####Ant 2 (prev liom)
-surv_rfx2 <- cbind(surv.params$w.2.1,surv.params$w.2.2,surv.params$w.2.3,rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w.2.4,surv.params$w.2.5,surv.params$w.2.6,surv.params$w.2.7,
-                   surv.params$w.2.8,surv.params$w.2.9,surv.params$w.2.10,surv.params$w.2.11,
-                   surv.params$w.2.12,surv.params$w.2.13,surv.params$w.2.14,surv.params$w.2.15,
-                   surv.params$w.2.16,rep(0,N_draws))
-####Ant 3 (prev other)
-surv_rfx3 <- cbind(surv.params$w.3.1,surv.params$w.3.2,surv.params$w.3.3,rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w.3.4,surv.params$w.3.5,surv.params$w.3.6,surv.params$w.3.7,
-                   surv.params$w.3.8,surv.params$w.3.9,surv.params$w.3.10,surv.params$w.3.11,
-                   surv.params$w.3.12,surv.params$w.3.13,surv.params$w.3.14,surv.params$w.3.15,
-                   surv.params$w.3.16,rep(0,N_draws))
-####Ant 4 (prev vac)
-surv_rfx4 <- cbind(surv.params$w.4.1,surv.params$w.4.2,surv.params$w.4.3,rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w.4.4,surv.params$w.4.5,surv.params$w.4.6,surv.params$w.4.7,
-                   surv.params$w.4.8,surv.params$w.4.9,surv.params$w.4.10,surv.params$w.4.11,
-                   surv.params$w.4.12,surv.params$w.4.13,surv.params$w.4.14,surv.params$w.4.15,
-                   surv.params$w.4.16,rep(0,N_draws))
+params$surv_sig_u<-surv.params$sigma_u[draws]        ## surv sigma u
+params$surv_sig_w<-surv.params$sigma_w[draws]        ## surv sigma w
+# Ant 4 (vacant)
+params$surv_beta04<-surv.params$beta0[draws,4]     	  ## surv intercept
+params$surv_beta14<-surv.params$beta1[draws,4]				## surv slope
+# Ant 3 (other)
+params$surv_beta03<-surv.params$beta0[draws,3]     	  ## surv intercept
+params$surv_beta13<-surv.params$beta1[draws,3]				## surv slope
+# Ant 1 (crem)
+params$surv_beta01<-surv.params$beta0[draws,1]     	  ## surv intercept
+params$surv_beta11<-surv.params$beta1[draws,1]				## surv slope
+# Ant 2 (liom)
+params$surv_beta02<-surv.params$beta0[draws,2]     	  ## surv intercept
+params$surv_beta12<-surv.params$beta1[draws,2]				##surv slope
+## Year Random Effects
+# Ant 1 (prev crem)
+surv_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 18))
+colnames(surv_rfx1) <- years
+surv_rfx1$'2004' <- surv.params$w[draws,1,1]; surv_rfx1$'2005' <- surv.params$w[draws,1,2]; surv_rfx1$'2006' <- surv.params$w[draws,1,3];surv_rfx1$'2009' <- surv.params$w[draws,1,4];surv_rfx1$'2010' <- surv.params$w[draws,1,5]; surv_rfx1$'2011' <- surv.params$w[draws,1,6];
+surv_rfx1$'2012' <- surv.params$w[draws,1,7];surv_rfx1$'2013' <- surv.params$w[draws,1,8];surv_rfx1$'2014' <- surv.params$w[draws,1,9];
+surv_rfx1$'2015' <- surv.params$w[draws,1,10];surv_rfx1$'2016' <- surv.params$w[draws,1,11];surv_rfx1$'2017' <- surv.params$w[draws,1,12];
+surv_rfx1$'2018' <- surv.params$w[draws,1,13];surv_rfx1$'2019' <- surv.params$w[draws,1,14];surv_rfx1$'2021' <- surv.params$w[draws,1,15];surv_rfx1$'2022' <- surv.params$w[draws,1,16]
+# Ant 2 (prev liom)
+surv_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+colnames(surv_rfx2) <- years
+surv_rfx2$'2004' <- surv.params$w[draws,2,1]; surv_rfx2$'2005' <- surv.params$w[draws,2,2]; surv_rfx2$'2006' <- surv.params$w[draws,2,3];surv_rfx2$'2009' <- surv.params$w[draws,2,4];surv_rfx2$'2010' <- surv.params$w[draws,2,5]; surv_rfx2$'2011' <- surv.params$w[draws,2,6];
+surv_rfx2$'2012' <- surv.params$w[draws,2,7];surv_rfx2$'2013' <- surv.params$w[draws,2,8];surv_rfx2$'2014' <- surv.params$w[draws,2,9];
+surv_rfx2$'2015' <- surv.params$w[draws,2,10];surv_rfx2$'2016' <- surv.params$w[draws,2,11];surv_rfx2$'2017' <- surv.params$w[draws,2,12];
+surv_rfx2$'2018' <- surv.params$w[draws,2,13];surv_rfx2$'2019' <- surv.params$w[draws,2,14];surv_rfx2$'2021' <- surv.params$w[draws,2,15];surv_rfx2$'2022' <- surv.params$w[draws,2,16]
+# Ant 3 (prev other)
+surv_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+colnames(surv_rfx3) <- years
+surv_rfx3$'2004' <- surv.params$w[draws,3,1]; surv_rfx3$'2005' <- surv.params$w[draws,3,2]; surv_rfx3$'2006' <- surv.params$w[draws,3,3];surv_rfx3$'2009' <- surv.params$w[draws,3,4];surv_rfx3$'2010' <- surv.params$w[draws,3,5]; surv_rfx3$'2011' <- surv.params$w[draws,3,6];
+surv_rfx3$'2012' <- surv.params$w[draws,3,7];surv_rfx3$'2013' <- surv.params$w[draws,3,8];surv_rfx3$'2014' <- surv.params$w[draws,3,9];
+surv_rfx3$'2015' <- surv.params$w[draws,3,10];surv_rfx3$'2016' <- surv.params$w[draws,3,11];surv_rfx3$'2017' <- surv.params$w[draws,3,12];
+surv_rfx3$'2018' <- surv.params$w[draws,3,13];surv_rfx3$'2019' <- surv.params$w[draws,3,14];surv_rfx3$'2021' <- surv.params$w[draws,3,15];surv_rfx3$'2022' <- surv.params$w[draws,3,16]
+# Ant 4 (prev vac)
+surv_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+colnames(surv_rfx4) <- years
+surv_rfx4$'2004' <- surv.params$w[draws,4,1]; surv_rfx4$'2005' <- surv.params$w[draws,4,2]; surv_rfx4$'2006' <- surv.params$w[draws,4,3];surv_rfx4$'2009' <- surv.params$w[draws,4,4];surv_rfx4$'2010' <- surv.params$w[draws,4,5]; surv_rfx4$'2011' <- surv.params$w[draws,4,6];
+surv_rfx4$'2012' <- surv.params$w[draws,4,7];surv_rfx4$'2013' <- surv.params$w[draws,4,8];surv_rfx4$'2014' <- surv.params$w[draws,4,9];
+surv_rfx4$'2015' <- surv.params$w[draws,4,10];surv_rfx4$'2016' <- surv.params$w[draws,4,11];surv_rfx4$'2017' <- surv.params$w[draws,4,12];
+surv_rfx4$'2018' <- surv.params$w[draws,4,13];surv_rfx4$'2019' <- surv.params$w[draws,4,14];surv_rfx4$'2021' <- surv.params$w[draws,4,15];surv_rfx4$'2022' <- surv.params$w[draws,4,16]
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
@@ -150,10 +161,9 @@ params$flow_sig_w<-flow.params$sigma_w        ## flow sigma w
 params$flow_beta0<-flow.params$beta0          ## flow intercept
 params$flow_beta1<-flow.params$beta1          ## flow slopes
 #### --- Year Random Effects --- ####
-flow_rfx <- cbind(flow.params$w.1,flow.params$w.2,flow.params$w.3,flow.params$w.4,rep(0,N_draws),
-                  rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),flow.params$w.5,flow.params$w.6,
-                  flow.params$w.7,flow.params$w.8,flow.params$w.9,flow.params$w.10,flow.params$w.11,
-                  flow.params$w.12,flow.params$w.13,flow.params$w.14)
+flow_rfx <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+colnames(flow_rfx) <- years
+flow_rfx$'2004' <- flow.params$w[draws,1];flow_rfx$'2005' <- flow.params$w[draws,2];flow_rfx$'2006' <- flow.params$w[draws,3];flow_rfx$'2007' <- flow.params$w[draws,4];flow_rfx$'2013' <- flow.params$w[draws,5];flow_rfx$'2014' <- flow.params$w[draws,6];flow_rfx$'2015' <- flow.params$w[draws,7];flow_rfx$'2016' <- flow.params$w[draws,8];flow_rfx$'2017' <- flow.params$w[draws,9];flow_rfx$'2018' <- flow.params$w[draws,10];flow_rfx$'2019' <- flow.params$w[draws,11];flow_rfx$'2021' <- flow.params$w[draws,12];flow_rfx$'2022' <- flow.params$w[draws,13];flow_rfx$'2023' <- flow.params$w[draws,14];
 
 ##-----------------------Reproductive State Parameters-----------------## 
 ## Check the names of the parameters
@@ -162,9 +172,7 @@ params$repro_beta0<-repro.params$beta0      ## repro intercept
 params$repro_beta1<-repro.params$beta1      ## repro slope
 params$repro_sig_u<-repro.params$sigma_u    ## repro sigma u
 params$repro_sig_w<-repro.params$sigma_w    ## repro sigma w
-#### --- Year Random Effects --- ####
-
-
+## --- Year Random Effects --- ####
 repro_rfx <- cbind(repro.params$w.1,repro.params$w.2,repro.params$w.3,repro.params$w.4,
                    rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),repro.params$w.5,repro.params$w.6,
                    repro.params$w.7,repro.params$w.8,repro.params$w.9,repro.params$w.10,repro.params$w.11,
@@ -175,34 +183,37 @@ repro_rfx <- cbind(repro.params$w.1,repro.params$w.2,repro.params$w.3,repro.para
 params$viab_sig<-viab.params$sigma              ## viab sigma
 params$viab_sig_u<-viab.params$sigma_u          ## viab sigma u
 params$viab_sig_w<-viab.params$sigma_w          ## viab sigma w
-####Ant 4 (vacant)
+# Ant 4 (vacant)
 params$viab_beta04<-viab.params$beta0.4     	  ## viab intercept
-####Ant 3 (other)
+# Ant 3 (other)
 params$viab_beta03<-viab.params$beta0.3     	  ## viab intercept
-####Ant 1 (crem)
+# Ant 1 (crem)
 params$viab_beta01<-viab.params$beta0.1     	  ## viab intercept
-####Ant 2 (liom)
+# Ant 2 (liom)
 params$viab_beta02<-viab.params$beta0.2     	  ## viab intercept
-#### --- Year Random Effects --- ####
-####Ant 1 (prev crem)
+## Year random effects
+# Ant 1 (prev crem)
+viab_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+viab_rfx1$'2004' <- viab.params$w[draws,1,1];viab_rfx1$'2005' <- viab.params$w[draws,1,2];viab_rfx1$'2006' <- viab.params$w[draws,1,3];viab_rfx1$'2012' <- viab.params$w[draws,1,4];viab_rfx1$'2013' <- viab.params$w[draws,1,5];viab_rfx1$'2014' <- viab.params$w[draws,1,6];viab_rfx1$'2015' <- viab.params$w[draws,1,7];viab_rfx1$'2016' <- viab.params$w[draws,1,8];viab_rfx1$'2017' <- viab.params$w[draws,1,9];viab_rfx1$'2018' <- viab.params$w[draws,1,10];viab_rfx1$'2019' <- viab.params$w[draws,1,11];viab_rfx1$'2021' <- viab.params$w[draws,1,12];viab_rfx1$'2022' <- viab.params$w[draws,1,13];
 viab_rfx1 <- cbind(rep(0,N_draws),viab.params$w.1.1,viab.params$w.1.2,viab.params$w.1.3,rep(0,N_draws),
                    rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.1.4,
                    viab.params$w.1.5,viab.params$w.1.6, viab.params$w.1.7,viab.params$w.1.8,
                    viab.params$w.1.9,viab.params$w.1.10,viab.params$w.1.11,viab.params$w.1.12,
                    viab.params$w.1.13)
-####Ant 2 (prev liom)
+colnames(viab_rfx1) <- c("2004","2005","2006","2007","2008","2009","2010","2011","")
+# Ant 2 (prev liom)
 viab_rfx2 <- cbind(rep(0,N_draws),viab.params$w.2.1,viab.params$w.2.2,viab.params$w.2.3,rep(0,N_draws),
                    rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.2.4,
                    viab.params$w.2.5,viab.params$w.2.6, viab.params$w.2.7,viab.params$w.2.8,
                    viab.params$w.2.9,viab.params$w.2.10,viab.params$w.2.11,viab.params$w.2.12,
                    viab.params$w.2.13)
-####Ant 3 (prev other)
+# Ant 3 (prev other)
 viab_rfx3 <- cbind(rep(0,N_draws),viab.params$w.3.1,viab.params$w.3.2,viab.params$w.3.3,rep(0,N_draws),
                    rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.3.4,
                    viab.params$w.3.5,viab.params$w.3.6, viab.params$w.3.7,viab.params$w.3.8,
                    viab.params$w.3.9,viab.params$w.3.10,viab.params$w.3.11,viab.params$w.3.12,
                    viab.params$w.3.13)
-####Ant 2 (prev vac)
+# Ant 2 (prev vac)
 viab_rfx4 <- cbind(rep(0,N_draws),viab.params$w.4.1,viab.params$w.4.2,viab.params$w.4.3,rep(0,N_draws),
                    rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),viab.params$w.4.4,
                    viab.params$w.4.5,viab.params$w.4.6, viab.params$w.4.7,viab.params$w.4.8,
