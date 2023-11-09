@@ -72,7 +72,7 @@ stan_data_surv <- list(N = nrow(survival_data),                                 
 surv_model <- stan_model("Data Analysis/STAN Models/surv_code.stan")
 fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
                    control = list(adapt_delta=0.99,stepsize=0.1),
-                   iter=5000,cores=3,thin=2,
+                   iter=10000,cores=3,thin=2,
                    pars = c("beta0","beta1","u","w"),   #location coefficients)
                    save_warmup=F)
 # fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
@@ -286,15 +286,15 @@ stan_data_seed_surv <- list(N = nrow(precensus.dat),                            
                             transect = as.integer(as.factor(precensus.dat$Transect)), ## transect
                             y = precensus.dat$survive0405)                            ## survival data
 ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-# seed_surv_model <- stan_model("Data Analysis/STAN Models/seed_surv_code.stan")
-# fit_seed_surv<-sampling(seed_surv_model, data = stan_data_seed_surv,chains=3,
-#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
-#                                                 iter=10000,cores=3,thin=2,
-#                                                 pars = c("beta0"   #location coefficients
-#                                                          ),save_warmup=F)
-# ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_seed_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
-# saveRDS(fit_seed_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
+seed_surv_model <- stan_model("Data Analysis/STAN Models/seed_surv_code.stan")
+fit_seed_surv<-sampling(seed_surv_model, data = stan_data_seed_surv,chains=3,
+                                                control = list(adapt_delta=0.99,stepsize=0.1),
+                                                iter=10000,cores=3,thin=2,
+                                                pars = c("beta0"   #location coefficients
+                                                         ),save_warmup=F)
+## Save the RDS file which saves all parameters, draws, and other information
+saveRDS(fit_seed_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
+saveRDS(fit_seed_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
 
 ################################################################################
 ## Germination -- Probability of germinating by the next time step (yr 1&2) 

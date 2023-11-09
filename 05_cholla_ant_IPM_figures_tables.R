@@ -13,7 +13,15 @@ cremcol <- "#9239F6"
 liomcol <- "#00A08A"
 othercol <- "#FF0076"
 vaccol <- "#F8B660"
-
+  vcol <- "#ad90ec"
+    lcol <- "#084f98"
+      ccol <- "#e9a67a"
+        ocol <- "#93022f"
+          lccol <- "#5dc9cf"
+            locol <- "#cf3545"
+              cocol <- "#ab59c8"
+                acol <- "#5d906b"
+                  cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
 str(cactus)
 ##### Size variable used in most visualizations
 size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
@@ -1303,15 +1311,14 @@ lams_stoch_null <- lams_stoch_null[,-c(1)]
 ######################################################################################################
 # Set the working directory to the figures folder
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
-
+scenario_abv <- c("V","CV","LV","OV","LCV","LOV","OCV","LOCV")
 ## Plot the means of the deterministic and stochastic distributions together
 png("lambda_means.png")
-plot(c(1,3,5,7,9,11,13,15),colMeans(lams_dpost),
-     col = cols, pch = 20, cex = 5,
-     xlim = c(0,16), ylim = c(0.985,1.01),
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_dpost), pch = 20, cex = 5,col = cols,
+     xlim = c(0,16), ylim = c(0.98,1.01),
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
-text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_dpost)+0.002,cex = 2, labels = lams$scenario_abv,srt = 35)
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_dpost)+0.002,cex = 2, labels = scenario_abv,srt = 35)
 legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),cex = 1.5)
 points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch),
        col = cols, cex = 5)
