@@ -6,7 +6,7 @@
 ################################################################################
 ################################################################################
 ## Read the data in
-source("~/Documents/GitHub/ant_cactus_demography/01_cholla_ant_IPM_setup.R")
+source("01_cholla_ant_IPM_setup.R")
 cactus <- read.csv("Data Analysis/cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
 ################################################################################
 ##   Skew Growth Model -- What size will the cacti be next time step?

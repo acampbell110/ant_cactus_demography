@@ -40,8 +40,8 @@ library(reshape2)
 knitr::opts_chunk$set(echo = TRUE)
 options(mc.cores = parallel::detectCores())
 # check the workign directory and make sure it is set to the right location
-getwd()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+#getwd()
+#setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 
 ## Create the necessary functions 
 # function for the volume of a cone
