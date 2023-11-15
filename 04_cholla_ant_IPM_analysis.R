@@ -35,7 +35,7 @@ for(z in 1:length(scenario)){
 lams_dpost
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_dpost) <- scenario
-write.csv(lams_dpost,"det_post_lambda.csv")
+write.csv(lams_dpost,"det_post_lambda_2021_newcode.csv")
 
 ######################################################################################################
 ################################## STOCHASTIC POST IPM ###############################################
@@ -47,7 +47,7 @@ write.csv(lams_dpost,"det_post_lambda.csv")
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 # Choose the number of parameter iterations 
-max_rep = 100 ## Posterior Draws from vital rate models
+max_rep = 1 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
 max_yrs = 1000 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R

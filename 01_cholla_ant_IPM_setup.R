@@ -7,7 +7,7 @@
 ## finally load in any other data files.
 ################################################################################
 ################################################################################
-## Load All Necessary Packages Here 
+## Load All Necessary Packages Here
 # stan models
 library(rstan)
 library(sn)
@@ -19,7 +19,7 @@ library(popbio)
 library(lme4)
 library(nnet)
 library(extraDistr)
-# visual model checks 
+# visual model checks
 library(moments)
 library("posterior")
 library(gridExtra)
