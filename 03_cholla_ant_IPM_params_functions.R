@@ -5,18 +5,20 @@
 ################################################################################
 ################################################################################
 ## Source the IPM vital rates code 
-source("~/Documents/GitHub/ant_cactus_demography/02_cholla_ant_IPM_vital_rates.R")
+source("02_cholla_ant_IPM_vital_rates.R")
 ## Set conditions for the IPM 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
 Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
 iter <- 1000
-matsize<-400
 lower<- cholla_min
 upper<- cholla_max
-ceiling <- 20
-floor <- 10
+## these values were tested and found to work well in all scenarios
+matsize<-500
+ceiling <- 4
+floor <- 25
+
 set.seed(333) # picked random number
 N_draws <- 1000
 draws <- sample(7500,N_draws, replace=F)
@@ -24,7 +26,7 @@ years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
 ## Choose your pathway to pull from 
 #Ali
-mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
 mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
@@ -761,7 +763,11 @@ transition.x <- function(x,i,j,params,scenario){
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
 ##################################################################################################
-bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
+bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
+                        surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+                        flow_rfx=0,repro_rfx=0,
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -782,7 +788,7 @@ bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3
   # Growth/survival transition matricies -- One Ant
   Tmat<-matrix(0,(n+2),(n+2))
   ## Full Matricies
-  IPMmat <- matrix()
+  #IPMmat <- matrix()
 
   # Banked seeds go in top row
   Fmat[1,3:(n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
@@ -796,11 +802,44 @@ bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
   # Put it all together
   IPMmat<-Fmat+Tmat
-  p <- colSums(Tmat[3:(n+2),3:(n+2)]) # Shows the column sums, each should be as close to 1 as possible
-  evict<-matsize-sum(colSums(Tmat[3:(n+2),3:(n+2)])) # Should be as close to 0 as possible
+  
+  # eviction tests
+  growmat<-t(outer(y,y,gxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
+  p <- colSums(growmat) # Shows the column sums, each should be as close to 1 as possible
+  evict<-matsize-sum(colSums(growmat)) # Should be as close to 0 as possible
+  
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, evict=evict, p=p))
 }
- x <- c(1,1)
+ 
+mean_params=data.frame(t(colMeans(params)))
+bigobj<-bigmatrix.1(params=mean_params,
+            lower=lower,
+            upper=upper,
+            floor=25,
+            ceiling=4,
+            matsize=400)
+
+plot(bigobj$y,bigobj$p,ylab="colsums of Tmat",ylim=c(0,1))
+abline(v=c(lower,upper),col="red")
+
+evicts<-lambdas<-c()
+matsizes<-c(200,250,300,350,400,450,500,600,800,1000)
+for(i in 1:length(matsizes)){
+  bigobj<-bigmatrix.1(params=mean_params,
+                      lower=lower,
+                      upper=upper,
+                      floor=25,
+                      ceiling=4,
+                      matsize=matsizes[i])
+  evicts[i]<-bigobj$evict
+  lambdas[i]<-popbio::lambda(bigobj$IPMmat)
+}
+
+plot(matsizes,evicts)
+plot(matsizes,lambdas,type="b")
+
+
+x <- c(1,1)
  lam <- matrix(rep(NA,120), nrow = 10)
  l <- list()
  for(a in 1:1){ ## years
@@ -814,7 +853,11 @@ l[1]
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
-bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
+bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
+                        surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+                        flow_rfx=0,repro_rfx=0,
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -865,7 +908,14 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     # Calculate the lambda
     # lambda = Re(eigen(IPMmat)$values[1])
     # return(lambda)
-    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+    
+    # eviction tests
+    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac"))
+    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+    p <- colSums(rbind(LLgrowmat,LVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat))) # Should be as close to 0 as possible
+    
+    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, p=p, evict=evict))
   }
   ########################################### CREM ###############################################
   if(scenario == "cremvac"){
@@ -942,6 +992,37 @@ bigmatrix.2 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
 # }
 # lam
 # big
+
+
+bigobj_liomvac<-bigmatrix.2(params=mean_params,
+                    scenario="liomvac",
+                    lower=lower,
+                    upper=upper,
+                    floor=25,
+                    ceiling=4,
+                    matsize=400)
+
+plot(bigobj_liomvac$y,bigobj_liomvac$p,ylab="colsums of Tmat",ylim=c(0,1))
+abline(v=c(lower,upper),col="red")
+
+evicts_liomvac<-lambdas_liomvac<-c()
+for(i in 1:length(matsizes)){
+  bigobj_liomvac<-bigmatrix.2(params=mean_params,
+                              scenario="liomvac",
+                      lower=lower,
+                      upper=upper,
+                      floor=25,
+                      ceiling=4,
+                      matsize=matsizes[i])
+  evicts_liomvac[i]<-bigobj_liomvac$evict
+  lambdas_liomvac[i]<-popbio::lambda(bigobj_liomvac$IPMmat)
+}
+
+plot(matsizes,evicts_liomvac)
+plot(matsizes,lambdas_liomvac,type="b",ylim=c(.98,1))
+points(matsizes,lambdas,type="b",col="red")
+
+
 
 #################################################################################################
 ###################################### THREE ANTS ###############################################
@@ -1102,6 +1183,7 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
 # }
 # lam
 # big
+
 
 
 ##################################################################################################
