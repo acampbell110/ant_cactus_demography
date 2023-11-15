@@ -90,7 +90,7 @@ lams_stoch
 # for(n in 1:max_scenario){
 #   print(scenario[n])
 #   for(m in 1:max_rep){
-#   lams_stoch[m,n] <- lambdaSim(params = a,## parameters
+#   lams_stoch[m,n] <- lambdaSim(params = a,## parameters 
 #                                grow_rfx1 = grow_rfx1[m,],
 #                                grow_rfx2 = grow_rfx2[m,],
 #                                grow_rfx3 = grow_rfx3[m,],

@@ -1,4 +1,4 @@
-################################################################################
+################################################################################ 
 ################################################################################
 ## The purpose of this script is to load all model fits, load the IPM functions,
 ## and load any values which need to be loaded to run the IPM
@@ -796,23 +796,21 @@ bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
   # Put it all together
   IPMmat<-Fmat+Tmat
-  p <- colSums(Tmat[3:(n+2),3:(n+2)])
-  evict<-matsize-sum(colSums(Tmat[3:(n+2),3:(n+2)]))
+  p <- colSums(Tmat[3:(n+2),3:(n+2)]) # Shows the column sums, each should be as close to 1 as possible
+  evict<-matsize-sum(colSums(Tmat[3:(n+2),3:(n+2)])) # Should be as close to 0 as possible
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, evict=evict, p=p))
-  #lambda = Re(eigen(IPMmat)$values[1])
-  #return(lambda)
 }
-#  x <- c(1,1)
-#  lam <- matrix(rep(NA,120), nrow = 10)
-#  l <- list()
-#  for(a in 1:1){ ## years
-#  for(m in 1:10){ ## params
-#   #lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-#    l[[m]] <- bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$p
-#  }
-#  }
-# #lam # each row is different iteration and each column is a year
-# l[1]
+ x <- c(1,1)
+ lam <- matrix(rep(NA,120), nrow = 10)
+ l <- list()
+ for(a in 1:1){ ## years
+ for(m in 1:10){ ## params
+  #lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+   l[[m]] <- bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$evict
+ }
+ }
+#lam # each row is different iteration and each column is a year
+l[1]
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
