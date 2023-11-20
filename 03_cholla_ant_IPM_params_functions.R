@@ -26,9 +26,9 @@ years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
 ## Choose your pathway to pull from 
 #Ali
-#mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
-mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters
@@ -84,6 +84,7 @@ params$grow_beta24<-grow.params$beta2[draws,4]				## growth slope
 # Ant 3 (other)
 params$grow_beta03<-grow.params$beta0[draws,3]     	  ## growth intercept
 params$grow_beta13<-grow.params$beta1[draws,3]				## growth slope
+
 params$grow_beta23<-grow.params$beta2[draws,3]				## growth slope
 # Ant 1 (crem)
 params$grow_beta01<-grow.params$beta0[draws,1]     	  ## growth intercept
@@ -96,25 +97,52 @@ params$grow_beta22<-grow.params$beta2[draws,2]				## growth slope
 ## Year Random Effects
 # Create a dataframe for random effects where the columns are the year name and the rows are the iterations
 # Ant 1 (prev crem)
-grow_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 18))
-colnames(grow_rfx1) <- years
-grow_rfx1$'2004' <- grow.params$w[draws,1,1];grow_rfx1$'2005' <- grow.params$w[draws,1,2];grow_rfx1$'2006' <- grow.params$w[draws,1,3];grow_rfx1$'2009' <- grow.params$w[draws,1,4];grow_rfx1$'2010' <- grow.params$w[draws,1,5];grow_rfx1$'20011' <- grow.params$w[draws,1,6];
-grow_rfx1$'2012' <- grow.params$w[draws,1,7];grow_rfx1$'2013' <- grow.params$w[draws,1,8];grow_rfx1$'2014' <- grow.params$w[draws,1,9];grow_rfx1$'2015' <- grow.params$w[draws,1,10];grow_rfx1$'2016' <- grow.params$w[draws,1,11];grow_rfx1$'2017' <- grow.params$w[draws,1,12];grow_rfx1$'2018' <- grow.params$w[draws,1,13];grow_rfx1$'2019' <- grow.params$w[draws,1,14];grow_rfx1$'2021' <- grow.params$w[draws,1,15]
-# Ant 2 (prev liom)
-grow_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(grow_rfx2) <- years
-grow_rfx2$'2004' <- grow.params$w[draws,2,1];grow_rfx2$'2005' <- grow.params$w[draws,2,2];grow_rfx2$'2006' <- grow.params$w[draws,2,3];grow_rfx2$'2009' <- grow.params$w[draws,2,4];grow_rfx2$'2010' <- grow.params$w[draws,2,5];grow_rfx2$'20011' <- grow.params$w[draws,2,6];
-grow_rfx2$'2012' <- grow.params$w[draws,2,7];grow_rfx2$'2013' <- grow.params$w[draws,2,8];grow_rfx2$'2014' <- grow.params$w[draws,2,9];grow_rfx2$'2015' <- grow.params$w[draws,2,10];grow_rfx2$'2016' <- grow.params$w[draws,2,11];grow_rfx2$'2017' <- grow.params$w[draws,2,12];grow_rfx2$'2018' <- grow.params$w[draws,2,13];grow_rfx2$'2019' <- grow.params$w[draws,2,14];grow_rfx2$'2021' <- grow.params$w[draws,2,15]
+# grow_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 18))
+# colnames(grow_rfx1) <- years
+# grow_rfx1$'2004' <- grow.params$w[draws,1,1];grow_rfx1$'2005' <- grow.params$w[draws,1,2];grow_rfx1$'2006' <- grow.params$w[draws,1,3];grow_rfx1$'2009' <- grow.params$w[draws,1,4];grow_rfx1$'2010' <- grow.params$w[draws,1,5];grow_rfx1$'2011' <- grow.params$w[draws,1,6];
+# grow_rfx1$'2012' <- grow.params$w[draws,1,7];grow_rfx1$'2013' <- grow.params$w[draws,1,8];grow_rfx1$'2014' <- grow.params$w[draws,1,9];grow_rfx1$'2015' <- grow.params$w[draws,1,10];grow_rfx1$'2016' <- grow.params$w[draws,1,11];grow_rfx1$'2017' <- grow.params$w[draws,1,12];grow_rfx1$'2018' <- grow.params$w[draws,1,13];grow_rfx1$'2019' <- grow.params$w[draws,1,14];grow_rfx1$'2021' <- grow.params$w[draws,1,15]
+# grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],rep(0,N_draws),grow.params$w[draws,1,15],rep(0,N_draws),rep(0,N_draws))
+# # Ant 2 (prev liom)
+# grow_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(grow_rfx2) <- years
+# grow_rfx2$'2004' <- grow.params$w[draws,2,1];grow_rfx2$'2005' <- grow.params$w[draws,2,2];grow_rfx2$'2006' <- grow.params$w[draws,2,3];grow_rfx2$'2009' <- grow.params$w[draws,2,4];grow_rfx2$'2010' <- grow.params$w[draws,2,5];grow_rfx2$'2011' <- grow.params$w[draws,2,6];
+# grow_rfx2$'2012' <- grow.params$w[draws,2,7];grow_rfx2$'2013' <- grow.params$w[draws,2,8];grow_rfx2$'2014' <- grow.params$w[draws,2,9];grow_rfx2$'2015' <- grow.params$w[draws,2,10];grow_rfx2$'2016' <- grow.params$w[draws,2,11];grow_rfx2$'2017' <- grow.params$w[draws,2,12];grow_rfx2$'2018' <- grow.params$w[draws,2,13];grow_rfx2$'2019' <- grow.params$w[draws,2,14];grow_rfx2$'2021' <- grow.params$w[draws,2,15]
+
 # Ant 3 (prev other)
-grow_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(grow_rfx3) <- years
-grow_rfx3$'2004' <- grow.params$w[draws,3,1];grow_rfx3$'2005' <- grow.params$w[draws,3,2];grow_rfx3$'2006' <- grow.params$w[draws,3,3];grow_rfx3$'2009' <- grow.params$w[draws,3,4];grow_rfx3$'2010' <- grow.params$w[draws,3,5];grow_rfx3$'20011' <- grow.params$w[draws,3,6];
-grow_rfx3$'2012' <- grow.params$w[draws,3,7];grow_rfx3$'2013' <- grow.params$w[draws,3,8];grow_rfx3$'2014' <- grow.params$w[draws,3,9];grow_rfx3$'2015' <- grow.params$w[draws,3,10];grow_rfx3$'2016' <- grow.params$w[draws,3,11];grow_rfx3$'2017' <- grow.params$w[draws,3,12];grow_rfx3$'2018' <- grow.params$w[draws,3,13];grow_rfx3$'2019' <- grow.params$w[draws,3,14];grow_rfx3$'2021' <- grow.params$w[draws,3,15]
-# Ant 4 (prev vac)
-grow_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(grow_rfx4) <- years
-grow_rfx4$'2004' <- grow.params$w[draws,4,1];grow_rfx4$'2005' <- grow.params$w[draws,4,2];grow_rfx4$'2006' <- grow.params$w[draws,4,3];grow_rfx4$'2009' <- grow.params$w[draws,4,4];grow_rfx4$'2010' <- grow.params$w[draws,4,5];grow_rfx4$'20011' <- grow.params$w[draws,4,6];
-grow_rfx4$'2012' <- grow.params$w[draws,4,7];grow_rfx4$'2013' <- grow.params$w[draws,4,8];grow_rfx4$'2014' <- grow.params$w[draws,4,9];grow_rfx4$'2015' <- grow.params$w[draws,4,10];grow_rfx4$'2016' <- grow.params$w[draws,4,11];grow_rfx4$'2017' <- grow.params$w[draws,4,12];grow_rfx4$'2018' <- grow.params$w[draws,4,13];grow_rfx4$'2019' <- grow.params$w[draws,4,14];grow_rfx4$'2021' <- grow.params$w[draws,4,15]
+# grow_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(grow_rfx3) <- years
+# grow_rfx3$'2004' <- grow.params$w[draws,3,1];grow_rfx3$'2005' <- grow.params$w[draws,3,2];grow_rfx3$'2006' <- grow.params$w[draws,3,3];grow_rfx3$'2009' <- grow.params$w[draws,3,4];grow_rfx3$'2010' <- grow.params$w[draws,3,5];grow_rfx3$'2011' <- grow.params$w[draws,3,6];
+# grow_rfx3$'2012' <- grow.params$w[draws,3,7];grow_rfx3$'2013' <- grow.params$w[draws,3,8];grow_rfx3$'2014' <- grow.params$w[draws,3,9];grow_rfx3$'2015' <- grow.params$w[draws,3,10];grow_rfx3$'2016' <- grow.params$w[draws,3,11];grow_rfx3$'2017' <- grow.params$w[draws,3,12];grow_rfx3$'2018' <- grow.params$w[draws,3,13];grow_rfx3$'2019' <- grow.params$w[draws,3,14];grow_rfx3$'2021' <- grow.params$w[draws,3,15]
+# # Ant 4 (prev vac)
+# grow_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(grow_rfx4) <- years
+# grow_rfx4$'2004' <- grow.params$w[draws,4,1];grow_rfx4$'2005' <- grow.params$w[draws,4,2];grow_rfx4$'2006' <- grow.params$w[draws,4,3];grow_rfx4$'2009' <- grow.params$w[draws,4,4];grow_rfx4$'2010' <- grow.params$w[draws,4,5];grow_rfx4$'2011' <- grow.params$w[draws,4,6];
+# grow_rfx4$'2012' <- grow.params$w[draws,4,7];grow_rfx4$'2013' <- grow.params$w[draws,4,8];grow_rfx4$'2014' <- grow.params$w[draws,4,9];grow_rfx4$'2015' <- grow.params$w[draws,4,10];grow_rfx4$'2016' <- grow.params$w[draws,4,11];grow_rfx4$'2017' <- grow.params$w[draws,4,12];grow_rfx4$'2018' <- grow.params$w[draws,4,13];grow_rfx4$'2019' <- grow.params$w[draws,4,14];grow_rfx4$'2021' <- grow.params$w[draws,4,15]
+
+####Ant 1 (prev crem)
+grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
+                   grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
+                   grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],grow.params$w[draws,1,15],
+                   rep(0,N_draws),rep(0,N_draws))
+####Ant 2 (prev liom)
+grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
+                   grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
+                   grow.params$w[draws,2,12],grow.params$w[draws,2,13],grow.params$w[draws,2,14],grow.params$w[draws,2,15],
+                   rep(0,N_draws),rep(0,N_draws))
+####Ant 3 (prev other)
+grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
+                   grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
+                   grow.params$w[draws,3,12],grow.params$w[draws,3,13],grow.params$w[draws,3,14],grow.params$w[draws,3,15],
+                   rep(0,N_draws),rep(0,N_draws))
+####Ant 4 (prev vac)
+grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
+                   grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
+                   grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],grow.params$w[draws,4,15],
+                   rep(0,N_draws),rep(0,N_draws))
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -133,36 +161,64 @@ params$surv_beta11<-surv.params$beta1[draws,1]				## surv slope
 # Ant 2 (liom)
 params$surv_beta02<-surv.params$beta0[draws,2]     	  ## surv intercept
 params$surv_beta12<-surv.params$beta1[draws,2]				##surv slope
-## Year Random Effects
-# Ant 1 (prev crem)
-surv_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 18))
-colnames(surv_rfx1) <- years
-surv_rfx1$'2004' <- surv.params$w[draws,1,1]; surv_rfx1$'2005' <- surv.params$w[draws,1,2]; surv_rfx1$'2006' <- surv.params$w[draws,1,3];surv_rfx1$'2009' <- surv.params$w[draws,1,4];surv_rfx1$'2010' <- surv.params$w[draws,1,5]; surv_rfx1$'2011' <- surv.params$w[draws,1,6];
-surv_rfx1$'2012' <- surv.params$w[draws,1,7];surv_rfx1$'2013' <- surv.params$w[draws,1,8];surv_rfx1$'2014' <- surv.params$w[draws,1,9];
-surv_rfx1$'2015' <- surv.params$w[draws,1,10];surv_rfx1$'2016' <- surv.params$w[draws,1,11];surv_rfx1$'2017' <- surv.params$w[draws,1,12];
-surv_rfx1$'2018' <- surv.params$w[draws,1,13];surv_rfx1$'2019' <- surv.params$w[draws,1,14];surv_rfx1$'2021' <- surv.params$w[draws,1,15];surv_rfx1$'2022' <- surv.params$w[draws,1,16]
-# Ant 2 (prev liom)
-surv_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(surv_rfx2) <- years
-surv_rfx2$'2004' <- surv.params$w[draws,2,1]; surv_rfx2$'2005' <- surv.params$w[draws,2,2]; surv_rfx2$'2006' <- surv.params$w[draws,2,3];surv_rfx2$'2009' <- surv.params$w[draws,2,4];surv_rfx2$'2010' <- surv.params$w[draws,2,5]; surv_rfx2$'2011' <- surv.params$w[draws,2,6];
-surv_rfx2$'2012' <- surv.params$w[draws,2,7];surv_rfx2$'2013' <- surv.params$w[draws,2,8];surv_rfx2$'2014' <- surv.params$w[draws,2,9];
-surv_rfx2$'2015' <- surv.params$w[draws,2,10];surv_rfx2$'2016' <- surv.params$w[draws,2,11];surv_rfx2$'2017' <- surv.params$w[draws,2,12];
-surv_rfx2$'2018' <- surv.params$w[draws,2,13];surv_rfx2$'2019' <- surv.params$w[draws,2,14];surv_rfx2$'2021' <- surv.params$w[draws,2,15];surv_rfx2$'2022' <- surv.params$w[draws,2,16]
-# Ant 3 (prev other)
-surv_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(surv_rfx3) <- years
-surv_rfx3$'2004' <- surv.params$w[draws,3,1]; surv_rfx3$'2005' <- surv.params$w[draws,3,2]; surv_rfx3$'2006' <- surv.params$w[draws,3,3];surv_rfx3$'2009' <- surv.params$w[draws,3,4];surv_rfx3$'2010' <- surv.params$w[draws,3,5]; surv_rfx3$'2011' <- surv.params$w[draws,3,6];
-surv_rfx3$'2012' <- surv.params$w[draws,3,7];surv_rfx3$'2013' <- surv.params$w[draws,3,8];surv_rfx3$'2014' <- surv.params$w[draws,3,9];
-surv_rfx3$'2015' <- surv.params$w[draws,3,10];surv_rfx3$'2016' <- surv.params$w[draws,3,11];surv_rfx3$'2017' <- surv.params$w[draws,3,12];
-surv_rfx3$'2018' <- surv.params$w[draws,3,13];surv_rfx3$'2019' <- surv.params$w[draws,3,14];surv_rfx3$'2021' <- surv.params$w[draws,3,15];surv_rfx3$'2022' <- surv.params$w[draws,3,16]
-# Ant 4 (prev vac)
-surv_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(surv_rfx4) <- years
-surv_rfx4$'2004' <- surv.params$w[draws,4,1]; surv_rfx4$'2005' <- surv.params$w[draws,4,2]; surv_rfx4$'2006' <- surv.params$w[draws,4,3];surv_rfx4$'2009' <- surv.params$w[draws,4,4];surv_rfx4$'2010' <- surv.params$w[draws,4,5]; surv_rfx4$'2011' <- surv.params$w[draws,4,6];
-surv_rfx4$'2012' <- surv.params$w[draws,4,7];surv_rfx4$'2013' <- surv.params$w[draws,4,8];surv_rfx4$'2014' <- surv.params$w[draws,4,9];
-surv_rfx4$'2015' <- surv.params$w[draws,4,10];surv_rfx4$'2016' <- surv.params$w[draws,4,11];surv_rfx4$'2017' <- surv.params$w[draws,4,12];
-surv_rfx4$'2018' <- surv.params$w[draws,4,13];surv_rfx4$'2019' <- surv.params$w[draws,4,14];surv_rfx4$'2021' <- surv.params$w[draws,4,15];surv_rfx4$'2022' <- surv.params$w[draws,4,16]
+# ## Year Random Effects
+# # Ant 1 (prev crem)
+# surv_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 18))
+# colnames(surv_rfx1) <- years
+# surv_rfx1$'2004' <- surv.params$w[draws,1,1]; surv_rfx1$'2005' <- surv.params$w[draws,1,2]; surv_rfx1$'2006' <- surv.params$w[draws,1,3];surv_rfx1$'2009' <- surv.params$w[draws,1,4];surv_rfx1$'2010' <- surv.params$w[draws,1,5]; surv_rfx1$'2011' <- surv.params$w[draws,1,6];
+# surv_rfx1$'2012' <- surv.params$w[draws,1,7];surv_rfx1$'2013' <- surv.params$w[draws,1,8];surv_rfx1$'2014' <- surv.params$w[draws,1,9];
+# surv_rfx1$'2015' <- surv.params$w[draws,1,10];surv_rfx1$'2016' <- surv.params$w[draws,1,11];surv_rfx1$'2017' <- surv.params$w[draws,1,12];
+# surv_rfx1$'2018' <- surv.params$w[draws,1,13];surv_rfx1$'2019' <- surv.params$w[draws,1,14];surv_rfx1$'2021' <- surv.params$w[draws,1,15];surv_rfx1$'2022' <- surv.params$w[draws,1,16]
+# # Ant 2 (prev liom)
+# surv_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(surv_rfx2) <- years
+# surv_rfx2$'2004' <- surv.params$w[draws,2,1]; surv_rfx2$'2005' <- surv.params$w[draws,2,2]; surv_rfx2$'2006' <- surv.params$w[draws,2,3];surv_rfx2$'2009' <- surv.params$w[draws,2,4];surv_rfx2$'2010' <- surv.params$w[draws,2,5]; surv_rfx2$'2011' <- surv.params$w[draws,2,6];
+# surv_rfx2$'2012' <- surv.params$w[draws,2,7];surv_rfx2$'2013' <- surv.params$w[draws,2,8];surv_rfx2$'2014' <- surv.params$w[draws,2,9];
+# surv_rfx2$'2015' <- surv.params$w[draws,2,10];surv_rfx2$'2016' <- surv.params$w[draws,2,11];surv_rfx2$'2017' <- surv.params$w[draws,2,12];
+# surv_rfx2$'2018' <- surv.params$w[draws,2,13];surv_rfx2$'2019' <- surv.params$w[draws,2,14];surv_rfx2$'2021' <- surv.params$w[draws,2,15];surv_rfx2$'2022' <- surv.params$w[draws,2,16]
+# # Ant 3 (prev other)
+# surv_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(surv_rfx3) <- years
+# surv_rfx3$'2004' <- surv.params$w[draws,3,1]; surv_rfx3$'2005' <- surv.params$w[draws,3,2]; surv_rfx3$'2006' <- surv.params$w[draws,3,3];surv_rfx3$'2009' <- surv.params$w[draws,3,4];surv_rfx3$'2010' <- surv.params$w[draws,3,5]; surv_rfx3$'2011' <- surv.params$w[draws,3,6];
+# surv_rfx3$'2012' <- surv.params$w[draws,3,7];surv_rfx3$'2013' <- surv.params$w[draws,3,8];surv_rfx3$'2014' <- surv.params$w[draws,3,9];
+# surv_rfx3$'2015' <- surv.params$w[draws,3,10];surv_rfx3$'2016' <- surv.params$w[draws,3,11];surv_rfx3$'2017' <- surv.params$w[draws,3,12];
+# surv_rfx3$'2018' <- surv.params$w[draws,3,13];surv_rfx3$'2019' <- surv.params$w[draws,3,14];surv_rfx3$'2021' <- surv.params$w[draws,3,15];surv_rfx3$'2022' <- surv.params$w[draws,3,16]
+# # Ant 4 (prev vac)
+# surv_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(surv_rfx4) <- years
+# surv_rfx4$'2004' <- surv.params$w[draws,4,1]; surv_rfx4$'2005' <- surv.params$w[draws,4,2]; surv_rfx4$'2006' <- surv.params$w[draws,4,3];surv_rfx4$'2009' <- surv.params$w[draws,4,4];surv_rfx4$'2010' <- surv.params$w[draws,4,5]; surv_rfx4$'2011' <- surv.params$w[draws,4,6];
+# surv_rfx4$'2012' <- surv.params$w[draws,4,7];surv_rfx4$'2013' <- surv.params$w[draws,4,8];surv_rfx4$'2014' <- surv.params$w[draws,4,9];
+# surv_rfx4$'2015' <- surv.params$w[draws,4,10];surv_rfx4$'2016' <- surv.params$w[draws,4,11];surv_rfx4$'2017' <- surv.params$w[draws,4,12];
+# surv_rfx4$'2018' <- surv.params$w[draws,4,13];surv_rfx4$'2019' <- surv.params$w[draws,4,14];surv_rfx4$'2021' <- surv.params$w[draws,4,15];surv_rfx4$'2022' <- surv.params$w[draws,4,16]
+# names(surv_rfx1) <- NULL
+# names(surv_rfx2) <- NULL
+# names(surv_rfx3) <- NULL
+# names(surv_rfx4) <- NULL
 
+####Ant 1 (prev crem)
+surv_rfx1 <- cbind(surv.params$w[draws,1,1],surv.params$w[draws,1,2],surv.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
+                   surv.params$w[draws,1,4],surv.params$w[draws,1,5],surv.params$w[draws,1,6],surv.params$w[draws,1,7],
+                   surv.params$w[draws,1,8],surv.params$w[draws,1,9],surv.params$w[draws,1,10],surv.params$w[draws,1,11],
+                   surv.params$w[draws,1,12],surv.params$w[draws,1,13],surv.params$w[draws,1,14],surv.params$w[draws,1,15],
+                   rep(0,N_draws),rep(0,N_draws))
+####Ant 2 (prev liom)
+surv_rfx2 <- cbind(surv.params$w[draws,2,1],surv.params$w[draws,2,2],surv.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
+                   surv.params$w[draws,2,4],surv.params$w[draws,2,5],surv.params$w[draws,2,6],surv.params$w[draws,2,7],
+                   surv.params$w[draws,2,8],surv.params$w[draws,2,9],surv.params$w[draws,2,10],surv.params$w[draws,2,11],
+                   surv.params$w[draws,2,12],surv.params$w[draws,2,13],surv.params$w[draws,2,14],surv.params$w[draws,2,15],
+                   rep(0,N_draws),rep(0,N_draws))
+####Ant 3 (prev other)
+surv_rfx3 <- cbind(surv.params$w[draws,3,1],surv.params$w[draws,3,2],surv.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
+                   surv.params$w[draws,3,4],surv.params$w[draws,3,5],surv.params$w[draws,3,6],surv.params$w[draws,3,7],
+                   surv.params$w[draws,3,8],surv.params$w[draws,3,9],surv.params$w[draws,3,10],surv.params$w[draws,3,11],
+                   surv.params$w[draws,3,12],surv.params$w[draws,3,13],surv.params$w[draws,3,14],surv.params$w[draws,3,15],
+                   rep(0,N_draws),rep(0,N_draws))
+####Ant 4 (prev vac)
+surv_rfx4 <- cbind(surv.params$w[draws,4,1],surv.params$w[draws,4,2],surv.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
+                   surv.params$w[draws,4,4],surv.params$w[draws,4,5],surv.params$w[draws,4,6],surv.params$w[draws,4,7],
+                   surv.params$w[draws,4,8],surv.params$w[draws,4,9],surv.params$w[draws,4,10],surv.params$w[draws,4,11],
+                   surv.params$w[draws,4,12],surv.params$w[draws,4,13],surv.params$w[draws,4,14],surv.params$w[draws,4,15],
+                   rep(0,N_draws),rep(0,N_draws))
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
 #head(flow.params)
@@ -173,10 +229,16 @@ params$flow_sig_w<-flow.params$sigma_w[draws]        ## flow sigma w
 params$flow_beta0<-flow.params$beta0[draws]          ## flow intercept
 params$flow_beta1<-flow.params$beta1[draws]          ## flow slopes
 #### --- Year Random Effects --- ####
-flow_rfx <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(flow_rfx) <- years
-flow_rfx$'2004' <- flow.params$w[draws,1];flow_rfx$'2005' <- flow.params$w[draws,2];flow_rfx$'2006' <- flow.params$w[draws,3];flow_rfx$'2007' <- flow.params$w[draws,4];flow_rfx$'2013' <- flow.params$w[draws,5];flow_rfx$'2014' <- flow.params$w[draws,6];flow_rfx$'2015' <- flow.params$w[draws,7];flow_rfx$'2016' <- flow.params$w[draws,8];flow_rfx$'2017' <- flow.params$w[draws,9];flow_rfx$'2018' <- flow.params$w[draws,10];flow_rfx$'2019' <- flow.params$w[draws,11];flow_rfx$'2021' <- flow.params$w[draws,12];flow_rfx$'2022' <- flow.params$w[draws,13];flow_rfx$'2023' <- flow.params$w[draws,14];
-
+# flow_rfx <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(flow_rfx) <- years
+# flow_rfx$'2004' <- flow.params$w[draws,1];flow_rfx$'2005' <- flow.params$w[draws,2];flow_rfx$'2006' <- flow.params$w[draws,3];flow_rfx$'2007' <- flow.params$w[draws,4];flow_rfx$'2013' <- flow.params$w[draws,5];flow_rfx$'2014' <- flow.params$w[draws,6];flow_rfx$'2015' <- flow.params$w[draws,7];flow_rfx$'2016' <- flow.params$w[draws,8];flow_rfx$'2017' <- flow.params$w[draws,9];flow_rfx$'2018' <- flow.params$w[draws,10];flow_rfx$'2019' <- flow.params$w[draws,11];flow_rfx$'2021' <- flow.params$w[draws,12];flow_rfx$'2022' <- flow.params$w[draws,13];flow_rfx$'2023' <- flow.params$w[draws,14];
+# names(flow_rfx) <- NULL
+flow_rfx <- cbind(flow.params$w[draws,1],flow.params$w[draws,2],flow.params$w[draws,3],
+                  flow.params$w[draws,4],rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                  flow.params$w[draws,5],flow.params$w[draws,6],flow.params$w[draws,7],
+                  flow.params$w[draws,8],flow.params$w[draws,9],flow.params$w[draws,10],flow.params$w[draws,11],
+                  rep(0,N_draws),
+                  flow.params$w[draws,12],flow.params$w[draws,13],flow.params$w[draws,14])
 ##-----------------------Reproductive State Parameters-----------------## 
 ## Check the names of the parameters
 #head(repro.params)
@@ -185,9 +247,16 @@ params$repro_beta1<-repro.params$beta1[draws]      ## repro slope
 params$repro_sig_u<-repro.params$sigma_u[draws]    ## repro sigma u
 params$repro_sig_w<-repro.params$sigma_w[draws]    ## repro sigma w
 ## --- Year Random Effects --- ####
-repro_rfx <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-colnames(repro_rfx) <- years
-repro_rfx$'2005' <- repro.params$w[draws,1];repro_rfx$'2006' <- repro.params$w[draws,2];repro_rfx$'2007' <- repro.params$w[draws,3];repro_rfx$'2008' <- repro.params$w[draws,4];repro_rfx$'2013' <- repro.params$w[draws,5];repro_rfx$'2014' <- repro.params$w[draws,6];repro_rfx$'2015' <- repro.params$w[draws,7];repro_rfx$'2016' <- repro.params$w[draws,8];repro_rfx$'2017' <- repro.params$w[draws,9];repro_rfx$'2018' <- repro.params$w[draws,10];repro_rfx$'2019' <- repro.params$w[draws,11];repro_rfx$'2021' <- repro.params$w[draws,12];repro_rfx$'2022' <- repro.params$w[draws,13];repro_rfx$'2023' <- repro.params$w[draws,14];
+# repro_rfx <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# colnames(repro_rfx) <- years
+# repro_rfx$'2005' <- repro.params$w[draws,1];repro_rfx$'2006' <- repro.params$w[draws,2];repro_rfx$'2007' <- repro.params$w[draws,3];repro_rfx$'2008' <- repro.params$w[draws,4];repro_rfx$'2013' <- repro.params$w[draws,5];repro_rfx$'2014' <- repro.params$w[draws,6];repro_rfx$'2015' <- repro.params$w[draws,7];repro_rfx$'2016' <- repro.params$w[draws,8];repro_rfx$'2017' <- repro.params$w[draws,9];repro_rfx$'2018' <- repro.params$w[draws,10];repro_rfx$'2019' <- repro.params$w[draws,11];repro_rfx$'2021' <- repro.params$w[draws,12];repro_rfx$'2022' <- repro.params$w[draws,13];repro_rfx$'2023' <- repro.params$w[draws,14];
+# names(repro_rfx) <- NULL
+repro_rfx <- cbind(rep(0,N_draws),repro.params$w[draws,1],repro.params$w[draws,2],repro.params$w[draws,3],
+                   repro.params$w[draws,4],rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   repro.params$w[draws,5],repro.params$w[draws,6],repro.params$w[draws,7],
+                   repro.params$w[draws,8],repro.params$w[draws,9],repro.params$w[draws,10],repro.params$w[draws,11],
+                  rep(0,N_draws),
+                  repro.params$w[draws,12],repro.params$w[draws,13],repro.params$w[draws,14])
 ##-----------------------Viability Parameters-----------------## 
 ## Check the names of the parameters
 #head(viab.params) 
@@ -202,20 +271,48 @@ params$viab_beta03<-viab.params$beta0[draws,3]     	  ## viab intercept
 params$viab_beta01<-viab.params$beta0[draws,1]     	  ## viab intercept
 # Ant 2 (liom)
 params$viab_beta02<-viab.params$beta0[draws,2]     	  ## viab intercept
-## Year random effects
-# Ant 1 (prev crem)
-viab_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-viab_rfx1$'2004' <- viab.params$w[draws,1,1];viab_rfx1$'2005' <- viab.params$w[draws,1,2];viab_rfx1$'2006' <- viab.params$w[draws,1,3];viab_rfx1$'2012' <- viab.params$w[draws,1,4];viab_rfx1$'2013' <- viab.params$w[draws,1,5];viab_rfx1$'2014' <- viab.params$w[draws,1,6];viab_rfx1$'2015' <- viab.params$w[draws,1,7];viab_rfx1$'2016' <- viab.params$w[draws,1,8];viab_rfx1$'2017' <- viab.params$w[draws,1,9];viab_rfx1$'2018' <- viab.params$w[draws,1,10];viab_rfx1$'2019' <- viab.params$w[draws,1,11];viab_rfx1$'2021' <- viab.params$w[draws,1,12];viab_rfx1$'2022' <- viab.params$w[draws,1,13];
-# Ant 2 (prev liom)
-viab_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-viab_rfx2$'2004' <- viab.params$w[draws,2,1];viab_rfx2$'2005' <- viab.params$w[draws,2,2];viab_rfx2$'2006' <- viab.params$w[draws,2,3];viab_rfx2$'2012' <- viab.params$w[draws,2,4];viab_rfx2$'2013' <- viab.params$w[draws,2,5];viab_rfx2$'2014' <- viab.params$w[draws,2,6];viab_rfx2$'2015' <- viab.params$w[draws,2,7];viab_rfx2$'2016' <- viab.params$w[draws,2,8];viab_rfx2$'2017' <- viab.params$w[draws,2,9];viab_rfx2$'2018' <- viab.params$w[draws,2,10];viab_rfx2$'2019' <- viab.params$w[draws,2,11];viab_rfx2$'2021' <- viab.params$w[draws,2,12];viab_rfx2$'2022' <- viab.params$w[draws,2,13];
-# Ant 3 (prev other)
-viab_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-viab_rfx3$'2004' <- viab.params$w[draws,3,1];viab_rfx3$'2005' <- viab.params$w[draws,3,2];viab_rfx2$'2006' <- viab.params$w[draws,2,3];viab_rfx3$'2012' <- viab.params$w[draws,3,4];viab_rfx3$'2013' <- viab.params$w[draws,3,5];viab_rfx2$'2014' <- viab.params$w[draws,2,6];viab_rfx3$'2015' <- viab.params$w[draws,3,7];viab_rfx3$'2016' <- viab.params$w[draws,3,8];viab_rfx2$'2017' <- viab.params$w[draws,2,9];viab_rfx3$'2018' <- viab.params$w[draws,3,10];viab_rfx3$'2019' <- viab.params$w[draws,3,11];viab_rfx2$'2021' <- viab.params$w[draws,2,12];viab_rfx3$'2022' <- viab.params$w[draws,3,13];
-# Ant 4 (prev vac)
-viab_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
-viab_rfx4$'2004' <- viab.params$w[draws,4,1];viab_rfx4$'2005' <- viab.params$w[draws,4,2];viab_rfx4$'2006' <- viab.params$w[draws,4,3];viab_rfx4$'2012' <- viab.params$w[draws,4,4];viab_rfx4$'2013' <- viab.params$w[draws,4,5];viab_rfx4$'2014' <- viab.params$w[draws,4,6];viab_rfx4$'2015' <- viab.params$w[draws,4,7];viab_rfx4$'2016' <- viab.params$w[draws,4,8];viab_rfx4$'2017' <- viab.params$w[draws,4,9];viab_rfx4$'2018' <- viab.params$w[draws,4,10];viab_rfx4$'2019' <- viab.params$w[draws,4,11];viab_rfx4$'2021' <- viab.params$w[draws,4,12];viab_rfx4$'2022' <- viab.params$w[draws,4,13];
+# ## Year random effects
+# # Ant 1 (prev crem)
+# viab_rfx1 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# viab_rfx1$'2004' <- viab.params$w[draws,1,1];viab_rfx1$'2005' <- viab.params$w[draws,1,2];viab_rfx1$'2006' <- viab.params$w[draws,1,3];viab_rfx1$'2012' <- viab.params$w[draws,1,4];viab_rfx1$'2013' <- viab.params$w[draws,1,5];viab_rfx1$'2014' <- viab.params$w[draws,1,6];viab_rfx1$'2015' <- viab.params$w[draws,1,7];viab_rfx1$'2016' <- viab.params$w[draws,1,8];viab_rfx1$'2017' <- viab.params$w[draws,1,9];viab_rfx1$'2018' <- viab.params$w[draws,1,10];viab_rfx1$'2019' <- viab.params$w[draws,1,11];viab_rfx1$'2021' <- viab.params$w[draws,1,12];viab_rfx1$'2022' <- viab.params$w[draws,1,13];
+# # Ant 2 (prev liom)
+# viab_rfx2 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# viab_rfx2$'2004' <- viab.params$w[draws,2,1];viab_rfx2$'2005' <- viab.params$w[draws,2,2];viab_rfx2$'2006' <- viab.params$w[draws,2,3];viab_rfx2$'2012' <- viab.params$w[draws,2,4];viab_rfx2$'2013' <- viab.params$w[draws,2,5];viab_rfx2$'2014' <- viab.params$w[draws,2,6];viab_rfx2$'2015' <- viab.params$w[draws,2,7];viab_rfx2$'2016' <- viab.params$w[draws,2,8];viab_rfx2$'2017' <- viab.params$w[draws,2,9];viab_rfx2$'2018' <- viab.params$w[draws,2,10];viab_rfx2$'2019' <- viab.params$w[draws,2,11];viab_rfx2$'2021' <- viab.params$w[draws,2,12];viab_rfx2$'2022' <- viab.params$w[draws,2,13];
+# # Ant 3 (prev other)
+# viab_rfx3 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# viab_rfx3$'2004' <- viab.params$w[draws,3,1];viab_rfx3$'2005' <- viab.params$w[draws,3,2];viab_rfx2$'2006' <- viab.params$w[draws,2,3];viab_rfx3$'2012' <- viab.params$w[draws,3,4];viab_rfx3$'2013' <- viab.params$w[draws,3,5];viab_rfx2$'2014' <- viab.params$w[draws,2,6];viab_rfx3$'2015' <- viab.params$w[draws,3,7];viab_rfx3$'2016' <- viab.params$w[draws,3,8];viab_rfx2$'2017' <- viab.params$w[draws,2,9];viab_rfx3$'2018' <- viab.params$w[draws,3,10];viab_rfx3$'2019' <- viab.params$w[draws,3,11];viab_rfx2$'2021' <- viab.params$w[draws,2,12];viab_rfx3$'2022' <- viab.params$w[draws,3,13];
+# # Ant 4 (prev vac)
+# viab_rfx4 <- data.frame(matrix(0, nrow = N_draws, ncol = 19))
+# viab_rfx4$'2004' <- viab.params$w[draws,4,1];viab_rfx4$'2005' <- viab.params$w[draws,4,2];viab_rfx4$'2006' <- viab.params$w[draws,4,3];viab_rfx4$'2012' <- viab.params$w[draws,4,4];viab_rfx4$'2013' <- viab.params$w[draws,4,5];viab_rfx4$'2014' <- viab.params$w[draws,4,6];viab_rfx4$'2015' <- viab.params$w[draws,4,7];viab_rfx4$'2016' <- viab.params$w[draws,4,8];viab_rfx4$'2017' <- viab.params$w[draws,4,9];viab_rfx4$'2018' <- viab.params$w[draws,4,10];viab_rfx4$'2019' <- viab.params$w[draws,4,11];viab_rfx4$'2021' <- viab.params$w[draws,4,12];viab_rfx4$'2022' <- viab.params$w[draws,4,13];
+# names(viab_rfx1) <- NULL
+# names(viab_rfx2) <- NULL
+# names(viab_rfx3) <- NULL
+# names(viab_rfx4) <- NULL
 
+viab_rfx1 <- cbind(viab.params$w[draws,1,1],viab.params$w[draws,1,2],viab.params$w[draws,1,3],
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   viab.params$w[draws,1,4],viab.params$w[draws,1,5],viab.params$w[draws,1,6],viab.params$w[draws,1,7],
+                   viab.params$w[draws,1,8],viab.params$w[draws,1,9],viab.params$w[draws,1,10],viab.params$w[draws,1,11]
+                   ,rep(0,N_draws),
+                   viab.params$w[draws,1,12],viab.params$w[draws,1,13],rep(0,N_draws))
+viab_rfx2 <- cbind(viab.params$w[draws,2,1],viab.params$w[draws,2,2],viab.params$w[draws,2,3],
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   viab.params$w[draws,2,4],viab.params$w[draws,2,5],viab.params$w[draws,2,6],viab.params$w[draws,2,7],
+                   viab.params$w[draws,2,8],viab.params$w[draws,2,9],viab.params$w[draws,2,10],viab.params$w[draws,2,11]
+                   ,rep(0,N_draws),
+                   viab.params$w[draws,2,12],viab.params$w[draws,2,13],rep(0,N_draws))
+viab_rfx3 <- cbind(viab.params$w[draws,3,1],viab.params$w[draws,3,2],viab.params$w[draws,3,3],
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   viab.params$w[draws,3,4],viab.params$w[draws,3,5],viab.params$w[draws,3,6],viab.params$w[draws,3,7],
+                   viab.params$w[draws,3,8],viab.params$w[draws,3,9],viab.params$w[draws,3,10],viab.params$w[draws,3,11]
+                   ,rep(0,N_draws),
+                   viab.params$w[draws,3,12],viab.params$w[draws,3,13],rep(0,N_draws))
+viab_rfx4 <- cbind(viab.params$w[draws,4,1],viab.params$w[draws,4,2],viab.params$w[draws,4,3],
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   viab.params$w[draws,4,4],viab.params$w[draws,4,5],viab.params$w[draws,4,6],viab.params$w[draws,4,7],
+                   viab.params$w[draws,4,8],viab.params$w[draws,4,9],viab.params$w[draws,4,10],viab.params$w[draws,4,11]
+                   ,rep(0,N_draws),
+                   viab.params$w[draws,4,12],viab.params$w[draws,4,13],rep(0,N_draws))
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
 #head(seed.params)
@@ -320,13 +417,15 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "vacant"){ return(g_vac)}
 }
 
+# gxy(x = 4,y = 3,i ="crem",params = params[1,],grow_rfx1 = grow_rfx1[1,1],grow_rfx2 = grow_rfx2[1,1],grow_rfx3 = grow_rfx3[1,1],grow_rfx4 = grow_rfx4[1,1])
+# 
 # # ##Check that it works properly
 # i = c("vacant","crem","liom","other")
 # x = c(-1,-5,3,4)
 # y = c(-1,-4,3,4)
 # g <- matrix(NA,ncol = length(i), nrow = 10)
 # l <- list()
-#
+# 
 # for(a in 1:17){ ## year
 # for(m in 1:10){ ## iteration
 #   for(n in seq(1:length(i))){ ## input info
@@ -338,7 +437,7 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
 # }
 # g
 # l
-
+# 
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
 ## You input the size of the cactus and ant state and in return you get the probability of surviving ####
@@ -374,7 +473,7 @@ sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
 # }
 #   l[[a]] <- s
 # #}
-#
+# 
 # s
 # l
 
@@ -402,7 +501,7 @@ pxy<-function(x,y,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,gro
 # }
 #   l[[a]] <- px
 # }
-#
+# 
 # px
 # l
 
@@ -438,13 +537,12 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
 # i = c("liom","vacant","crem","other")
 # x = c(-1,-5,4,3)
 # y = c(-1,-4,4.5,3.01)
-# f <- matrix(NA,ncol = length(i), nrow = 100)
+# f <- matrix(NA,ncol = length(i), nrow = 10)
 # l <- list()
+# 
 # for(a in 1:17){ ## year
-# for(m in seq(1:100)){ ## iteration
-#   for(n in seq(1:length(i))){ ## input info
+# for(m in seq(1:10)){ ## iteration
 #     f[m,n] <- fx(x[n],i[n],params[m,],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])
-#     }
 # }
 #   l[[a]] <- f
 # }
@@ -759,7 +857,6 @@ transition.x <- function(x,i,j,params,scenario){
 # }
 # t
 
-
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
 ##################################################################################################
@@ -802,54 +899,35 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
   Tmat[3:(n+2),3:(n+2)]<-t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
   # Put it all together
   IPMmat<-Fmat+Tmat
-  
-  # eviction tests
-  growmat<-t(outer(y,y,gxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
-  p <- colSums(growmat) # Shows the column sums, each should be as close to 1 as possible
-  evict<-matsize-sum(colSums(growmat)) # Should be as close to 0 as possible
-  
-  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, evict=evict, p=p))
+  # 
+  # # eviction tests
+  # growmat<-t(outer(y,y,gxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
+  # p <- colSums(growmat) # Shows the column sums, each should be as close to 1 as possible
+  # evict<-matsize-sum(colSums(growmat)) # Should be as close to 0 as possible
+  # 
+   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))#, y=y, evict=evict, p=p))
 }
- 
-mean_params=data.frame(t(colMeans(params)))
-bigobj<-bigmatrix.1(params=mean_params,
-            lower=lower,
-            upper=upper,
-            floor=25,
-            ceiling=4,
-            matsize=400)
-
-plot(bigobj$y,bigobj$p,ylab="colsums of Tmat",ylim=c(0,1))
-abline(v=c(lower,upper),col="red")
-
-evicts<-lambdas<-c()
-matsizes<-c(200,250,300,350,400,450,500,600,800,1000)
-for(i in 1:length(matsizes)){
-  bigobj<-bigmatrix.1(params=mean_params,
-                      lower=lower,
-                      upper=upper,
-                      floor=25,
-                      ceiling=4,
-                      matsize=matsizes[i])
-  evicts[i]<-bigobj$evict
-  lambdas[i]<-popbio::lambda(bigobj$IPMmat)
-}
-
-plot(matsizes,evicts)
-plot(matsizes,lambdas,type="b")
-
-
-x <- c(1,1)
- lam <- matrix(rep(NA,120), nrow = 10)
- l <- list()
- for(a in 1:1){ ## years
- for(m in 1:10){ ## params
-  #lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-   l[[m]] <- bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$evict
- }
- }
-#lam # each row is different iteration and each column is a year
-l[1]
+# x <- c(1,1)
+#  lam <- matrix(rep(NA,120), nrow = 10)
+#  growmat<-c()
+#  l <- list()
+#  for(a in 1:12){
+#  for(m in 1:10){ ## years
+#   lam[m,a] <- lambda(bigmatrix.1(params=params[m,],
+#                          lower=lower,
+#                          upper=upper,
+#                          floor=25,
+#                          ceiling=4,
+#                          matsize=500,
+#                          grow_rfx1[m,a],grow_rfx2[m,a],
+#                          grow_rfx3[m,a],grow_rfx4[m,a],
+#                          surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+#                          flow_rfx[m,a],repro_rfx[m,a],
+#                          viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#  }
+#  }
+# lam # each row is different iteration and each column is a year
+# # l
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
@@ -912,10 +990,13 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     # eviction tests
     LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac"))
     LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
-    p <- colSums(rbind(LLgrowmat,LVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
-    evict<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat))) # Should be as close to 0 as possible
-    
-    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, p=p, evict=evict))
+    p_l <- colSums(rbind(LLgrowmat,LVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_l<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat))) # Should be as close to 0 as possible
+    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+    p_v <- colSums(rbind(LLgrowmat,LVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_v<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat))) # Should be as close to 0 as possible
+    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, p_v=p_v, evict_v=evict_v, p_l=p_l, evict_l=evict_l))
   }
   ########################################### CREM ###############################################
   if(scenario == "cremvac"){
@@ -940,9 +1021,16 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     # Put it all together
     colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat# Calculate the lambda
-    # lambda = Re(eigen(IPMmat)$values[1])
-    # return(lambda)
-    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+    # eviction tests
+    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"cremvac"))
+    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac"))
+    p_c <- colSums(rbind(CCgrowmat,CVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_c<-matsize-sum(colSums(rbind(CCgrowmat,CVgrowmat))) # Should be as close to 0 as possible
+    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"cremvac"))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac"))
+    p_v <- colSums(rbind(VCgrowmat,VVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_v<-matsize-sum(colSums(rbind(VCgrowmat,VVgrowmat))) # Should be as close to 0 as possible
+    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, y = y))
   }
   ############################################# OTHER ###########################################
   if(scenario == "othervac"){
@@ -967,60 +1055,48 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     # Put it all together
     colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat
-    # Calculate the lambda
-    # lambda = Re(eigen(IPMmat)$values[1])
-    # return(lambda)
-    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+    # eviction tests
+    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac"))
+  OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
+    p_o <- colSums(rbind(OOgrowmat,OVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_o<-matsize-sum(colSums(rbind(OOgrowmat,OVgrowmat))) # Should be as close to 0 as possible
+    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac"))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac"))
+    p_v <- colSums(rbind(VOgrowmat,VVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_v<-matsize-sum(colSums(rbind(VOgrowmat,VVgrowmat))) # Should be as close to 0 as possible
+    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_o = evict_o, p_o = p_o, evict_v = evict_v, p_v = p_v,y = y))
   }
 }
 
 
-# i = c("liom","vacant")
 # x <- c(1,1)
-# scenario = c("liomvac","othervac")
-# lam <- matrix(rep(NA,20),nrow = 10,ncol = 2)
-# big <- list()
-#
-#   for(a in 1:7){ ## year
-#     for(m in 1:10){ ## iter
-#       for(n in 1:length(i)){ ## input info
-#       lam[m,n] <- lambda(bigmatrix.2(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+# scenario = c("othervac","liomvac","cremvac")
+# lam <- matrix(rep(NA,120), nrow = 10)
+# growmat<-c()
+# l <- list()
+# for(i in 1:length(scenario)){
+#   for(a in 1:12){
+#     for(m in 1:10){ ## years
+      # lam[m,a] <- lambda(bigmatrix.2(params=params[m,],
+      #                              lower=lower,
+      #                              upper=upper,
+      #                              scenario = scenario[1],
+      #                              floor=25,
+      #                              ceiling=4,
+      #                              matsize=500,
+#                                    grow_rfx1[m,a],grow_rfx2[m,a],
+#                                    grow_rfx3[m,a],grow_rfx4[m,a],
+#                                    surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+#                                    flow_rfx[m,a],repro_rfx[m,a],
+#                                    viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
 #     }
 #   }
-#   big[[a]] <- lam
-#
+#   l[[i]] <- lam[m,a]
 # }
-# lam
-# big
+# lam # each row is different iteration and each column is a year
+# l
 
 
-bigobj_liomvac<-bigmatrix.2(params=mean_params,
-                    scenario="liomvac",
-                    lower=lower,
-                    upper=upper,
-                    floor=25,
-                    ceiling=4,
-                    matsize=400)
-
-plot(bigobj_liomvac$y,bigobj_liomvac$p,ylab="colsums of Tmat",ylim=c(0,1))
-abline(v=c(lower,upper),col="red")
-
-evicts_liomvac<-lambdas_liomvac<-c()
-for(i in 1:length(matsizes)){
-  bigobj_liomvac<-bigmatrix.2(params=mean_params,
-                              scenario="liomvac",
-                      lower=lower,
-                      upper=upper,
-                      floor=25,
-                      ceiling=4,
-                      matsize=matsizes[i])
-  evicts_liomvac[i]<-bigobj_liomvac$evict
-  lambdas_liomvac[i]<-popbio::lambda(bigobj_liomvac$IPMmat)
-}
-
-plot(matsizes,evicts_liomvac)
-plot(matsizes,lambdas_liomvac,type="b",ylim=c(.98,1))
-points(matsizes,lambdas,type="b",col="red")
 
 
 
@@ -1028,7 +1104,11 @@ points(matsizes,lambdas,type="b",col="red")
 ###################################### THREE ANTS ###############################################
 #################################################################################################
 
-bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
+bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
+                        surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+                        flow_rfx=0,repro_rfx=0,
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -1081,9 +1161,23 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     # Put it all together
     colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
-    # lambda = Re(eigen(IPMmat)$values[1])
-    # return(lambda)
-    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+    # eviction tests
+    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomcremvac"))
+    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac"))
+    LCgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"liomcremvac"))
+    p_l <- colSums(rbind(LLgrowmat,LVgrowmat,LCgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_l<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat,LCgrowmat))) # Should be as close to 0 as possible
+    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomcremvac"))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac"))
+    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"liomcremvac"))
+    p_v <- colSums(rbind(VLgrowmat,VVgrowmat,VCgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_v<-matsize-sum(colSums(rbind(VLgrowmat,VVgrowmat,VCgrowmat))) # Should be as close to 0 as possible
+    CLgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"liomcremvac"))
+    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"liomcremvac"))
+    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"liomcremvac"))
+    p_c <- colSums(rbind(CLgrowmat,CVgrowmat,CCgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_c<-matsize-sum(colSums(rbind(CLgrowmat,CVgrowmat,CCgrowmat))) # Should be as close to 0 as possible
+    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_l = evict_l, p_l = p_l, evict_v = evict_v, p_v = p_v,p_c=p_c, evict_c=evict_c,y = y))
   }
   ############################################ LIOM & OTHER & VAC ###########################################
   if(scenario == "liomvacother"){
@@ -1126,9 +1220,23 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     # Put it all together
     colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
-    # lambda = Re(eigen(IPMmat)$values[1])
-    # return(lambda)
-    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+    # eviction tests
+    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother"))
+    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother"))
+    LOgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother"))
+    p_l <- colSums(rbind(LLgrowmat,LVgrowmat,LOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_l<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat,LOgrowmat))) # Should be as close to 0 as possible
+    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother"))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother"))
+    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother"))
+    p_v <- colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_v<-matsize-sum(colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat))) # Should be as close to 0 as possible
+    OLgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother"))
+    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother"))
+    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother"))
+    p_o <- colSums(rbind(OLgrowmat,OVgrowmat,OOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_o<-matsize-sum(colSums(rbind(OLgrowmat,OVgrowmat,OOgrowmat))) # Should be as close to 0 as possible
+    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_l = evict_l, p_l = p_l, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o,y = y))
   }
   ############################################# CREM & OTHER & VAC ############################################
   if(scenario == "othercremvac"){
@@ -1162,34 +1270,62 @@ bigmatrix.3 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
     # Put it all together
     colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
-    # lambda = Re(eigen(IPMmat)$values[1])
-    # return(lambda)
-    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+    # eviction tests
+    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"othercremvac"))
+    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"othercremvac"))
+    COgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"othercremvac"))
+    p_c <- colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_c<-matsize-sum(colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat))) # Should be as close to 0 as possible
+    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"othercremvac"))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othercremvac"))
+    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac"))
+    p_v <- colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_v<-matsize-sum(colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat))) # Should be as close to 0 as possible
+    OCgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"othercremvac"))
+    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othercremvac"))
+    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac"))
+    p_o <- colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+    evict_o<-matsize-sum(colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat))) # Should be as close to 0 as possible
+    return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o,y = y))
   }
 }
-# # Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-# i = c("liom","vacant")
 # x <- c(1,1)
-# scenario = c("liomvacother","liomcremvac")
-# lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
-# big <- list()
-# for(a in 1:2){ ## year
-#   for(m in 1:10){ ## iter
-#     for(n in 1:length(i)){ ## input info
-#       lam[m,n] <- lambda(bigmatrix.3(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+# scenario = c("othercremvac","liomvacother","liomcremvac")
+# lam <- matrix(rep(NA,120), nrow = 10)
+# growmat<-c()
+# l <- list()
+# for(i in 1:length(scenario)){
+#   for(a in 1:2){
+#     for(m in 1:3){ ## years
+#       lam[m,a] <- lambda(bigmatrix.3(params=params[m,],
+#                                      lower=lower,
+#                                      upper=upper,
+#                                      scenario = scenario[i],
+#                                      floor=25,
+#                                      ceiling=4,
+#                                      matsize=500,
+#                                      grow_rfx1[m,a],grow_rfx2[m,a],
+#                                      grow_rfx3[m,a],grow_rfx4[m,a],
+#                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+#                                      flow_rfx[m,a],repro_rfx[m,a],
+#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
 #     }
 #   }
-#   big[[a]] <- lam
+#   l[[i]] <- lam[m,a]
 # }
-# lam
-# big
+# lam # each row is different iteration and each column is a year
+# l
 
 
 
 ##################################################################################################
 ######################################### ALL ANTS PRESENT #######################################
 ##################################################################################################
-bigmatrix.4 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
+bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
+                        surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+                        flow_rfx=0,repro_rfx=0,
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -1254,32 +1390,70 @@ bigmatrix.4 <- function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,
   colSums(Tmat[3:(4*n+2),3:(4*n+2)])
   colSums(Tmat[3:(4*n+2),3:(4*n+2)])[1000:1200]
   IPMmat<-Fmat+Tmat
-  # lambda = Re(eigen(IPMmat)$values[1])
-  # return(lambda)
-  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))
+  # eviction tests
+  CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))
+  CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"all"))
+  COgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"all"))
+  CLgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"all"))
+  p_c <- colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat,CLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+  evict_c<-matsize-sum(colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat,CLgrowmat))) # Should be as close to 0 as possible
+  VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"all"))
+  VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
+  VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all"))
+  VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all"))
+  p_v <- colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat,VLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+  evict_v<-matsize-sum(colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat,VLgrowmat))) # Should be as close to 0 as possible
+  OCgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all"))
+  OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))
+  OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all"))
+  OLgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"all"))
+  p_o <- colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat,OLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+  evict_o<-matsize-sum(colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat,OLgrowmat))) # Should be as close to 0 as possible
+  LCgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"all"))
+  LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"all"))
+  LOgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"all"))
+  LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"all"))
+  p_l <- colSums(rbind(LCgrowmat,LVgrowmat,LOgrowmat,LLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+  evict_l<-matsize-sum(colSums(rbind(LCgrowmat,LVgrowmat,LOgrowmat,LLgrowmat))) # Should be as close to 0 as possible
+  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o, p_l = p_l, evict_l = evict_l, y = y))
 }
 
-# i = c("liom","vacant")
 # x <- c(1,1)
-# scenario = c("all","all")
-# lam <- matrix(rep(NA,10*length(i)),nrow = 10,ncol = length(i))
-# big <- list()
-# for(a in 1:17){ ## year
-#   for(m in 1:10){ ## iter
-#     for(n in 1:length(i)){ ## input info
-#       lam[m,n] <- lambda(bigmatrix.4(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+# lam <- matrix(rep(NA,120), nrow = 10)
+# scenario = c("all")
+# growmat<-c()
+# l <- list()
+# for(i in 1:length(scenario)){
+#   for(a in 1:2){
+#     for(m in 1:2){ ## years
+#       lam[m,a] <- lambda(bigmatrix.4(params=params[m,],
+#                                      lower=lower,
+#                                      upper=upper,
+#                                      scenario = scenario[i],
+#                                      floor=25,
+#                                      ceiling=4,
+#                                      matsize=500,
+#                                      grow_rfx1[m,a],grow_rfx2[m,a],
+#                                      grow_rfx3[m,a],grow_rfx4[m,a],
+#                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+#                                      flow_rfx[m,a],repro_rfx[m,a],
+#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
 #     }
 #   }
-#   big[[a]] <- lam
+#   l[[i]] <- lam[m,a]
 # }
-# lam
-# big
+# lam # each row is different iteration and each column is a year
+# l
 
 #################################################################################################
 ############################ CHOOSE WHICH SCENARIO (COMBO OF ANTS) ##############################
 #################################################################################################
 
-bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
+bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
+                    grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
+                    surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+                    flow_rfx=0,repro_rfx=0,
+                    viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -1291,67 +1465,95 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
   ## "othervac", "liomvac", "cremvac", "all", "none"
 
   if(scenario == "none"){
-    list = (bigmatrix.1(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.1(params,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "liomvac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.2(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "cremvac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.2(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "othervac"){
-    list = (bigmatrix.2(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.2(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "liomvacother"){
-    list = (bigmatrix.3(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.3(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "liomcremvac"){
-    list = (bigmatrix.3(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.3(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "othercremvac"){
-    list = (bigmatrix.3(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.3(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
   if(scenario == "all"){
-    list = (bigmatrix.4(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+    list = (bigmatrix.4(params,scenario,lower,upper,floor,ceiling,matsize,
+                        grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
+                        surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                        flow_rfx,repro_rfx,
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
     return(list)
   }
 }
-# i = c("liom","vacant","vacant","crem")
-# x <- c(1,1,1,1)
-# scenario = c("all","all","none","liomcremvac")
-# lam <- matrix(rep(NA,3),nrow = 3,ncol = 4)
-# big <- list()
-# for(a in 1:2){ ## year
-#   for(m in 1:1){ ## iter
-#     for(n in 1:length(i)){ ## input info
-#       lam[m,n] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[n],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+# lam <- matrix(rep(NA,120), nrow = 10)
+# scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+# growmat<-c()
+# l <- list()
+# for(i in 1:length(scenario)){
+#   for(a in 1:2){
+#     for(m in 1:1){
+#       lam[m,a] <- lambda(bigmatrix(params=params[m,],
+#                                      lower=lower,
+#                                      upper=upper,
+#                                      scenario = scenario[i],
+#                                      floor=25,
+#                                      ceiling=4,
+#                                      matsize=500,
+#                                      grow_rfx1[m,a],grow_rfx2[m,a],
+#                                      grow_rfx3[m,a],grow_rfx4[m,a],
+#                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+#                                      flow_rfx[m,a],repro_rfx[m,a],
+#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
 #     }
 #   }
-#   big[[a]] <- lam
+#   l[[i]] <- lam[m,a]
 # }
-# lam
-# big
-
-
-# ## One ant option
-# lambda(bigmatrix(params[14,], lower, upper, matsize, "none",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-# ## 2 ant options
-# lambda(bigmatrix(params[14,],lower,upper,matsize,"cremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-# lambda(bigmatrix(params[14,],lower,upper,matsize,"othervac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-# ## 3 ant options
-# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomcremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvacother",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-# lambda(bigmatrix(params[14,],lower,upper,matsize,"othercremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-# ## all ant options
-# lambda(bigmatrix(params[14,],lower,upper,matsize,"all",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lam # each row is different iteration and each column is a year
+# l
 
 
 #########################################################################################################
@@ -1362,15 +1564,17 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
 # For every diversity scenario analyzed there should be a posterior distribution of lambdas estimated ###
 #########################################################################################################
 lambdaSim=function(params,                                  ## parameters
-                   grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4, ## growth model year rfx
-                   surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4, ## survival model year rfx
-                   flow_rfx,                                ## flower model year rfx
-                   repro_rfx,                               ## repro model year rfx
-                   viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4, ## viability model year rfx
+                   grow_rfx1=0,grow_rfx2=0,
+                   grow_rfx3=0,grow_rfx4=0,
+                   surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
+                   flow_rfx=0,repro_rfx=0,
+                   viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,
                    max_yrs,                                 ## the # years you want to iterate
                    matsize,                                 ## size of transition matrix
                    scenario,                                ## partner diversity scenario
-                   lower,upper                              ## extensions to avoid eviction
+                   lower,upper,                             ## extensions to avoid eviction
+                   floor,ceiling
+                  
 ){
 
   ## Create an actual matrix filled with 0 of the right size based on scenarios
@@ -1381,15 +1585,15 @@ lambdaSim=function(params,                                  ## parameters
   matdim        <- ncol(K_t)
   rtracker      <- (rep(0,max_yrs))  ## Empty vector to store growth rates in
   n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
-  #
+
   for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then
     #   ## scale this to the stochastic growth rate
     #   ## Randomly sample the years we have data for by calling column r in all matricies of
     #   ## the year random effects
-    r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19),1,replace = TRUE,prob = NULL)
+    r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),1,replace = TRUE,prob = NULL)
 
     ## Create and store matrix
-    K_t[,]<-bigmatrix(params,lower,upper,matsize,scenario,
+    K_t[,]<-bigmatrix(params,scenario,lower,upper,floor,ceiling,matsize,
                       grow_rfx1[r],grow_rfx2[r],grow_rfx3[r],grow_rfx4[r],
                       surv_rfx1[r],surv_rfx2[r],surv_rfx3[r],surv_rfx4[r],
                       flow_rfx[r],
@@ -1415,32 +1619,32 @@ lambdaSim=function(params,                                  ## parameters
 
 # scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 # max_scenario = length(scenario) #n
-# max_yrs = 100
+# max_yrs = 2
 # max_rep = 1
 # lam <- matrix(data = NA, nrow = max_rep, ncol = max_scenario)
-# for(n in 1:max_scenario){
-#   print(scenario[n])
+# for(i in 1:max_scenario){
+#   print(scenario[i])
 #   for(m in 1:max_rep){
-#     lam[m,n] <- lambdaSim(params = params[m,],
+#     lam[m,i] <- lambdaSim(params=params[m,],
 #                           grow_rfx1 = grow_rfx1[m,],
 #                           grow_rfx2 = grow_rfx2[m,],
 #                           grow_rfx3 = grow_rfx3[m,],
 #                           grow_rfx4 = grow_rfx4[m,],
-#                           surv_rfx1 = surv_rfx1[m,],
-#                           surv_rfx2 = surv_rfx2[m,],
-#                           surv_rfx3 = surv_rfx3[m,],
-#                           surv_rfx4 = surv_rfx4[m,],
+#                           surv_rfx1 = 0,
+#                           surv_rfx2 = 0,
+#                           surv_rfx3 = 0,
+#                           surv_rfx4 = 0,
 #                           flow_rfx = flow_rfx[m,],
 #                           repro_rfx = repro_rfx[m,],
 #                           viab_rfx1 = viab_rfx1[m,],
 #                           viab_rfx2 = viab_rfx2[m,],
 #                           viab_rfx3 = viab_rfx3[m,],
 #                           viab_rfx4 = viab_rfx4[m,],
-#                           max_yrs,
-#                           matsize = 400,
-#                           scenario = scenario[n],
-#                           lower,
-#                           upper
+#                           max_yrs=max_yrs,
+#                           matsize=500,
+#                           scenario = scenario[i],
+#                           lower=lower, upper=upper,
+#                           floor=25,ceiling=4
 #     )
 #   }
 # }
