@@ -43,6 +43,17 @@ stan_data_grow_stud <- list(N = nrow(growth_data),                              
 #                        save_warmup=F)
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_grow_stud, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t.rds")
+# # grow_stud_model_null <- stan_model("Data Analysis/STAN Models/grow_student_t_null.stan")
+# fit_grow_stud_null<-sampling(grow_stud_model_null,data = stan_data_grow_stud,chains=3,
+#                        control = list(adapt_delta=0.99,stepsize=0.1),
+#                        iter=10000,cores=3,thin=2,
+#                        pars = c("u","w",          # plot and year random effects
+#                                 "beta0","beta1","beta2", #location coefficients
+#                                 "d_0","d_size","d_size2", #scale coefficiences
+#                                 "a_0","a_size","a_size2"), #shape coefficients
+#                        save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_grow_stud_null, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t_null.rds")
 
 
 ################################################################################
@@ -68,7 +79,7 @@ stan_data_surv <- list(N = nrow(survival_data),                                 
                        plot = as.integer(as.factor(survival_data$Plot)),           ## predictor plots
                        year = as.integer(as.factor(survival_data$Year_t))          ## predictor years
 ) 
-## Run the survival model with a bernoulli distribution ---- fixed effects: previous size and ant state; random effects: plot and year
+# ## Run the survival model with a bernoulli distribution ---- fixed effects: previous size and ant state; random effects: plot and year
 # surv_model <- stan_model("Data Analysis/STAN Models/surv_code.stan")
 # fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
 #                    control = list(adapt_delta=0.99,stepsize=0.1),
@@ -77,22 +88,17 @@ stan_data_surv <- list(N = nrow(survival_data),                                 
 #                    save_warmup=F)
 # ##Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
-#saveRDS(fit_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
+# saveRDS(fit_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
+# surv_model_null <- stan_model("Data Analysis/STAN Models/surv_code_null.stan")
+# fit_surv_null<-sampling(surv_model_null, data = stan_data_surv,chains=3,
+#                    control = list(adapt_delta=0.99,stepsize=0.1),
+#                    iter=10000,cores=3,thin=2,
+#                    pars = c("beta0","beta1","u","w"),   #location coefficients)
+#                    save_warmup=F)
+# ##Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_surv_null, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv_null.rds")
+# saveRDS(fit_surv_null,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv_null.rds")
 
-# 
-# bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))
-# y <- stan_data_surv$y_surv
-# ant <- stan_data_surv$ant
-# n_draws = 100
-# surv_sim <- matrix(NA, n_draws,stan_data_surv$N)
-# surv_out <- rstan::extract(fit_surv)
-# for(i in 1:n_draws){
-#   for(n in 1:stan_data_surv$N){
-#     surv_sim[i,n]<-rbern(n=1,prob=invlogit(surv_out$beta0[i,stan_data_surv$ant[n]]+surv_out$beta1[i,stan_data_surv$ant[n]]*stan_data_surv$vol[n]))
-#   }
-# }
-# # Overlay Plots
-# bayesplot::ppc_dens_overlay_grouped(y,surv_sim,group = ant)
 
 ################################################################################
 ## Flowering Model -- What are the total number of fruits produced in the next time step?
@@ -168,7 +174,17 @@ stan_data_viab <- list(N = nrow(viability_data),                                
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_viab, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
 # saveRDS(fit_viab,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
-
+# ## Run the Viability model with a binomial distribution but no ant effects on the random effects of years
+# viab_model_null <- stan_model("Data Analysis/STAN Models/viab_code_null.stan")
+# fit_viab_null<-sampling(viab_model_null, data = stan_data_viab,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0"           #location coefficients
+#                                                          ),save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_viab_null, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab_null.rds")
+# saveRDS(fit_viab_null,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab_null.rds")
 
 ################################################################################
 ## Reproductive State Model -- Prob of reproducing at next time step   

@@ -1295,7 +1295,7 @@ dev.off()
 ######################################################################################################
 ## Read in lambda estimates
 ## deterministic
-lams_dpost <- read.csv("det_post_lambda.csv")
+lams_dpost <- read.csv("det_post_lambda_mean.csv")
 lams_dpost <- lams_dpost[,-c(1)]
 ## stochastic
 lams_stoch <- read.csv("stoch_post_lambda.csv")
@@ -1303,6 +1303,7 @@ lams_stoch <- lams_stoch[,-c(1)]
 ## stochastic null
 lams_stoch_null <- read.csv("stoch_null_post_lambda.csv")
 lams_stoch_null <- lams_stoch_null[,-c(1)]
+scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 
 ######################################################################################################
 ######################################################################################################
@@ -1318,11 +1319,11 @@ plot(c(1,3,5,7,9,11,13,15),(lams_dpost), pch = 20, cex = 5,col = cols,
      xlim = c(0,16), ylim = c(0.98,1.01),
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
-text(x = c(1,3,5,7,9,11,13,15)-0.2, y = (lams_dpost)+0.002,cex = 2, labels = scenario_abv,srt = 35)
+#text(x = c(1,3,5,7,9,11,13,15)-0.2, y = (lams_dpost)+0.002,cex = 2, labels = scenario_abv,srt = 35)
 legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),cex = 1.5)
 points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch),
        col = cols, cex = 5)
-points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch_null), cex = 5, pch = 20)
+points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),(lams_stoch_null_mean), col = cols, cex = 5, pch = 13)
 dev.off()
 
 ## plot the distributions of the deterministic distribution 
