@@ -12,7 +12,7 @@ data {
   int<lower=1, upper=N_Year> year[N]; // year
 }
 parameters {
-  matrix[K,N_Year] w; 
+  vector[N_Year] w; 
   vector[K] beta0; //intercept, unique to ant sp
   vector[K] beta1; //slope, unique to ant sp
   vector[N_Plot] u; //subject intercepts
@@ -24,16 +24,14 @@ parameters {
 transformed parameters{
   vector[N] mu; //linear predictor for the mean
   for(i in 1:N){
-    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[ant[i],year[i]];
+    mu[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[year[i]];
   }
 }
 
 model {
 //Priors
  u ~ normal(0, sigma_u); // plot random effects
- for(i in 1:K){
-   w[i,] ~ normal(0,sigma_w);
- } 
+ w ~ normal(0,sigma_w);
  sigma ~ normal(0,1);
  beta0 ~ normal(0,sigma); // intercept distribution
  beta1 ~ normal(0,sigma); // slope distribution

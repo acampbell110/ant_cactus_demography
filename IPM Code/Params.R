@@ -1,9 +1,9 @@
 ## -------- set working directory ---------------------- ##
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
+#setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 
 ## load in the cleaned data product created by Create_Clean_Data_Script.R
-cactus<-read.csv("cholla_demography_20042021_cleaned.csv")
+cactus<-read.csv("Data Analysis/cholla_demography_20042021_cleaned.csv")
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
@@ -22,9 +22,9 @@ upper<- cholla_max
 
 ## -------- read in MCMC output ---------------------- ##
 #Ali
-#mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Tom
-mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 

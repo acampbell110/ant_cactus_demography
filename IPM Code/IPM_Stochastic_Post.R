@@ -534,15 +534,15 @@ bigmatrix.1 <- function(params,lower,upper,matsize,grow_rfx1,grow_rfx2,grow_rfx3
   #lambda = Re(eigen(IPMmat)$values[1])
   #return(lambda)
 }
-#  i = c("liom","vacant")
-#  x <- c(1,1)
-#  lam <- matrix(rep(NA,120), nrow = 10)
-#  for(a in 1:12){ ## years
-#  for(m in 1:10){ ## params
-#   lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-#  }
-#  }
-# lam # each row is different iteration and each column is a year
+ i = c("liom","vacant")
+ x <- c(1,1)
+ lam <- matrix(rep(NA,120), nrow = 10)
+ for(a in 1:12){ ## years
+ for(m in 1:10){ ## params
+  lam[m,a] <- lambda(bigmatrix.1(params[m,],lower,upper,matsize,grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+ }
+ }
+lam # each row is different iteration and each column is a year
 
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
@@ -992,18 +992,18 @@ bigmatrix<-function(params,lower,upper,matsize,scenario,grow_rfx1,grow_rfx2,grow
 # big
 
 
-## One ant option
-lambda(bigmatrix(params[14,], lower, upper, matsize, "none",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-## 2 ant options
-lambda(bigmatrix(params[14,],lower,upper,matsize,"cremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"othervac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-## 3 ant options
-lambda(bigmatrix(params[14,],lower,upper,matsize,"liomcremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvacother",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-lambda(bigmatrix(params[14,],lower,upper,matsize,"othercremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
-## all ant options
-lambda(bigmatrix(params[14,],lower,upper,matsize,"all",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## One ant option
+# lambda(bigmatrix(params[14,], lower, upper, matsize, "none",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## 2 ant options
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"cremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"othervac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## 3 ant options
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomcremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"liomvacother",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"othercremvac",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
+# ## all ant options
+# lambda(bigmatrix(params[14,],lower,upper,matsize,"all",grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,flow_rfx=0,repro_rfx=0,viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0)$IPMmat)
 
 
 #########################################################################################################
@@ -1067,7 +1067,7 @@ lambdaSim=function(params,                                  ## parameters
 
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario) #n
-max_yrs = 100
+max_yrs = 10
 max_rep = 1
 lam <- matrix(data = NA, nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){

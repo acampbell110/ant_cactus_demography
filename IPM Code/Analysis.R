@@ -14,7 +14,7 @@ locol <- "#cf3545"
 cocol <- "#ab59c8"
 acol <- "#5d906b"
 cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
-
+scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 ######################################################################################################
 ############################### DETERMINISTIC POST IPM ###############################################
 ##                        Calculate the lambda posterior distributions                              ##
@@ -24,18 +24,48 @@ cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios
-lams_dpost <- matrix(rep(NA, 100*8), nrow = 100, ncol = 8)
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
+max_scenario = length(scenario)
+# Choose the number of parameter iterations 
+max_rep = 10 ## Posterior Draws from vital rate models
+# Choose the number of years for stochasticity
+max_yrs = 10 ## Years of randomly sampled annual effectsa <- matrix(rep(NA,ncol(params)), nrow = 1, ncol = ncol(params))
+for(i in 1:ncol(params)){
+  a[,i] <- mean(params[,i])
+}
+a <- as.data.frame(a)
+colnames(a) <- colnames(params)
+lams_dpost <- matrix(rep(NA, max_rep*max_scenario), nrow = max_rep, ncol = max_scenario)
 for(z in 1:length(scenario)){
   print(z)
-  for(m in 1:100){
-    lams_dpost[m,z] <- lambda(bigmatrix(params[m,],lower,upper,matsize,scenario[z])$IPMmat)
+  for(m in 1:max_rep){
+    lams_dpost[m,z] <- lambdaSim(params = params[m,],
+                                            grow_rfx1 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            grow_rfx2 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            grow_rfx3 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            grow_rfx4 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            surv_rfx1 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            surv_rfx2 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            surv_rfx3 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            surv_rfx4 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            flow_rfx = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            repro_rfx = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            viab_rfx1 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            viab_rfx2 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            viab_rfx3 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            viab_rfx4 = matrix(data = 0, nrow = max_rep, ncol = 19)[m,],
+                                            max_yrs,
+                                            matsize = 400,
+                                            scenario = scenario[z],
+                                            lower,
+                                            upper
+    )   
     }
 }
 lams_dpost
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_dpost) <- scenario
-write.csv(lams_dpost,"det_post_lambda.csv")
+write.csv(lams_dpost,"det_post_lambda_2021_oldcode.csv")
 
 ######################################################################################################
 ################################## STOCHASTIC POST IPM ###############################################
@@ -47,40 +77,43 @@ write.csv(lams_dpost,"det_post_lambda.csv")
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 # Choose the number of parameter iterations 
-max_rep = 100 ## Posterior Draws from vital rate models
+max_rep = 10 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
 max_yrs = 100 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios
-lams_stoch <- matrix(nrow = max_rep, ncol = max_scenario)
+lams_stoch <- matrix(nrow = 1, ncol = max_scenario)
 for(n in 1:max_scenario){
   print(scenario[n])
   for(m in 1:max_rep){
-    lams_stoch[m,n] <- lambdaSim(params = params[m,],## parameters
-                          grow_rfx1 = grow_rfx1[m,],
-                          grow_rfx2 = grow_rfx2[m,],
-                          grow_rfx3 = grow_rfx3[m,],
-                          grow_rfx4 = grow_rfx4[m,],
-                          surv_rfx1 = surv_rfx1[m,],
-                          surv_rfx2 = surv_rfx2[m,],
-                          surv_rfx3 = surv_rfx3[m,],
-                          surv_rfx4 = surv_rfx4[m,],
-                          flow_rfx = flow_rfx[m,],
-                          repro_rfx = repro_rfx[m,],
-                          viab_rfx1 = viab_rfx1[m,],
-                          viab_rfx2 = viab_rfx2[m,],
-                          viab_rfx3 = viab_rfx3[m,],
-                          viab_rfx4 = viab_rfx4[m,],## viability model year rfx
-                          max_yrs = max_yrs,        ## the # years you want to iterate
-                          matsize=matsize,          ## size of transition matrix
-                          scenario = scenario[n],   ## partner diversity scenario
-                          lower=lower,upper=upper  )
+    lams_stoch[,n] <- lambdaSim(params = params[m,],
+                                            grow_rfx1 = grow_rfx1[m,],
+                                            grow_rfx2 = grow_rfx2[m,],
+                                            grow_rfx3 = grow_rfx3[m,],
+                                            grow_rfx4 = grow_rfx4[m,],
+                                            surv_rfx1 = surv_rfx1[m,],
+                                            surv_rfx2 = surv_rfx2[m,],
+                                            surv_rfx3 = surv_rfx3[m,],
+                                            surv_rfx4 = surv_rfx4[m,],
+                                            flow_rfx = flow_rfx[m,],
+                                            repro_rfx = repro_rfx[m,],
+                                            viab_rfx1 = viab_rfx1[m,],
+                                            viab_rfx2 = viab_rfx2[m,],
+                                            viab_rfx3 = viab_rfx3[m,],
+                                            viab_rfx4 = viab_rfx4[m,],
+                                            max_yrs,
+                                            matsize = 400,
+                                            scenario = scenario[n],
+                                            lower,
+                                            upper
+    )
   }
 }
+lams_stoch
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_stoch) <- scenario
-write.csv(lams_stoch,"stoch_post_lambda.csv")
+write.csv(lams_stoch,"stoch_post_lambda_2021_oldcode.csv")
 
 ######################################################################################################
 ################################## STOCHASTIC NULL POST IPM ##########################################
@@ -93,7 +126,7 @@ write.csv(lams_stoch,"stoch_post_lambda.csv")
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 # Choose the number of parameter iterations 
-max_rep = 100 ## Posterior Draws from vital rate models
+max_rep = 10 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
 max_yrs = 100 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
@@ -102,31 +135,34 @@ max_yrs = 100 ## Years of randomly sampled annual effects
 lams_stoch_null <- matrix(nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){
   print(scenario[n])
-  for(m in 1:max_rep){
-    lams_stoch_null[m,n] <- lambdaSim(params = params[m,],## parameters
-                                 grow_rfx1 = grow_rfx1[m,],
-                                 grow_rfx2 = grow_rfx1[m,],
-                                 grow_rfx3 = grow_rfx1[m,],
-                                 grow_rfx4 = grow_rfx1[m,],
-                                 surv_rfx1 = surv_rfx1[m,],
-                                 surv_rfx2 = surv_rfx1[m,],
-                                 surv_rfx3 = surv_rfx1[m,],
-                                 surv_rfx4 = surv_rfx1[m,],
-                                 flow_rfx = flow_rfx[m,],
-                                 repro_rfx = repro_rfx[m,],
-                                 viab_rfx1 = viab_rfx1[m,],
-                                 viab_rfx2 = viab_rfx1[m,],
-                                 viab_rfx3 = viab_rfx1[m,],
-                                 viab_rfx4 = viab_rfx1[m,],## viability model year rfx
-                                 max_yrs = max_yrs,        ## the # years you want to iterate
-                                 matsize=matsize,          ## size of transition matrix
-                                 scenario = scenario[n],   ## partner diversity scenario
-                                 lower=lower,upper=upper  )
-  }
+ # for(m in 1:max_rep){
+    lams_stoch_null[,n] <- lambdaSim(params = params[m,],
+                                                  grow_rfx1 = grow_rfx4[m,],
+                                                  grow_rfx2 = grow_rfx4[m,],
+                                                  grow_rfx3 = grow_rfx4[m,],
+                                                  grow_rfx4 = grow_rfx4[m,],
+                                                  surv_rfx1 = surv_rfx4[m,],
+                                                  surv_rfx2 = surv_rfx4[m,],
+                                                  surv_rfx3 = surv_rfx4[m,],
+                                                  surv_rfx4 = surv_rfx4[m,],
+                                                  flow_rfx = flow_rfx[m,],
+                                                  repro_rfx = repro_rfx[m,],
+                                                  viab_rfx1 = viab_rfx4[m,],
+                                                  viab_rfx2 = viab_rfx4[m,],
+                                                  viab_rfx3 = viab_rfx4[m,],
+                                                  viab_rfx4 = viab_rfx4[m,],
+                                                  max_yrs,
+                                                  matsize = 400,
+                                                  scenario = scenario[n],
+                                                  lower,
+                                                  upper
+    )
+#  }
 }
+lams_stoch_null
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_stoch_null) <- scenario
-write.csv(lams_stoch_null,"stoch_null_post_lambda.csv")
+write.csv(lams_stoch_null,"stoch_null_post_lambda_2021_oldcode.csv")
 
 ######################################################################################################
 ######################################################################################################
@@ -154,15 +190,15 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
 
 ## Plot the means of the deterministic and stochastic distributions together
 png("lambda_portfolios.png")
-plot(c(1,3,5,7,9,11,13,15),colMeans(lams_stoch),
-     col = cols, pch = 1, cex = 5,
-     xlim = c(0,16), ylim = c(0.985,1.0),
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_dpost),
+     col = cols, pch = 20, cex = 5,
+     xlim = c(0,16), #ylim = c(1.01,1.04),
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
-     text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_stoch)+0.002,cex = 2, labels = lams$scenario_abv,srt = 35)
+     text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_dpost)+0.002,cex = 2, labels = scenario_abv,srt = 35)
      legend("topleft",legend = c("L = Liom.","C = Crem.","O = Other"),cex = 1.5)
-#points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch),
-       #col = cols, cex = 5)
+points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch),
+       col = cols, cex = 5)
 points(c(1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5),colMeans(lams_stoch_null), cex = 5, pch = 18, col = cols)
 dev.off()
 

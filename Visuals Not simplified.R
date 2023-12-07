@@ -125,27 +125,27 @@ par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
 # Crem
-contour(x,y,crem, nlevels = 20,  xlim = c(2,10), ylim = c(0,10), 
+contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15), 
         main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black") 
 points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
 lines(size_dummy, y_crem_mean_grow, col = cremcol, lwd = 4)
 # Liom
-contour(x,y,liom, nlevels = 20, col = "black", xlim = c(2,10), ylim = c(0,10), 
+contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
         main = "b)      Liom.                ", cex.main = 2, lwd = 1.5) 
 points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
 lines(size_dummy, y_liom_mean_grow, col = liomcol, lwd = 4)
 # Other
-contour(x,y,other, nlevels = 20, col = "black", xlim = c(2,10), ylim = c(0,10), 
+contour(x,y,other, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
         main = "c)       Other                ", cex.main = 2, lwd = 1.5) 
 points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
 lines(size_dummy, y_other_mean_grow, col = othercol, lwd = 4)
 # Vacant
-contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(2,10), ylim = c(0,10), 
+contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
         main = "d)      Vacant                ", cex.main = 2, lwd = 1.5) 
 points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
 lines(size_dummy, y_vac_mean_grow, col = vaccol, lwd = 4)
 # All together
-plot(size_dummy, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(-4,6), ylim = c(-4,6), 
+plot(size_dummy, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(-5,6), ylim = c(-4,6), 
      main = "e)                      All Ants                           ", cex.main = 2) 
 lines(size_dummy, y_liom_mean_grow, col = liomcol, lwd = 3)
 lines(size_dummy, y_other_mean_grow, col = othercol, lwd = 3)
