@@ -112,9 +112,9 @@ write.csv(lams_dpost,"det_post_lambda_mean.csv")
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 # Choose the number of parameter iterations 
-max_rep = 1000 ## Posterior Draws from vital rate models
+max_rep = 50 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
-max_yrs = 1000 ## Years of randomly sampled annual effects
+max_yrs = 200 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios
@@ -122,7 +122,7 @@ lams_stoch <- matrix(nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){
   print(scenario[n])
   for(m in 1:max_rep){
-  lams_stoch[m,n] <- lambdaSim(params=mean_params,
+  lams_stoch[m,n] <- lambdaSim(params=params[m,],
                                lower=lower,
                                upper=upper,
                                scenario = scenario[n],
@@ -162,17 +162,17 @@ write.csv(lams_stoch,"stoch_post_lambda.csv")
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 # Choose the number of parameter iterations 
-max_rep = 1 ## Posterior Draws from vital rate models
+max_rep = 50 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
-max_yrs = 1000 ## Years of randomly sampled annual effects
+max_yrs = 200 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios
-lams_stoch_null_mean <- matrix(nrow = 1, ncol = max_scenario)
+lams_stoch_null <- matrix(nrow = max_rep, ncol = max_scenario)
 for(n in 1:max_scenario){
   print(scenario[n])
   for(m in 1:max_rep){
-    lams_stoch_null[m,n] <- lambdaSim(params=mean_params,
+    lams_stoch_null[m,n] <- lambdaSim(params=params[m,],
                                       lower=lower,
                                       upper=upper,
                                       scenario = scenario[n],

@@ -27,7 +27,7 @@ years <- unique(cactus$Year_t)
 ## Choose your pathway to pull from 
 #Ali
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
-mcmc_dir <- "/Users/alicampbell/Desktop/"
+#mcmc_dir <- "/Users/alicampbell/Desktop/"
 #Tom
 #mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab

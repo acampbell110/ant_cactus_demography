@@ -1,4 +1,4 @@
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/Figures")
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 source( "/Users/alicampbell/Documents/GitHub/ant_cactus_demography/03_cholla_ant_IPM_params_functions.R")
 size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
 
@@ -156,6 +156,61 @@ mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
 dev.off()
 
+## Mean growth rate of plants < 0 
+small <- seq(min(cactus$logsize_t, na.rm = T), 2.3, length = 205)
+y_other_mean_grow <- quantile(grow.params$beta0[,3],0.5) + (small) * quantile(grow.params$beta1[,3],0.5) + (small)^2 * quantile(grow.params$beta2[,3],0.5)
+# Crem
+y_crem_mean_grow <- quantile(grow.params$beta0[,1],0.5) + (small) * quantile(grow.params$beta1[,1],0.5) + (small)^2 * quantile(grow.params$beta2[,1],0.5)
+# Liom
+y_liom_mean_grow <- quantile(grow.params$beta0[,2],0.5) + (small) * quantile(grow.params$beta1[,2],0.5) + (small)^2 * quantile(grow.params$beta2[,2],0.5)
+# Vac
+y_vac_mean_grow <-  quantile(grow.params$beta0[,4],0.5) + (small) * quantile(grow.params$beta1[,4],0.5) + (small)^2 * quantile(grow.params$beta2[,4],0.5)
+exp(mean(y_other_mean_grow - small))
+exp(mean(y_crem_mean_grow - small))
+exp(mean(y_liom_mean_grow - small))
+exp(mean(y_vac_mean_grow - small))
+## Mean growth rate of plants 0<x<10
+small <- seq(2.3, 5.01, length = 205)
+y_other_mean_grow <- quantile(grow.params$beta0[,3],0.5) + (small) * quantile(grow.params$beta1[,3],0.5) + (small)^2 * quantile(grow.params$beta2[,3],0.5)
+# Crem
+y_crem_mean_grow <- quantile(grow.params$beta0[,1],0.5) + (small) * quantile(grow.params$beta1[,1],0.5) + (small)^2 * quantile(grow.params$beta2[,1],0.5)
+# Liom
+y_liom_mean_grow <- quantile(grow.params$beta0[,2],0.5) + (small) * quantile(grow.params$beta1[,2],0.5) + (small)^2 * quantile(grow.params$beta2[,2],0.5)
+# Vac
+y_vac_mean_grow <-  quantile(grow.params$beta0[,4],0.5) + (small) * quantile(grow.params$beta1[,4],0.5) + (small)^2 * quantile(grow.params$beta2[,4],0.5)
+exp(mean(y_other_mean_grow - small))
+exp(mean(y_crem_mean_grow - small))
+exp(mean(y_liom_mean_grow - small))
+exp(mean(y_vac_mean_grow - small))
+## Mean growth rate of plants >10
+small <- seq(5.01,max(cactus$logsize_t, na.rm = T) , length = 205)
+y_other_mean_grow <- quantile(grow.params$beta0[,3],0.5) + (small) * quantile(grow.params$beta1[,3],0.5) + (small)^2 * quantile(grow.params$beta2[,3],0.5)
+# Crem
+y_crem_mean_grow <- quantile(grow.params$beta0[,1],0.5) + (small) * quantile(grow.params$beta1[,1],0.5) + (small)^2 * quantile(grow.params$beta2[,1],0.5)
+# Liom
+y_liom_mean_grow <- quantile(grow.params$beta0[,2],0.5) + (small) * quantile(grow.params$beta1[,2],0.5) + (small)^2 * quantile(grow.params$beta2[,2],0.5)
+# Vac
+y_vac_mean_grow <-  quantile(grow.params$beta0[,4],0.5) + (small) * quantile(grow.params$beta1[,4],0.5) + (small)^2 * quantile(grow.params$beta2[,4],0.5)
+exp(mean(y_other_mean_grow - small))
+exp(mean(y_crem_mean_grow - small))
+exp(mean(y_liom_mean_grow - small))
+exp(mean(y_vac_mean_grow - small))
+
+## Confidence intervals
+#Crem
+c_v <- y_crem_mean_grow - y_vac_mean_grow
+c_l <- y_crem_mean_grow - y_liom_mean_grow
+c_o <- y_crem_mean_grow - y_other_mean_grow
+length(subset(c_v, c_v>0))/205
+length(subset(c_l, c_l>0))/205
+length(subset(c_o, c_o>0))/205
+#Vacant
+v_c <- y_crem_mean_grow - y_vac_mean_grow
+v_l <- y_liom_mean_grow - y_vac_mean_grow
+v_o <- y_other_mean_grow - y_vac_mean_grow
+length(subset(v_c, v_c>0))/205
+length(subset(v_l, v_l>0))/205
+length(subset(v_o, v_o>0))/205
 
 ################################################################################
 ## Survival Model
@@ -270,6 +325,76 @@ legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othe
 mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=2,las=0)
 dev.off()
+
+## Min growth rate of plants
+small <- max(cactus$logsize_t, na.rm = T)
+y_other <- invlogit(quantile(surv.params$beta0[,3],0.5) + (small) * quantile(surv.params$beta1[,3],0.5))
+# Crem
+y_crem <- invlogit(quantile(surv.params$beta0[,1],0.5) + (small) * quantile(surv.params$beta1[,1],0.5))
+# Liom
+y_liom <- invlogit(quantile(surv.params$beta0[,2],0.5) + (small) * quantile(surv.params$beta1[,2],0.5))
+# Vac
+y_vac <-  invlogit(quantile(surv.params$beta0[,4],0.5) + (small) * quantile(surv.params$beta1[,4],0.5))
+(mean(y_other))
+(mean(y_crem))
+(mean(y_liom))
+(mean(y_vac))
+## Mean growth rate of plants < 0 
+small <- seq(min(cactus$logsize_t, na.rm = T), 2.3, length = 205)
+y_other <- invlogit(quantile(surv.params$beta0[,3],0.5) + (small) * quantile(surv.params$beta1[,3],0.5))
+# Crem
+y_crem <- invlogit(quantile(surv.params$beta0[,1],0.5) + (small) * quantile(surv.params$beta1[,1],0.5))
+# Liom
+y_liom <- invlogit(quantile(surv.params$beta0[,2],0.5) + (small) * quantile(surv.params$beta1[,2],0.5))
+# Vac
+y_vac <-  invlogit(quantile(surv.params$beta0[,4],0.5) + (small) * quantile(surv.params$beta1[,4],0.5))
+(mean(y_other))
+(mean(y_crem))
+(mean(y_liom))
+(mean(y_vac))
+## Mean growth rate of plants 0<x<10
+small <- seq(2.3, 5.01, length = 205)
+y_other <- invlogit(quantile(surv.params$beta0[,3],0.5) + (small) * quantile(surv.params$beta1[,3],0.5))
+# Crem
+y_crem <- invlogit(quantile(surv.params$beta0[,1],0.5) + (small) * quantile(surv.params$beta1[,1],0.5))
+# Liom
+y_liom <- invlogit(quantile(surv.params$beta0[,2],0.5) + (small) * quantile(surv.params$beta1[,2],0.5))
+# Vac
+y_vac <-  invlogit(quantile(surv.params$beta0[,4],0.5) + (small) * quantile(surv.params$beta1[,4],0.5))
+(mean(y_other))
+(mean(y_crem))
+(mean(y_liom))
+(mean(y_vac))
+## Mean growth rate of plants >10
+small <- seq(5.01, max(cactus$logsize_t, na.rm = T), length = 205)
+y_other <- invlogit(quantile(surv.params$beta0[,3],0.5) + (small) * quantile(surv.params$beta1[,3],0.5))
+# Crem
+y_crem <- invlogit(quantile(surv.params$beta0[,1],0.5) + (small) * quantile(surv.params$beta1[,1],0.5))
+# Liom
+y_liom <- invlogit(quantile(surv.params$beta0[,2],0.5) + (small) * quantile(surv.params$beta1[,2],0.5))
+# Vac
+y_vac <-  invlogit(quantile(surv.params$beta0[,4],0.5) + (small) * quantile(surv.params$beta1[,4],0.5))
+(mean(y_other))
+(mean(y_crem))
+(mean(y_liom))
+(mean(y_vac))
+
+## Confidence intervals
+#Crem
+c_v <- invlogit(percentiles("crem",0.5)) - invlogit(percentiles("vacant",0.5))
+c_l <- invlogit(percentiles("crem",0.5)) - invlogit(percentiles("liom",0.5))
+c_o <- invlogit(percentiles("crem",0.5)) - invlogit(percentiles("other",0.5))
+length(subset(c_v, c_v>0))/205
+length(subset(c_l, c_l>0))/205
+length(subset(c_o, c_o>0))/205
+#Vacant
+v_c <- invlogit(percentiles("crem",0.5)) - invlogit(percentiles("vacant",0.5))
+v_l <- invlogit(percentiles("liom",0.5)) - invlogit(percentiles("vacant",0.5))
+v_o <- invlogit(percentiles("other",0.5)) - invlogit(percentiles("vacant",0.5))
+length(subset(v_c, v_c>0))/205
+length(subset(v_l, v_l>0))/205
+length(subset(v_o, v_o>0))/205
+
 ################################################################################
 ## Flowering Model
 ################################################################################
@@ -318,6 +443,17 @@ polygon(c(size_dummy,rev(size_dummy)),c(exp(percentiles(.95)), rev(exp(percentil
 mtext("Log(Volume)",side=1,line=-1.5,outer=TRUE,cex=1.7)
 mtext("Total Number of Flowers Produced",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
 dev.off()
+
+## Mean flowers produced
+small <- seq(min(cactus$logsize_t, na.rm = T), 2.3, length = 205)
+y_other <- exp(quantile(flow.params$beta0,.5) + small * quantile(flow.params$beta1,.5))
+mean(y_other)
+small <- seq(2.3, 5.01, length = 205)
+y_other <- exp(quantile(flow.params$beta0,.5) + small * quantile(flow.params$beta1,.5))
+mean(y_other)
+small <- seq(5.01, max(cactus$logsize_t, na.rm = T), length = 205)
+y_other <- exp(quantile(flow.params$beta0,.5) + small * quantile(flow.params$beta1,.5))
+mean(y_other)
 
 
 ################################################################################
@@ -375,6 +511,33 @@ mtext("Proportion of Flowerbuds Viable",side=1,line=-1.5,outer=TRUE,cex=2)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
+## min viab rate of plants
+(mean(invlogit(viab.params$beta0[,1])))
+(mean(invlogit(viab.params$beta0[,2])))
+(mean(invlogit(viab.params$beta0[,3])))
+(mean(invlogit(viab.params$beta0[,4])))
+
+## Confidence intervals
+c <- ((invlogit(viab.params$beta0[,1])))
+l <- ((invlogit(viab.params$beta0[,2])))
+o <- ((invlogit(viab.params$beta0[,3])))
+v <- ((invlogit(viab.params$beta0[,4])))
+#Liom
+c_v <- l-v
+c_l <- l-c
+c_o <- l-o
+length(subset(c_v, c_v>0))/7500
+length(subset(c_l, c_l>0))/7500
+length(subset(c_o, c_o>0))/7500
+#Vacant
+c_v <- l-v
+c_l <- c-v
+c_o <- o-v
+length(subset(c_v, c_v>0))/7500
+length(subset(c_l, c_l>0))/7500
+length(subset(c_o, c_o>0))/7500
+
+
 ################################################################################
 ## Repro
 ################################################################################
@@ -415,6 +578,17 @@ polygon(c((size_dummy),rev((size_dummy))),c(invlogit(percentiles(.95)), rev(invl
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 dev.off()
 
+## Mean flowers produced
+small <- seq(min(cactus$logsize_t, na.rm = T), 2.3, length = 205)
+y_other <- invlogit(quantile(repro.params$beta0,.5) + small * quantile(repro.params$beta1,.5))
+mean(y_other)
+small <- seq(2.3, 5.01, length = 205)
+y_other <- invlogit(quantile(repro.params$beta0,.5) + small * quantile(repro.params$beta1,.5))
+mean(y_other)
+small <- seq(5.01, max(cactus$logsize_t, na.rm = T), length = 205)
+y_other <- invlogit(quantile(repro.params$beta0,.5) + small * quantile(repro.params$beta1,.5))
+mean(y_other)
+
 ################################################################################
 ## Seeds per flower
 ################################################################################
@@ -443,6 +617,31 @@ subset_crem <- subset(seed_data, seed_data$ant_state == "Crem")
 subset_liom <- subset(seed_data, seed_data$ant_state == "Liom")
 subset_vac <- subset(seed_data, seed_data$ant_state == "Vacant")
 
+## Min and max per ant 1 = crem, 2 = liom, 3 = vac
+max(exp(seed.params$beta0[,1]))
+max(exp(seed.params$beta0[,2]))
+max(exp(seed.params$beta0[,3]))
+
+## Confidence intervals
+c <- exp(seed.params$beta0[,1])
+l <- exp(seed.params$beta0[,2])
+v <- exp(seed.params$beta0[,3])
+#Liom
+c_v <- v-c
+c_l <- v-l
+a <- c-l
+length(subset(c_v, c_v>0))/7500
+length(subset(c_l, c_l>0))/7500
+length(subset(a, a>0))/7500
+
+#Vacant
+c_v <- l-v
+c_l <- c-v
+c_o <- o-v
+length(subset(c_v, c_v>0))/7500
+length(subset(c_l, c_l>0))/7500
+length(subset(c_o, c_o>0))/7500
+
 ################################################################################
 ## Precensus Survival
 ################################################################################
@@ -462,6 +661,10 @@ plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "Pre-census 
 abline(v = mean(precensus.dat$survive0405), lty = 2)
 legend("topright",legend = c("Predicted Pre-census Survival","Real Pre-census Survival"), col = c("chartreuse4","black"), pch = 16)
 dev.off()
+
+mean(invlogit(y_surv))
+min(invlogit(y_surv))
+max(invlogit(y_surv))
 
 ################################################################################
 ## Germination Models
@@ -486,6 +689,14 @@ boxplot(invlogit(germ), col = "chartreuse4", names.arg = c("Yr 1","Yr 2"),
         xlab = "Year in Seedbank", ylab = "Probability of Germinating", main = "Seeds Are More Likely to \n Germinate in Year 1")
 dev.off()
 
+## Min max and mean
+min(invlogit(y_germ1))
+max(invlogit(y_germ1))
+mean(invlogit(y_germ1))
+min(invlogit(y_germ2))
+max(invlogit(y_germ2))
+mean(invlogit(y_germ2))
+
 ################################################################################
 ## Recuits Model
 ################################################################################
@@ -499,6 +710,11 @@ dev.off()
 png("rec_size.png")
 boxplot(rec.params$beta0, col = "chartreuse4", ylab = "Log(Volume)", main = "Recruit Size Distribution")
 dev.off()
+
+## Mean min max
+exp(mean(rec.params$beta0))
+exp(min(rec.params$beta0))
+exp(max(rec.params$beta0))
 
 ################################################################################
 ## Multinomial Model
@@ -600,6 +816,10 @@ multi_plot_vac <- subset_vac %>%
             N = length(logsize_t))
 multi_plot_vac$N_mod <- log(multi_plot_vac$N)
 #### ALL ANTS ------------------------------------------------------------------
+
+size_dummy <- seq(5.01, max(cactus_real$logsize_t, na.rm = T), length = 100)
+#size_dummy <- seq(min(cactus_real$logsize_t, na.rm = T),5.01, length = 100)
+
 # Previously tended by crem
 Denominator_crem <- exp(mean(multi.params$beta[draws,1,1]) + size_dummy*mean(multi.params$beta[draws,5,1])) + 
   exp(mean(multi.params$beta[draws,1,2]) + size_dummy*mean(multi.params$beta[draws,5,2])) + 
@@ -660,6 +880,79 @@ pred_vac<-cbind(
   #pr(vac)
   exp(mean(multi.params$beta[draws,4,4]) + size_dummy*mean(multi.params$beta[draws,5,4]))/Denominator_vac)
 sum(pred_vac[1,])
+
+## Previously vacant
+min(pred_vac[,4])
+max(pred_vac[,4])
+min(pred_vac[,2])
+max(pred_vac[,2])
+min(pred_vac[,1])
+max(pred_vac[,1])
+min(pred_vac[,3])
+max(pred_vac[,3])
+## Previously Crem
+min(pred_crem[,4])
+max(pred_crem[,4])
+min(pred_crem[,2])
+max(pred_crem[,2])
+min(pred_crem[,1])
+max(pred_crem[,1])
+min(pred_crem[,3])
+max(pred_crem[,3])
+## Previously Other
+min(pred_other[,4])
+max(pred_other[,4])
+min(pred_other[,2])
+max(pred_other[,2])
+min(pred_other[,1])
+max(pred_other[,1])
+min(pred_other[,3])
+max(pred_other[,3])
+## Previously Liom
+min(pred_liom[,4])
+max(pred_liom[,4])
+min(pred_liom[,2])
+max(pred_liom[,2])
+min(pred_liom[,1])
+max(pred_liom[,1])
+min(pred_liom[,3])
+max(pred_liom[,3])
+
+## Small and med plants probability of being tended vs vacant
+mean(pred_crem[,4])
+mean(pred_liom[,4])
+mean(pred_other[,4])
+mean(pred_vac[,4])
+
+## Probs of being liom as large plant (prev vac)
+vl <- pred_vac[,2] - pred_vac[,4]
+ll <- pred_vac[,2] - pred_vac[,1]
+ol <- pred_vac[,2] - pred_vac[,3]
+length(subset(vl,vl>0))/100
+length(subset(ll,ll>0))/100
+length(subset(ol,ol>0))/100
+## Probs of being liom as large plant (prev liom)
+vl <- pred_liom[,2] - pred_liom[,4]
+ll <- pred_liom[,2] - pred_liom[,1]
+ol <- pred_liom[,2] - pred_liom[,3]
+length(subset(vl,vl>0))/100
+length(subset(ll,ll>0))/100
+length(subset(ol,ol>0))/100
+## Probs of being liom as large plant (prev other)
+vl <- pred_other[,2] - pred_other[,4]
+ll <- pred_other[,2] - pred_other[,1]
+ol <- pred_other[,2] - pred_other[,3]
+length(subset(vl,vl>0))/100
+length(subset(ll,ll>0))/100
+length(subset(ol,ol>0))/100
+## Probs of being crem as large plant (prev crem)
+vl <- pred_crem[,1] - pred_crem[,4]
+ll <- pred_crem[,1] - pred_crem[,2]
+ol <- pred_crem[,1] - pred_crem[,3]
+length(subset(vl,vl>0))/100
+length(subset(ll,ll>0))/100
+length(subset(ol,ol>0))/100
+
 ## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
 png("Ant_Size_Multi.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
@@ -709,6 +1002,9 @@ points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_vac,pch=16,cex=multi_plo
 mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
 mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.5,las=0)
 dev.off()
+
+
+
 #### 3 ANTS --------------------------------------------------------------------
 #### LIOM VAC CREM
 ## Calculate the probabilities of being tended by each ant species

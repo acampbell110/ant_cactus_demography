@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  11 SEP 2023 15:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  10 JAN 2024 10:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -89,23 +89,7 @@ File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count268
 \l__pdf_internal_box=\box53
 )
-(./ant_cactus_AmNat_Ali.aux
-
-! Package natbib Error: Bibliography not compatible with author-year citations.
-
-(natbib)                Press <return> to continue in numerical citation style.
-
-
-See the natbib package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.88 ...mand\NAT@force@numbers{}\NAT@force@numbers
-                                                  
-Check the bibliography entries for non-compliant syntax,
-or select author-year BibTeX style, e.g. plainnat
-
-)
+(./ant_cactus_AmNat_Ali.aux)
 \openout1 = `ant_cactus_AmNat_Ali.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 52.
@@ -125,7 +109,8 @@ LaTeX Font Info:    ... okay on input line 52.
 \big@size=\dimen151
 LaTeX Font Info:    Trying to load font information for OML+zplm on input line 
 54.
- (/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omlzplm.fd
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omlzplm.fd
 File: omlzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OML/zplm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+zplm on input line 
@@ -150,45 +135,304 @@ File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 {/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
 al/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}] [2]
 
+Package natbib Warning: Citation `Bronstein1994' on page 3 undefined on input l
+ine 92.
+
+
+Package natbib Warning: Citation `Chamberlain2014' on page 3 undefined on input
+ line 92.
+
+
+Package natbib Warning: Citation `Frederickson2013' on page 3 undefined on inpu
+t line 92.
+
+
+Package natbib Warning: Citation `Rodriguez-Rodriguez2017' on page 3 undefined 
+on input line 92.
+
+
+Package natbib Warning: Citation `Song2020' on page 3 undefined on input line 9
+2.
+
+
+Package natbib Warning: Citation `Mandyam2014' on page 3 undefined on input lin
+e 92.
+
+
+Package natbib Warning: Citation `Thrall2007' on page 3 undefined on input line
+ 92.
+
+
+Package natbib Warning: Citation `Bahia2022' on page 3 undefined on input line 
+92.
+
+
+Package natbib Warning: Citation `Chamberlain2014' on page 3 undefined on input
+ line 93.
+
+
+Package natbib Warning: Citation `Frederickson2013' on page 3 undefined on inpu
+t line 93.
+
+
+Package natbib Warning: Citation `Afkhami2014' on page 3 undefined on input lin
+e 95.
+
+
+Package natbib Warning: Citation `Palmer2010' on page 3 undefined on input line
+ 95.
+
+
 Package natbib Warning: Citation `Stanton2003' on page 3 undefined on input lin
 e 97.
+
+
+Package natbib Warning: Citation `rogers2014bee' on page 3 undefined on input l
+ine 98.
+
+
+Package natbib Warning: Citation `Frederickson2013' on page 3 undefined on inpu
+t line 101.
+
+
+Package natbib Warning: Citation `Batstone2018' on page 3 undefined on input li
+ne 102.
+
+
+Package natbib Warning: Citation `Miller2007' on page 3 undefined on input line
+ 103.
+
+
+Package natbib Warning: Citation `Stachowicz2005' on page 3 undefined on input 
+line 104.
+
+
+Package natbib Warning: Citation `Bronstein2006' on page 3 undefined on input l
+ine 104.
 
 
 Package natbib Warning: Citation `Stanton2003' on page 3 undefined on input lin
 e 104.
 
+
+Package natbib Warning: Citation `Batstone2018' on page 3 undefined on input li
+ne 105.
+
+
+Package natbib Warning: Citation `Ollerton2006' on page 3 undefined on input li
+ne 107.
+
+
+Package natbib Warning: Citation `Alarcon2008' on page 3 undefined on input lin
+e 107.
+
+
+Package natbib Warning: Citation `Batstone2018' on page 3 undefined on input li
+ne 108.
+
+
+Package natbib Warning: Citation `Lazaro2022' on page 3 undefined on input line
+ 108.
+
 [3]
+
+Package natbib Warning: Citation `Djieto-Lordon2005' on page 4 undefined on inp
+ut line 110.
+
+
+Package natbib Warning: Citation `Ness2006' on page 4 undefined on input line 1
+10.
+
+
+Package natbib Warning: Citation `Bruna2014' on page 4 undefined on input line 
+110.
+
+
+Package natbib Warning: Citation `Oliveira1999' on page 4 undefined on input li
+ne 112.
+
+
+Package natbib Warning: Citation `Horvitz1986' on page 4 undefined on input lin
+e 112.
+
+
+Package natbib Warning: Citation `Sachs2004' on page 4 undefined on input line 
+113.
+
+
+Package natbib Warning: Citation `Fonseca2003' on page 4 undefined on input lin
+e 114.
+
+
+Package natbib Warning: Citation `Boege2005' on page 4 undefined on input line 
+115.
+
+
+Package natbib Warning: Citation `Barton2010' on page 4 undefined on input line
+ 115.
+
+
+Package natbib Warning: Citation `Djieto-Lordon2005' on page 4 undefined on inp
+ut line 115.
+
+
+Package natbib Warning: Citation `Bronstein1998' on page 4 undefined on input l
+ine 117.
+
+
+Package natbib Warning: Citation `Bronstein2006' on page 4 undefined on input l
+ine 117.
+
+
+Package natbib Warning: Citation `Byk2011' on page 4 undefined on input line 11
+8.
+
+
+Package natbib Warning: Citation `Ness2009' on page 4 undefined on input line 1
+18.
+
+
+Package natbib Warning: Citation `Ness2006' on page 4 undefined on input line 1
+18.
+
+
+Package natbib Warning: Citation `Trager2010' on page 4 undefined on input line
+ 119.
+
 
 Package natbib Warning: Citation `Rudgers2010' on page 4 undefined on input lin
 e 119.
 
 
+Package natbib Warning: Citation `Baez2016' on page 4 undefined on input line 1
+19.
+
+
+Package natbib Warning: Citation `Bronstein1994' on page 4 undefined on input l
+ine 120.
+
+
+Package natbib Warning: Citation `Bronstein1998' on page 4 undefined on input l
+ine 120.
+
+
+Package natbib Warning: Citation `Lanan2013' on page 4 undefined on input line 
+120.
+
+
+Package natbib Warning: Citation `Bronstein1998' on page 4 undefined on input l
+ine 121.
+
+
+Package natbib Warning: Citation `Beattie1985' on page 4 undefined on input lin
+e 121.
+
+
+Package natbib Warning: Citation `Trager2010' on page 4 undefined on input line
+ 121.
+
+
+Package natbib Warning: Citation `Agrawal1998' on page 4 undefined on input lin
+e 121.
+
+
 Package natbib Warning: Citation `bruna2004' on page 4 undefined on input line 
 122.
 
-[4] [5] (./ant_cactus_AmNat_Ali.bbl [6] [7] [8] [9] [10]) [11] [12]
 
-Package natbib Warning: There were undefined citations.
+Package natbib Warning: Citation `Fraser2001' on page 4 undefined on input line
+ 122.
 
-[13] (./ant_cactus_AmNat_Ali.aux) ) 
+
+Package natbib Warning: Citation `Frederickson2005' on page 4 undefined on inpu
+t line 122.
+
+
+Package natbib Warning: Citation `Boege2005' on page 4 undefined on input line 
+123.
+
+
+Package natbib Warning: Citation `Barton2010' on page 4 undefined on input line
+ 124.
+
+
+Package natbib Warning: Citation `Boege2005' on page 4 undefined on input line 
+124.
+
+
+Package natbib Warning: Citation `Fonseca2003' on page 4 undefined on input lin
+e 124.
+
+
+Package natbib Warning: Citation `Palmer2010' on page 4 undefined on input line
+ 125.
+
+
+Package natbib Warning: Citation `Afkhami2014' on page 4 undefined on input lin
+e 125.
+
+
+Package natbib Warning: Citation `Barrett2015' on page 4 undefined on input lin
+e 125.
+
+
+Package natbib Warning: Citation `Ushio2020' on page 4 undefined on input line 
+125.
+
+[4]
+
+Package natbib Warning: Citation `Miller2009' on page 5 undefined on input line
+ 130.
+
+
+Package natbib Warning: Citation `Miller2007' on page 5 undefined on input line
+ 130.
+
+
+Package natbib Warning: Citation `Ohm2014' on page 5 undefined on input line 13
+2.
+
+
+Package natbib Warning: Citation `donald2022does' on page 5 undefined on input 
+line 132.
+
+
+Package natbib Warning: Citation `Miller2007' on page 5 undefined on input line
+ 133.
+
+
+Package natbib Warning: Citation `Miller2007' on page 5 undefined on input line
+ 134.
+
+
+Package natbib Warning: Citation `Ohm2014' on page 5 undefined on input line 13
+4.
+
+[5])
+Runaway argument?
+{\textsc {\subsection *{Study System} \par This study was conducted i\ETC.
+! File ended while scanning use of \textsc .
+<inserted text> 
+                \par 
+<*> ant_cactus_AmNat_Ali.tex
+                            
+I suspect you have forgotten a `}', causing me
+to read past where you wanted me to stop.
+I'll try to recover; but if the error is serious,
+you'd better type `E' or `X' now and fix your file.
+
+! Emergency stop.
+<*> ant_cactus_AmNat_Ali.tex
+                            
+*** (job aborted, no legal \end found)
+
+ 
 Here is how much of TeX's memory you used:
- 2099 strings out of 476025
- 33076 string characters out of 5790017
- 1860388 words of memory out of 5000000
- 22557 multiletter control sequences out of 15000+600000
+ 1949 strings out of 476025
+ 30232 string characters out of 5790017
+ 1858388 words of memory out of 5000000
+ 22412 multiletter control sequences out of 15000+600000
  538539 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 42i,8n,48p,402b,315s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2023/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2023/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
-/urw/palatino/uplb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/pa
-latino/uplr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/palatino/
-uplri8a.pfb>
-Output written on ant_cactus_AmNat_Ali.pdf (13 pages, 97409 bytes).
-PDF statistics:
- 73 PDF objects out of 1000 (max. 8388607)
- 47 compressed objects within 1 object stream
- 0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+ 42i,8n,48p,416b,222s stack positions out of 10000i,1000n,20000p,200000b,200000s
+!  ==> Fatal error occurred, no output PDF file produced!
