@@ -77,6 +77,34 @@ cactus$Plot[cactus$Plot=="HT4B1" | cactus$Plot=="HT4B2"]<-"T4"
 cactus$logsize_t <- log(volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t))
 cactus$logsize_t1 <- log(volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1))
 
+## Get the frequencies of ant species
+Antsp_t_levels <- levels(cactus$Antsp_t)
+# liom
+a <- subset(cactus, cactus$Antsp_t == "Liom" | cactus$Antsp_t == "LIOM" | cactus$Antsp_t == "liom" | cactus$Antsp_t == "L" | cactus$Antsp_t == "LIOM " |  cactus$Antsp_t == "liom ")
+nrow(a)
+# crem
+b <- subset(cactus, cactus$Antsp_t == "CREN" | cactus$Antsp_t == "LCREM" | cactus$Antsp_t == "crem" | cactus$Antsp_t == "Crem" | cactus$Antsp_t == "C" | cactus$Antsp_t == "CREM" | cactus$Antsp_t == "VCREM")
+nrow(b)
+# camp
+c <- subset(cactus, cactus$Antsp_t == "camp" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "large black shiny" | cactus$Antsp_t == "LARGE BLACK SHINY" | cactus$Antsp_t == "drpoff" | cactus$Antsp_t == "dropoff")
+nrow(c)
+# honeypot
+d <- subset(cactus, cactus$Antsp_t ==  "HNEYPOT" | cactus$Antsp_t ==  "honeypot" | cactus$Antsp_t == "HONEYPOT")
+nrow(d)
+# phen
+e <- subset(cactus, cactus$Antsp_t == "phen" | cactus$Antsp_t == "PHEN" | cactus$Antsp_t == "aph" | cactus$Antsp_t == "unk (Aphaeno?)")
+nrow(e)
+# tetra
+h <- subset(cactus, cactus$Antsp_t == "tetra")
+nrow(h)
+# brachy
+j <- subset(cactus, cactus$Antsp_t == "brachy")
+nrow(j)
+# unknown
+k <- subset(cactus, cactus$Antsp_t == "unk" | cactus$Antsp_t == "lg unk" | cactus$Antsp_t == "UNK" | cactus$Antsp_t == "unk " | cactus$Antsp_t == "other" | cactus$Antsp_t == "SMALL RED-BROWN SPINDLY" | cactus$Antsp_t == "black shiny red thorax" | cactus$Antsp_t == "RED HEAD BLK BUTT" | cactus$Antsp_t == "shiny black red thorax" | cactus$Antsp_t == "shiny black, red thorax") 
+nrow(k)
+l <- subset(cactus,cactus$Antsp_t == "LFOR" | cactus$Antsp_t == "for" | cactus$Antsp_t == "FOR")
+nrow(l)
 ## Cactus 2023 data cleaning ---- Ant Species
 # Change ant counts to numeric (some random entries are different types of strings)
 cactus$Antcount_t <- as.numeric(as.character(cactus$Antcount_t))
@@ -207,12 +235,37 @@ cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","AB
 write.csv(cactus, "Data Analysis/cholla_demography_20042023_cleaned.csv")
 
 
-# 
-# ## Further analyses ----
-# # How many plants do we survey annually (on average)
-# yr <- vector()
-# for(i in 1:length(unique(cactus$Year_t))){
-#   yr[i] <- nrow(subset(cactus, cactus$Year_t == 2003+i))
-# }
-# yr
-# mean(yr[1:17])
+
+## Further analyses ----
+# How many plants do we survey annually (on average)
+yr <- vector()
+for(i in 1:length(unique(cactus$Year_t))){
+  yr[i] <- nrow(subset(cactus, cactus$Year_t == 2003+i))
+}
+yr
+mean(yr[1:17])
+
+
+## Get numbers on years of data nd number of individual plants
+# create a combined variable of plot and ID and check for unique combos
+cactus$plot_ID <- paste(cactus$Plot, cactus$TagID)
+length(unique(cactus$plot_ID))
+# get the number of years
+length(unique(cactus$Year_t1))
+
+## Get the proportions of each species
+# how many ant observations are there
+cac <- subset(cactus, cactus$ant_t != "vacant")
+nrow(cac)
+# calculate the proportions of each ant
+liom_prop <- nrow(a)/nrow(cac)
+crem_prop <- nrow(b)/nrow(cac)
+camp_prop <- nrow(c)/nrow(cac)
+honey_prop <- nrow(d)/nrow(cac)
+phen_prop <- nrow(e)/nrow(cac)
+tetra_prop <- nrow(h)/nrow(cac)
+brach_prop <- nrow(j)/nrow(cac)
+unk_prop <- nrow(k)/nrow(cac)
+for_prop <- nrow(l)/nrow(cac)
+sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
+m <- 

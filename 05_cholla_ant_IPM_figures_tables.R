@@ -1489,11 +1489,11 @@ prop
 all_vac_stoch_null <- lams_stoch_null$all - lams_stoch_null$none
 all_vac_stoch <- lams_stoch$all - lams_stoch$none
 # Plot the boost offered by the real ant scenario based on stochastic and deterministic lambda estimates
-png("portfolio_effect.png")
-plot(density(all_vac_stoch_null), lwd = 3, col = "chartreuse4", ylim = c(0,60))
+png("Figures/portfolio_effect.png")
+plot(density(all_vac_stoch_null), lwd = 3, col = "chartreuse4", ylim = c(0,100), xlab = "Effect of Partner Presence on Fitness", main = "", cex.lab = 2)
 lines(density(all_vac_stoch), lwd = 3, col = "violet")
 abline(v = 0, lty = 2, lwd = 3)
-legend("topleft",legend = c("Synchronicity Possible","Synchronicity Excluded"), fill = c("violet","chartreuse4"))
+legend("topright",legend = c("Synchronicity Possible","Synchronicity Excluded"), fill = c("violet","chartreuse4"))
 dev.off()
 # check the mean density 
 mean(all_vac_stoch_null>0)
@@ -1508,7 +1508,21 @@ length(subset((all_vac_stoch-all_vac_stoch_null), (all_vac_stoch-all_vac_stoch_n
 mean(lams_stoch$all) - mean(lams_stoch$none)
 mean(lams_stoch_null$all) - mean(lams_stoch_null$none)
 
+#################################################################################################
+#################################################################################################
+######## VISUALIZE THE MEAN LAMBDA BY NUMBER OF ANT PARTNERS RATHER THAN IDENTITY ###############
+#################################################################################################
+#################################################################################################
+## No partners mean
+zero_part <- mean(lams_stoch$none)
+## One partners mean
+one_part <- mean(colMeans(cbind(lams_stoch$cremvac,lams_stoch$liomvac, lams_stoch$othervac)))
+## Two partners mean
+two_part <- mean(colMeans(cbind(lams_stoch$liomcremvac,lams_stoch$liomvacother, lams_stoch$othercremvac)))
+## All partners mean
+all_part <- mean(lams_stoch$all)
 
-
-
-
+## Plot these means
+png("Figures/Lambda_Num_Partners.png")
+plot(x = c(0,1,2,3), y = c(zero_part,one_part,two_part,all_part), xlab = "Number of Partners", ylab = "Mean Fitness", pch = 20, cex = 2.5,cex.lab = 1.8)
+dev.off()
