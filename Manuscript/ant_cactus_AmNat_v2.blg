@@ -1,0 +1,61 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: ant_cactus_AmNat_v2.aux
+Reallocating 'name_of_file' (item size: 1) to 8 items.
+The style file: apalike.bst
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+Database file #1: References.bib
+Warning--entry type for "Trager2010" isn't style-file defined
+--line 577 of file References.bib
+Warning--entry type for "Agrawal1998" isn't style-file defined
+--line 585 of file References.bib
+Repeated entry---line 707 of file References.bib
+ : @article{Kiers2003
+ :                   ,
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "rees2009integral"
+Warning--empty publisher in Beattie1985
+Warning--empty journal in Benson1982
+Warning--there's a number but no series in Ollerton2006
+You've used 75 entries,
+            1935 wiz_defined-function locations,
+            957 strings with 17190 characters,
+and the built_in function-call counts, 30040 in all, are:
+= -- 2939
+> -- 1273
+< -- 39
++ -- 446
+- -- 428
+* -- 2662
+:= -- 5291
+add.period$ -- 221
+call.type$ -- 75
+change.case$ -- 586
+chr.to.int$ -- 75
+cite$ -- 78
+duplicate$ -- 1043
+empty$ -- 2058
+format.name$ -- 531
+if$ -- 5772
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 72
+newline$ -- 373
+num.names$ -- 225
+pop$ -- 433
+preamble$ -- 1
+purify$ -- 589
+quote$ -- 0
+skip$ -- 806
+stack$ -- 0
+substring$ -- 2278
+swap$ -- 90
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 446
+warning$ -- 3
+while$ -- 243
+width$ -- 0
+write$ -- 960
+(There was 1 error message)
