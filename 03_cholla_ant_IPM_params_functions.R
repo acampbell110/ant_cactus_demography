@@ -29,7 +29,7 @@ years <- unique(cactus$Year_t)
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #mcmc_dir <- "/Users/alicampbell/Desktop/"
 #Tom
-#mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters

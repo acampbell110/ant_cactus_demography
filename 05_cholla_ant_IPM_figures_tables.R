@@ -959,8 +959,24 @@ barplot(invlogit(means), ylim = c(0,1.1), col = c(vaccol,othercol,cremcol,liomco
         cex.main = 2.6, cex.lab = 1.5)
 dev.off()
 ############
-
-
+alpha_val<-0.2
+## Tom's version of viability figure
+plot(1:5,c(1,1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4)
+points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
+       cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(cremcol,alpha_val),pch=16)
+points(jitter(rep(2,nrow(liom_subset))),jitter(liom_subset$viab),
+       cex=0.5+(liom_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(liomcol,alpha_val),pch=16)
+points(jitter(rep(3,nrow(other_subset))),jitter(other_subset$viab),
+       cex=0.5+(other_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(othercol,alpha_val),pch=16)
+points(jitter(rep(4,nrow(vac_subset))),jitter(vac_subset$viab),
+       cex=0.5+(vac_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(vaccol,alpha_val),pch=16)
+axis(1,at=1:4,labels=c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Other","Vacant"))
+mtext("Flowerbud viability", side = 2, line = 1, cex=1.4)
+box()
 
 #########################################################################################################################
 #### Reproductive Visuals #####################################################################################################
