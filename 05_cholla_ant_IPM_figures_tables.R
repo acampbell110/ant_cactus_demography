@@ -959,24 +959,41 @@ barplot(invlogit(means), ylim = c(0,1.1), col = c(vaccol,othercol,cremcol,liomco
         cex.main = 2.6, cex.lab = 1.5)
 dev.off()
 ############
-alpha_val<-0.2
 ## Tom's version of viability figure
-plot(1:5,c(1,1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4)
+## need to load rds output
+viab_out<-rstan::extract(readRDS(paste0(mcmc_dir,"fit_viab.rds")))
+alpha_val<-0.15
+pdf("Manuscript/Figures/viab_v2.pdf",height=5,width=5)
+plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4,xlim=c(1,4.25))
 points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
        cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
        col=alpha(cremcol,alpha_val),pch=16)
+lines(rep(1.25,2),quantile(invlogit(viab_out$beta0[,1]),probs=c(0.025,.975)),
+      lwd=3,col=cremcol)
+points(1.25,mean(invlogit(viab_out$beta0[,1])),col=cremcol,pch=15,cex=1.5)
 points(jitter(rep(2,nrow(liom_subset))),jitter(liom_subset$viab),
        cex=0.5+(liom_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
        col=alpha(liomcol,alpha_val),pch=16)
+lines(rep(2.25,2),quantile(invlogit(viab_out$beta0[,2]),probs=c(0.025,.975)),
+      lwd=3,col=liomcol)
+points(2.25,mean(invlogit(viab_out$beta0[,2])),col=liomcol,pch=15,cex=1.5)
 points(jitter(rep(3,nrow(other_subset))),jitter(other_subset$viab),
        cex=0.5+(other_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
        col=alpha(othercol,alpha_val),pch=16)
+lines(rep(3.25,2),quantile(invlogit(viab_out$beta0[,3]),probs=c(0.025,.975)),
+      lwd=3,col=othercol)
+points(3.25,mean(invlogit(viab_out$beta0[,3])),col=othercol,pch=15,cex=1.5)
 points(jitter(rep(4,nrow(vac_subset))),jitter(vac_subset$viab),
        cex=0.5+(vac_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
        col=alpha(vaccol,alpha_val),pch=16)
+lines(rep(4.25,2),quantile(invlogit(viab_out$beta0[,4]),probs=c(0.025,.975)),
+      lwd=3,col=vaccol)
+points(4.25,mean(invlogit(viab_out$beta0[,4])),col=vaccol,pch=15,cex=1.5)
 axis(1,at=1:4,labels=c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Other","Vacant"))
 mtext("Flowerbud viability", side = 2, line = 1, cex=1.4)
 box()
+dev.off()
+## min buds is 1, max is 264
 
 #########################################################################################################################
 #### Reproductive Visuals #####################################################################################################
