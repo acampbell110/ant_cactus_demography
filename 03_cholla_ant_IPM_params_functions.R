@@ -5,6 +5,7 @@
 ################################################################################
 ################################################################################
 ## Source the IPM vital rates code 
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 source("02_cholla_ant_IPM_vital_rates.R")
 ## Set conditions for the IPM 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
@@ -21,7 +22,7 @@ floor <- 25
 
 set.seed(333) # picked random number
 N_draws <- 1000
-draws <- sample(7500,N_draws, replace=F)
+draws <- sample(1500,N_draws, replace=F)
 years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
 ## Choose your pathway to pull from 
@@ -29,15 +30,15 @@ years <- unique(cactus$Year_t)
 mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #mcmc_dir <- "/Users/alicampbell/Desktop/"
 #Tom
-mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+#mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters
 # growth model
-fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
-grow.params <- rstan::extract(fit_grow_stud)
-fit_grow_stud_null<-readRDS(paste0(mcmc_dir,"fit_grow_student_t_null.rds"))
-grow.params.null <- rstan::extract(fit_grow_stud_null)
+fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
+grow.params <- rstan::extract(fit_grow_skew)
+#fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
+#grow.params.null <- rstan::extract(fit_grow_skew_null)
 # survival model
 fit_surv<-readRDS(paste0(mcmc_dir,"fit_surv.rds"))
 surv.params <- rstan::extract(fit_surv)
@@ -69,6 +70,9 @@ germ2.params <- rstan::extract(fit_germ2)
 # recruit size distribution model
 fit_rec<-readRDS(paste0(mcmc_dir,"fit_rec.rds"))
 rec.params <- rstan::extract(fit_rec)
+# Fruit survival model
+fit_fruit<-readRDS(paste0(mcmc_dir,"fit_fruit.rds"))
+fruit.params <- rstan::extract(fit_fruit)
 # ant transitions model
 fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi.rds"))
 multi.params <- rstan::extract(fit_multi)
@@ -103,35 +107,35 @@ params$grow_beta12<-grow.params$beta1[draws,2]				## growth slope
 params$grow_beta22<-grow.params$beta2[draws,2]				## growth slope
 ## Year Random Effects
 # Ant 1 (prev crem)
-grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
-                   grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
-                   grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],grow.params$w[draws,1,15],
-                   rep(0,N_draws),rep(0,N_draws))
-# Ant 2 (prev liom)
-grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
-                   grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
-                   grow.params$w[draws,2,12],grow.params$w[draws,2,13],grow.params$w[draws,2,14],grow.params$w[draws,2,15],
-                   rep(0,N_draws),rep(0,N_draws))
-# Ant 3 (prev other)
-grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
-                   grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
-                   grow.params$w[draws,3,12],grow.params$w[draws,3,13],grow.params$w[draws,3,14],grow.params$w[draws,3,15],
-                   rep(0,N_draws),rep(0,N_draws))
-# Ant 4 (prev vac)
-grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
-                   grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
-                   grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],grow.params$w[draws,4,15],
-                   rep(0,N_draws),rep(0,N_draws))
+# grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
+#                    grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
+#                    grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
+#                    grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],rep(0,N_draws),
+#                    grow.params$w[draws,1,15],grow.params$w[draws,1,16])
+# # Ant 2 (prev liom)
+# grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
+#                    grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
+#                    grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
+#                    grow.params$w[draws,2,12],grow.params$w[draws,2,13],grow.params$w[draws,2,14],rep(0,N_draws),
+#                    grow.params$w[draws,2,15],grow.params$w[draws,2,16])
+# # Ant 3 (prev other)
+# grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
+#                    grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
+#                    grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
+#                    grow.params$w[draws,3,12],grow.params$w[draws,3,13],grow.params$w[draws,3,14],rep(0,N_draws),
+#                    grow.params$w[draws,3,15],grow.params$w[draws,3,16])
+# # Ant 4 (prev vac)
+# grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
+#                    grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
+#                    grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
+#                    grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],rep(0,N_draws),
+#                    grow.params$w[draws,4,15],grow.params$w[draws,4,16])
 # Non ant specific
-grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
-                   grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
-                   grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
-                   rep(0,N_draws),rep(0,N_draws))
+# grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
+#                    grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
+#                    grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
+#                    grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
+#                    rep(0,N_draws),rep(0,N_draws))
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -155,32 +159,32 @@ params$surv_beta12<-surv.params$beta1[draws,2]				##surv slope
 surv_rfx1 <- cbind(surv.params$w[draws,1,1],surv.params$w[draws,1,2],surv.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
                    surv.params$w[draws,1,4],surv.params$w[draws,1,5],surv.params$w[draws,1,6],surv.params$w[draws,1,7],
                    surv.params$w[draws,1,8],surv.params$w[draws,1,9],surv.params$w[draws,1,10],surv.params$w[draws,1,11],
-                   surv.params$w[draws,1,12],surv.params$w[draws,1,13],surv.params$w[draws,1,14],surv.params$w[draws,1,15],
-                   rep(0,N_draws),rep(0,N_draws))
+                   surv.params$w[draws,1,12],surv.params$w[draws,1,13],surv.params$w[draws,1,14],rep(0,N_draws),
+                   surv.params$w[draws,1,15],surv.params$w[draws,1,16])
 # Ant 2 (prev liom)
 surv_rfx2 <- cbind(surv.params$w[draws,2,1],surv.params$w[draws,2,2],surv.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
                    surv.params$w[draws,2,4],surv.params$w[draws,2,5],surv.params$w[draws,2,6],surv.params$w[draws,2,7],
                    surv.params$w[draws,2,8],surv.params$w[draws,2,9],surv.params$w[draws,2,10],surv.params$w[draws,2,11],
-                   surv.params$w[draws,2,12],surv.params$w[draws,2,13],surv.params$w[draws,2,14],surv.params$w[draws,2,15],
-                   rep(0,N_draws),rep(0,N_draws))
+                   surv.params$w[draws,2,12],surv.params$w[draws,2,13],surv.params$w[draws,2,14],rep(0,N_draws),
+                   surv.params$w[draws,2,15],surv.params$w[draws,2,16])
 # Ant 3 (prev other)
 surv_rfx3 <- cbind(surv.params$w[draws,3,1],surv.params$w[draws,3,2],surv.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
                    surv.params$w[draws,3,4],surv.params$w[draws,3,5],surv.params$w[draws,3,6],surv.params$w[draws,3,7],
                    surv.params$w[draws,3,8],surv.params$w[draws,3,9],surv.params$w[draws,3,10],surv.params$w[draws,3,11],
-                   surv.params$w[draws,3,12],surv.params$w[draws,3,13],surv.params$w[draws,3,14],surv.params$w[draws,3,15],
-                   rep(0,N_draws),rep(0,N_draws))
+                   surv.params$w[draws,3,12],surv.params$w[draws,3,13],surv.params$w[draws,3,14],rep(0,N_draws),
+                   surv.params$w[draws,3,15],surv.params$w[draws,3,16])
 # Ant 4 (prev vac)
 surv_rfx4 <- cbind(surv.params$w[draws,4,1],surv.params$w[draws,4,2],surv.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
                    surv.params$w[draws,4,4],surv.params$w[draws,4,5],surv.params$w[draws,4,6],surv.params$w[draws,4,7],
                    surv.params$w[draws,4,8],surv.params$w[draws,4,9],surv.params$w[draws,4,10],surv.params$w[draws,4,11],
-                   surv.params$w[draws,4,12],surv.params$w[draws,4,13],surv.params$w[draws,4,14],surv.params$w[draws,4,15],
-                   rep(0,N_draws),rep(0,N_draws))
+                   surv.params$w[draws,4,12],surv.params$w[draws,4,13],surv.params$w[draws,4,14],rep(0,N_draws),
+                   surv.params$w[draws,4,15],surv.params$w[draws,4,16])
 # Non ant specific
 surv_rfx <- cbind(surv.params.null$w[draws,1],surv.params.null$w[draws,2],surv.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-                   surv.params.null$w[draws,4],surv.params.null$w[draws,5],surv.params.null$w[draws,6],surv.params.null$w[draws,7],
-                   surv.params.null$w[draws,8],surv.params.null$w[draws,9],surv.params.null$w[draws,10],surv.params.null$w[draws,11],
-                   surv.params.null$w[draws,12],surv.params.null$w[draws,13],surv.params.null$w[draws,14],surv.params.null$w[draws,15],
-                   rep(0,N_draws),rep(0,N_draws))
+                  surv.params.null$w[draws,4],surv.params.null$w[draws,5],surv.params.null$w[draws,6],surv.params.null$w[draws,7],
+                  surv.params.null$w[draws,8],surv.params.null$w[draws,9],surv.params.null$w[draws,10],surv.params.null$w[draws,11],
+                  surv.params.null$w[draws,12],surv.params.null$w[draws,13],surv.params.null$w[draws,14],rep(0,N_draws),
+                  surv.params.null$w[draws,15],surv.params.null$w[draws,16])
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
 #head(flow.params)
@@ -205,12 +209,11 @@ params$repro_beta1<-repro.params$beta1[draws]      ## repro slope
 params$repro_sig_u<-repro.params$sigma_u[draws]    ## repro sigma u
 params$repro_sig_w<-repro.params$sigma_w[draws]    ## repro sigma w
 ## --- Year Random Effects --- ####
-repro_rfx <- cbind(rep(0,N_draws),repro.params$w[draws,1],repro.params$w[draws,2],repro.params$w[draws,3],
+repro_rfx <- cbind(repro.params$w[draws,1],repro.params$w[draws,2],repro.params$w[draws,3],
                    repro.params$w[draws,4],rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
                    repro.params$w[draws,5],repro.params$w[draws,6],repro.params$w[draws,7],
                    repro.params$w[draws,8],repro.params$w[draws,9],repro.params$w[draws,10],repro.params$w[draws,11],
-                  rep(0,N_draws),
-                  repro.params$w[draws,12],repro.params$w[draws,13],repro.params$w[draws,14])
+                   repro.params$w[draws,12],rep(0,N_draws),repro.params$w[draws,13],repro.params$w[draws,14])
 ##-----------------------Viability Parameters-----------------## 
 ## Check the names of the parameters
 #head(viab.params) 
@@ -227,35 +230,34 @@ params$viab_beta01<-viab.params$beta0[draws,1]     	  ## viab intercept
 params$viab_beta02<-viab.params$beta0[draws,2]     	  ## viab intercept
 # ## Year random effects
 viab_rfx1 <- cbind(viab.params$w[draws,1,1],viab.params$w[draws,1,2],viab.params$w[draws,1,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
                    viab.params$w[draws,1,4],viab.params$w[draws,1,5],viab.params$w[draws,1,6],viab.params$w[draws,1,7],
-                   viab.params$w[draws,1,8],viab.params$w[draws,1,9],viab.params$w[draws,1,10],viab.params$w[draws,1,11]
-                   ,rep(0,N_draws),
-                   viab.params$w[draws,1,12],viab.params$w[draws,1,13],rep(0,N_draws))
+                   viab.params$w[draws,1,8],viab.params$w[draws,1,9],viab.params$w[draws,1,10],
+                   viab.params$w[draws,1,11],rep(0,N_draws),
+                   viab.params$w[draws,1,12])
 viab_rfx2 <- cbind(viab.params$w[draws,2,1],viab.params$w[draws,2,2],viab.params$w[draws,2,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
                    viab.params$w[draws,2,4],viab.params$w[draws,2,5],viab.params$w[draws,2,6],viab.params$w[draws,2,7],
-                   viab.params$w[draws,2,8],viab.params$w[draws,2,9],viab.params$w[draws,2,10],viab.params$w[draws,2,11]
-                   ,rep(0,N_draws),
-                   viab.params$w[draws,2,12],viab.params$w[draws,2,13],rep(0,N_draws))
+                   viab.params$w[draws,2,8],viab.params$w[draws,2,9],viab.params$w[draws,2,10],
+                   viab.params$w[draws,2,11],rep(0,N_draws),
+                   viab.params$w[draws,2,12])
 viab_rfx3 <- cbind(viab.params$w[draws,3,1],viab.params$w[draws,3,2],viab.params$w[draws,3,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
                    viab.params$w[draws,3,4],viab.params$w[draws,3,5],viab.params$w[draws,3,6],viab.params$w[draws,3,7],
-                   viab.params$w[draws,3,8],viab.params$w[draws,3,9],viab.params$w[draws,3,10],viab.params$w[draws,3,11]
-                   ,rep(0,N_draws),
-                   viab.params$w[draws,3,12],viab.params$w[draws,3,13],rep(0,N_draws))
+                   viab.params$w[draws,3,8],viab.params$w[draws,3,9],viab.params$w[draws,3,10],
+                   viab.params$w[draws,3,11],rep(0,N_draws),
+                   viab.params$w[draws,3,12])
 viab_rfx4 <- cbind(viab.params$w[draws,4,1],viab.params$w[draws,4,2],viab.params$w[draws,4,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
                    viab.params$w[draws,4,4],viab.params$w[draws,4,5],viab.params$w[draws,4,6],viab.params$w[draws,4,7],
-                   viab.params$w[draws,4,8],viab.params$w[draws,4,9],viab.params$w[draws,4,10],viab.params$w[draws,4,11]
-                   ,rep(0,N_draws),
-                   viab.params$w[draws,4,12],viab.params$w[draws,4,13],rep(0,N_draws))
+                   viab.params$w[draws,4,8],viab.params$w[draws,4,9],viab.params$w[draws,4,10],
+                   viab.params$w[draws,4,11],rep(0,N_draws),
+                   viab.params$w[draws,4,12])
 viab_rfx <- cbind(viab.params.null$w[draws,1],viab.params.null$w[draws,2],viab.params.null$w[draws,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                   viab.params.null$w[draws,4],viab.params.null$w[draws,5],viab.params.null$w[draws,6],viab.params.null$w[draws,7],
-                   viab.params.null$w[draws,8],viab.params.null$w[draws,9],viab.params.null$w[draws,10],viab.params.null$w[draws,11]
-                   ,rep(0,N_draws),
-                   viab.params.null$w[draws,12],viab.params.null$w[draws,13],rep(0,N_draws))
+                  rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+                  viab.params.null$w[draws,4],viab.params.null$w[draws,5],viab.params.null$w[draws,6],viab.params.null$w[draws,7],
+                  viab.params.null$w[draws,8],viab.params.null$w[draws,9],viab.params.null$w[draws,10],rep(0,N_draws),
+                  viab.params.null$w[draws,11],viab.params.null$w[draws,12])
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
 #head(seed.params)
@@ -295,6 +297,11 @@ params$germ2_beta0<-germ2.params$beta0[draws]        ## germ 2 intercept
 params$rec_beta0<-rec.params$beta0[draws]        ## Rec intercept
 params$rec_sig<-rec.params$sigma[draws]         ## Rec error
 
+##------------------------- Fruit Survival -------------------##
+## Check the names of the parameters
+head(fruit.params)
+params$fruit_beta0<-fruit.params$beta0[draws]
+
 ##-------------------------Transition Parameters-------------------##
 # Prev Vac
 params$multi_betavv <- multi.params$beta[draws,4,4] ## intercept for vacant to vacant  
@@ -307,7 +314,7 @@ params$multi_betaov <- multi.params$beta[draws,3,4]
 params$multi_betaoo <- multi.params$beta[draws,3,3]
 params$multi_betaoc <- multi.params$beta[draws,3,1]
 params$multi_betaol <- multi.params$beta[draws,3,2]
-params$multi_betao <- multi.params$beta[draws,5,2]
+params$multi_betao <- multi.params$beta[draws,5,3]
 # Prev Crem
 params$multi_betacv <- multi.params$beta[draws,1,4]
 params$multi_betaco <- multi.params$beta[draws,1,3]
@@ -451,7 +458,7 @@ pxy<-function(x,y,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,gro
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
 fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
-
+  
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
   p.flow<-invlogit((params$repro_beta0) + (params$repro_beta1)*xb + repro_rfx)      ## Probability of Reproducing
@@ -463,12 +470,12 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
   seeds.per.fruit_crem<-(params$seed_beta01)      ## Number of Seeds per Fruit
   seeds.per.fruit_liom<-(params$seed_beta03)      ## Number of Seeds per Fruit
   seeds.per.fruit_vac<-(params$seed_beta02)     ## Number of Seeds per Fruit
-  seed.survival<-invlogit((params$preseed_beta0))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
+  fruit.survival<-invlogit((params$fruit_beta0))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
   #Calculate the fecundity probabilities by ant species
-  f_crem = p.flow*nflow*flow.surv_crem*seeds.per.fruit_crem*seed.survival
-  f_vac = p.flow*nflow*flow.surv_vac*seeds.per.fruit_vac*seed.survival
-  f_other = p.flow*nflow*flow.surv_other*seeds.per.fruit_vac*seed.survival
-  f_liom = p.flow*nflow*flow.surv_liom*seeds.per.fruit_liom*seed.survival
+  f_crem = p.flow*nflow*flow.surv_crem*seeds.per.fruit_crem*fruit.survival
+  f_vac = p.flow*nflow*flow.surv_vac*seeds.per.fruit_vac*fruit.survival
+  f_other = p.flow*nflow*flow.surv_other*seeds.per.fruit_vac*fruit.survival
+  f_liom = p.flow*nflow*flow.surv_liom*seeds.per.fruit_liom*fruit.survival
   #Return the correct value
   if(i == "crem"){ return(f_crem)}
   if(i == "liom"){ return(f_liom)}
@@ -476,13 +483,13 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
   if(i == "vacant"){ return(f_vac)}
 }
 
-## Check if it works
+# Check if it works
 # i = c("liom","vacant","crem","other")
 # x = c(-1,-5,4,3)
 # y = c(-1,-4,4.5,3.01)
 # f <- matrix(NA,ncol = length(i), nrow = 10)
 # l <- list()
-# 
+# n = 1
 # for(a in 1:17){ ## year
 # for(m in seq(1:10)){ ## iteration
 #     f[m,n] <- fx(x[n],i[n],params[m,],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])
@@ -822,14 +829,14 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
-
+  
   # Fertility matricies -- One Ant
   Fmat<-matrix(0,(n+2),(n+2))
   # Growth/survival transition matricies -- One Ant
   Tmat<-matrix(0,(n+2),(n+2))
   ## Full Matricies
   #IPMmat <- matrix()
-
+  
   # Banked seeds go in top row
   Fmat[1,3:(n+2)]<-fx(y,"vacant",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
@@ -848,7 +855,7 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
   # p <- colSums(growmat) # Shows the column sums, each should be as close to 1 as possible
   # evict<-matsize-sum(colSums(growmat)) # Should be as close to 0 as possible
   # 
-   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat))#, y=y, evict=evict, p=p))
+  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y = y))#, y=y, evict=evict, p=p))
 }
 # x <- c(1,1)
 #  lam <- matrix(rep(NA,120), nrow = 10)
@@ -892,7 +899,7 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
-
+  
   # Fertility matricies -- Two Ant
   Fmat <- matrix(0,(2*n+2),(2*n+2))
   # Growth/survival transition matricies -- Two Ant
@@ -1000,7 +1007,7 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     IPMmat<-Fmat+Tmat
     # eviction tests
     OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac"))
-  OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
+    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
     p_o <- colSums(rbind(OOgrowmat,OVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_o<-matsize-sum(colSums(rbind(OOgrowmat,OVgrowmat))) # Should be as close to 0 as possible
     VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac"))
@@ -1020,13 +1027,13 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
 # for(i in 1:length(scenario)){
 #   for(a in 1:12){
 #     for(m in 1:10){ ## years
-      # lam[m,a] <- lambda(bigmatrix.2(params=params[m,],
-      #                              lower=lower,
-      #                              upper=upper,
-      #                              scenario = scenario[1],
-      #                              floor=25,
-      #                              ceiling=4,
-      #                              matsize=500,
+# lam[m,a] <- lambda(bigmatrix.2(params=params[m,],
+#                              lower=lower,
+#                              upper=upper,
+#                              scenario = scenario[1],
+#                              floor=25,
+#                              ceiling=4,
+#                              matsize=500,
 #                                    grow_rfx1[m,a],grow_rfx2[m,a],
 #                                    grow_rfx3[m,a],grow_rfx4[m,a],
 #                                    surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
@@ -1065,7 +1072,7 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
-
+  
   # Fertility matricies -- Two Ant
   Fmat <- matrix(0,(3*n+2),(3*n+2))
   # Growth/survival transition matricies -- Two Ant
@@ -1282,7 +1289,7 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   h<-(U-L)/n                   #Bin size
   b<-L+c(0:n)*h;               #Lower boundaries of bins
   y<-0.5*(b[1:n]+b[2:(n+1)]);  #Bin midpoints
-
+  
   # Fertility matricies -- Two Ant
   Fmat <- matrix(0,(4*n+2),(4*n+2))
   # Growth/survival transition matricies -- Two Ant
@@ -1406,7 +1413,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
   ###################################################################################################
   ## Scenario options are "liomvacother", "liomcremvac", "othercremvac",
   ## "othervac", "liomvac", "cremvac", "all", "none"
-
+  
   if(scenario == "none"){
     list = (bigmatrix.1(params,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
@@ -1517,9 +1524,9 @@ lambdaSim=function(params,                                  ## parameters
                    scenario,                                ## partner diversity scenario
                    lower,upper,                             ## extensions to avoid eviction
                    floor,ceiling
-                  
+                   
 ){
-
+  
   ## Create an actual matrix filled with 0 of the right size based on scenarios
   if(scenario == "none"){K_t <- matrix(0,matsize+2,matsize+2)}
   if(scenario == "cremvac"|scenario == "liomvac"|scenario == "othervac"){K_t <- matrix(0,2*matsize+2,2*matsize+2)}
@@ -1528,13 +1535,13 @@ lambdaSim=function(params,                                  ## parameters
   matdim        <- ncol(K_t)
   rtracker      <- (rep(0,max_yrs))  ## Empty vector to store growth rates in
   n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
-
+  
   for(t in 1:max_yrs){ ## In this loop I call the IPMmat and store it in the K_t matrix then
     #   ## scale this to the stochastic growth rate
     #   ## Randomly sample the years we have data for by calling column r in all matricies of
     #   ## the year random effects
     r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),1,replace = TRUE,prob = NULL)
-
+    
     ## Create and store matrix
     K_t[,]<-bigmatrix(params,scenario,lower,upper,floor,ceiling,matsize,
                       grow_rfx1[r],grow_rfx2[r],grow_rfx3[r],grow_rfx4[r],
@@ -1542,6 +1549,7 @@ lambdaSim=function(params,                                  ## parameters
                       flow_rfx[r],
                       repro_rfx[r],
                       viab_rfx1[r],viab_rfx2[r],viab_rfx3[r],viab_rfx4[r])$IPMmat
+    matricies[[t]] <- K_t[,]
     ## At each time step call the IPM for the proper Year
     #
     n0 <- K_t[,] %*% n0 ## This is a vector of population structure. Numerical trick to keep pop sizes managable
@@ -1553,43 +1561,10 @@ lambdaSim=function(params,                                  ## parameters
   #discard initial values (to get rid of transient)
   burnin    <- round(max_yrs*0.1)
   rtracker  <- rtracker[-c(1:burnin)]
-
+  
   #Finish and return
   #print(proc.time() - ptm)
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
-
-# scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-# max_scenario = length(scenario) #n
-# max_yrs = 2
-# max_rep = 1
-# lam <- matrix(data = NA, nrow = max_rep, ncol = max_scenario)
-# for(i in 1:max_scenario){
-#   print(scenario[i])
-#   for(m in 1:max_rep){
-#     lam[m,i] <- lambdaSim(params=params[m,],
-#                           grow_rfx1 = grow_rfx1[m,],
-#                           grow_rfx2 = grow_rfx2[m,],
-#                           grow_rfx3 = grow_rfx3[m,],
-#                           grow_rfx4 = grow_rfx4[m,],
-#                           surv_rfx1 = 0,
-#                           surv_rfx2 = 0,
-#                           surv_rfx3 = 0,
-#                           surv_rfx4 = 0,
-#                           flow_rfx = flow_rfx[m,],
-#                           repro_rfx = repro_rfx[m,],
-#                           viab_rfx1 = viab_rfx1[m,],
-#                           viab_rfx2 = viab_rfx2[m,],
-#                           viab_rfx3 = viab_rfx3[m,],
-#                           viab_rfx4 = viab_rfx4[m,],
-#                           max_yrs=max_yrs,
-#                           matsize=500,
-#                           scenario = scenario[i],
-#                           lower=lower, upper=upper,
-#                           floor=25,ceiling=4
-#     )
-#   }
-# }
-# lam
 

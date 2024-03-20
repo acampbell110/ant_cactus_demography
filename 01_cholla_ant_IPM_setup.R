@@ -13,6 +13,8 @@ library(rstan)
 library(sn)
 library(sgt)
 library(qgam)
+library(brms)
+library(loo)
 # ipm analysis
 library(popbio)
 # max likelihood models
@@ -215,6 +217,7 @@ cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$Survival_t1[cactus$Recruit == 1] <- NA
 cactus$Survival_t1[cactus$Newplant == 1] <- NA
 
+
 ## Export the data ---- Write a data file which has "cleaned" data with proper column headings
 #head(cactus) # some of the columns are not names properly
 # rename all columns
@@ -228,9 +231,10 @@ colnames(cactus) <- c("Plot" ,            "TagID"     ,       "Transplant"   ,  
                       "CV"      ,         "WVL"         ,     "Damage"        ,   "MA"    ,          
                       "comments"    ,     "logsize_t"   ,     "logsize_t1"   ,    "ant_t"       ,    
                       "ant_t1"  ,         "flower1_YN" )     
+
 # Remove extra columns
 cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1"                            ,"ant_t","ant_t1",
-                      "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1"                            ,"Antcount_t1","flower1_YN","Newplant")]
+                      "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1"                            ,"Antcount_t1","flower1_YN","Newplant","Damage","NP_adult","NP_juv","CV","WVL","MA")]
 # Export cactus to a csv
 write.csv(cactus, "Data Analysis/cholla_demography_20042023_cleaned.csv")
 
@@ -257,7 +261,6 @@ length(unique(cactus$Year_t1))
 # how many ant observations are there
 cac <- subset(cactus, cactus$ant_t != "vacant")
 nrow(cac)
-# calculate the proportions of each ant
 liom_prop <- nrow(a)/nrow(cac)
 crem_prop <- nrow(b)/nrow(cac)
 camp_prop <- nrow(c)/nrow(cac)
@@ -268,4 +271,4 @@ brach_prop <- nrow(j)/nrow(cac)
 unk_prop <- nrow(k)/nrow(cac)
 for_prop <- nrow(l)/nrow(cac)
 sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
-m <- 
+

@@ -1,8 +1,8 @@
-#######################################################################################################
-#######################################################################################################
-##                            Call the IPM and understand the outputs                                ##
-#######################################################################################################
-#######################################################################################################
+################################################################################
+################################################################################
+##                            Call the IPM and understand the outputs            
+################################################################################
+################################################################################
 source("03_cholla_ant_IPM_params_functions.R")
 ## Set the colors for the visuals
 vcol <- "#ad90ec"
@@ -14,65 +14,12 @@ locol <- "#cf3545"
 cocol <- "#ab59c8"
 acol <- "#5d906b"
 cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
-# mean_params=data.frame(t(colMeans(params)))
-# mean_grow_rfx1=matrix(data = colMeans(grow_rfx1), nrow = 1)
-# grow_rfx1 <- rbind(grow_rfx1,mean_grow_rfx1)
-# mean_grow_rfx2=matrix(data = colMeans(grow_rfx2), nrow = 1)
-# grow_rfx2 <- rbind(grow_rfx2,mean_grow_rfx2)
-# mean_grow_rfx3=matrix(data = colMeans(grow_rfx3), nrow = 1)
-# grow_rfx3 <- rbind(grow_rfx3,mean_grow_rfx3)
-# mean_grow_rfx4=matrix(data = colMeans(grow_rfx4), nrow = 1)
-# grow_rfx4 <- rbind(grow_rfx4,mean_grow_rfx4)
-# mean_grow_rfx=matrix(data = colMeans(grow_rfx), nrow = 1)
-# grow_rfx <- rbind(grow_rfx,mean_grow_rfx)
-# mean_surv_rfx1=matrix(data = colMeans(surv_rfx1), nrow = 1)
-# surv_rfx1 <- rbind(surv_rfx1,mean_surv_rfx1)
-# mean_surv_rfx2=matrix(data = colMeans(surv_rfx2), nrow = 1)
-# surv_rfx2 <- rbind(surv_rfx2,mean_surv_rfx2)
-# mean_surv_rfx3=matrix(data = colMeans(surv_rfx3), nrow = 1)
-# surv_rfx3 <- rbind(surv_rfx3,mean_surv_rfx3)
-# mean_surv_rfx4=matrix(data = colMeans(surv_rfx4), nrow = 1)
-# surv_rfx4 <- rbind(surv_rfx4,mean_surv_rfx4)
-# mean_surv_rfx=matrix(data = colMeans(surv_rfx), nrow = 1)
-# surv_rfx <- rbind(surv_rfx,mean_surv_rfx)
-# mean_viab_rfx1=matrix(data = colMeans(viab_rfx1), nrow = 1)
-# viab_rfx1 <- rbind(viab_rfx1,mean_viab_rfx1)
-# mean_viab_rfx2=matrix(data = colMeans(viab_rfx2), nrow = 1)
-# viab_rfx2 <- rbind(viab_rfx2,mean_viab_rfx2)
-# mean_viab_rfx3=matrix(data = colMeans(viab_rfx3), nrow = 1)
-# viab_rfx3 <- rbind(viab_rfx3,mean_viab_rfx3)
-# mean_viab_rfx4=matrix(data = colMeans(viab_rfx4), nrow = 1)
-# viab_rfx4 <- rbind(viab_rfx4,mean_viab_rfx4)
-# mean_viab_rfx=matrix(data = colMeans(viab_rfx), nrow = 1)
-# viab_rfx <- rbind(viab_rfx,mean_viab_rfx)
-# mean_repro_rfx=matrix(data = colMeans(repro_rfx), nrow = 1)
-# repro_rfx <- rbind(repro_rfx,mean_repro_rfx)
-# mean_flow_rfx=matrix(data = colMeans(flow_rfx), nrow = 1)
-# flow_rfx <- rbind(flow_rfx,mean_flow_rfx)
-# 
-# dim(grow_rfx1)
-# dim(grow_rfx2)
-# dim(grow_rfx3)
-# dim(grow_rfx4)
-# dim(grow_rfx)
-# dim(surv_rfx1)
-# dim(surv_rfx2)
-# dim(surv_rfx3)
-# dim(surv_rfx4)
-# dim(surv_rfx)
-# dim(viab_rfx1)
-# dim(viab_rfx2)
-# dim(viab_rfx3)
-# dim(viab_rfx4)
-# dim(viab_rfx)
-# dim(repro_rfx)
-# dim(flow_rfx)
 
-######################################################################################################
-############################### DETERMINISTIC POST IPM ###############################################
-##                        Calculate the lambda posterior distributions                              ##
-######################################################################################################
-######################################################################################################
+################################################################################
+##                                    DETERMINISTIC POST IPM
+##                        Calculate the lambda posterior distributions     
+################################################################################
+################################################################################
 #### Calculate the lambda posterior distributions
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Post.R
 # Rows correspond to parameter iterations
@@ -102,23 +49,24 @@ lams_dpost
 colnames(lams_dpost) <- scenario
 write.csv(lams_dpost,"det_post_lambda_mean.csv")
 
-######################################################################################################
-################################## STOCHASTIC POST IPM ###############################################
-##                       Calculate the lambda posterior distributions                         ########
-######################################################################################################
-######################################################################################################
+################################################################################
+##                                   STOCHASTIC POST IPM
+##                       Calculate the lambda posterior distributions       
+################################################################################
+################################################################################
 #### Calculate the lambda posterior distributions with stochasticity
 # Set the order or the scenarios
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 # Choose the number of parameter iterations 
-max_rep = 50 ## Posterior Draws from vital rate models
+max_rep = 1 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
-max_yrs = 200 ## Years of randomly sampled annual effects
+max_yrs = 1 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios
 lams_stoch <- matrix(nrow = max_rep, ncol = max_scenario)
+mats <- list()
 for(n in 1:max_scenario){
   print(scenario[n])
   for(m in 1:max_rep){
@@ -144,18 +92,89 @@ for(n in 1:max_scenario){
                                viab_rfx3 = viab_rfx3[m,],
                                viab_rfx4 = viab_rfx4[m,],## viability model year rfx
                                max_yrs = max_yrs        ## the # years you want to iterate
-                               )
+                               )$lambdaS
   }
 }
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_stoch) <- scenario
 write.csv(lams_stoch,"stoch_post_lambda.csv")
+#### Check the stable stage distribution of sizes
+# Pull out the mean matrix
+params_mean <- matrix(rep(0,ncol(params)), nrow = 1)
+for(i in 1:ncol(params)){
+  params_mean[,i] <- mean(params[,i])
+}
+colMeans(params)
+colnames(params_mean) <- colnames(params)
+params_mean <- as.data.frame(params_mean)
+all_stable <- stable.stage(bigmatrix(params = (params[m,]),
+                                      scenario = "all",
+                                      lower = lower,
+                                      upper = upper,
+                                      floor = floor,
+                                      ceiling = ceiling,
+                                      matsize = matsize,
+                                      mean(grow_rfx1),mean(grow_rfx2),mean(grow_rfx3),mean(grow_rfx4),
+                                      mean(surv_rfx1),mean(surv_rfx2),mean(surv_rfx3),mean(surv_rfx4),
+                                      mean(flow_rfx),
+                                      mean(repro_rfx),
+                                      mean(viab_rfx1),mean(viab_rfx2),mean(viab_rfx3),mean(viab_rfx4))$IPMmat)
+# standardize all_stable s.t. the seed banks are excluded (aka all_stable[3:2002] sums to 1)
+all_stable_stan <- (all_stable[3:2002])
+sum(all_stable_stan)
 
-######################################################################################################
-################################## STOCHASTIC NULL POST IPM ##########################################
-##                       Calculate the lambda posterior distributions                               ##
-######################################################################################################
-######################################################################################################
+vac_IPM <- bigmatrix(params = (params[m,]),
+                     scenario = "none",
+                     lower = lower,
+                     upper = upper,
+                     floor = floor,
+                     ceiling = ceiling,
+                     matsize = matsize,
+                     mean(grow_rfx1),mean(grow_rfx2),mean(grow_rfx3),mean(grow_rfx4),
+                     mean(surv_rfx1),mean(surv_rfx2),mean(surv_rfx3),mean(surv_rfx4),
+                     mean(flow_rfx),
+                     mean(repro_rfx),
+                     mean(viab_rfx1),mean(viab_rfx2),mean(viab_rfx3),mean(viab_rfx4))
+vac_stable <- stable.stage(vac_IPM$IPMmat)
+
+
+
+vac_stable_mod <- vac_stable[3:502]
+
+sequence <- seq(lower,upper,length = 500)
+png("Figures/tester.png")
+plot(vac_IPM$y,vac_stable_mod, type= "b", xlim = c(-4,2))
+dev.off()
+
+
+liomvac_IPM <- bigmatrix(params = (params[m,]),
+                     scenario = "liomvac",
+                     lower = lower,
+                     upper = upper,
+                     floor = floor,
+                     ceiling = ceiling,
+                     matsize = matsize,
+                     mean(grow_rfx1),mean(grow_rfx2),mean(grow_rfx3),mean(grow_rfx4),
+                     mean(surv_rfx1),mean(surv_rfx2),mean(surv_rfx3),mean(surv_rfx4),
+                     mean(flow_rfx),
+                     mean(repro_rfx),
+                     mean(viab_rfx1),mean(viab_rfx2),mean(viab_rfx3),mean(viab_rfx4))
+liomvac_stable <- stable.stage(liomvac_IPM$IPMmat)
+
+lambda(liomvac_IPM$IPMmat)
+
+
+
+sequence <- seq(lower,upper,length = 500)
+png("Figures/tester.png")
+plot(liomvac_IPM$y,liomvac_stable[3:502], type= "b", xlim = c(-4,2), ylim = c(0,.2))
+lines(liomvac_IPM$y,liomvac_stable[503:1002], col = vaccol, lwd = 3)
+dev.off()
+################################################################################
+##                               STOCHASTIC NULL POST IPM
+##                       Calculate the lambda posterior distributions           
+################################################################################
+################################################################################
 #### Calculate the lambda posterior distributions with stochasticity and no possible synchronicity of 
 #### ant effects
 # Set the order or the scenarios
@@ -164,7 +183,7 @@ max_scenario = length(scenario)
 # Choose the number of parameter iterations 
 max_rep = 50 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
-max_yrs = 200 ## Years of randomly sampled annual effects
+max_yrs = 100 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios

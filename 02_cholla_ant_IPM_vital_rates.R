@@ -6,10 +6,36 @@
 ################################################################################
 ################################################################################
 ## Read the data in
+setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 source("01_cholla_ant_IPM_setup.R")
 cactus <- read.csv("Data Analysis/cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
 ################################################################################
-##   Skew Growth Model -- What size will the cacti be next time step?
+## Growth Model Selection with WAIC
+################################################################################
+## Make a brms model
+# grow_skew <- brm(brmsformula(logsize_t1 ~ logsize_t * ant_t + logsize_t^2 * ant_t,
+#                              sigma ~ logsize_t,
+#                              alpha ~ logsize_t),
+#                  data = growth_data,
+#                  family = skew_normal(link = "identity",link_sigma = "log",link_alpha = "identity"),
+#                  chains = 3,
+#                  iter = 1000,
+#                  cores = 3,
+#                  thin = 2)
+# grow_stu <- brm(brmsformula(logsize_t1 ~ logsize_t * ant_t + logsize_t^2 * ant_t,
+#                              sigma ~ logsize_t,
+#                              nu ~ logsize_t),
+#                  data = growth_data,
+#                  family = student(link = "identity",link_sigma = "log",link_nu = "logm1"),
+#                  chains = 3,
+#                  iter = 1000,
+#                  cores = 3,
+#                  thin = 2)
+# ## Model selection between null and parameterized model
+# WAIC(grow_skew,grow_stu)
+
+################################################################################
+##   Student T Growth Model -- What size will the cacti be next time step?
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
@@ -54,6 +80,42 @@ stan_data_grow_stud <- list(N = nrow(growth_data),                              
 #                        save_warmup=F)
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_grow_stud_null, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_student_t_null.rds")
+
+################################################################################
+##   Skew Growth Model -- What size will the cacti be next time step?
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
+growth_data <- na.omit(growth_data_orig) # Lose 2032 rows (due to plant death & recruit status)
+# nrow(growth_data_orig)
+# nrow(growth_data)
+# check that you are happy with the subsetting by plotting the original and cleaned data
+# plot(growth_data$logsize_t, growth_data$logsize_t1)
+# points((cactus$logsize_t), (cactus$logsize_t1), col = "red")
+## Make a list of all necessary variables so they are properly formatted to feed into the stan model
+stan_data_grow_skew <- list(N = nrow(growth_data),                                     ## number of observations
+                            vol = (growth_data$logsize_t),                             ## predictor volume year t
+                            vol2 = (growth_data$logsize_t)^2,                          ## non linear volume year t predictor
+                            y = (growth_data$logsize_t1),                              ## response volume next year
+                            ant = as.integer(as.factor(growth_data$ant_t)),            ## predictor ant state
+                            K = 4,                                                     ## number of ant states
+                            N_Year = max(as.integer(as.factor(growth_data$Year_t))),   ## number of years
+                            N_Plot = max(as.integer(growth_data$Plot)),                ## number of plots
+                            plot = as.integer(growth_data$Plot),                       ## predictor plots
+                            year = as.integer(as.factor(growth_data$Year_t))           ## predictor years
+)
+# ## Run the growth model with a student t distribution -- fixed effects: previous size and a non linear previous size variable and ant state; random effects: plot and year; size variation is included for both the omega and alpha estimates
+# grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
+# fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
+#                        control = list(adapt_delta=0.99,stepsize=0.1),
+#                        iter=10000,cores=3,thin=2,
+#                        pars = c("u","w",          # plot and year random effects
+#                                 "beta0","beta1","beta2", #location coefficients
+#                                 "d_0","d_size","d_size2", #scale coefficiences
+#                                 "a_0","a_size","a_size2"), #shape coefficients
+#                        save_warmup=F)
+# ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_grow_skew, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 
 
 ################################################################################
@@ -123,7 +185,7 @@ stan_data_flow_trunc <- list(N = nrow(flower_data),                             
                              plot = as.integer(as.factor(flower_data$Plot)),          ## predictor plots
                              year = as.integer(as.factor(flower_data$Year_t))         ## predictor years
 ) 
-## Run the flower model with a negative binomial distribution ---- fixed effects: previous size; random effects: plot and year
+# ## Run the flower model with a negative binomial distribution ---- fixed effects: previous size; random effects: plot and year
 # flow_model <- stan_model("Data Analysis/STAN Models/flower_trunc_code.stan")
 # fit_flow<-sampling(flow_model, data = stan_data_flow_trunc,chains=3,
 #                                                 control = list(adapt_delta=0.99,stepsize=0.1),
@@ -140,9 +202,10 @@ stan_data_flow_trunc <- list(N = nrow(flower_data),                             
 ## Viability Model -- What proportion of fruit are viable? 
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-viability_data_orig <- cactus[ , c("TotFlowerbuds_t1","Goodbuds_t1","ABFlowerbuds_t1","ant_t", "logsize_t","Year_t","Plot")]
-viability_data_orig <- subset(viability_data_orig, TotFlowerbuds_t1 > 0)
+viability_data_orig <- cactus[ , c("TotFlowerbuds_t","Goodbuds_t","ABFlowerbuds_t","ant_t", "logsize_t","Year_t","Plot")]
+viability_data_orig <- subset(viability_data_orig, TotFlowerbuds_t > 0)
 viability_data <- na.omit(viability_data_orig)
+
 # levels(viability_data$ant_t)
 # unique(viability_data_orig$Year_t)
 # # Lose Rows of data
@@ -153,9 +216,9 @@ viability_data <- na.omit(viability_data_orig)
 # plot(viability_data_orig$logsize_t, viability_data_orig$ABFlowerbuds_t1, col = "red")
 ## Create stan data subset
 stan_data_viab <- list(N = nrow(viability_data),                                   ## number of observations
-                       good = viability_data$Goodbuds_t1,                          ## number of good flowerbuds 
-                       abort = viability_data$ABFlowerbuds_t1,                     ## aborted buds data
-                       tot = viability_data$TotFlowerbuds_t1,                      ## number of trials
+                       good = viability_data$Goodbuds_t,                          ## number of good flowerbuds 
+                       abort = viability_data$ABFlowerbuds_t,                     ## aborted buds data
+                       tot = viability_data$TotFlowerbuds_t,                      ## number of trials
                        ant = as.integer(as.factor(viability_data$ant)),            ## predictors ants
                        K = 4,                                                      ## number of ant states
                        N_Year = max(as.integer(as.factor(viability_data$Year_t))), ## number of years
@@ -163,7 +226,7 @@ stan_data_viab <- list(N = nrow(viability_data),                                
                        plot = as.integer(as.factor(viability_data$Plot)),          ## predictor plots
                        year = as.integer(as.factor(viability_data$Year_t))         ## predictor years
 ) 
-## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
+# ## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
 # viab_model <- stan_model("Data Analysis/STAN Models/viab_code.stan")
 # fit_viab<-sampling(viab_model, data = stan_data_viab,chains=3,
 #                                                 control = list(adapt_delta=0.99,stepsize=0.1),
@@ -190,7 +253,7 @@ stan_data_viab <- list(N = nrow(viability_data),                                
 ## Reproductive State Model -- Prob of reproducing at next time step   
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-reproductive_data_orig <- cactus[ , c("flower1_YN","logsize_t","Year_t1","Plot", "logsize_t1")]
+reproductive_data_orig <- cactus[ , c("flower1_YN","logsize_t","Year_t","Plot")]
 reproductive_data <- na.omit(reproductive_data_orig)
 # # check that you're happy with the subsetting
 # plot(reproductive_data$logsize_t, reproductive_data$flower1_YN)
@@ -200,14 +263,14 @@ reproductive_data <- na.omit(reproductive_data_orig)
 # nrow(reproductive_data)
 ## Create Stan Data
 stan_data_repro <- list(N = nrow(reproductive_data),                                   ## number of observations
-                        vol = reproductive_data$logsize_t1,                            ## predictors volume
+                        vol = reproductive_data$logsize_t,                            ## predictors volume
                         y_repro = reproductive_data$flower1_YN,                        ## response volume next year
-                        N_Year = max(as.integer(as.factor(reproductive_data$Year_t1))), ## number of years
+                        N_Year = max(as.integer(as.factor(reproductive_data$Year_t))), ## number of years
                         N_Plot = max(as.integer(as.factor(reproductive_data$Plot))),   ## number of plots
                         plot = as.integer(as.factor(reproductive_data$Plot)),          ## predictor plots
-                        year = as.integer(as.factor(reproductive_data$Year_t1))         ## predictor years
+                        year = as.integer(as.factor(reproductive_data$Year_t))         ## predictor years
 ) 
-## Run the reproductive Model with a bernoulli distribution ---- fixed effects: previous size ; random effects: plot and year
+# ## Run the reproductive Model with a bernoulli distribution ---- fixed effects: previous size ; random effects: plot and year
 # repro_model <- stan_model("Data Analysis/STAN Models/repro_code.stan")
 # fit_repro<-sampling(repro_model, data = stan_data_repro,chains=3,
 #                                                 control = list(adapt_delta=0.99,stepsize=0.1),
@@ -220,9 +283,9 @@ stan_data_repro <- list(N = nrow(reproductive_data),                            
 # saveRDS(fit_repro,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
 
 
-######################################################################################################
-#### Seeds Model -- # Seeds per fruit/flower #########################################################
-######################################################################################################
+################################################################################
+#### Seeds Model -- # Seeds per fruit/flower 
+################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 seed_uncleaned <- read.csv("Data Analysis/JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
 # PEAA = Ant Access
@@ -254,7 +317,7 @@ seed_data <- na.omit(seed_data)
 seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
 seed_data <- subset(seed_data, seed_count > 0)
 # str(seed_data)
-# levels(as.factor(seed_data$ant_state))
+ levels(as.factor(seed_data$ant_state))
 # # check if you're happy with the subsetting
 # plot(seed$fruit_number)
 # points(seed_data$fruit_number, col = "red")
@@ -265,7 +328,7 @@ stan_data_seed <- list(N = nrow(seed_data),                            ## number
                        K = 3,                                          ## number of ant states
                        ant = as.integer(as.factor(seed_data$ant)),     ## ant partners data
                        seed = seed_data$seed_count)                    ## number of seeds data
-## Run the seeds Model with a negative binomial distribution ---- fixed effects: ant partner ;
+# ## Run the seeds Model with a negative binomial distribution ---- fixed effects: ant partner ;
 # seed_model <- stan_model("Data Analysis/STAN Models/seed_code.stan")
 # fit_seed<-sampling(seed_model, data = stan_data_seed,chains=3,
 #                                                 control = list(adapt_delta=0.99,stepsize=0.1),
@@ -278,7 +341,7 @@ stan_data_seed <- list(N = nrow(seed_data),                            ## number
 
 
 ################################################################################
-## Seed Survival Pre Census -- Proportion of seeds that survive from germination to Census
+## Seedling Survival Pre Census -- Proportion of seedlings that survive from germination to Census
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 precensus.dat.orig<-read.csv("Data Analysis/PrecensusSurvival.csv") 
@@ -350,9 +413,32 @@ stan_data_germ2 <- list(N = nrow(germ.dat),
 # saveRDS(fit_germ2, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
 # saveRDS(fit_germ2,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
 
-#######################################################################################################
-#### Recruits -- Size Distribution of  #########################################################################################
-#######################################################################################################
+################################################################################
+##.    Fruit Survival Model 
+################################################################################
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+fruit_data_orig <- read.csv("Data Analysis/FruitSurvival.csv", header = TRUE,stringsAsFactors=T)
+fruit_data <- na.omit(fruit_data_orig)
+## Create stan data subset
+stan_data_fruit <- list(N = nrow(fruit_data),                                   ## number of observations
+                       good = fruit_data$Fr.on.plant,                          ## number of good flowerbuds 
+                       abort = fruit_data$Fr.on.grnd.not.chewed,                     ## aborted buds data
+                       tot = fruit_data$Fr.on.plant+fruit_data$Fr.on.grnd                      ## number of trials
+) 
+## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
+# fruit_model <- stan_model("Data Analysis/STAN Models/fruit_code.stan")
+# fit_fruit<-sampling(fruit_model, data = stan_data_fruit,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("beta0"),save_warmup=F)
+## Save the RDS file which saves all parameters, draws, and other information
+#saveRDS(fit_fruit, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
+#saveRDS(fit_fruit,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
+
+
+################################################################################
+#### Recruits -- Size Distribution of  ################################################################################
+################################################################################
 seedling.dat_orig <- cactus[,c("logsize_t1","Recruit","Year_t1")]
 seedling.dat_orig <- filter(seedling.dat_orig, Recruit == 1)
 seedling.dat <- na.omit(seedling.dat_orig)
@@ -365,7 +451,7 @@ seedling.dat <- na.omit(seedling.dat_orig)
 stan_data_rec <- list(N = length(seedling.dat$logsize_t1),
                       y_rec = (seedling.dat$logsize_t1)
 )
-## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
+# ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
 # rec_model <- stan_model("Data Analysis/STAN Models/rec_code.stan")
 # fit_rec<-sampling(rec_model, data = stan_data_rec,chains=3,
 #                         control = list(adapt_delta=0.99,stepsize=0.1),
@@ -379,10 +465,10 @@ stan_data_rec <- list(N = length(seedling.dat$logsize_t1),
 
 
 
-# #############################################################################################
-# ###### now include ant and size as predictors  ##############################################
-# ###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan ###############################
-# #############################################################################################
+##############################################################################
+###### now include ant and size as predictors
+###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan
+##############################################################################
 cactus_real <- cactus[,c("ant_t","ant_t1","logsize_t","Year_t","Plot")]
 cactus_real <- na.omit(cactus_real)
 cactus_real$ant_t1_relevel <- relevel(cactus_real$ant_t1,ref = "vacant")
@@ -398,11 +484,11 @@ stan_data_multi <- list(K = length(unique(cactus_real$ant_t1)), #number of possi
                        z = model.matrix(~0 + as.factor(Year_t), cactus_real),
                        N_Year = as.integer(length(unique(cactus_real$Year_t)))
 )
-## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
+# ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
 # multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
 # fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
 #                         control = list(adapt_delta=0.99,stepsize=0.1),
-#                         iter=10000,cores=3,thin=2,
+#                         iter=2000,cores=3,thin=2,
 #                         pars = c("beta","theta"   #location coefficients
 #                         ),save_warmup=F)
 # ## Save the RDS file which saves all parameters, draws, and other information
