@@ -35,10 +35,14 @@ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism proj
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters
 # growth model
-fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
-grow.params <- rstan::extract(fit_grow_skew)
+# fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
+# grow.params <- rstan::extract(fit_grow_skew)
 #fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
 #grow.params.null <- rstan::extract(fit_grow_skew_null)
+fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
+grow.params <- rstan::extract(fit_grow_stud)
+fit_grow_stud_null<-readRDS(paste0(mcmc_dir,"fit_grow_student_t_null.rds"))
+grow.params.null <- rstan::extract(fit_grow_stud_null)
 # survival model
 fit_surv<-readRDS(paste0(mcmc_dir,"fit_surv.rds"))
 surv.params <- rstan::extract(fit_surv)

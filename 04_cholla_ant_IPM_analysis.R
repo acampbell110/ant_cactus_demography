@@ -107,21 +107,38 @@ for(i in 1:ncol(params)){
 colMeans(params)
 colnames(params_mean) <- colnames(params)
 params_mean <- as.data.frame(params_mean)
-all_stable <- stable.stage(bigmatrix(params = (params[m,]),
-                                      scenario = "all",
-                                      lower = lower,
-                                      upper = upper,
-                                      floor = floor,
-                                      ceiling = ceiling,
-                                      matsize = matsize,
-                                      mean(grow_rfx1),mean(grow_rfx2),mean(grow_rfx3),mean(grow_rfx4),
-                                      mean(surv_rfx1),mean(surv_rfx2),mean(surv_rfx3),mean(surv_rfx4),
-                                      mean(flow_rfx),
-                                      mean(repro_rfx),
-                                      mean(viab_rfx1),mean(viab_rfx2),mean(viab_rfx3),mean(viab_rfx4))$IPMmat)
-# standardize all_stable s.t. the seed banks are excluded (aka all_stable[3:2002] sums to 1)
-all_stable_stan <- (all_stable[3:2002])
+
+all_IPM <- bigmatrix(params = (params[m,]),
+                     scenario = "all",
+                     lower = lower,
+                     upper = upper,
+                     floor = floor,
+                     ceiling = ceiling,
+                     matsize = matsize,
+                     mean(grow_rfx1),mean(grow_rfx2),mean(grow_rfx3),mean(grow_rfx4),
+                     mean(surv_rfx1),mean(surv_rfx2),mean(surv_rfx3),mean(surv_rfx4),
+                     mean(flow_rfx),
+                     mean(repro_rfx),
+                     mean(viab_rfx1),mean(viab_rfx2),mean(viab_rfx3),mean(viab_rfx4))
+# Pull out the exact size distribution from the matrix above
+all_y <- all_IPM$y
+## Check that the lambda makes sense before going any further
+lambda(all_IPM$IPMmat) # Looks correct!
+# Pull out the IPM from the matrix above
+all_stable <- stable.stage(all_IPM$IPMmat)
+# Remove the seed banks
+all_stable_cut <- all_stable[3:2002]
+# Standardize -- NOTE THIS DOES NOT APPEAR TO HAVE ANY AFFECT ON THE PLOT
+all_stable_stan <- all_stable_cut/sum(all_stable_cut)
 sum(all_stable_stan)
+png("Figures/stable_all_test.png")
+plot(all_y,(all_stable_stan[1:500]/sum(all_stable_stan)), col = cremcol, type = "l", xlim = c(-5,15), ylim = c(0,0.025))
+lines(all_y, all_stable_stan[501:1000]/sum(all_stable_stan), col = liomcol)
+lines(all_y, all_stable_stan[1001:1500]/sum(all_stable_stan), col = othercol)
+lines(all_y, all_stable_stan[1501:2000]/sum(all_stable_stan), col = vaccol)
+legend("topleft", legend = c("Crem.","Liom.","Other","Vac."), fill = c(cremcol,liomcol,othercol,vaccol))
+dev.off()
+
 
 vac_IPM <- bigmatrix(params = (params[m,]),
                      scenario = "none",
@@ -135,15 +152,20 @@ vac_IPM <- bigmatrix(params = (params[m,]),
                      mean(flow_rfx),
                      mean(repro_rfx),
                      mean(viab_rfx1),mean(viab_rfx2),mean(viab_rfx3),mean(viab_rfx4))
+# Pull out the exact size distribution from the matrix above
+vac_y <- vac_IPM$y
+## Check that the lambda makes sense before going any further
+lambda(vac_IPM$IPMmat) # Looks correct!
+# Pull out the IPM from the matrix above
 vac_stable <- stable.stage(vac_IPM$IPMmat)
-
-
-
-vac_stable_mod <- vac_stable[3:502]
-
-sequence <- seq(lower,upper,length = 500)
-png("Figures/tester.png")
-plot(vac_IPM$y,vac_stable_mod, type= "b", xlim = c(-4,2))
+# Remove the seed banks
+vac_stable_cut <- vac_stable[3:502]
+# Standardize -- NOTE THIS DOES NOT APPEAR TO HAVE ANY AFFECT ON THE PLOT
+vac_stable_stan <- vac_stable_cut/sum(vac_stable_cut)
+sum(vac_stable_stan)
+png("Figures/stable_vac_test.png")
+plot(vac_IPM$y,vac_stable_stan, type= "l", xlim = c(-5,15), col = vaccol)
+legend("topleft", legend = c("Crem.","Liom.","Other","Vac."), fill = c(cremcol,liomcol,othercol,vaccol))
 dev.off()
 
 
@@ -159,16 +181,21 @@ liomvac_IPM <- bigmatrix(params = (params[m,]),
                      mean(flow_rfx),
                      mean(repro_rfx),
                      mean(viab_rfx1),mean(viab_rfx2),mean(viab_rfx3),mean(viab_rfx4))
+# Pull out the exact size distribution from the matrix above
+liomvac_y <- liomvac_IPM$y
+## Check that the lambda makes sense before going any further
+lambda(liomvac_IPM$IPMmat) # Looks correct!
+# Pull out the IPM from the matrix above
 liomvac_stable <- stable.stage(liomvac_IPM$IPMmat)
-
-lambda(liomvac_IPM$IPMmat)
-
-
-
-sequence <- seq(lower,upper,length = 500)
-png("Figures/tester.png")
-plot(liomvac_IPM$y,liomvac_stable[3:502], type= "b", xlim = c(-4,2), ylim = c(0,.2))
-lines(liomvac_IPM$y,liomvac_stable[503:1002], col = vaccol, lwd = 3)
+# Remove the seed banks
+liomvac_stable_cut <- liomvac_stable[3:1002]
+# Standardize -- NOTE THIS DOES NOT APPEAR TO HAVE ANY AFFECT ON THE PLOT
+liomvac_stable_stan <- liomvac_stable_cut/sum(liomvac_stable_cut)
+sum(liomvac_stable_stan)
+png("Figures/stable_liomvac_test.png")
+plot(liomvac_IPM$y,liomvac_stable_stan[1:500], type= "l", xlim = c(-5,15), col = liomcol, ylim = c(0,0.05))
+lines(liomvac_IPM$y, liomvac_stable_stan[501:1000], col = vaccol)
+legend("topleft", legend = c("Crem.","Liom.","Other","Vac."), fill = c(cremcol,liomcol,othercol,vaccol))
 dev.off()
 ################################################################################
 ##                               STOCHASTIC NULL POST IPM
