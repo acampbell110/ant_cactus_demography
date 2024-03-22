@@ -228,6 +228,93 @@ mtext("Ant-Year Effects",side=2,line=0,outer=TRUE,cex=1.7,las=0)
 dev.off()
 
 
+##### CREM FIGS 
+# Corr between crem and crem
+ccg <- cov(grow_rfx1,grow_rfx1)
+ccs <- cov(surv_rfx1,surv_rfx1)
+ccv <- cov(viab_rfx1,viab_rfx1)
+# Corr between crem and liom
+clg <- cov(grow_rfx1,grow_rfx2)
+cls <- cov(surv_rfx1,surv_rfx2)
+clv <- cov(viab_rfx1,viab_rfx2)
+# Corr between liom and liom
+llg <- cov(grow_rfx2,grow_rfx2)
+lls <- cov(surv_rfx2,surv_rfx2)
+llv <- cov(viab_rfx2,viab_rfx2)
+# Corr between crem and other
+cog <- cov(grow_rfx1,grow_rfx3)
+cos <- cov(surv_rfx1,surv_rfx3)
+cov <- cov(viab_rfx1,viab_rfx3)
+# Corr between liom and other
+log <- cov(grow_rfx2,grow_rfx3)
+los <- cov(surv_rfx2,surv_rfx3)
+lov <- cov(viab_rfx2,viab_rfx3)
+# Corr between other and other
+oog <- cov(grow_rfx3,grow_rfx3)
+oos <- cov(surv_rfx3,surv_rfx3)
+oov <- cov(viab_rfx3,viab_rfx3)
+# Corr between crem and vacant
+cvg <- cov(grow_rfx1,grow_rfx4)
+cvs <- cov(surv_rfx1,surv_rfx4)
+cvv <- cov(viab_rfx1,viab_rfx4)
+# Corr between liom and vacant
+lvg <- cov(grow_rfx2,grow_rfx4)
+lvs <- cov(surv_rfx2,surv_rfx4)
+lvv <- cov(viab_rfx2,viab_rfx4)
+# Corr between other and vacant
+ovg <- cov(grow_rfx3,grow_rfx4)
+ovs <- cov(surv_rfx3,surv_rfx4)
+ovv <- cov(viab_rfx3,viab_rfx4)
+# Corr between vacant and vacant
+vvg <- cov(grow_rfx4,grow_rfx4)
+vvs <- cov(surv_rfx4,surv_rfx4)
+vvv <- cov(viab_rfx4,viab_rfx4)
+png("Figures/RFX.png")
+par(mar=c(4,2,2,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4,
+                5,6,7,8,
+                9,10,11,12,
+                13,14,15,16),
+              ncol = 4, byrow = TRUE), heights = c(1), widths = c(4,4,4,4))
+plot(density(ccg), col = "red", xlim = c(-0.007,0.01))
+lines(density(ccs), col = "orange")
+lines(density(ccv), col = "green")
+legend("topright",legend = c("Growth","Survival","Viability"), fill = c("red","orange","green"))
+plot.new()
+plot.new()
+plot.new()
+plot(density(clg), col = "red", xlim = c(-0.007,0.01))
+lines(density(cls), col = "orange")
+lines(density(clv), col = "green")
+plot(density(llg), col = "red", xlim = c(-0.007,0.01))
+lines(density(lls), col = "orange")
+lines(density(llv), col = "green")
+plot.new()
+plot.new()
+plot(density(cog), col = "red", xlim = c(-0.007,0.01))
+lines(density(cos), col = "orange")
+lines(density(cov), col = "green")
+plot(density(log), col = "red", xlim = c(-0.007,0.01))
+lines(density(los), col = "orange")
+lines(density(lov), col = "green")
+plot(density(oog), col = "red", xlim = c(-0.007,0.01))
+lines(density(oos), col = "orange")
+lines(density(oov), col = "green")
+plot.new()
+plot(density(cvg), col = "red", xlim = c(-0.007,0.01))
+lines(density(cvs), col = "orange")
+lines(density(cvv), col = "green")
+plot(density(lvg), col = "red", xlim = c(-0.007,0.01))
+lines(density(lvs), col = "orange")
+lines(density(lvv), col = "green")
+plot(density(ovg), col = "red", xlim = c(-0.007,0.01))
+lines(density(ovs), col = "orange")
+lines(density(ovv), col = "green")
+plot(density(vvg), col = "red", xlim = c(-0.007,0.01))
+lines(density(vvs), col = "orange")
+lines(density(vvv), col = "green")
+dev.off()
+
 ################################################################################
 ## Survival Model Visuals
 ################################################################################

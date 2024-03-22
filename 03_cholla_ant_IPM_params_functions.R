@@ -111,35 +111,35 @@ params$grow_beta12<-grow.params$beta1[draws,2]				## growth slope
 params$grow_beta22<-grow.params$beta2[draws,2]				## growth slope
 ## Year Random Effects
 # Ant 1 (prev crem)
-# grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
-#                    grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
-#                    grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
-#                    grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],rep(0,N_draws),
-#                    grow.params$w[draws,1,15],grow.params$w[draws,1,16])
-# # Ant 2 (prev liom)
-# grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
-#                    grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
-#                    grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
-#                    grow.params$w[draws,2,12],grow.params$w[draws,2,13],grow.params$w[draws,2,14],rep(0,N_draws),
-#                    grow.params$w[draws,2,15],grow.params$w[draws,2,16])
-# # Ant 3 (prev other)
-# grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
-#                    grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
-#                    grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
-#                    grow.params$w[draws,3,12],grow.params$w[draws,3,13],grow.params$w[draws,3,14],rep(0,N_draws),
-#                    grow.params$w[draws,3,15],grow.params$w[draws,3,16])
-# # Ant 4 (prev vac)
-# grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
-#                    grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
-#                    grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
-#                    grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],rep(0,N_draws),
-#                    grow.params$w[draws,4,15],grow.params$w[draws,4,16])
+grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
+                   grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
+                   grow.params$w[draws,1,12],grow.params$w[draws,1,13],grow.params$w[draws,1,14],rep(0,N_draws),
+                   grow.params$w[draws,1,15],grow.params$w[draws,1,16])
+# Ant 2 (prev liom)
+grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
+                   grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
+                   grow.params$w[draws,2,12],grow.params$w[draws,2,13],grow.params$w[draws,2,14],rep(0,N_draws),
+                   grow.params$w[draws,2,15],grow.params$w[draws,2,16])
+# Ant 3 (prev other)
+grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
+                   grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
+                   grow.params$w[draws,3,12],grow.params$w[draws,3,13],grow.params$w[draws,3,14],rep(0,N_draws),
+                   grow.params$w[draws,3,15],grow.params$w[draws,3,16])
+# Ant 4 (prev vac)
+grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
+                   grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
+                   grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],rep(0,N_draws),
+                   grow.params$w[draws,4,15],grow.params$w[draws,4,16])
 # Non ant specific
-# grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-#                    grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
-#                    grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
-#                    grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
-#                    rep(0,N_draws),rep(0,N_draws))
+grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
+                   grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
+                   grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
+                   grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
+                   rep(0,N_draws),rep(0,N_draws))
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
