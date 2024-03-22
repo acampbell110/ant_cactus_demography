@@ -1,5 +1,24 @@
 \begin{thebibliography}{}
 
+\bibitem[Rez, 2007]{Rezende2007}
+ (2007).
+\newblock Effects of phenotypic complementarity and phylogeny on the nested
+  structure of mutualistic networks.
+\newblock {\em Oikos}, 116:1919--1929.
+
+\bibitem[Car, 2007]{Cardinale2007}
+ (2007).
+\newblock Impacts of plant diversity on biomass production increase through
+  time because of species complementarity.
+\newblock {\em PNAS}, 104:18123–18128.
+
+\bibitem[Afk, 2021]{Afkhami2021}
+ (2021).
+\newblock Multiple mutualism effects generate synergistic selection and
+  strengthen fitness alignment in the interaction between legumes, rhizobia and
+  mycorrhizal fungi.
+\newblock {\em Ecology Letters}, 24:1824--1834.
+
 \bibitem[Afkhami, 2014]{Afkhami2014}
 Afkhami, M. (2014).
 \newblock Multiple mutualist effects: conflict and synergy in multispecies
@@ -73,13 +92,6 @@ Beattie, A. (1985).
 Benson, L. (1982).
 \newblock Cacti of the united states and canada.
 
-\bibitem[Báez et~al., 2016]{Baez2016}
-Báez, S., Donoso, D.~A., Queenborough, S.~A., Jaramillo, L., Valencia, R., and
-  Dangles, O. (2016).
-\newblock Ant mutualism increases long-term growth and survival of a common
-  amazonian tree.
-\newblock {\em American Naturalist}, 188(5).
-
 \bibitem[Boege and Marquis, 2005]{Boege2005}
 Boege, K. and Marquis, R.~J. (2005).
 \newblock Facing herbivory as you grow up: The ontogeny of resistance in
@@ -113,10 +125,22 @@ Byk, J. and Del-Claro, K. (2011).
   effects of extrafloral nectar on ant colony fitness.
 \newblock {\em Population Ecology}, 53:327--332.
 
+\bibitem[Báez et~al., 2016]{Baez2016}
+Báez, S., Donoso, D.~A., Queenborough, S.~A., Jaramillo, L., Valencia, R., and
+  Dangles, O. (2016).
+\newblock Ant mutualism increases long-term growth and survival of a common
+  amazonian tree.
+\newblock {\em American Naturalist}, 188(5).
+
 \bibitem[Chamberlain et~al., 2014]{Chamberlain2014}
 Chamberlain, S.~A., Bronstein, J.~L., and Rudgers, J.~A. (2014).
 \newblock How context dependent are species interactions?
 \newblock {\em Ecology Letters}, 17(7):881--890.
+
+\bibitem[Dallas and Kramer, ]{Dallas2021}
+Dallas, T.~A. and Kramer, A.~M.
+\newblock Temporal variability in population and community dynamics.
+\newblock {\em Ecology}, 103.
 
 \bibitem[Dattilo et~al., 2014]{Dattilo2014}
 Dattilo, W., Marquitti, F. M.~D., Guimaraes, P.~R., and Izzo, T.~J. (2014).
@@ -196,6 +220,12 @@ Gaume, L., Mckey, D., and Terrin, S. (1998).
 \newblock Ant-plant-homopteran mutualism: how the third partner affects the
   interaction between a plant-specialist ant and its myrmecophyte host.
 \newblock {\em Ecological Entymology}.
+
+\bibitem[Hooper, 2005]{Hooper2005}
+Hooper, D.~U. (2005).
+\newblock Effects of biodiversity on ecosystem functioning: A consensus of
+  current knowledge.
+\newblock {\em Ecological Monographs}, 75(1):3--35.
 
 \bibitem[Horvitz and Schemske, 1986]{Horvitz1986}
 Horvitz, C. and Schemske, D. (1986).
@@ -387,17 +417,19 @@ Thrall, P.~H., Hochberg, M.~E., Burdon, J.~J., and Bever, J.~D. (2007).
   context.
 \newblock {\em Trends in Ecology and Evolution}, 22(3):120--126.
 
+\bibitem[Tornos-Estupiña et~al., 2023]{Tornos2023}
+Tornos-Estupiña, L., Hernández-Alonso, H., Madrigal-González, J., Rodrigues,
+  A., and Silla, F. (2023).
+\newblock Species-specific growth responses to local and regional climate
+  variability indicate the presence of a diversity portfolio effect in
+  mediterranean tree assemblages.
+\newblock {\em Agricultural and Forest Meteorology}, 341:0168--1923.
+
 \bibitem[Trager et~al., 2010]{Trager2010}
 Trager, M.~D., Bhotika, S., Hostetler, J.~A., Andrade, G.~V., Rodriguez-Cabal,
   M.~A., Mckeon, C.~S., Osenberg, C.~W., and Bolker, B.~M. (2010).
 \newblock Benefits for plants in ant-plant protective mutualisms: A
   meta-analysis.
-
-\bibitem[Trøjelsgaard et~al., 2015]{Trojelsgaard2015}
-Trøjelsgaard, K., Jordano, P., Carstensen, D.~W., and Olesen, J.~M. (2015).
-\newblock Geographical variation in mutualistic networks: Similarity, turnover
-  and partner fidelity.
-\newblock {\em Proceedings of the Royal Society B: Biological Sciences}, 282.
 
 \bibitem[Tr{\o}jelsgaard et~al., 2015]{Tgaard2015}
 Tr{\o}jelsgaard, K., Jordano, P., Carstensen, D.~W., and Olesen, J.~M. (2015).
@@ -405,6 +437,12 @@ Tr{\o}jelsgaard, K., Jordano, P., Carstensen, D.~W., and Olesen, J.~M. (2015).
   and partner fidelity.
 \newblock {\em Proceedings of the Royal Society B: Biological Sciences},
   282(1802).
+
+\bibitem[Trøjelsgaard et~al., 2015]{Trojelsgaard2015}
+Trøjelsgaard, K., Jordano, P., Carstensen, D.~W., and Olesen, J.~M. (2015).
+\newblock Geographical variation in mutualistic networks: Similarity, turnover
+  and partner fidelity.
+\newblock {\em Proceedings of the Royal Society B: Biological Sciences}, 282.
 
 \bibitem[Ushio, 2020]{Ushio2020}
 Ushio, M. (2020).
