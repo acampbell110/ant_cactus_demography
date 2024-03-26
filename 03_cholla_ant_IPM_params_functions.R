@@ -78,7 +78,7 @@ rec.params <- rstan::extract(fit_rec)
 fit_fruit<-readRDS(paste0(mcmc_dir,"fit_fruit.rds"))
 fruit.params <- rstan::extract(fit_fruit)
 # ant transitions model
-fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi.rds"))
+fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi1.rds"))
 multi.params <- rstan::extract(fit_multi)
 ## 'params' is a matrix where rows are vital rate coefficients and columns are posterior draws
 # below, we will loop over columns, sending each set of coefficients into the IPM
@@ -312,25 +312,52 @@ params$multi_betavv <- multi.params$beta[draws,4,4] ## intercept for vacant to v
 params$multi_betavo <- multi.params$beta[draws,4,3] ## intercept for vacant to other
 params$multi_betavc <- multi.params$beta[draws,4,1] ## intercept for vacant to crem
 params$multi_betavl <- multi.params$beta[draws,4,2] ## intercept for vacant to liom
-params$multi_betav <- multi.params$beta[draws,5,4] ## Size specific vacant slope
+# params$multi_betav <- multi.params$beta[draws,5,4] ## Size specific vacant slope
 # Prev Other
 params$multi_betaov <- multi.params$beta[draws,3,4]
 params$multi_betaoo <- multi.params$beta[draws,3,3]
 params$multi_betaoc <- multi.params$beta[draws,3,1]
 params$multi_betaol <- multi.params$beta[draws,3,2]
-params$multi_betao <- multi.params$beta[draws,5,3]
+# params$multi_betao <- multi.params$beta[draws,5,3]
 # Prev Crem
 params$multi_betacv <- multi.params$beta[draws,1,4]
 params$multi_betaco <- multi.params$beta[draws,1,3]
 params$multi_betacc <- multi.params$beta[draws,1,1]
 params$multi_betacl <- multi.params$beta[draws,1,2]
-params$multi_betac <- multi.params$beta[draws,5,1]
+#params$multi_betac <- multi.params$beta[draws,5,1]
 # Prev Liom
 params$multi_betalv <- multi.params$beta[draws,2,4]
 params$multi_betalo <- multi.params$beta[draws,2,3]
 params$multi_betalc <- multi.params$beta[draws,2,1]
 params$multi_betall <- multi.params$beta[draws,2,2]
-params$multi_betal <- multi.params$beta[draws,5,2]
+#params$multi_betal <- multi.params$beta[draws,5,2]
+
+
+
+# # Prev Vac
+# params$multi_betavv <- multi.params$beta[draws,1,1] ## intercept for vacant to vacant  
+# params$multi_betavo <- multi.params$beta[draws,1,2] ## intercept for vacant to other
+# params$multi_betavc <- multi.params$beta[draws,1,3] ## intercept for vacant to crem
+# params$multi_betavl <- multi.params$beta[draws,1,4] ## intercept for vacant to liom
+# params$multi_betav <- multi.params$beta[draws,5,1] ## Size specific vacant slope
+# # Prev Other
+# params$multi_betaov <- multi.params$beta[draws,2,1]
+# params$multi_betaoo <- multi.params$beta[draws,2,2]
+# params$multi_betaoc <- multi.params$beta[draws,2,3]
+# params$multi_betaol <- multi.params$beta[draws,2,4]
+# params$multi_betao <- multi.params$beta[draws,5,2]
+# # Prev Crem
+# params$multi_betacv <- multi.params$beta[draws,3,1]
+# params$multi_betaco <- multi.params$beta[draws,3,2]
+# params$multi_betacc <- multi.params$beta[draws,3,3]
+# params$multi_betacl <- multi.params$beta[draws,3,4]
+# params$multi_betac <- multi.params$beta[draws,5,3]
+# # Prev Liom
+# params$multi_betalv <- multi.params$beta[draws,4,1]
+# params$multi_betalo <- multi.params$beta[draws,4,2]
+# params$multi_betalc <- multi.params$beta[draws,4,3]
+# params$multi_betall <- multi.params$beta[draws,4,4]
+# params$multi_betal <- multi.params$beta[draws,5,4]
 
 #########################################################################################################
 ##            This will be an IPM which allows you to choose how many ants are present
@@ -589,8 +616,22 @@ transition.1<-function(x, i, j,params, scenario){
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
   }
 }
-
-
+# ## Scenario options are "liomvac", "cremvac", "othervac"
+# ## Check if it works
+i = c("liom","liom","vacant","vacant")
+j = c("vacant","liom","liom","vacant")
+x = c(15,15,15,15)
+y = c(-1,-4,4.5,3.01)
+scenario = "liomvac"
+t2 <- matrix(NA,ncol = length(i), nrow = (10))
+for(m in 1:10){
+  for(n in 1:length(i)){
+    t2[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario)
+  }
+}
+t2
+rowSums(t2)
+colMeans(t2)
 
 ##########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (THREE STATES)
@@ -700,18 +741,19 @@ transition.2<-function(x, i, j, params,scenario){
 }
 # ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
 # ## Check if it works
-# i = c("liom","vacant","other","other")
-# j = c("vacant","liom","other","liom")
-# x = c(15,15,15,15)
-# y = c(-1,-4,4.5,3.01)
-# scenario = "liomvacother"
-# t2 <- matrix(NA,ncol = length(i), nrow = (10))
-# for(m in 1:10){
-#   for(n in 1:length(i)){
-#     t2[m,n] <- transition.2(x[n],i[n],j[n],params[m,],scenario)
-#   }
-# }
-# t2
+ i = c("liom","liom","liom")
+ j = c("vacant","liom","other")
+ x = c(15,15,15,15)
+ y = c(-1,-4,4.5,3.01)
+ scenario = "liomvacother"
+ t2 <- matrix(NA,ncol = length(i), nrow = (10))
+ for(m in 1:10){
+   for(n in 1:length(i)){
+     t2[m,n] <- transition.2(x[n],i[n],j[n],params[m,],scenario)
+   }
+ }
+ t2
+ rowSums(t2)
 #
 #######################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)

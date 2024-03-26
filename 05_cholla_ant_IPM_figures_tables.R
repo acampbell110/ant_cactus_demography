@@ -762,7 +762,7 @@ dev.off()
 ################################################################################
 ## Visualize the outputs of the model -- trace plots to check convergence, overlay plots to check the fit
 # Convergence Plots
-png(file = "Figures/multi_conv.png")
+png(file = "Figures/multi_conv1.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("beta")))
 dev.off()
@@ -859,6 +859,239 @@ multi_plot_vac <- subset_vac %>%
 multi_plot_vac$N_mod <- log(multi_plot_vac$N)
 #### ALL ANTS ------------------------------------------------------------------
 
+
+# Previously tended by crem
+Denominator_crem <- exp(mean(multi.params$beta[draws,1,1])) + 
+  exp(mean(multi.params$beta[draws,1,2])) + 
+  exp(mean(multi.params$beta[draws,1,3])) + 
+  exp(mean(multi.params$beta[draws,1,4]))
+pred_crem<-cbind(
+  #pr(crem)
+  exp(mean(multi.params$beta[draws,1,1]))/Denominator_crem,
+  #pr(liom)
+  exp(mean(multi.params$beta[draws,1,2]))/Denominator_crem,
+  #pr(other)
+  exp(mean(multi.params$beta[draws,1,3]))/Denominator_crem,
+  #pr(vac)
+  exp(mean(multi.params$beta[draws,1,4]))/Denominator_crem)
+sum(pred_crem[1,])
+# Previously tended by Liom
+Denominator_liom <- exp(mean(multi.params$beta[draws,2,1])) + 
+  exp(mean(multi.params$beta[draws,2,2])) + 
+  exp(mean(multi.params$beta[draws,2,3])) + 
+  exp(mean(multi.params$beta[draws,2,4]))
+pred_liom<-cbind(
+  #pr(crem)
+  exp(mean(multi.params$beta[draws,2,1]))/Denominator_liom,
+  #pr(liom)
+  exp(mean(multi.params$beta[draws,2,2]))/Denominator_liom,
+  #pr(other)
+  exp(mean(multi.params$beta[draws,2,3]))/Denominator_liom,
+  #pr(vac)
+  exp(mean(multi.params$beta[draws,2,4]))/Denominator_liom)
+sum(pred_liom[1,])
+# Previously tended by other
+Denominator_other <- exp(mean(multi.params$beta[draws,3,1])) + 
+  exp(mean(multi.params$beta[draws,3,2])) + 
+  exp(mean(multi.params$beta[draws,3,3])) + 
+  exp(mean(multi.params$beta[draws,3,4]))
+pred_other<-cbind(
+  #pr(crem)
+  exp(mean(multi.params$beta[draws,3,1]))/Denominator_other,
+  #pr(liom)
+  exp(mean(multi.params$beta[draws,3,2]))/Denominator_other,
+  #pr(other)
+  exp(mean(multi.params$beta[draws,3,3]))/Denominator_other,
+  #pr(vac)
+  exp(mean(multi.params$beta[draws,3,4]))/Denominator_other)
+sum(pred_other[1,])
+# Previously tended by vac
+Denominator_vac <- exp(mean(multi.params$beta[draws,4,1])) + 
+  exp(mean(multi.params$beta[draws,4,2])) + 
+  exp(mean(multi.params$beta[draws,4,3])) + 
+  exp(mean(multi.params$beta[draws,4,4]))
+pred_vac<-cbind(
+  #pr(crem)
+  exp(mean(multi.params$beta[draws,4,1]))/Denominator_vac,
+  #pr(liom)
+  exp(mean(multi.params$beta[draws,4,2]))/Denominator_vac,
+  #pr(other)
+  exp(mean(multi.params$beta[draws,4,3]))/Denominator_vac,
+  #pr(vac)
+  exp(mean(multi.params$beta[draws,4,4]))/Denominator_vac)
+sum(pred_vac[1,])
+
+png("Figures/multi_ants_size1.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4),
+              ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
+barplot(height = c(pred_vac[,1],pred_vac[,2],pred_vac[,3],pred_vac[,4]),col = c(cremcol,liomcol,othercol,vaccol))
+
+dev.off()
+## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
+png("Figures/multi_ants_size1.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4),
+              ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
+# Prev Vac
+plot(size_dummy, pred_vac[,4], type = "l", col = vaccol,main = "a)              Prev. Vacant               ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_vac[,3], col = othercol)
+lines(size_dummy, pred_vac[,1], col = cremcol)
+lines(size_dummy, pred_vac[,2], col = liomcol)
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_crem,pch=16,cex=multi_plot_vac$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_liom,pch=16,cex=multi_plot_vac$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_other,pch=16,cex=multi_plot_vac$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_vac,pch=16,cex=multi_plot_vac$N_mod,col= alpha(vaccol, 0.4))
+# Prev Other
+plot(size_dummy, pred_other[,4], type = "l", col = vaccol,main = "b)              Prev. Other                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_other[,3], col = othercol)
+lines(size_dummy, pred_other[,1], col = cremcol)
+lines(size_dummy, pred_other[,2], col = liomcol)
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_plot_other$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
+legend("topleft",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1.5)
+# Prev Crem
+plot(size_dummy, pred_crem[,4], type = "l", col = vaccol,main = "c)              Prev. Crem.                ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_crem[,3], col = othercol)
+lines(size_dummy, pred_crem[,1], col = cremcol)
+lines(size_dummy, pred_crem[,2], col = liomcol)
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_crem,pch=16,cex=multi_plot_crem$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_plot_crem$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
+# Prev Liom
+plot(size_dummy, pred_liom[,4], type = "l", col = vaccol,main = "d)              Prev. Liom.                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_liom[,3], col = othercol)
+lines(size_dummy, pred_liom[,1], col = cremcol)
+lines(size_dummy, pred_liom[,2], col = liomcol)
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_plot_liom$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_vac,pch=16,cex=multi_plot_liom$N_mod,col= alpha(vaccol, 0.4))
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
+mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.5,las=0)
+dev.off()
+
+
+size_dummy <- seq(5.01, max(cactus_real$logsize_t, na.rm = T), length = 100)
+#size_dummy <- seq(min(cactus_real$logsize_t, na.rm = T),5.01, length = 100)
+
+# Previously tended by crem
+Denominator_crem <- exp(mean(params$multi_betacc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betacl) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betaco) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betacv) + size_dummy*mean(params$multi_betav))
+pred_crem<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betacc) + size_dummy*mean(params$multi_betac))/Denominator_crem,
+  #pr(liom)
+  exp(mean(params$multi_betacl) + size_dummy*mean(params$multi_betal))/Denominator_crem,
+  #pr(other)
+  exp(mean(params$multi_betaco) + size_dummy*mean(params$multi_betao))/Denominator_crem,
+  #pr(vac)
+  exp(mean(params$multi_betacv) + size_dummy*mean(params$multi_betav))/Denominator_crem)
+sum(pred_crem[1,])
+# Previously tended by Liom
+Denominator_liom <- exp(mean(params$multi_betalc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betall) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betalo) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betalv) + size_dummy*mean(params$multi_betav))
+pred_liom<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betalc) + size_dummy*mean(params$multi_betac))/Denominator_liom,
+  #pr(liom)
+  exp(mean(params$multi_betall) + size_dummy*mean(params$multi_betal))/Denominator_liom,
+  #pr(other)
+  exp(mean(params$multi_betalo) + size_dummy*mean(params$multi_betao))/Denominator_liom,
+  #pr(vac)
+  exp(mean(params$multi_betalv) + size_dummy*mean(params$multi_betav))/Denominator_liom)
+sum(pred_liom[1,])
+# Previously tended by other
+Denominator_other <- exp(mean(params$multi_betaoc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betaol) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betaoo) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betaov) + size_dummy*mean(params$multi_betav))
+pred_other<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betaoc) + size_dummy*mean(params$multi_betac))/Denominator_other,
+  #pr(liom)
+  exp(mean(params$multi_betaol) + size_dummy*mean(params$multi_betal))/Denominator_other,
+  #pr(other)
+  exp(mean(params$multi_betaoo) + size_dummy*mean(params$multi_betao))/Denominator_other,
+  #pr(vac)
+  exp(mean(params$multi_betaov) + size_dummy*mean(params$multi_betav))/Denominator_other)
+sum(pred_other[1,])
+# Previously tended by vac
+Denominator_vac <- exp(mean(params$multi_betavc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betavl) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betavo) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))
+pred_vac<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betavc) + size_dummy*mean(params$multi_betac))/Denominator_vac,
+  #pr(liom)
+  exp(mean(params$multi_betavl) + size_dummy*mean(params$multi_betal))/Denominator_vac,
+  #pr(other)
+  exp(mean(params$multi_betavo) + size_dummy*mean(params$multi_betao))/Denominator_vac,
+  #pr(vac)
+  exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))/Denominator_vac)
+sum(pred_vac[1,])
+## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
+png("Figures/multi_ants_size1.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4),
+              ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
+# Prev Vac
+plot(size_dummy, pred_vac[,4], type = "l", col = vaccol,main = "a)              Prev. Vacant               ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_vac[,3], col = othercol)
+lines(size_dummy, pred_vac[,1], col = cremcol)
+lines(size_dummy, pred_vac[,2], col = liomcol)
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_crem,pch=16,cex=multi_plot_vac$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_liom,pch=16,cex=multi_plot_vac$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_other,pch=16,cex=multi_plot_vac$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_vac,pch=16,cex=multi_plot_vac$N_mod,col= alpha(vaccol, 0.4))
+# Prev Other
+plot(size_dummy, pred_other[,4], type = "l", col = vaccol,main = "b)              Prev. Other                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_other[,3], col = othercol)
+lines(size_dummy, pred_other[,1], col = cremcol)
+lines(size_dummy, pred_other[,2], col = liomcol)
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_plot_other$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
+legend("topleft",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1.5)
+# Prev Crem
+plot(size_dummy, pred_crem[,4], type = "l", col = vaccol,main = "c)              Prev. Crem.                ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_crem[,3], col = othercol)
+lines(size_dummy, pred_crem[,1], col = cremcol)
+lines(size_dummy, pred_crem[,2], col = liomcol)
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_crem,pch=16,cex=multi_plot_crem$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_plot_crem$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
+# Prev Liom
+plot(size_dummy, pred_liom[,4], type = "l", col = vaccol,main = "d)              Prev. Liom.                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_liom[,3], col = othercol)
+lines(size_dummy, pred_liom[,1], col = cremcol)
+lines(size_dummy, pred_liom[,2], col = liomcol)
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_plot_liom$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_vac,pch=16,cex=multi_plot_liom$N_mod,col= alpha(vaccol, 0.4))
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
+mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.5,las=0)
+dev.off()
+
 size_dummy <- seq(5.01, max(cactus_real$logsize_t, na.rm = T), length = 100)
 #size_dummy <- seq(min(cactus_real$logsize_t, na.rm = T),5.01, length = 100)
 
@@ -923,7 +1156,121 @@ pred_vac<-cbind(
   exp(mean(multi.params$beta[draws,4,4]) + size_dummy*mean(multi.params$beta[draws,5,4]))/Denominator_vac)
 sum(pred_vac[1,])
 ## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
-png("Figures/multi_ants_size.png")
+png("Figures/multi_ants_size1.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4),
+              ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
+# Prev Vac
+plot(size_dummy, pred_vac[,4], type = "l", col = vaccol,main = "a)              Prev. Vacant               ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_vac[,3], col = othercol)
+lines(size_dummy, pred_vac[,1], col = cremcol)
+lines(size_dummy, pred_vac[,2], col = liomcol)
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_crem,pch=16,cex=multi_plot_vac$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_liom,pch=16,cex=multi_plot_vac$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_other,pch=16,cex=multi_plot_vac$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_vac$mean_size,multi_plot_vac$ant_t1_vac,pch=16,cex=multi_plot_vac$N_mod,col= alpha(vaccol, 0.4))
+# Prev Other
+plot(size_dummy, pred_other[,4], type = "l", col = vaccol,main = "b)              Prev. Other                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_other[,3], col = othercol)
+lines(size_dummy, pred_other[,1], col = cremcol)
+lines(size_dummy, pred_other[,2], col = liomcol)
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_plot_other$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
+legend("topleft",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1.5)
+# Prev Crem
+plot(size_dummy, pred_crem[,4], type = "l", col = vaccol,main = "c)              Prev. Crem.                ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_crem[,3], col = othercol)
+lines(size_dummy, pred_crem[,1], col = cremcol)
+lines(size_dummy, pred_crem[,2], col = liomcol)
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_crem,pch=16,cex=multi_plot_crem$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_plot_crem$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
+# Prev Liom
+plot(size_dummy, pred_liom[,4], type = "l", col = vaccol,main = "d)              Prev. Liom.                 ", ylim = c(0,1), xlab = "", ylab = "",
+     cex.main = 1.5)
+lines(size_dummy, pred_liom[,3], col = othercol)
+lines(size_dummy, pred_liom[,1], col = cremcol)
+lines(size_dummy, pred_liom[,2], col = liomcol)
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_plot_liom$N_mod,col= alpha(cremcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
+points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_vac,pch=16,cex=multi_plot_liom$N_mod,col= alpha(vaccol, 0.4))
+mtext("Log(Volume) year t",side=1,line=0,outer=TRUE,cex=1.5)
+mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.5,las=0)
+dev.off()
+
+
+size_dummy <- seq(5.01, max(cactus_real$logsize_t, na.rm = T), length = 100)
+#size_dummy <- seq(min(cactus_real$logsize_t, na.rm = T),5.01, length = 100)
+
+# Previously tended by crem
+Denominator_crem <- exp(mean(params$multi_betacc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betacl) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betaco) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betacv) + size_dummy*mean(params$multi_betav))
+pred_crem<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betacc) + size_dummy*mean(params$multi_betac))/Denominator_crem,
+  #pr(liom)
+  exp(mean(params$multi_betacl) + size_dummy*mean(params$multi_betal))/Denominator_crem,
+  #pr(other)
+  exp(mean(params$multi_betaco) + size_dummy*mean(params$multi_betao))/Denominator_crem,
+  #pr(vac)
+  exp(mean(params$multi_betacv) + size_dummy*mean(params$multi_betav))/Denominator_crem)
+sum(pred_crem[1,])
+# Previously tended by Liom
+Denominator_liom <- exp(mean(params$multi_betalc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betall) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betalo) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betalv) + size_dummy*mean(params$multi_betav))
+pred_liom<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betalc) + size_dummy*mean(params$multi_betac))/Denominator_liom,
+  #pr(liom)
+  exp(mean(params$multi_betall) + size_dummy*mean(params$multi_betal))/Denominator_liom,
+  #pr(other)
+  exp(mean(params$multi_betalo) + size_dummy*mean(params$multi_betao))/Denominator_liom,
+  #pr(vac)
+  exp(mean(params$multi_betalv) + size_dummy*mean(params$multi_betav))/Denominator_liom)
+sum(pred_liom[1,])
+# Previously tended by other
+Denominator_other <- exp(mean(params$multi_betaoc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betaol) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betaoo) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betaov) + size_dummy*mean(params$multi_betav))
+pred_other<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betaoc) + size_dummy*mean(params$multi_betac))/Denominator_other,
+  #pr(liom)
+  exp(mean(params$multi_betaol) + size_dummy*mean(params$multi_betal))/Denominator_other,
+  #pr(other)
+  exp(mean(params$multi_betaoo) + size_dummy*mean(params$multi_betao))/Denominator_other,
+  #pr(vac)
+  exp(mean(params$multi_betaov) + size_dummy*mean(params$multi_betav))/Denominator_other)
+sum(pred_other[1,])
+# Previously tended by vac
+Denominator_vac <- exp(mean(params$multi_betavc) + size_dummy*mean(params$multi_betac)) + 
+  exp(mean(params$multi_betavl) + size_dummy*mean(params$multi_betal)) + 
+  exp(mean(params$multi_betavo) + size_dummy*mean(params$multi_betao)) + 
+  exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))
+pred_vac<-cbind(
+  #pr(crem)
+  exp(mean(params$multi_betavc) + size_dummy*mean(params$multi_betac))/Denominator_vac,
+  #pr(liom)
+  exp(mean(params$multi_betavl) + size_dummy*mean(params$multi_betal))/Denominator_vac,
+  #pr(other)
+  exp(mean(params$multi_betavo) + size_dummy*mean(params$multi_betao))/Denominator_vac,
+  #pr(vac)
+  exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))/Denominator_vac)
+sum(pred_vac[1,])
+## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
+png("Figures/multi_ants_size1.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4),
               ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))

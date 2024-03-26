@@ -63,6 +63,7 @@ Q.kurtosis<-function(q.05,q.25,q.75,q.95){
 }
 
 
+
 ## import the data -- Cacti (main) 
 cactus <- read.csv("Data Analysis/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
 # str(cactus) ##<- problem: antcount is a factor
@@ -149,11 +150,11 @@ Antsp_t1_levels <- levels(cactus$Antsp_t1)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
 ant_t1_levels <- rep("other",times=length(Antsp_t1_levels))
 # crem levels
-ant_t1_levels[c(5,8,9,10,11,22,45)] <- "crem"
+ant_t1_levels[c(8,9,10,11,12,23,45)] <- "crem"
 # liom levels
-ant_t1_levels[c(27,28,29,30,31)] <- "liom"
+ant_t1_levels[c(26,27,28,29,30)] <- "liom"
 # vacant
-ant_t1_levels[c(1,2,44,45)] <- "vacant"
+ant_t1_levels[c(1,43,44)] <- "vacant"
 # create new variable merging levels as above
 cactus$ant_t1 <- factor(cactus$Antsp_t1,levels=Antsp_t1_levels,labels=ant_t1_levels)
 # check the spread of these ants
@@ -271,4 +272,7 @@ brach_prop <- nrow(j)/nrow(cac)
 unk_prop <- nrow(k)/nrow(cac)
 for_prop <- nrow(l)/nrow(cac)
 sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
+
+nrow(cactus)
+
 

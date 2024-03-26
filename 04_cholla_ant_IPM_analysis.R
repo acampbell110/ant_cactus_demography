@@ -132,11 +132,15 @@ all_stable_cut <- all_stable[3:2002]
 all_stable_stan <- all_stable_cut/sum(all_stable_cut)
 sum(all_stable_stan)
 png("Figures/stable_all_test.png")
-plot(all_y,(all_stable_stan[1:500]/sum(all_stable_stan)), col = cremcol, type = "l", xlim = c(-5,15), ylim = c(0,0.025))
+plot(all_y,(all_stable_stan[1:500]/sum(all_stable_stan)), col = cremcol, type = "l")#, xlim = c(-5,15), ylim = c(0,0.025))
 lines(all_y, all_stable_stan[501:1000]/sum(all_stable_stan), col = liomcol)
 lines(all_y, all_stable_stan[1001:1500]/sum(all_stable_stan), col = othercol)
 lines(all_y, all_stable_stan[1501:2000]/sum(all_stable_stan), col = vaccol)
 legend("topleft", legend = c("Crem.","Liom.","Other","Vac."), fill = c(cremcol,liomcol,othercol,vaccol))
+dev.off()
+
+png("Figures/stable_all_sum.png")
+plot(all_y, (all_stable_stan[1:500]+all_stable_stan[501:1000]+ all_stable_stan[1001:1500]+ all_stable_stan[1501:2000]))
 dev.off()
 
 
@@ -197,6 +201,9 @@ plot(liomvac_IPM$y,liomvac_stable_stan[1:500], type= "l", xlim = c(-5,15), col =
 lines(liomvac_IPM$y, liomvac_stable_stan[501:1000], col = vaccol)
 legend("topleft", legend = c("Crem.","Liom.","Other","Vac."), fill = c(cremcol,liomcol,othercol,vaccol))
 dev.off()
+
+
+
 ################################################################################
 ##                               STOCHASTIC NULL POST IPM
 ##                       Calculate the lambda posterior distributions           
@@ -246,3 +253,8 @@ for(n in 1:max_scenario){
 colnames(lams_stoch_null) <- scenario
 write.csv(lams_stoch_null,"stoch_null_post_lambda.csv")
 
+
+
+png("Figures/tester.png")
+hist(cactus$logsize_t)
+dev.off()
