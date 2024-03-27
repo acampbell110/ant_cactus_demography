@@ -471,12 +471,16 @@ stan_data_rec <- list(N = length(seedling.dat$logsize_t1),
 ##############################################################################
 cactus_real <- cactus[,c("ant_t","ant_t1","logsize_t","Year_t","Plot")]
 cactus_real <- na.omit(cactus_real)
-cactus_real$ant_t1_relevel <- relevel(cactus_real$ant_t1,ref = "vacant")
-cactus_real$ant_t_relevel <- relevel(cactus_real$ant_t, ref = "vacant")
-cactus_real <- cactus_real[,c("ant_t_relevel","ant_t1_relevel","logsize_t", "ant_t", "ant_t1","Year_t","Plot")]
+cactus_real$ant_t1 <- relevel(cactus_real$ant_t1,ref = "vacant")
+cactus_real$ant_t <- relevel(cactus_real$ant_t, ref = "vacant")
+cactus_real <- cactus_real[,c("logsize_t", "ant_t", "ant_t1","Year_t","Plot")]
+
+unique(cactus_real$Year_t)
+cactus_real$ant_t1 <- factor(cactus_real$ant_t1, levels = c("crem","liom","other","vacant"))
+cactus_real$ant_t <- factor(cactus_real$ant_t, levels = c("crem","liom","other","vacant"))
 levels(cactus_real$ant_t)
 levels(cactus_real$ant_t1)
-unique(cactus_real$Year_t)
+(stan_data_multi$x)
 cactus_real <- subset(cactus_real, cactus_real$Year_t != 2022 & cactus_real$Year_t != 2021)
 ## make stan data set
 stan_data_multi <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
@@ -492,12 +496,12 @@ stan_data_multi <- list(K = length(unique(cactus_real$ant_t1)), #number of possi
 multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
 fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
                         control = list(adapt_delta=0.99,stepsize=0.1),
-                        iter=9000,cores=3,thin=3,
+                        iter=7500,cores=3,thin=3,
                         pars = c("beta"   #location coefficients
                         ),save_warmup=F)
 ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_multi, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
-saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi1.rds")
+saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
 
 
 

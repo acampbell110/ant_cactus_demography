@@ -35,14 +35,14 @@ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism proj
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters
 # growth model
-# fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
-# grow.params <- rstan::extract(fit_grow_skew)
+fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
+grow.params <- rstan::extract(fit_grow_skew)
 #fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
 #grow.params.null <- rstan::extract(fit_grow_skew_null)
-fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
-grow.params <- rstan::extract(fit_grow_stud)
-fit_grow_stud_null<-readRDS(paste0(mcmc_dir,"fit_grow_student_t_null.rds"))
-grow.params.null <- rstan::extract(fit_grow_stud_null)
+# fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
+# grow.params <- rstan::extract(fit_grow_stud)
+# fit_grow_stud_null<-readRDS(paste0(mcmc_dir,"fit_grow_student_t_null.rds"))
+# grow.params.null <- rstan::extract(fit_grow_stud_null)
 # survival model
 fit_surv<-readRDS(paste0(mcmc_dir,"fit_surv.rds"))
 surv.params <- rstan::extract(fit_surv)
@@ -78,13 +78,13 @@ rec.params <- rstan::extract(fit_rec)
 fit_fruit<-readRDS(paste0(mcmc_dir,"fit_fruit.rds"))
 fruit.params <- rstan::extract(fit_fruit)
 # ant transitions model
-fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi1.rds"))
+fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi.rds"))
 multi.params <- rstan::extract(fit_multi)
 ## 'params' is a matrix where rows are vital rate coefficients and columns are posterior draws
 # below, we will loop over columns, sending each set of coefficients into the IPM
 params <- data.frame(matrix(NA,nrow=N_draws,ncol=1))
 params<-params[,-1]
-##----------------------Growth Parameters----------------## 
+##----------------------Growth Parameters Student T----------------## 
 # No specific ant
 params$grow_sig0 <- grow.params$d_0[draws]           ## growth error intercept
 params$grow_sig1 <- grow.params$d_size[draws]        ## ## growth error size
@@ -135,11 +135,12 @@ grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params
                    grow.params$w[draws,4,12],grow.params$w[draws,4,13],grow.params$w[draws,4,14],rep(0,N_draws),
                    grow.params$w[draws,4,15],grow.params$w[draws,4,16])
 # Non ant specific
-grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
-                   grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
-                   grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
-                   rep(0,N_draws),rep(0,N_draws))
+# grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
+#                    grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
+#                    grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
+#                    grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
+#                    rep(0,N_draws),rep(0,N_draws))
+
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -308,34 +309,34 @@ params$fruit_beta0<-fruit.params$beta0[draws]
 
 ##-------------------------Transition Parameters-------------------##
 # Prev Vac
-params$multi_betavv <- multi.params$beta[draws,4,4] ## intercept for vacant to vacant  
+params$multi_betavv <- multi.params$beta[draws,4,4] ## intercept for vacant to vacant
 params$multi_betavo <- multi.params$beta[draws,4,3] ## intercept for vacant to other
 params$multi_betavc <- multi.params$beta[draws,4,1] ## intercept for vacant to crem
 params$multi_betavl <- multi.params$beta[draws,4,2] ## intercept for vacant to liom
-# params$multi_betav <- multi.params$beta[draws,5,4] ## Size specific vacant slope
+params$multi_betav <- multi.params$beta[draws,5,4] ## Size specific vacant slope
 # Prev Other
 params$multi_betaov <- multi.params$beta[draws,3,4]
 params$multi_betaoo <- multi.params$beta[draws,3,3]
 params$multi_betaoc <- multi.params$beta[draws,3,1]
 params$multi_betaol <- multi.params$beta[draws,3,2]
-# params$multi_betao <- multi.params$beta[draws,5,3]
+params$multi_betao <- multi.params$beta[draws,5,3]
 # Prev Crem
 params$multi_betacv <- multi.params$beta[draws,1,4]
 params$multi_betaco <- multi.params$beta[draws,1,3]
 params$multi_betacc <- multi.params$beta[draws,1,1]
 params$multi_betacl <- multi.params$beta[draws,1,2]
-#params$multi_betac <- multi.params$beta[draws,5,1]
+params$multi_betac <- multi.params$beta[draws,5,1]
 # Prev Liom
 params$multi_betalv <- multi.params$beta[draws,2,4]
 params$multi_betalo <- multi.params$beta[draws,2,3]
 params$multi_betalc <- multi.params$beta[draws,2,1]
 params$multi_betall <- multi.params$beta[draws,2,2]
-#params$multi_betal <- multi.params$beta[draws,5,2]
+params$multi_betal <- multi.params$beta[draws,5,2]
 
 
 
 # # Prev Vac
-# params$multi_betavv <- multi.params$beta[draws,1,1] ## intercept for vacant to vacant  
+# params$multi_betavv <- multi.params$beta[draws,1,1] ## intercept for vacant to vacant
 # params$multi_betavo <- multi.params$beta[draws,1,2] ## intercept for vacant to other
 # params$multi_betavc <- multi.params$beta[draws,1,3] ## intercept for vacant to crem
 # params$multi_betavl <- multi.params$beta[draws,1,4] ## intercept for vacant to liom
@@ -374,7 +375,7 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 ## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
 ## will get a vector of probabilities.                                                               ####
 #########################################################################################################
-
+## Student T Growth Dist
 gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   #Transform all values below/above limits in min/max size
   xb=pmin(pmax(x,cholla_min),cholla_max)
@@ -391,6 +392,30 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   g_liom = dlst(y, mu = (params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2 + grow_rfx2,
                 sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb),
                 df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
+  #Return the probability of growing from size x to y
+  if(i == "crem"){ return(g_crem)}
+  if(i == "liom"){ return(g_liom)}
+  if(i == "other"){ return(g_other)}
+  if(i == "vacant"){ return(g_vac)}
+}
+
+## Skew Growth Dist
+gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
+  #Transform all values below/above limits in min/max size
+  xb=pmin(pmax(x,cholla_min),cholla_max)
+  #Density probability function which uses the parameters that are ant specific
+  g_crem = dsn(y,xi=(params$grow_beta01) + (params$grow_beta11)*xb + (params$grow_beta21)*xb^2 + grow_rfx1,
+                omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
+                alpha = exp((params$grow_alp0) + (params$grow_alp1)*xb))
+  g_vac = dsn(y, xi = (params$grow_beta04) + (params$grow_beta14)*xb + (params$grow_beta24)*xb^2 + grow_rfx4,
+               omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
+               alpha = exp((params$grow_alp0) + (params$grow_alp1)*xb))
+  g_other = dsn(y, xi = (params$grow_beta03) + (params$grow_beta13)*xb + (params$grow_beta23)*xb^2 + grow_rfx3,
+                 omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
+                 alpha = exp((params$grow_alp0) + (params$grow_alp1)*xb))
+  g_liom = dsn(y, xi = (params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2 + grow_rfx2,
+                omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
+                alpha = exp((params$grow_alp0) + (params$grow_alp1)*xb))
   #Return the probability of growing from size x to y
   if(i == "crem"){ return(g_crem)}
   if(i == "liom"){ return(g_liom)}
@@ -744,7 +769,6 @@ transition.2<-function(x, i, j, params,scenario){
  i = c("liom","liom","liom")
  j = c("vacant","liom","other")
  x = c(15,15,15,15)
- y = c(-1,-4,4.5,3.01)
  scenario = "liomvacother"
  t2 <- matrix(NA,ncol = length(i), nrow = (10))
  for(m in 1:10){
@@ -754,6 +778,7 @@ transition.2<-function(x, i, j, params,scenario){
  }
  t2
  rowSums(t2)
+ colMeans(t2)
 #
 #######################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)
@@ -812,19 +837,19 @@ transition.3<-function(x, i, j,params){
   if(i == "vacant" & j == "crem"){return(vac_crem)}
   if(i == "vacant" & j == "vacant"){return(vac_vac)}
 }
-# ## Chekc if it works
-# i = c("liom","liom")
-# j = c("vacant","vacant")
-# x = c(-1,-5)
-# y = c(-1,-5)
-# t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
-# for(m in 1:nrow(params)){
-#   for(n in 1:length(i)){
-#     t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
-#   }
-# }
-# t3
-
+## Chekc if it works
+i = c("liom","liom","liom","liom")
+j = c("vacant","liom","other","crem")
+x = c(5,5,5,5)
+t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
+for(m in 1:nrow(params)){
+  for(n in 1:length(i)){
+    t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
+  }
+}
+t3
+rowSums(t3)
+colMeans(t3)
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
 transition.x <- function(x,i,j,params,scenario){

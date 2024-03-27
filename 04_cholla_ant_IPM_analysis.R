@@ -132,7 +132,7 @@ all_stable_cut <- all_stable[3:2002]
 all_stable_stan <- all_stable_cut/sum(all_stable_cut)
 sum(all_stable_stan)
 png("Figures/stable_all_test.png")
-plot(all_y,(all_stable_stan[1:500]/sum(all_stable_stan)), col = cremcol, type = "l")#, xlim = c(-5,15), ylim = c(0,0.025))
+plot(all_y,(all_stable_stan[1:500]/sum(all_stable_stan)), col = cremcol, type = "l", xlim = c(-5,15), ylim = c(0,0.025))
 lines(all_y, all_stable_stan[501:1000]/sum(all_stable_stan), col = liomcol)
 lines(all_y, all_stable_stan[1001:1500]/sum(all_stable_stan), col = othercol)
 lines(all_y, all_stable_stan[1501:2000]/sum(all_stable_stan), col = vaccol)
@@ -168,8 +168,10 @@ vac_stable_cut <- vac_stable[3:502]
 vac_stable_stan <- vac_stable_cut/sum(vac_stable_cut)
 sum(vac_stable_stan)
 png("Figures/stable_vac_test.png")
-plot(vac_IPM$y,vac_stable_stan, type= "l", xlim = c(-5,15), col = vaccol)
+plot(vac_IPM$y,vac_stable_stan, type= "l", col = vaccol)
 legend("topleft", legend = c("Crem.","Liom.","Other","Vac."), fill = c(cremcol,liomcol,othercol,vaccol))
+abline(v = lower, col = "black", lty = 2)
+abline(v = upper, col = "black", lty = 2)
 dev.off()
 
 
