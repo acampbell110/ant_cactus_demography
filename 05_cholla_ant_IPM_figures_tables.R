@@ -30,8 +30,7 @@ size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm 
 png("grow_conv_skew.png")
 bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size",
                                            "beta0[1]","beta0[2]","beta0[3]","beta0[4]",
-                                           "beta1[1]","beta1[2]","beta1[3]","beta1[4]",
-                                           "beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
+                                           "beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
 dev.off()
 # # Check the different quantile fits of the model to make sure not only the mean but also other quantiles fit well with the real data
 # # real data moments
@@ -100,13 +99,13 @@ size_other <- seq(min(y_other_subset_grow$logsize_t, na.rm = TRUE), max(y_other_
 size_vac <- seq(min(y_vac_subset_grow$logsize_t, na.rm = TRUE), max(y_vac_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 ## Predicted sizes for each partner condition
 # Other
-y_other_mean_grow <- quantile(grow.params$beta0[,3],0.5) + (size_dummy) * quantile(grow.params$beta1[,3],0.5) + (size_dummy)^2 * quantile(grow.params$beta2[,3],0.5)
+y_other_mean_grow <- quantile(grow.params$beta0[,3],0.5) + (size_dummy) * quantile(grow.params$beta1[,3],0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,3],0.5)
 # Crem
-y_crem_mean_grow <- quantile(grow.params$beta0[,1],0.5) + (size_dummy) * quantile(grow.params$beta1[,1],0.5) + (size_dummy)^2 * quantile(grow.params$beta2[,1],0.5)
+y_crem_mean_grow <- quantile(grow.params$beta0[,1],0.5) + (size_dummy) * quantile(grow.params$beta1[,1],0.5) #+ (size_dummy)^2 * quantile(grow.params$beta2[,1],0.5)
 # Liom
-y_liom_mean_grow <- quantile(grow.params$beta0[,2],0.5) + (size_dummy) * quantile(grow.params$beta1[,2],0.5) + (size_dummy)^2 * quantile(grow.params$beta2[,2],0.5)
+y_liom_mean_grow <- quantile(grow.params$beta0[,2],0.5) + (size_dummy) * quantile(grow.params$beta1[,2],0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,2],0.5)
 # Vac
-y_vac_mean_grow <-  quantile(grow.params$beta0[,4],0.5) + (size_dummy) * quantile(grow.params$beta1[,4],0.5) + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
+y_vac_mean_grow <-  quantile(grow.params$beta0[,4],0.5) + (size_dummy) * quantile(grow.params$beta1[,4],0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
 ## Create a contour plot which shows the full fit of the growth model rather than just the mean
 x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
 y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), length = 25); # five rows
@@ -143,31 +142,47 @@ y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), len
 other <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,3],0.5) + quantile(grow.params$beta1[,3],0.5)*x + quantile(grow.params$beta2[,3],0.5)*x^2, 
+  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,3],0.5) + quantile(grow.params$beta1[,3],0.5)*x,# + quantile(grow.params$beta2[,3],0.5)*x^2, 
                          omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 );
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,4],0.5) + quantile(grow.params$beta1[,4],0.5)*x + quantile(grow.params$beta2[,4],0.5)*x^2, 
+  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,4],0.5) + quantile(grow.params$beta1[,4],0.5)*x,# + quantile(grow.params$beta2[,4],0.5)*x^2, 
                          omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 );
 liom <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,2],0.5) + quantile(grow.params$beta1[,2],0.5)*x + quantile(grow.params$beta2[,2],0.5)*x^2, 
+  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,2],0.5) + quantile(grow.params$beta1[,2],0.5)*x,# + quantile(grow.params$beta2[,2],0.5)*x^2, 
                          omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 );
 crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,1],0.5) + quantile(grow.params$beta1[,1],0.5)*x + quantile(grow.params$beta2[,1],0.5)*x^2, 
+  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,1],0.5) + quantile(grow.params$beta1[,1],0.5)*x,# + quantile(grow.params$beta2[,1],0.5)*x^2, 
                          omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 );
+## Skew Kernels -- No Ant
+y_grow <-  quantile(grow.params$beta0,0.5) + (size_dummy) * quantile(grow.params$beta1,0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
+grow <- outer (
+  y,     # First dimension:  the columns (y)
+  x,     # Second dimension: the rows    (x)
+  function (x, y)   dsn(y,xi=quantile(grow.params$beta0,0.5) + quantile(grow.params$beta1,0.5)*x,
+                        omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
+                        alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+);
+png("Figures/grow_skew_no_ant.png")
+contour(x,y,grow,nlevels = 15)
+points(y_subset$logsize_t,y_subset$logsize_t1, col = alpha("green",0.5), pch = 16, cex = 0.5)
+lines(size_dummy, y_grow, col = "green", lwd = 4)
+lines(size_dummy,size_dummy, lty = 2, col = "grey")
+dev.off()
+
 ## Plot the countour lines of the studetn t growth model with the mean fit of the model and the real data
 png("Figures/grow_skew.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))

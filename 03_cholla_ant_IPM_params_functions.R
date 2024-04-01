@@ -35,7 +35,7 @@ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism proj
 #mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters
 # growth model
-fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
+fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew1.rds"))
 grow.params <- rstan::extract(fit_grow_skew)
 #fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
 #grow.params.null <- rstan::extract(fit_grow_skew_null)
@@ -92,6 +92,9 @@ params$grow_alp0 <- grow.params$a_0[draws]
 params$grow_alp1 <- grow.params$a_size[draws]
 params$grow_sig_u<-grow.params$sigma_u[draws]
 params$grow_sig_w<-grow.params$sigma_w[draws]
+## non ant specific model
+params$grow_beta0 <- grow.params$beta0[draws]
+params$grow_beta1 <- grow.params$beta1[draws]
 # Ant 4 (vacant)
 params$grow_beta04<-grow.params$beta0[draws,4]     	  ## growth intercept
 params$grow_beta14<-grow.params$beta1[draws,4]				## growth slope

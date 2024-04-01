@@ -104,19 +104,19 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
                             plot = as.integer(growth_data$Plot),                       ## predictor plots
                             year = as.integer(as.factor(growth_data$Year_t))           ## predictor years
 )
-# ## Run the growth model with a student t distribution -- fixed effects: previous size and a non linear previous size variable and ant state; random effects: plot and year; size variation is included for both the omega and alpha estimates
-# grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
-# fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
-#                        control = list(adapt_delta=0.99,stepsize=0.1),
-#                        iter=10000,cores=3,thin=2,
-#                        pars = c("u","w",          # plot and year random effects
-#                                 "beta0","beta1","beta2", #location coefficients
-#                                 "d_0","d_size","d_size2", #scale coefficiences
-#                                 "a_0","a_size","a_size2"), #shape coefficients
-#                        save_warmup=F)
-# ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_grow_skew, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
-
+## Run the growth model with a student t distribution -- fixed effects: previous size and a non linear previous size variable and ant state; random effects: plot and year; size variation is included for both the omega and alpha estimates
+grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
+fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
+                       control = list(adapt_delta=0.99,stepsize=0.1),
+                       iter=10000,cores=3,thin=2,
+                       pars = c("u","w",          # plot and year random effects
+                                "beta0","beta1", #location coefficients
+                                "d_0","d_size","d_size2", #scale coefficiences
+                                "a_0","a_size","a_size2"), #shape coefficients
+                       save_warmup=F)
+## Save the RDS file which saves all parameters, draws, and other information
+saveRDS(fit_grow_skew, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+saveRDS(fit_grow_skew,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew1.rds")
 
 ################################################################################
 ##  Survival Model -- What is the probability of surviving to the next time step?   
