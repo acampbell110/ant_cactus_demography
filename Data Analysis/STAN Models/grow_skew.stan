@@ -14,10 +14,13 @@ data {
 
 parameters {
   matrix[K,N_Year] w;         // year random effects
-  vector[K] beta0;            // ant beta
-  vector[K] beta1;            // interaction size and ant beta
-  vector[K] beta2;            // polynomial size and ant beta
+  //vector[K] beta0;            // ant beta
+  //vector[K] beta1;            // interaction size and ant beta
+  //vector[K] beta2;            // polynomial size and ant beta
   vector[N_Plot] u;           // Plot random effects
+  real beta0;
+  real beta1;
+  real beta2;
   real < lower = 0 > sigma_w; // plot SD
   real < lower = 0 > sigma_u; // plot SD
   real d_0;                   // Error intercept
@@ -35,10 +38,11 @@ transformed parameters{
   vector[N] alpha;            // predictor for the skew
 
   for(i in 1:N){
-    xi[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + beta2[ant[i]] * vol2[i] + u[plot[i]] + w[ant[i],year[i]];
+    xi[i] = beta0 + beta1 * vol[i];
+    //xi[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + u[plot[i]] + w[ant[i],year[i]];
     omega[i] = exp(d_0 + d_size * vol[i] + d_size2 * vol2[i]);
     alpha[i] = a_0 + a_size * vol[i] + a_size2 * vol2[i];
-  }
+  } // beta2[ant[i]] * vol2[i] + 
 }
 model {
 //Priors
