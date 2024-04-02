@@ -1,6 +1,10 @@
 This is BibTeX, Version 0.99d (TeX Live 2023)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: ant_cactus_AmNat_v2.aux
+White space in argument---line 63 of file ant_cactus_AmNat_v2.aux
+ : \citation{Mark
+ :                2009}
+I'm skipping whatever remains of this command
 The style file: apalike.bst
 Database file #1: References.bib
 Warning--entry type for "Trager2010" isn't style-file defined
@@ -11,7 +15,10 @@ Repeated entry---line 707 of file References.bib
  : @article{Kiers2003
  :                   ,
 I'm skipping whatever remains of this entry
-Warning--I didn't find a database entry for "rees2009integral"
+Repeated entry---line 938 of file References.bib
+ : @misc{Noe1994
+ :              ,
+I'm skipping whatever remains of this entry
 Warning--to sort, need author or key in Rezende2007
 Warning--to sort, need author or key in Cardinale2007
 Warning--to sort, need author or key in Afkhami2021
@@ -22,45 +29,45 @@ Warning--empty publisher in Beattie1985
 Warning--empty journal in Benson1982
 Warning--empty year in Dallas2021
 Warning--there's a number but no series in Ollerton2006
-You've used 81 entries,
+You've used 82 entries,
             1935 wiz_defined-function locations,
-            989 strings with 18248 characters,
-and the built_in function-call counts, 32194 in all, are:
-= -- 3150
-> -- 1321
-< -- 41
-+ -- 462
-- -- 444
-* -- 2859
-:= -- 5637
-add.period$ -- 239
-call.type$ -- 81
-change.case$ -- 624
-chr.to.int$ -- 81
-cite$ -- 94
-duplicate$ -- 1126
-empty$ -- 2242
-format.name$ -- 552
-if$ -- 6202
+            993 strings with 18744 characters,
+and the built_in function-call counts, 32950 in all, are:
+= -- 3213
+> -- 1386
+< -- 38
++ -- 486
+- -- 468
+* -- 2940
+:= -- 5773
+add.period$ -- 243
+call.type$ -- 82
+change.case$ -- 641
+chr.to.int$ -- 82
+cite$ -- 95
+duplicate$ -- 1144
+empty$ -- 2280
+format.name$ -- 575
+if$ -- 6346
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 78
-newline$ -- 403
-num.names$ -- 234
-pop$ -- 462
+missing$ -- 80
+newline$ -- 409
+num.names$ -- 237
+pop$ -- 479
 preamble$ -- 1
-purify$ -- 627
+purify$ -- 644
 quote$ -- 0
-skip$ -- 864
+skip$ -- 873
 stack$ -- 0
-substring$ -- 2489
-swap$ -- 96
+substring$ -- 2527
+swap$ -- 98
 text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 482
+type$ -- 488
 warning$ -- 10
-while$ -- 255
+while$ -- 258
 width$ -- 0
-write$ -- 1034
-(There was 1 error message)
+write$ -- 1050
+(There were 3 error messages)
