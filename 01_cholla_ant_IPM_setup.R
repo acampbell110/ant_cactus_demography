@@ -275,4 +275,6 @@ sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
 
 nrow(cactus)
 
+length(unique(cactus$Year_t))
+
 

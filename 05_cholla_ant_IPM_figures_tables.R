@@ -275,91 +275,136 @@ dev.off()
 
 ##### CREM FIGS 
 # Corr between crem and crem
-ccg <- cov(grow_rfx1,grow_rfx1)
-ccs <- cov(surv_rfx1,surv_rfx1)
-ccv <- cov(viab_rfx1,viab_rfx1)
+ccg <- cor.test(grow_rfx1,grow_rfx1)
+ccs <- cor.test(surv_rfx1,surv_rfx1)
+ccv <- cor.test(viab_rfx1,viab_rfx1)
 # Corr between crem and liom
-clg <- cov(grow_rfx1,grow_rfx2)
-cls <- cov(surv_rfx1,surv_rfx2)
-clv <- cov(viab_rfx1,viab_rfx2)
+clg <- cor.test(grow_rfx1,grow_rfx2)
+cls <- cor.test(surv_rfx1,surv_rfx2)
+clv <- cor.test(viab_rfx1,viab_rfx2)
 # Corr between liom and liom
-llg <- cov(grow_rfx2,grow_rfx2)
-lls <- cov(surv_rfx2,surv_rfx2)
-llv <- cov(viab_rfx2,viab_rfx2)
+llg <- cor.test(grow_rfx2,grow_rfx2)
+lls <- cor.test(surv_rfx2,surv_rfx2)
+llv <- cor.test(viab_rfx2,viab_rfx2)
 # Corr between crem and other
-cog <- cov(grow_rfx1,grow_rfx3)
-cos <- cov(surv_rfx1,surv_rfx3)
-cov <- cov(viab_rfx1,viab_rfx3)
+cog <- cor.test(grow_rfx1,grow_rfx3)
+cos <- cor.test(surv_rfx1,surv_rfx3)
+cov <- cor.test(viab_rfx1,viab_rfx3)
 # Corr between liom and other
-log <- cov(grow_rfx2,grow_rfx3)
-los <- cov(surv_rfx2,surv_rfx3)
-lov <- cov(viab_rfx2,viab_rfx3)
+log <- cor.test(grow_rfx2,grow_rfx3)
+los <- cor.test(surv_rfx2,surv_rfx3)
+lov <- cor.test(viab_rfx2,viab_rfx3)
 # Corr between other and other
-oog <- cov(grow_rfx3,grow_rfx3)
-oos <- cov(surv_rfx3,surv_rfx3)
-oov <- cov(viab_rfx3,viab_rfx3)
+oog <- cor.test(grow_rfx3,grow_rfx3)
+oos <- cor.test(surv_rfx3,surv_rfx3)
+oov <- cor.test(viab_rfx3,viab_rfx3)
 # Corr between crem and vacant
-cvg <- cov(grow_rfx1,grow_rfx4)
-cvs <- cov(surv_rfx1,surv_rfx4)
-cvv <- cov(viab_rfx1,viab_rfx4)
+cvg <- cor.test(grow_rfx1,grow_rfx4)
+cvs <- cor.test(surv_rfx1,surv_rfx4)
+cvv <- cor.test(viab_rfx1,viab_rfx4)
 # Corr between liom and vacant
-lvg <- cov(grow_rfx2,grow_rfx4)
-lvs <- cov(surv_rfx2,surv_rfx4)
-lvv <- cov(viab_rfx2,viab_rfx4)
+lvg <- cor.test(grow_rfx2,grow_rfx4)
+lvs <- cor.test(surv_rfx2,surv_rfx4)
+lvv <- cor.test(viab_rfx2,viab_rfx4)
 # Corr between other and vacant
-ovg <- cov(grow_rfx3,grow_rfx4)
-ovs <- cov(surv_rfx3,surv_rfx4)
-ovv <- cov(viab_rfx3,viab_rfx4)
+ovg <- cor.test(grow_rfx3,grow_rfx4)
+ovs <- cor.test(surv_rfx3,surv_rfx4)
+ovv <- cor.test(viab_rfx3,viab_rfx4)
 # Corr between vacant and vacant
-vvg <- cov(grow_rfx4,grow_rfx4)
-vvs <- cov(surv_rfx4,surv_rfx4)
-vvv <- cov(viab_rfx4,viab_rfx4)
-png("Figures/RFX.png")
-par(mar=c(4,2,2,1),oma=c(2,2,0,0))
-layout(matrix(c(1,2,3,4,
-                5,6,7,8,
-                9,10,11,12,
-                13,14,15,16),
-              ncol = 4, byrow = TRUE), heights = c(1), widths = c(4,4,4,4))
-plot(density(ccg), col = "red", xlim = c(-0.007,0.01))
-lines(density(ccs), col = "orange")
-lines(density(ccv), col = "green")
-legend("topright",legend = c("Growth","Survival","Viability"), fill = c("red","orange","green"))
-plot.new()
-plot.new()
-plot.new()
-plot(density(clg), col = "red", xlim = c(-0.007,0.01))
-lines(density(cls), col = "orange")
-lines(density(clv), col = "green")
-plot(density(llg), col = "red", xlim = c(-0.007,0.01))
-lines(density(lls), col = "orange")
-lines(density(llv), col = "green")
-plot.new()
-plot.new()
-plot(density(cog), col = "red", xlim = c(-0.007,0.01))
-lines(density(cos), col = "orange")
-lines(density(cov), col = "green")
-plot(density(log), col = "red", xlim = c(-0.007,0.01))
-lines(density(los), col = "orange")
-lines(density(lov), col = "green")
-plot(density(oog), col = "red", xlim = c(-0.007,0.01))
-lines(density(oos), col = "orange")
-lines(density(oov), col = "green")
-plot.new()
-plot(density(cvg), col = "red", xlim = c(-0.007,0.01))
-lines(density(cvs), col = "orange")
-lines(density(cvv), col = "green")
-plot(density(lvg), col = "red", xlim = c(-0.007,0.01))
-lines(density(lvs), col = "orange")
-lines(density(lvv), col = "green")
-plot(density(ovg), col = "red", xlim = c(-0.007,0.01))
-lines(density(ovs), col = "orange")
-lines(density(ovv), col = "green")
-plot(density(vvg), col = "red", xlim = c(-0.007,0.01))
-lines(density(vvs), col = "orange")
-lines(density(vvv), col = "green")
+vvg <- cor.test(grow_rfx4,grow_rfx4)
+vvs <- cor.test(surv_rfx4,surv_rfx4)
+vvv <- cor.test(viab_rfx4,viab_rfx4)
+
+# create matrix 1 = crem, 2 = liom, 3 = other, 4 = vac
+a <- matrix(NA, nrow = 4, ncol = 4)
+#crem col
+a[1,1] <- ccg$estimate
+a[1,2] <- clg$estimate
+a[1,3] <- cog$estimate
+a[1,4] <- cvg$estimate
+#liom col
+a[2,1] <- clg$estimate
+a[2,2] <- llg$estimate
+a[2,3] <- log$estimate
+a[2,4] <- lvg$estimate
+#other col
+a[3,1] <- cog$estimate
+a[3,2] <- log$estimate
+a[3,3] <- oog$estimate
+a[3,4] <- ovg$estimate
+#vac col
+a[4,1] <- cvg$estimate
+a[4,2] <- lvg$estimate
+a[4,3] <- ovg$estimate
+a[4,4] <- vvg$estimate
+colnames(a) <- c("Crem.","Liom.","Other","Vacant")
+rownames(a) <- c("Crem.","Liom.","Other","Vacant")
+png("Figures/corr_GRFX.png")
+heatmap(a,Rowv = NA, Colv = NA, margins = c(6,8), scale = "column")
 dev.off()
 
+# create matrix 1 = crem, 2 = liom, 3 = other, 4 = vac
+b <- matrix(NA, nrow = 4, ncol = 4)
+#crem col
+b[1,1] <- ccs$estimate
+b[1,2] <- cls$estimate
+b[1,3] <- cos$estimate
+b[1,4] <- cvs$estimate
+#liom col
+b[2,1] <- cls$estimate
+b[2,2] <- lls$estimate
+b[2,3] <- los$estimate
+b[2,4] <- lvs$estimate
+#other col
+b[3,1] <- cos$estimate
+b[3,2] <- los$estimate
+b[3,3] <- oos$estimate
+b[3,4] <- ovs$estimate
+#vac col
+b[4,1] <- cvs$estimate
+b[4,2] <- lvs$estimate
+b[4,3] <- ovs$estimate
+b[4,4] <- vvs$estimate
+colnames(b) <- c("Crem.","Liom.","Other","Vacant")
+rownames(b) <- c("Crem.","Liom.","Other","Vacant")
+png("Figures/corr_SRFX.png")
+heatmap(b,Rowv = NA, Colv = NA, margins = c(6,8), scale = "column")
+dev.off()
+
+# create matrix 1 = crem, 2 = liom, 3 = other, 4 = vac
+c <- matrix(NA, nrow = 4, ncol = 4)
+#crem col
+c[1,1] <- ccv$estimate
+c[1,2] <- clv$estimate
+c[1,3] <- cov$estimate
+c[1,4] <- cvv$estimate
+#liom col
+c[2,1] <- clv$estimate
+c[2,2] <- llv$estimate
+c[2,3] <- lov$estimate
+c[2,4] <- lvv$estimate
+#other col
+c[3,1] <- cov$estimate
+c[3,2] <- lov$estimate
+c[3,3] <- oov$estimate
+c[3,4] <- ovv$estimate
+#vac col
+c[4,1] <- cvv$estimate
+c[4,2] <- lvv$estimate
+c[4,3] <- ovv$estimate
+c[4,4] <- vvv$estimate
+colnames(c) <- c("Crem.","Liom.","Other","Vacant")
+rownames(c) <- c("Crem.","Liom.","Other","Vacant")
+png("Figures/corr_VRFX.png")
+heatmap(c,Rowv = NA, Colv = NA, margins = c(6,8), scale = "column")
+dev.off()
+
+mean(a)
+mean(b)
+mean(c)
+colMeans(a)
+colMeans(b)
+colMeans(c)
 ################################################################################
 ## Survival Model Visuals
 ################################################################################
