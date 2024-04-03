@@ -1,28 +1,34 @@
+library(rstan)
+library(sn)
+
 ### Simulate skew normal data and try to run a model to match it
 # fake volume variable 
-vol <- rsn(n = 100,xi = 1, omega = 2, alpha = 10)
+##vol <- rsn(n = 100,xi = 1, omega = 2, alpha = 10)
+## no need to make vol a sn random variable
+n<-1000
+vol<-runif(n,-5,15)
 beta0 <- 2
 beta1 <- 3
-d_0 <- 1
-d_1 <- 1
-a_0 <- 3
-a_1 <- 5
-data <- rsn(n = 100, xi = beta0 + beta1 * vol,
-            omega = (d_0 + d_1 * vol),
+d_0 <- 0.5
+d_1 <- 0.1
+a_0 <- -1
+a_1 <- 0.5
+data <- rsn(n = n, xi = beta0 + beta1 * vol,
+            omega = exp(d_0 + d_1 * vol),
             alpha = a_0 + a_1 * vol)
 plot(density(data))
 plot(vol,data)
 
 ## Make a list of all necessary variables so they are properly formatted to feed into the stan model
-stan_data_grow_skew <- list(N = 100,                                     ## number of observations
+stan_data_grow_skew <- list(N = n,                                     ## number of observations
                             vol = vol,                             ## predictor volume year t
-                            y = (data)                              ## response volume next year
-)
+                            y = data)                              ## response volume next year
+                            
 ## Run the growth model with a student t distribution -- fixed effects: previous size and a non linear previous size variable and ant state; random effects: plot and year; size variation is included for both the omega and alpha estimates
 grow_skew_model <- rstan::stan_model("Data Analysis/STAN Models/grow_skew.stan")
 fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
                        control = list(adapt_delta=0.99,stepsize=0.1),
-                       iter=10000,cores=3,thin=2,
+                       iter=1000,cores=3,thin=2,
                        pars = c("beta0","beta1", #location coefficients
                                 "d_0","d_size", #scale coefficiences
                                 "a_0","a_size"), #shape coefficients

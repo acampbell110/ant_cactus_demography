@@ -20,7 +20,7 @@ parameters {
   //vector[N_Plot] u;           // Plot random effects
   real beta0;
   real beta1;
-  real beta2;
+  //real beta2;
   //real < lower = 0 > sigma_w; // plot SD
   //real < lower = 0 > sigma_u; // plot SD
   real d_0;                   // Error intercept
@@ -50,12 +50,12 @@ model {
   // for(i in 1:K){
   //   w[i,] ~ normal(0,sigma_w);    // year random effects
   // }
-  // beta0 ~ normal(0,10);          // ant beta
-  // beta1 ~ normal(0,10);          // size & ant beta
-  // beta2 ~ normal(0,10);          // size & ant beta second order
-  // d_0 ~ normal(0, 10);           // intercept sd 
-  // d_size ~ normal(0, 10);        // size sd
-  // a_0 ~ normal(0, 10);           // intercept skew 
-  // a_size ~ normal(0, 10);        // size skew
+  beta0 ~ normal(0,10);          // ant beta
+  beta1 ~ normal(0,10);          // size & ant beta
+  //beta2 ~ normal(0,10);          // size & ant beta second order
+  d_0 ~ normal(0, 10);           // intercept sd 
+  d_size ~ normal(0, 10);        // size sd
+  a_0 ~ normal(0, 10);           // intercept skew 
+  a_size ~ normal(0, 10);        // size skew
   y ~ skew_normal(xi,omega,alpha);
 }
