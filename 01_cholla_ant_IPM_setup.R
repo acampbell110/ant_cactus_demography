@@ -30,7 +30,6 @@ library(MASS)
 library(patchwork)
 library(tidyverse)
 # data management
-library(tidyverse)
 library(dplyr)
 library(magrittr)
 # graphics
@@ -44,6 +43,7 @@ options(mc.cores = parallel::detectCores())
 # check the workign directory and make sure it is set to the right location
 #getwd()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+#setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 
 ## Create the necessary functions 
 # function for the volume of a cone
