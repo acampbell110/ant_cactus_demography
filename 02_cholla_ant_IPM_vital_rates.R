@@ -121,7 +121,7 @@ bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta2[1]","beta2[2]","beta2[3]","b
 bayesplot::mcmc_trace(fit_grow_skew,pars = c("d_0","d_size","a_0","a_size"))
 
 # ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_grow_skew, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 # saveRDS(fit_grow_skew,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew1.rds")
 
 ################################################################################
