@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  2 APR 2024 16:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  25 APR 2024 16:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -312,180 +312,217 @@ LaTeX Font Warning: Font shape `OML/pplx/m/n' undefined
 [9] [10] [11] [12] [13]
 
 Package natbib Warning: Citation `Mark 2009' on page 14 undefined on input line
- 309.
+ 313.
 
-[14] [15] [16]
-<Figures/GrowContourLinesColor.png, id=63, 481.8pt x 481.8pt>
+[14] [15] [16] [17]
+<Figures/GrowContourLinesColor.png, id=66, 481.8pt x 481.8pt>
 File: Figures/GrowContourLinesColor.png Graphic file (type png)
 <use Figures/GrowContourLinesColor.png>
 Package pdftex.def Info: Figures/GrowContourLinesColor.png  used on input line 
-362.
+371.
 (pdftex.def)             Requested size: 446.26582pt x 446.27556pt.
 
 
-LaTeX Warning: Float too large for page by 0.7732pt on input line 365.
+LaTeX Warning: Float too large for page by 0.7732pt on input line 374.
 
-<Figures/SurvivalPlot.png, id=65, 481.8pt x 481.8pt>
+<Figures/SurvivalPlot.png, id=68, 481.8pt x 481.8pt>
 File: Figures/SurvivalPlot.png Graphic file (type png)
 <use Figures/SurvivalPlot.png>
-Package pdftex.def Info: Figures/SurvivalPlot.png  used on input line 368.
+Package pdftex.def Info: Figures/SurvivalPlot.png  used on input line 377.
 (pdftex.def)             Requested size: 446.26582pt x 446.27556pt.
-[17] [18 <./Figures/GrowContourLinesColor.png>]
+[18] [19 <./Figures/GrowContourLinesColor.png>]
 Overfull \vbox (23.89316pt too high) has occurred while \output is active []
 
 
-[19 <./Figures/SurvivalPlot.png>]
+[20 <./Figures/SurvivalPlot.png>]
 
-LaTeX Warning: Reference `fig:viab' on page 20 undefined on input line 374.
+LaTeX Warning: Reference `fig:viab' on page 21 undefined on input line 383.
 
-<Figures/ViabHist.png, id=78, 481.8pt x 481.8pt>
+<Figures/ViabHist.png, id=81, 481.8pt x 481.8pt>
 File: Figures/ViabHist.png Graphic file (type png)
 <use Figures/ViabHist.png>
-Package pdftex.def Info: Figures/ViabHist.png  used on input line 380.
+Package pdftex.def Info: Figures/ViabHist.png  used on input line 389.
 (pdftex.def)             Requested size: 446.26582pt x 446.27556pt.
-[20] [21 <./Figures/ViabHist.png>]
-<Figures/year_ant_timeseries.png, id=86, 481.8pt x 481.8pt>
+[21] [22 <./Figures/ViabHist.png>]
+<Figures/year_ant_timeseries.png, id=89, 481.8pt x 481.8pt>
 File: Figures/year_ant_timeseries.png Graphic file (type png)
 <use Figures/year_ant_timeseries.png>
-Package pdftex.def Info: Figures/year_ant_timeseries.png  used on input line 39
-5.
+Package pdftex.def Info: Figures/year_ant_timeseries.png  used on input line 40
+4.
 (pdftex.def)             Requested size: 446.26582pt x 446.27556pt.
- [22] [23 <./Figures/year_ant_timeseries.png>]
-<Figures/AntSizeMulti.png, id=94, 481.8pt x 481.8pt>
+ [23] [24 <./Figures/year_ant_timeseries.png>]
+<Figures/AntSizeMulti.png, id=97, 481.8pt x 481.8pt>
 File: Figures/AntSizeMulti.png Graphic file (type png)
 <use Figures/AntSizeMulti.png>
-Package pdftex.def Info: Figures/AntSizeMulti.png  used on input line 412.
+Package pdftex.def Info: Figures/AntSizeMulti.png  used on input line 421.
 (pdftex.def)             Requested size: 446.26582pt x 446.27556pt.
- [24] [25 <./Figures/AntSizeMulti.png>]
-<Figures/LambdaMeans.png, id=103, 481.8pt x 481.8pt>
+ [25] [26 <./Figures/AntSizeMulti.png>]
+<Figures/LambdaMeans.png, id=106, 481.8pt x 481.8pt>
 File: Figures/LambdaMeans.png Graphic file (type png)
 <use Figures/LambdaMeans.png>
-Package pdftex.def Info: Figures/LambdaMeans.png  used on input line 425.
+Package pdftex.def Info: Figures/LambdaMeans.png  used on input line 434.
 (pdftex.def)             Requested size: 286.55084pt x 286.5606pt.
-<Figures/Lambda_Num_Partners.png, id=104, 306.14375pt x 494.84875pt>
+<Figures/Lambda_Num_Partners.png, id=107, 481.8pt x 481.8pt>
 File: Figures/Lambda_Num_Partners.png Graphic file (type png)
 <use Figures/Lambda_Num_Partners.png>
-Package pdftex.def Info: Figures/Lambda_Num_Partners.png  used on input line 42
-6.
-(pdftex.def)             Requested size: 183.20416pt x 296.12627pt.
+Package pdftex.def Info: Figures/Lambda_Num_Partners.png  used on input line 43
+5.
+(pdftex.def)             Requested size: 183.20416pt x 183.20352pt.
 
-Overfull \hbox (2.41994pt too wide) in paragraph at lines 425--427
+Overfull \hbox (2.41994pt too wide) in paragraph at lines 434--436
 [][] [] 
  []
 
-[26] [27 <./Figures/LambdaMeans.png> <./Figures/Lambda_Num_Partners.png>]
-<Figures/portfolio_effect.png, id=113, 481.8pt x 481.8pt>
+[27] [28 <./Figures/LambdaMeans.png> <./Figures/Lambda_Num_Partners.png>]
+<Figures/portfolio_effect.png, id=116, 481.8pt x 481.8pt>
 File: Figures/portfolio_effect.png Graphic file (type png)
 <use Figures/portfolio_effect.png>
-Package pdftex.def Info: Figures/portfolio_effect.png  used on input line 450.
+Package pdftex.def Info: Figures/portfolio_effect.png  used on input line 460.
 (pdftex.def)             Requested size: 469.75502pt x 469.77148pt.
 
-[28] [29 <./Figures/portfolio_effect.png>] [30] [31] [32] [33] [34] [35]
-[36] (./ant_cactus_AmNat_v2.bbl [37] [38] [39] [40] [41] [42] [43] [44])
-[45]
+[29] [30 <./Figures/portfolio_effect.png>] [31] [32] [33] [34] [35]
+(./ant_cactus_AmNat_v2.bbl [36] [37] [38] [39] [40] [41] [42] [43]) [44]
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 713.
+               Default added (so using `tbp') on input line 622.
 
 
-Overfull \hbox (31.41pt too wide) in paragraph at lines 714--756
+Overfull \hbox (31.41pt too wide) in paragraph at lines 623--665
 [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 97.23341pt on input line 758.
+LaTeX Warning: Float too large for page by 97.23341pt on input line 667.
 
-<Figures/surv_conv.png, id=172, 481.8pt x 481.8pt>
+[45] [46] [47]
+<Figures/lambda_means_freq.png, id=178, 481.8pt x 481.8pt>
+File: Figures/lambda_means_freq.png Graphic file (type png)
+<use Figures/lambda_means_freq.png>
+Package pdftex.def Info: Figures/lambda_means_freq.png  used on input line 726.
+
+(pdftex.def)             Requested size: 286.55084pt x 286.5606pt.
+<Figures/Lambda_Num_Partners_freq.png, id=179, 481.8pt x 481.8pt>
+File: Figures/Lambda_Num_Partners_freq.png Graphic file (type png)
+<use Figures/Lambda_Num_Partners_freq.png>
+Package pdftex.def Info: Figures/Lambda_Num_Partners_freq.png  used on input li
+ne 727.
+(pdftex.def)             Requested size: 183.20416pt x 183.20352pt.
+
+Overfull \hbox (2.41994pt too wide) in paragraph at lines 726--728
+[][] [] 
+ []
+
+[48 <./Figures/lambda_means_freq.png> <./Figures/Lambda_Num_Partners_freq.png>]
+<Figures/lambda_means_between.png, id=185, 481.8pt x 481.8pt>
+File: Figures/lambda_means_between.png Graphic file (type png)
+<use Figures/lambda_means_between.png>
+Package pdftex.def Info: Figures/lambda_means_between.png  used on input line 7
+39.
+(pdftex.def)             Requested size: 286.55084pt x 286.5606pt.
+<Figures/Lambda_Num_Partners_between.png, id=186, 481.8pt x 481.8pt>
+File: Figures/Lambda_Num_Partners_between.png Graphic file (type png)
+<use Figures/Lambda_Num_Partners_between.png>
+Package pdftex.def Info: Figures/Lambda_Num_Partners_between.png  used on input
+ line 740.
+(pdftex.def)             Requested size: 183.20416pt x 183.20352pt.
+
+Overfull \hbox (2.41994pt too wide) in paragraph at lines 739--741
+[][] [] 
+ []
+
+<Figures/surv_conv.png, id=187, 481.8pt x 481.8pt>
 File: Figures/surv_conv.png Graphic file (type png)
 <use Figures/surv_conv.png>
-Package pdftex.def Info: Figures/surv_conv.png  used on input line 773.
+Package pdftex.def Info: Figures/surv_conv.png  used on input line 755.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/surv_post.png, id=173, 481.8pt x 481.8pt>
+<Figures/surv_post.png, id=188, 481.8pt x 481.8pt>
 File: Figures/surv_post.png Graphic file (type png)
 <use Figures/surv_post.png>
-Package pdftex.def Info: Figures/surv_post.png  used on input line 774.
+Package pdftex.def Info: Figures/surv_post.png  used on input line 756.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/repro_conv.png, id=174, 481.8pt x 481.8pt>
+<Figures/repro_conv.png, id=189, 481.8pt x 481.8pt>
 File: Figures/repro_conv.png Graphic file (type png)
 <use Figures/repro_conv.png>
-Package pdftex.def Info: Figures/repro_conv.png  used on input line 780.
+Package pdftex.def Info: Figures/repro_conv.png  used on input line 762.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/repro_post.png, id=175, 481.8pt x 481.8pt>
+<Figures/repro_post.png, id=190, 481.8pt x 481.8pt>
 File: Figures/repro_post.png Graphic file (type png)
 <use Figures/repro_post.png>
-Package pdftex.def Info: Figures/repro_post.png  used on input line 781.
+Package pdftex.def Info: Figures/repro_post.png  used on input line 763.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/flow_conv.png, id=176, 481.8pt x 481.8pt>
+<Figures/flow_conv.png, id=191, 481.8pt x 481.8pt>
 File: Figures/flow_conv.png Graphic file (type png)
 <use Figures/flow_conv.png>
-Package pdftex.def Info: Figures/flow_conv.png  used on input line 787.
+Package pdftex.def Info: Figures/flow_conv.png  used on input line 769.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/flow_post.png, id=177, 481.8pt x 481.8pt>
+<Figures/flow_post.png, id=192, 481.8pt x 481.8pt>
 File: Figures/flow_post.png Graphic file (type png)
 <use Figures/flow_post.png>
-Package pdftex.def Info: Figures/flow_post.png  used on input line 788.
+Package pdftex.def Info: Figures/flow_post.png  used on input line 770.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/viab_conv.png, id=178, 481.8pt x 481.8pt>
+<Figures/viab_conv.png, id=193, 481.8pt x 481.8pt>
 File: Figures/viab_conv.png Graphic file (type png)
 <use Figures/viab_conv.png>
-Package pdftex.def Info: Figures/viab_conv.png  used on input line 794.
+Package pdftex.def Info: Figures/viab_conv.png  used on input line 776.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/viab_post.png, id=179, 481.8pt x 481.8pt>
+<Figures/viab_post.png, id=194, 481.8pt x 481.8pt>
 File: Figures/viab_post.png Graphic file (type png)
 <use Figures/viab_post.png>
-Package pdftex.def Info: Figures/viab_post.png  used on input line 795.
+Package pdftex.def Info: Figures/viab_post.png  used on input line 777.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/seed_conv.png, id=180, 481.8pt x 481.8pt>
+<Figures/seed_conv.png, id=195, 481.8pt x 481.8pt>
 File: Figures/seed_conv.png Graphic file (type png)
 <use Figures/seed_conv.png>
-Package pdftex.def Info: Figures/seed_conv.png  used on input line 801.
+Package pdftex.def Info: Figures/seed_conv.png  used on input line 783.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/seed_ant_post.png, id=181, 481.8pt x 481.8pt>
+<Figures/seed_ant_post.png, id=196, 481.8pt x 481.8pt>
 File: Figures/seed_ant_post.png Graphic file (type png)
 <use Figures/seed_ant_post.png>
-Package pdftex.def Info: Figures/seed_ant_post.png  used on input line 802.
+Package pdftex.def Info: Figures/seed_ant_post.png  used on input line 784.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/germ1_conv.png, id=182, 481.8pt x 481.8pt>
+<Figures/germ1_conv.png, id=197, 481.8pt x 481.8pt>
 File: Figures/germ1_conv.png Graphic file (type png)
 <use Figures/germ1_conv.png>
-Package pdftex.def Info: Figures/germ1_conv.png  used on input line 821.
+Package pdftex.def Info: Figures/germ1_conv.png  used on input line 803.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/germ2_conv.png, id=183, 481.8pt x 481.8pt>
+<Figures/germ2_conv.png, id=198, 481.8pt x 481.8pt>
 File: Figures/germ2_conv.png Graphic file (type png)
 <use Figures/germ2_conv.png>
-Package pdftex.def Info: Figures/germ2_conv.png  used on input line 822.
+Package pdftex.def Info: Figures/germ2_conv.png  used on input line 804.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/germ1_post.png, id=184, 481.8pt x 481.8pt>
+<Figures/germ1_post.png, id=199, 481.8pt x 481.8pt>
 File: Figures/germ1_post.png Graphic file (type png)
 <use Figures/germ1_post.png>
-Package pdftex.def Info: Figures/germ1_post.png  used on input line 823.
+Package pdftex.def Info: Figures/germ1_post.png  used on input line 805.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/germ2_post.png, id=185, 481.8pt x 481.8pt>
+<Figures/germ2_post.png, id=200, 481.8pt x 481.8pt>
 File: Figures/germ2_post.png Graphic file (type png)
 <use Figures/germ2_post.png>
-Package pdftex.def Info: Figures/germ2_post.png  used on input line 823.
+Package pdftex.def Info: Figures/germ2_post.png  used on input line 805.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/seed_surv_conv.png, id=186, 481.8pt x 481.8pt>
+[49 <./Figures/lambda_means_between.png> <./Figures/Lambda_Num_Partners_between
+.png>]
+<Figures/seed_surv_conv.png, id=207, 481.8pt x 481.8pt>
 File: Figures/seed_surv_conv.png Graphic file (type png)
 <use Figures/seed_surv_conv.png>
-Package pdftex.def Info: Figures/seed_surv_conv.png  used on input line 830.
+Package pdftex.def Info: Figures/seed_surv_conv.png  used on input line 812.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-<Figures/seed_surv_post.png, id=187, 481.8pt x 481.8pt>
+<Figures/seed_surv_post.png, id=208, 481.8pt x 481.8pt>
 File: Figures/seed_surv_post.png Graphic file (type png)
 <use Figures/seed_surv_post.png>
-Package pdftex.def Info: Figures/seed_surv_post.png  used on input line 831.
+Package pdftex.def Info: Figures/seed_surv_post.png  used on input line 813.
 (pdftex.def)             Requested size: 211.38832pt x 211.38246pt.
-[46] [47] [48 <./Figures/surv_conv.png> <./Figures/surv_post.png>] [49 <./Figur
-es/repro_conv.png> <./Figures/repro_post.png> <./Figures/flow_conv.png> <./Figu
-res/flow_post.png>] [50 <./Figures/viab_conv.png> <./Figures/viab_post.png>]
-[51 <./Figures/seed_conv.png> <./Figures/seed_ant_post.png>] [52 <./Figures/ger
+ [50 <./Figures/surv_conv.png> <./Figures/surv_post.png>] [51 <./Figures/repro_
+conv.png> <./Figures/repro_post.png> <./Figures/flow_conv.png> <./Figures/flow_
+post.png>] [52 <./Figures/viab_conv.png> <./Figures/viab_post.png>]
+[53 <./Figures/seed_conv.png> <./Figures/seed_ant_post.png>] [54 <./Figures/ger
 m1_conv.png> <./Figures/germ2_conv.png> <./Figures/germ1_post.png> <./Figures/g
-erm2_post.png>]
+erm2_post.png>] [55 <./Figures/seed_surv_conv.png> <./Figures/seed_surv_post.pn
+g>]
 
 Package natbib Warning: There were undefined citations.
 
-[53 <./Figures/seed_surv_conv.png> <./Figures/seed_surv_post.png>]
-(./ant_cactus_AmNat_v2.aux)
+[56] (./ant_cactus_AmNat_v2.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -494,13 +531,13 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 4746 strings out of 476025
- 73414 string characters out of 5790017
- 1870388 words of memory out of 5000000
- 25080 multiletter control sequences out of 15000+600000
+ 4776 strings out of 476025
+ 74503 string characters out of 5790017
+ 1865388 words of memory out of 5000000
+ 25106 multiletter control sequences out of 15000+600000
  548475 words of font info for 121 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,10n,62p,864b,390s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,10n,62p,864b,396s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
@@ -511,10 +548,10 @@ l/texlive/2023/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/local/te
 xlive/2023/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2
 023/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2023/tex
 mf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on ant_cactus_AmNat_v2.pdf (53 pages, 1569290 bytes).
+Output written on ant_cactus_AmNat_v2.pdf (56 pages, 1601945 bytes).
 PDF statistics:
- 276 PDF objects out of 1000 (max. 8388607)
- 151 compressed objects within 2 object streams
+ 294 PDF objects out of 1000 (max. 8388607)
+ 158 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 121 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 141 words of extra memory for PDF output out of 10000 (max. 10000000)
 
