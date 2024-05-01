@@ -105,23 +105,23 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
                             year = as.integer(as.factor(growth_data$Year_t))           ## predictor years
 )
 ## Run the growth model with a student t distribution -- fixed effects: previous size and a non linear previous size variable and ant state; random effects: plot and year; size variation is included for both the omega and alpha estimates
-grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
-fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
-                      control = list(adapt_delta=0.99,stepsize=0.1),
-                      iter=5000,cores=3,thin=2,
-                      pars = c("u","w",          # plot and year random effects
-                               "beta0","beta1","beta2", #location coefficients
-                               "d_0","d_size", #scale coefficiences
-                               "a_0","a_size"), #shape coefficients
-                      save_warmup=F)
-
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("d_0","d_size","a_0","a_size"))
-
-# ## Save the RDS file which saves all parameters, draws, and other information
-saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
+# grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
+# fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
+#                       control = list(adapt_delta=0.99,stepsize=0.1),
+#                       iter=5000,cores=3,thin=2,
+#                       pars = c("u","w",          # plot and year random effects
+#                                "beta0","beta1","beta2", #location coefficients
+#                                "d_0","d_size", #scale coefficiences
+#                                "a_0","a_size"), #shape coefficients
+#                       save_warmup=F)
+# 
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("d_0","d_size","a_0","a_size"))
+# 
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 # saveRDS(fit_grow_skew,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew1.rds")
 
 ################################################################################
@@ -499,23 +499,23 @@ stan_data_multi <- list(K = length(unique(cactus_real$ant_t1)), #number of possi
                        N_Year = as.integer(length(unique(cactus_real$Year_t)))
 )
 ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
-fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
-                        control = list(adapt_delta=0.99,stepsize=0.1),
-                        iter=7500,cores=3,thin=3,
-                        pars = c("beta"   #location coefficients
-                        ),save_warmup=F)
+#multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
+# fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
+#                         control = list(adapt_delta=0.99,stepsize=0.1),
+#                         iter=7500,cores=3,thin=3,
+#                         pars = c("beta"   #location coefficients
+#                         ),save_warmup=F)
 ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_multi, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
-saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
+#saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
 
 ## Calculate global turnover rate
-transition_rate_tended <- subset(cactus_real, cactus_real$ant_t != "vacant" & cactus_real$ant_t != cactus_real$ant_t1)
-tt_rate <- nrow(transition_rate_tended)/nrow(cactus_real)
-transition_rate <- subset(cactus_real, cactus_real$ant_t != cactus_real$ant_t1)
-t_rate <- nrow(transition_rate)/nrow(cactus_real)
-return_rate <- subset(cactus_real, cactus_real$ant_t == cactus_real$ant_t1)
-r_rate <- nrow(return_rate)/nrow(cactus_real)
+# transition_rate_tended <- subset(cactus_real, cactus_real$ant_t != "vacant" & cactus_real$ant_t != cactus_real$ant_t1)
+# tt_rate <- nrow(transition_rate_tended)/nrow(cactus_real)
+# transition_rate <- subset(cactus_real, cactus_real$ant_t != cactus_real$ant_t1)
+# t_rate <- nrow(transition_rate)/nrow(cactus_real)
+# return_rate <- subset(cactus_real, cactus_real$ant_t == cactus_real$ant_t1)
+# r_rate <- nrow(return_rate)/nrow(cactus_real)
 
 
 

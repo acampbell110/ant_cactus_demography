@@ -271,10 +271,15 @@ tetra_prop <- nrow(h)/nrow(cac)
 brach_prop <- nrow(j)/nrow(cac)
 unk_prop <- nrow(k)/nrow(cac)
 for_prop <- nrow(l)/nrow(cac)
-sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
+other_prop <- sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
 
 nrow(cactus)
 
 length(unique(cactus$Year_t))
+
+png("Figures/Ant_Props.png")
+barplot(c(liom_prop,crem_prop,other_prop), col = c(liomcol,cremcol,othercol))
+legend("topright",legend = c("Liom.","Crem.","Other"), fill = c(liomcol,cremcol,othercol))
+dev.off()
 
 

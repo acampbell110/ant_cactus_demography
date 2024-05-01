@@ -27,8 +27,11 @@ size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm 
 ## Growth Model Visuals
 ################################################################################
 # Visualize the outputs of the model -- trace plots to check conve4rgence, data moments to check fit
-png("grow_conv_skew.png")
-bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0","d_size","a_0","a_size",
+png("Figures/grow_conv_skew.png")
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0[1]","d_0[2]","d_0[3]","d_0[4]",
+                                           "d_size[1]","d_size[2]","d_size[3]","d_size[4]",
+                                           "a_0[1]","a_0[2]","a_0[3]","a_0[4]",
+                                           "a_size[1]","a_size[2]","a_size[3]","a_size[4]",
                                            "beta0[1]","beta0[2]","beta0[3]","beta0[4]",
                                            "beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
 dev.off()
@@ -92,20 +95,29 @@ y_crem_subset_grow <- subset(y_subset, ant_t == "crem")
 y_liom_subset_grow <- subset(y_subset, ant_t == "liom")
 y_vac_subset_grow <- subset(y_subset, ant_t == "vacant")
 y_other_subset_grow <- subset(y_subset, ant_t == "other")
-## Size dummies for each partner condition
-size_crem <- seq(min(y_crem_subset_grow$logsize_t, na.rm = TRUE), max(y_crem_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
-size_liom <- seq(min(y_liom_subset_grow$logsize_t, na.rm = TRUE), max(y_liom_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
-size_other <- seq(min(y_other_subset_grow$logsize_t, na.rm = TRUE), max(y_other_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
-size_vac <- seq(min(y_vac_subset_grow$logsize_t, na.rm = TRUE), max(y_vac_subset_grow$logsize_t, na.rm = TRUE), by = 0.1)
 ## Predicted sizes for each partner condition
+omega_crem <- exp(mean(params$grow_sig01) + size_dummy * mean(params$grow_sig11))
+omega_liom <- exp(mean(params$grow_sig02) + size_dummy * mean(params$grow_sig12))
+omega_other <- exp(mean(params$grow_sig03) + size_dummy * mean(params$grow_sig13))
+omega_vac <- exp(mean(params$grow_sig04) + size_dummy * mean(params$grow_sig14))
+alpha_crem <- mean(params$grow_alp01) + size_dummy * mean(params$grow_alp11)
+alpha_liom <- mean(params$grow_alp02) + size_dummy * mean(params$grow_alp12)
+alpha_other <- mean(params$grow_alp03) + size_dummy * mean(params$grow_alp13)
+alpha_vac <- mean(params$grow_alp04) + size_dummy * mean(params$grow_alp14)
 # Other
-y_other_mean_grow <- quantile(grow.params$beta0[,3],0.5) + (size_dummy) * quantile(grow.params$beta1[,3],0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,3],0.5)
+y_other_mean_grow <- mean(params$grow_beta03) + (size_dummy) * mean(params$grow_beta13 ) + (size_dummy)^2 * mean(params$grow_beta23)
 # Crem
-y_crem_mean_grow <- quantile(grow.params$beta0[,1],0.5) + (size_dummy) * quantile(grow.params$beta1[,1],0.5) #+ (size_dummy)^2 * quantile(grow.params$beta2[,1],0.5)
+y_crem_mean_grow <- mean(params$grow_beta01) + (size_dummy) * mean(params$grow_beta11) + (size_dummy)^2 * mean(params$grow_beta21)
 # Liom
-y_liom_mean_grow <- quantile(grow.params$beta0[,2],0.5) + (size_dummy) * quantile(grow.params$beta1[,2],0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,2],0.5)
+y_liom_mean_grow <- mean(params$grow_beta02) + (size_dummy) * mean(params$grow_beta12) + (size_dummy)^2 * mean(params$grow_beta22)
 # Vac
-y_vac_mean_grow <-  quantile(grow.params$beta0[,4],0.5) + (size_dummy) * quantile(grow.params$beta1[,4],0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
+y_vac_mean_grow <-  mean(params$grow_beta04) + (size_dummy) * mean(params$grow_beta14) + (size_dummy)^2 * mean(params$grow_beta24)
+
+other_mean <- y_other_mean_grow + omega_other * (alpha_other/(sqrt(1 + alpha_other^2)) * (sqrt(2/pi)))
+crem_mean <- y_crem_mean_grow + omega_crem * (alpha_crem/(sqrt(1 + alpha_crem^2)) * (sqrt(2/pi)))
+liom_mean <- y_liom_mean_grow + omega_liom * (alpha_liom/(sqrt(1 + alpha_liom^2)) * (sqrt(2/pi)))
+vac_mean <- y_vac_mean_grow + omega_vac * (alpha_vac/(sqrt(1 + alpha_vac^2)) * (sqrt(2/pi)))
+
 ## Create a contour plot which shows the full fit of the growth model rather than just the mean
 x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
 y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), length = 25); # five rows
@@ -142,46 +154,46 @@ y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), len
 other <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,3],0.5) + quantile(grow.params$beta1[,3],0.5)*x,# + quantile(grow.params$beta2[,3],0.5)*x^2, 
-                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta03) + mean(params$grow_beta13)*x + mean(params$grow_beta23)*x^2, 
+                         omega = exp(mean(params$grow_sig03) + x * mean(params$grow_sig13)), 
+                         alpha = (mean(params$grow_alp03) + x * mean(params$grow_alp13)))
 );
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,4],0.5) + quantile(grow.params$beta1[,4],0.5)*x,# + quantile(grow.params$beta2[,4],0.5)*x^2, 
-                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*x + mean(params$grow_beta24)*x^2, 
+                        omega = exp(mean(params$grow_sig04) + x * mean(params$grow_sig14)), 
+                        alpha = (mean(params$grow_alp04) + x * mean(params$grow_alp14)))
 );
 liom <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,2],0.5) + quantile(grow.params$beta1[,2],0.5)*x,# + quantile(grow.params$beta2[,2],0.5)*x^2, 
-                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta02) + mean(params$grow_beta12)*x + mean(params$grow_beta22)*x^2, 
+                        omega = exp(mean(params$grow_sig02) + x * mean(params$grow_sig12)), 
+                        alpha = (mean(params$grow_alp02) + x * mean(params$grow_alp12)))
 );
 crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0[,1],0.5) + quantile(grow.params$beta1[,1],0.5)*x,# + quantile(grow.params$beta2[,1],0.5)*x^2, 
-                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*x + mean(params$grow_beta21)*x^2, 
+                        omega = exp(mean(params$grow_sig01) + x * mean(params$grow_sig11)), 
+                        alpha = (mean(params$grow_alp01) + x * mean(params$grow_alp11)))
 );
-## Skew Kernels -- No Ant
-y_grow <-  quantile(grow.params$beta0,0.5) + (size_dummy) * quantile(grow.params$beta1,0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
-grow <- outer (
-  y,     # First dimension:  the columns (y)
-  x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=quantile(grow.params$beta0,0.5) + quantile(grow.params$beta1,0.5)*x,
-                        omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
-                        alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
-);
-png("Figures/grow_skew_no_ant.png")
-contour(x,y,grow,nlevels = 15)
-points(y_subset$logsize_t,y_subset$logsize_t1, col = alpha("green",0.5), pch = 16, cex = 0.5)
-lines(size_dummy, y_grow, col = "green", lwd = 4)
-lines(size_dummy,size_dummy, lty = 2, col = "grey")
-dev.off()
+# ## Skew Kernels -- No Ant
+# y_grow <-  quantile(grow.params$beta0,0.5) + (size_dummy) * quantile(grow.params$beta1,0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
+# grow <- outer (
+#   y,     # First dimension:  the columns (y)
+#   x,     # Second dimension: the rows    (x)
+#   function (x, y)   dsn(y,xi=quantile(grow.params$beta0,0.5) + quantile(grow.params$beta1,0.5)*x,
+#                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
+#                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
+# );
+# png("Figures/grow_skew_no_ant.png")
+# contour(x,y,grow,nlevels = 15)
+# points(y_subset$logsize_t,y_subset$logsize_t1, col = alpha("green",0.5), pch = 16, cex = 0.5)
+# lines(size_dummy, y_grow, col = "green", lwd = 4)
+# lines(size_dummy,size_dummy, lty = 2, col = "grey")
+# dev.off()
 
 ## Plot the countour lines of the studetn t growth model with the mean fit of the model and the real data
 png("Figures/grow_skew.png")
@@ -192,33 +204,35 @@ layout(matrix(c(1,2,3,4,5,5),
 contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15), 
         main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black") 
 points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
-lines(size_dummy, y_crem_mean_grow, col = cremcol, lwd = 4)
+lines(size_dummy, crem_mean, col = cremcol, lwd = 2)
 # Liom
 contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
         main = "b)      Liom.                ", cex.main = 2, lwd = 1.5) 
 points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
-lines(size_dummy, y_liom_mean_grow, col = liomcol, lwd = 4)
+lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
 # Other
 contour(x,y,other, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
         main = "c)       Other                ", cex.main = 2, lwd = 1.5) 
 points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
-lines(size_dummy, y_other_mean_grow, col = othercol, lwd = 4)
+lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
 # Vacant
 contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
         main = "d)      Vacant                ", cex.main = 2, lwd = 1.5) 
 points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
-lines(size_dummy, y_vac_mean_grow, col = vaccol, lwd = 4)
+lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
 # All together
-plot(size_dummy, y_crem_mean_grow, type = "l", col = cremcol, lwd = 3, xlim = c(10,14), ylim = c(10,14), 
+plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(-5,15), ylim = c(-5,15), 
      main = "e)                      All Ants                           ", cex.main = 2) 
-lines(size_dummy, y_liom_mean_grow, col = liomcol, lwd = 3)
-lines(size_dummy, y_other_mean_grow, col = othercol, lwd = 3)
-lines(size_dummy, y_vac_mean_grow, col = vaccol, lwd = 3)
+lines(size_dummy, liom_mean, col = liomcol, lwd = 3)
+lines(size_dummy, other_mean, col = othercol, lwd = 3)
+lines(size_dummy, vac_mean, col = vaccol, lwd = 3)
 lines(size_dummy, size_dummy, col = "grey", lty = 2)
 legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
 mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
 dev.off()
+
+
 
 ################################################################################
 ## Variance of random effects by year, ant, and model
@@ -340,8 +354,9 @@ a[4,4] <- vvg$estimate
 colnames(a) <- c("Crem.","Liom.","Other","Vacant")
 rownames(a) <- c("Crem.","Liom.","Other","Vacant")
 png("Figures/corr_GRFX.png")
-heatmap(a,Rowv = NA, Colv = NA, margins = c(6,8), scale = "column")
+corrplot(a, method = "shade", col.lim = c(0,1), addCoef.col = T)
 dev.off()
+
 
 # create matrix 1 = crem, 2 = liom, 3 = other, 4 = vac
 b <- matrix(NA, nrow = 4, ncol = 4)
@@ -368,7 +383,7 @@ b[4,4] <- vvs$estimate
 colnames(b) <- c("Crem.","Liom.","Other","Vacant")
 rownames(b) <- c("Crem.","Liom.","Other","Vacant")
 png("Figures/corr_SRFX.png")
-heatmap(b,Rowv = NA, Colv = NA, margins = c(6,8), scale = "column")
+corrplot(b, method = "shade", col.lim = c(0,1), addCoef.col = T)
 dev.off()
 
 # create matrix 1 = crem, 2 = liom, 3 = other, 4 = vac
@@ -396,7 +411,7 @@ c[4,4] <- vvv$estimate
 colnames(c) <- c("Crem.","Liom.","Other","Vacant")
 rownames(c) <- c("Crem.","Liom.","Other","Vacant")
 png("Figures/corr_VRFX.png")
-heatmap(c,Rowv = NA, Colv = NA, margins = c(6,8), scale = "column")
+corrplot(c, method = "shade", col.lim = c(0,1), addCoef.col = T)
 dev.off()
 
 mean(a)
@@ -405,6 +420,15 @@ mean(c)
 colMeans(a)
 colMeans(b)
 colMeans(c)
+
+png("Figures/corr_RFX.png")
+par(mar=c(0,1,0,10),oma=c(0,2,0,2))
+layout(matrix(c(1,2,3),ncol = 3, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9))
+corrplot(a, method = "shade", col.lim = c(0,1), addCoef.col = T)
+corrplot(b, method = "shade", col.lim = c(0,1), addCoef.col = T)
+corrplot(c, method = "shade", col.lim = c(0,1), addCoef.col = T)
+mtext("   Growth          Survival          Viability",side=3,line=-14,outer=TRUE,cex=2)
+dev.off()
 ################################################################################
 ## Survival Model Visuals
 ################################################################################
@@ -662,6 +686,37 @@ mtext("Flowerbud viability", side = 2, line = 1, cex=1.4)
 box()
 dev.off()
 ## min buds is 1, max is 264
+
+png("Figures/Viab_v2.png")
+plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4,xlim=c(1,4.25))
+points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
+       cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(cremcol,alpha_val),pch=16)
+lines(rep(1.25,2),quantile(invlogit(viab_out$beta0[,1]),probs=c(0.025,.975)),
+      lwd=3,col=cremcol)
+points(1.25,mean(invlogit(viab_out$beta0[,1])),col=cremcol,pch=15,cex=1.5)
+points(jitter(rep(2,nrow(liom_subset))),jitter(liom_subset$viab),
+       cex=0.5+(liom_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(liomcol,alpha_val),pch=16)
+lines(rep(2.25,2),quantile(invlogit(viab_out$beta0[,2]),probs=c(0.025,.975)),
+      lwd=3,col=liomcol)
+points(2.25,mean(invlogit(viab_out$beta0[,2])),col=liomcol,pch=15,cex=1.5)
+points(jitter(rep(3,nrow(other_subset))),jitter(other_subset$viab),
+       cex=0.5+(other_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(othercol,alpha_val),pch=16)
+lines(rep(3.25,2),quantile(invlogit(viab_out$beta0[,3]),probs=c(0.025,.975)),
+      lwd=3,col=othercol)
+points(3.25,mean(invlogit(viab_out$beta0[,3])),col=othercol,pch=15,cex=1.5)
+points(jitter(rep(4,nrow(vac_subset))),jitter(vac_subset$viab),
+       cex=0.5+(vac_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
+       col=alpha(vaccol,alpha_val),pch=16)
+lines(rep(4.25,2),quantile(invlogit(viab_out$beta0[,4]),probs=c(0.025,.975)),
+      lwd=3,col=vaccol)
+points(4.25,mean(invlogit(viab_out$beta0[,4])),col=vaccol,pch=15,cex=1.5)
+axis(1,at=1:4,labels=c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Other","Vacant"))
+mtext("Flowerbud viability", side = 2, line = 1, cex=1.4)
+box()
+dev.off()
 
 ################################################################################
 ## Probability of Reproducing Model Visuals
@@ -1062,6 +1117,116 @@ mtext("Probability of Next Ant Partner",side=2,line=0,outer=TRUE,cex=1.5,las=0)
 dev.off()
 
 
+## Two states 
+
+png("Figures/Comp_Excl_1.png")
+# Liom Vac
+plot(size_dummy, transition.1.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
+dev.off()
+png("Figures/Comp_Excl_2.png")
+# Liom Vac
+plot(size_dummy, transition.1.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.comp(size_dummy,"crem","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
+legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
+dev.off()
+png("Figures/Two_State_Comp_Excl_Transitions.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2),
+              ncol = 2, nrow = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9,3.9))
+# Liom Vac
+plot(size_dummy, transition.1.comp(size_dummy,"liom","vacant",params = params_mean,scenario = "liomvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.comp(size_dummy,"liom","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
+legend("topright",legend = c("Vac.","Liom."), fill = c(vaccol,liomcol))
+plot(size_dummy, transition.1.comp(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.comp(size_dummy,"vacant","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
+dev.off()
+
+## Three states 
+png("Figures/Three_State_Comp_Excl_Transitions.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3),
+              ncol = 3, nrow = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9,3.9,3.9))
+# Liom Vac
+plot(size_dummy, transition.2.comp(size_dummy,"liom","vacant",params = params_mean,scenario = "liomcremvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.2.comp(size_dummy,"liom","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
+lines(size_dummy,transition.2.comp(size_dummy,"liom","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
+legend("topright",legend = c("Vac.","Liom.","Crem."), fill = c(vaccol,liomcol,cremcol))
+plot(size_dummy, transition.2.comp(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.2.comp(size_dummy,"vacant","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
+lines(size_dummy,transition.2.comp(size_dummy,"vacant","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
+plot(size_dummy, transition.2.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.2.comp(size_dummy,"crem","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
+lines(size_dummy,transition.2.comp(size_dummy,"crem","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
+dev.off()
+
+
+##### Frequency Based
+png("Figures/Comp_Excl_1.png")
+# Liom Vac
+plot(size_dummy, transition.1.comp(size_dummy,"vacant","crem",params = params_mean,scenario = "cremvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
+dev.off()
+png("Figures/Comp_Excl_2.png")
+# Liom Vac
+plot(size_dummy, transition.1.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.comp(size_dummy,"crem","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
+legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
+dev.off()
+png("Figures/Two_State_Freq_Excl_Transitions.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4,5,6),
+              ncol = 2, nrow = 3, byrow = TRUE), heights = c(1.4,1.4,1.4), widths = c(3.9,3.9))
+# Liom Vac
+plot(size_dummy, transition.1.freq(size_dummy,"liom","vacant",params = params_mean,scenario = "liomvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.freq(size_dummy,"liom","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
+legend("topright",legend = c("Vac.","Liom."), fill = c(vaccol,liomcol))
+plot(size_dummy, transition.1.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.freq(size_dummy,"vacant","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
+
+# Crem Vac
+plot(size_dummy, transition.1.freq(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.freq(size_dummy,"crem","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
+legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
+plot(size_dummy, transition.1.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "cremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.freq(size_dummy,"vacant","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
+
+# Other Vac
+plot(size_dummy, transition.1.freq(size_dummy,"other","vacant",params = params_mean,scenario = "othervac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Other", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.freq(size_dummy,"other","other",params = params_mean,scenario = "othervac"), col = othercol, lwd = 2)
+legend("topright",legend = c("Vac.","Other"), fill = c(vaccol,othercol))
+plot(size_dummy, transition.1.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "othervac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.1.freq(size_dummy,"vacant","other",params = params_mean,scenario = "othervac"), col = othercol, lwd = 2)
+dev.off()
+
+## Three states 
+png("Figures/Three_State_Freq_Excl_Transitions.png")
+par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3),
+              ncol = 3, nrow = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9,3.9,3.9))
+# Liom Vac
+plot(size_dummy, transition.2.freq(size_dummy,"liom","vacant",params = params_mean,scenario = "liomcremvac"), 
+     col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.2.freq(size_dummy,"liom","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
+lines(size_dummy,transition.2.freq(size_dummy,"liom","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
+legend("topright",legend = c("Vac.","Liom.","Crem."), fill = c(vaccol,liomcol,cremcol))
+plot(size_dummy, transition.2.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.2.freq(size_dummy,"vacant","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
+lines(size_dummy,transition.2.freq(size_dummy,"vacant","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
+plot(size_dummy, transition.2.freq(size_dummy,"crem","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
+lines(size_dummy,transition.2.freq(size_dummy,"crem","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
+lines(size_dummy,transition.2.freq(size_dummy,"crem","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
+dev.off()
+
 
 
 ################################################################################
@@ -1415,16 +1580,24 @@ mean(lams_stoch_null$all) - mean(lams_stoch_null$none)
 #################################################################################################
 #################################################################################################
 ## No partners mean
-zero_part <- mean(lams_stoch$none)
+zero_part <- vac_mean
 ## One partners mean
-one_part <- mean(colMeans(cbind(lams_stoch$cremvac,lams_stoch$liomvac, lams_stoch$othervac)))
+one_part <- mean(c(liom_mean,crem_mean,other_mean))
 ## Two partners mean
-two_part <- mean(colMeans(cbind(lams_stoch$liomcremvac,lams_stoch$liomvacother, lams_stoch$othercremvac)))
+two_part <- mean(c(liomcrem_mean,liomother_mean,othercrem_mean))
 ## All partners mean
-all_part <- mean(lams_stoch$all)
+all_part <- (all_mean)
+
+zero_part <- 0.9643225
+## One partners mean
+one_part <- mean(c(0.9767861,0.9587724,0.9531965))
+## Two partners mean
+two_part <- mean(c(0.9627127,0.9755172,0.9748269))
+## All partners mean
+all_part <- (0.9745587)
 
 ## Plot these means
-png("Figures/Lambda_Num_Partners.png")
+png("Figures/Lambda_Num_Partners_freq.png")
 plot(x = c(0,1,2,3), y = c(zero_part,one_part,two_part,all_part), xlab = "Number of Partners", ylab = "Mean Fitness", pch = 20, cex = 2.5,cex.lab = 1.8)
 dev.off()
 
