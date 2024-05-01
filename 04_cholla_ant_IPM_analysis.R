@@ -229,11 +229,13 @@ scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 x_vals <- c(1,3,5,7,9,11,13,15)
 lambdas <- c(vac_mean,crem_mean,liom_mean,other_mean,liomcrem_mean,liomother_mean,othercrem_mean,all_mean)
 colors_lambdas <- c(vcol,ccol,lcol,ocol,lccol,locol,cocol,acol)
-png("Figures/Lambda_means_freq.png")
+png("Manuscript/Figures/Lambda_means_comp.png")
 plot(x_vals,lambdas,col = colors_lambdas, pch = 20, cex = 3, xlim = c(-8,16),ylim = c(0.94,0.984),
-     xlab = "Diversity Scenario",ylab = "Lambda")
+     xlab = "",ylab = "",xaxt = "n")
 text(x = c(1,3,5,7,9,11,13,15)-0.2, y = lambdas+0.001,cex = 1, labels = scenario_abv)
 legend("topleft",legend = scenario_abv,fill = colors_lambdas)
+mtext("Diversity Scenario",side=1,line=-1.5,outer=TRUE,cex=1.5)
+mtext("Lambda",side=2,line=-1.5,outer=TRUE,cex=1.5,las=0)
 dev.off()
 
 ################################################################################

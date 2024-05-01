@@ -27,7 +27,7 @@ size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm 
 ## Growth Model Visuals
 ################################################################################
 # Visualize the outputs of the model -- trace plots to check conve4rgence, data moments to check fit
-png("Figures/grow_conv_skew.png")
+png("Manuscript/Figures/grow_conv_skew.png")
 bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0[1]","d_0[2]","d_0[3]","d_0[4]",
                                            "d_size[1]","d_size[2]","d_size[3]","d_size[4]",
                                            "a_0[1]","a_0[2]","a_0[3]","a_0[4]",
@@ -196,7 +196,7 @@ crem <- outer (
 # dev.off()
 
 ## Plot the countour lines of the studetn t growth model with the mean fit of the model and the real data
-png("Figures/grow_skew.png")
+png("Manuscript/Figures/grow_skew.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
@@ -211,7 +211,7 @@ contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
 points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
 lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
 # Other
-contour(x,y,other, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
+contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
         main = "c)       Other                ", cex.main = 2, lwd = 1.5) 
 points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
 lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
@@ -221,7 +221,7 @@ contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15
 points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
 # All together
-plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(-5,15), ylim = c(-5,15), 
+plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(10,15), ylim = c(10,15), 
      main = "e)                      All Ants                           ", cex.main = 2) 
 lines(size_dummy, liom_mean, col = liomcol, lwd = 3)
 lines(size_dummy, other_mean, col = othercol, lwd = 3)
@@ -421,7 +421,7 @@ colMeans(a)
 colMeans(b)
 colMeans(c)
 
-png("Figures/corr_RFX.png")
+png("Manuscript/Figures/corr_RFX.png")
 par(mar=c(0,1,0,10),oma=c(0,2,0,2))
 layout(matrix(c(1,2,3),ncol = 3, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9))
 corrplot(a, method = "shade", col.lim = c(0,1), addCoef.col = T)
@@ -444,14 +444,14 @@ for(i in 1:n_draws){
   }
 }
 # Overlay Plots
-png(file = "Figures/surv_post.png")
+png(file = "Manuscript/Figures/surv_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_dens_overlay_grouped(y,surv_sim,group = ant)
 dev.off()
 # Convergence Plots
-png(file = "Figures/surv_conv.png")
+png(file = "Manuscript/Figures/surv_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))
 dev.off()
 
 
@@ -511,7 +511,7 @@ surv_plot_vac <- y_vac_subset_surv %>%
             N = length(logsize_t))
 surv_plot_vac$N_mod <- log(surv_plot_vac$N)
 ## Plot the survival rates of cacti across size with different ant partners
-png("Figures/survival_plot.png")
+png("Manuscript/Figures/survival_plot.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
 # Crem
@@ -560,12 +560,12 @@ for(i in 1:n_draws){
   }
 }
 ## Plot the posterior distributions
-png("Figures/flow_post.png")
+png("Manuscript/Figures/flow_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_dens_overlay(y, flow_sim)
 dev.off()
 ## Convergence Plots
-png(file = "Figures/flow_conv.png")
+png(file = "Manuscript/Figures/flow_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_flow, pars=c("beta0", "beta1","phi")))
 dev.off()
@@ -585,7 +585,7 @@ flow_plot <- flower_data %>%
             N = length(logsize_t),
             N_mod = log(N))
 ## Plot the mean estimate of how many flowers are produced based on the size of the plant alongside the real data and teh estimation errors
-png("Figures/flow.png")
+png("Manuscript/Figures/flow.png")
 par(mar=c(4,4,1,1))
 plot(x = size_dummy  ,y = exp(percentiles(.5)), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,100), xlab = " ", ylab = " ")
 points(flow_plot$mean_size,flow_plot$tot,pch=16,cex=flow_plot$N_mod,col= alpha("chartreuse4", 0.4))
@@ -613,12 +613,12 @@ for(i in 1:n_draws){
   }
 }
 # Plot the posterior distributions
-png("Figures/viab_post.png")
+png("Manuscript/Figures/viab_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_dens_overlay_grouped(y, viab_sim, group = ant)
 dev.off()
 # Convergence Plots
-png(file = "Figures/viab_conv.png")
+png(file = "Manuscript/Figures/viab_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
 dev.off()
@@ -655,8 +655,8 @@ dev.off()
 
 viab_out<-rstan::extract(readRDS(paste0(mcmc_dir,"fit_viab.rds")))
 alpha_val<-0.15
-pdf("Manuscript/Figures/viab_v2.pdf",height=5,width=5)
-plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4,xlim=c(1,4.25))
+png("Manuscript/Figures/viab.png")
+plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="",ylab="",cex.lab=1.4,xlim=c(1,4.25))
 points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
        cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
        col=alpha(cremcol,alpha_val),pch=16)
@@ -682,7 +682,8 @@ lines(rep(4.25,2),quantile(invlogit(viab_out$beta0[,4]),probs=c(0.025,.975)),
       lwd=3,col=vaccol)
 points(4.25,mean(invlogit(viab_out$beta0[,4])),col=vaccol,pch=15,cex=1.5)
 axis(1,at=1:4,labels=c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Other","Vacant"))
-mtext("Flowerbud viability", side = 2, line = 1, cex=1.4)
+mtext("Log(Volume)",side=1,line=-1.5,outer=TRUE,cex=1.7)
+mtext("Flowerbud Viability",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
 box()
 dev.off()
 ## min buds is 1, max is 264
@@ -714,7 +715,7 @@ lines(rep(4.25,2),quantile(invlogit(viab_out$beta0[,4]),probs=c(0.025,.975)),
       lwd=3,col=vaccol)
 points(4.25,mean(invlogit(viab_out$beta0[,4])),col=vaccol,pch=15,cex=1.5)
 axis(1,at=1:4,labels=c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Other","Vacant"))
-mtext("Flowerbud viability", side = 2, line = 1, cex=1.4)
+mtext("Flowerbud viability", side = 2, line = 1, cex=1.7)
 box()
 dev.off()
 
@@ -731,12 +732,12 @@ for(i in 1:n_draws){
   }
 }
 # Plot the posterior distributions
-png("Figures/repro_post.png")
+png("Manuscript/Figures/repro_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_dens_overlay(y, repro_sim)
 dev.off()
 # Convergence Plots
-png(file = "Figures/repro_conv.png")
+png(file = "Manuscript/Figures/repro_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_repro, pars=c("beta0","beta1")))
 dev.off()
@@ -750,14 +751,16 @@ percentiles <- function(percent){
 }
 # Create a subset which includes the necessary data
 ## Panel Plot showing the probability of reproducing across sizes with the error
-png("Figures/repro_panel.png")
-plot(x = (size_dummy)  ,y = invlogit(percentiles(.5)), type = "l", col = "chartreuse4",ylim = c(0,1),  lwd = 4,xlab = "Log(Volume)",ylab = "Reproduction Rate")
+png("Manuscript/Figures/repro_panel.png")
+plot(x = (size_dummy)  ,y = invlogit(percentiles(.5)), type = "l", col = "chartreuse4",ylim = c(0,1),  lwd = 4,xlab = "",ylab = "")
 points(x = stan_data_repro$vol, y =as.numeric(stan_data_repro$y_repro))
 lines(x = (size_dummy)  ,y = invlogit(percentiles(.5)), type = "l", col = "chartreuse4", lwd = 4)
 lines(x = (size_dummy), y = invlogit(percentiles(.05)), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 lines(x = (size_dummy), y = invlogit(percentiles(.95)), type = "l", col = "darkgrey", lty = 2, lwd = 2)
 polygon(c((size_dummy),rev((size_dummy))),c(invlogit(percentiles(.95)), rev(invlogit(percentiles(.05)))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
+mtext("Log(Volume)",side=1,line=-2,outer=TRUE,cex=1.7)
+mtext("Reproduction Rate",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
 dev.off()
 
 
@@ -776,12 +779,12 @@ for(i in 1:n_draws){
   }
 }
 # Overlay Plots
-png(file = "Figures/seed_post.png")
+png(file = "Manuscript/Figures/seed_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_dens_overlay_grouped(y,seed_sim,group = ant)
 dev.off()
 # Convergence Plots
-png(file = "Figures/seed_conv.png")
+png(file = "Manuscript/Figures/seed_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_seed, pars=c("beta0")))
 dev.off()
@@ -792,11 +795,13 @@ subset_crem <- subset(seed_data, seed_data$ant_state == "Crem")
 subset_liom <- subset(seed_data, seed_data$ant_state == "Liom")
 subset_vac <- subset(seed_data, seed_data$ant_state == "Vacant")
 ## Plot the number of seeds produced
-crem_num <- exp(params$seed_beta01)
-liom_num <- exp(params$seed_beta02)
-vac_num <- exp(params$seed_beta03)
-png("Figures/num_seeds.png")
-boxplot(cbind(crem_num,liom_num,vac_num), col = c(cremcol,liomcol,vaccol), ylab = "Number of Seeds Per Fruit", xtext = c("crem","liom","vac"))
+crem <- exp(params$seed_beta01)
+liom <- exp(params$seed_beta02)
+vac <- exp(params$seed_beta03)
+png("Manuscript/Figures/num_seeds.png")
+boxplot(cbind(crem,liom,vac), col = c(cremcol,liomcol,vaccol), ylab = "", xtext = c("crem","liom","vac"))
+mtext("Ant Partner",side=1,line=-2,outer=TRUE,cex=1.7)
+mtext("Number of Seeds Per Fruit",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
 dev.off()
 ################################################################################
 ## Fruit Survival Model Visuals
@@ -812,12 +817,12 @@ for(i in 1:n_draws){
   }
 }
 # Plot the posterior distributions
-png("Figures/fruit_post.png")
+png("Manuscript/Figures/fruit_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::ppc_dens_overlay(y, fruit_sim)
 dev.off()
 # Convergence Plots
-png(file = "Figures/fruit_conv.png")
+png(file = "Manuscript/Figures/fruit_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_fruit, pars=c("beta0")))
 dev.off()
@@ -826,8 +831,8 @@ dev.off()
 # calculate the viability rates of the real data
 fruit_data$viab <- fruit_data$Fr.on.plant/(fruit_data$Fr.on.grnd + fruit_data$Fr.on.plant)
 ## Plot the histograms of the actual data alongside the mean estimates of viability rates by ant state
-png("Figures/fruit_hist.png")
-hist(fruit_data$viab, xlim = c(0.5,1), prob = TRUE, ylim = c(0,30), col = vaccol, cex.main = 2, xlab = "",ylab = "",main = "d)                                           Vacant                                               ")
+png("Manuscript/Figures/fruit_hist.png")
+hist(fruit_data$viab, xlim = c(0.5,1), prob = TRUE, ylim = c(0,30), col = vaccol, cex.main = 2, xlab = "",ylab = "",main = "")
 lines(density(invlogit(fruit.params$beta0)), lwd = 3, col = vaccol) 
 mtext("Proportion of Surviving Fruit",side=1,line=-1.5,outer=TRUE,cex=2)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
@@ -839,7 +844,7 @@ dev.off()
 ################################################################################
 ## Visualize the outputs of the model -- trace plots to check convergence, overlay plots to check the fit
 # Convergence Plots
-png(file = "Figures/seed_surv_conv.png")
+png(file = "Manuscript/Figures/seed_surv_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_seed_surv, pars=c("beta0")))
 dev.off()
@@ -850,10 +855,12 @@ y_surv = pre.seed.params$beta0
 y_low_surv = quantile(pre.seed.params$beta0,0.05) 
 y_high_surv = quantile(pre.seed.params$beta0,0.95)
 ## Plot the precensus survival estimated by the model with the precensus survival of real data
-png("Figures/seed_surv.png")
-plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "Pre-census Survival Probability", ylab = "Density",main = "Probability of Seedlings\nSurviving to Census")
+png("Manuscript/Figures/seed_surv.png")
+plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "", ylab = "",main = "")
 abline(v = mean(precensus.dat$survive0405), lty = 2)
 legend("topright",legend = c("Predicted Pre-census Survival","Real Pre-census Survival"), col = c("chartreuse4","black"), pch = 16)
+mtext("Pre-census Survival Probability",side=1,line=-1.5,outer=TRUE,cex=2)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
 
@@ -864,11 +871,11 @@ dev.off()
 ################################################################################
 ## Visualize the outputs of the model -- trace plots to check convergence, overlay plots to check the fit
 # Convergence Plots
-png(file = "Figures/germ1_conv.png")
+png(file = "Manuscript/Figures/germ1_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_germ1, pars=c("beta0")))
 dev.off()
-png(file = "Figures/germ2_conv.png")
+png(file = "Manuscript/Figures/germ2_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_germ2, pars=c("beta0")))
 dev.off()
@@ -879,9 +886,11 @@ y_germ1 <- stan_data_germ1$y_germ/stan_data_germ1$trials
 y_germ2 <- stan_data_germ2$y_germ/stan_data_germ2$trials
 germ <- cbind(y_germ1,y_germ2)
 colnames(germ) <- c("Year 1","Year 2")
-png("Figures/germination.png")
+png("Manuscript/Figures/germination.png")
 boxplot((germ), col = "chartreuse4", names.arg = c("Yr 1","Yr 2"),
-        xlab = "Year in Seedbank", ylab = "Probability of Germinating", main = "Seeds Are More Likely to \n Germinate in Year 1")
+        xlab = "", ylab = "", main = "")
+mtext("Year in Seedbank",side=1,line=-1.5,outer=TRUE,cex=2)
+mtext("Probability of Germinating",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
 
@@ -890,15 +899,16 @@ dev.off()
 ################################################################################
 ## Visualize the outputs of the model -- trace plots to check convergence, overlay plots to check the fit
 # Convergence Plots
-png(file = "Figures/rec_conv.png")
+png(file = "Manuscript/Figures/rec_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_rec, pars=c("beta0")))
 dev.off()
 
 
 ## Plot the Recruit size distribution
-png("Figures/rec_size.png")
-boxplot(rec.params$beta0, col = "chartreuse4", ylab = "Log(Volume)", main = "Recruit Size Distribution")
+png("Manuscript/Figures/rec_size.png")
+boxplot(rec.params$beta0, col = "chartreuse4", ylab = "", main = "", xlab = "")
+mtext("Log(Volume)",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
 
@@ -907,7 +917,7 @@ dev.off()
 ################################################################################
 ## Visualize the outputs of the model -- trace plots to check convergence, overlay plots to check the fit
 # Convergence Plots
-png(file = "Figures/multi_conv.png")
+png(file = "Manuscript/Figures/multi_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("beta")))
 dev.off()
@@ -1067,7 +1077,7 @@ pred_vac<-cbind(
   exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))/Denominator_vac)
 sum(pred_vac[1,])
 ## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
-png("Figures/multi_ants_size.png")
+png("Manuscript/Figures/multi_ants_size.png")
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4),
               ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
@@ -1091,7 +1101,6 @@ points(multi_plot_other$mean_size,multi_plot_other$ant_t1_crem,pch=16,cex=multi_
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_plot_other$N_mod,col= alpha(liomcol, 0.4))
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
-legend("topleft",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1.5)
 # Prev Crem
 plot(size_dummy, pred_crem[,4], type = "l", col = vaccol,main = "c)              Prev. Crem.                ", ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 1.5)
@@ -1102,6 +1111,7 @@ points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_crem,pch=16,cex=multi_pl
 points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_liom,pch=16,cex=multi_plot_crem$N_mod,col= alpha(liomcol, 0.4))
 points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_plot_crem$N_mod,col= alpha(othercol, 0.4))
 points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
+legend("topright",c("vacant","other","crem.","liom."), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1.5)
 # Prev Liom
 plot(size_dummy, pred_liom[,4], type = "l", col = vaccol,main = "d)              Prev. Liom.                 ", ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 1.5)
@@ -1336,7 +1346,7 @@ ant_freq_ts <- cactus %>%
   group_by(Year_t,ant_t) %>% 
   summarise(n = n()) %>% 
   mutate(freq = n / sum(n))
-png("Timeseries.png")
+png("Manuscript/Figures/Timeseries.png")
 plot(ant_freq_ts$Year_t[ant_freq_ts$ant_t == "crem"], ant_freq_ts$freq[ant_freq_ts$ant_t == "crem"], 
      type = "b",pch = 20, cex = 3,col = cremcol, ylim =c(0,1),
      xlab = "", ylab = "")

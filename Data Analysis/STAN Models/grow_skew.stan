@@ -18,21 +18,21 @@ parameters {
   vector[K] beta1;            // interaction size and ant beta
   vector[K] beta2;            // polynomial size and ant beta
   vector[N_Plot] u;           // Plot random effects
-  vector[K] d_0;
-  vector[K] a_0;
-  vector[K] d_size;
-  vector[K] a_size;
+  // vector[K] d_0;
+  // vector[K] a_0;
+  // vector[K] d_size;
+  // vector[K] a_size;
   //real beta0;
   //real beta1;
   //real beta2;
   real < lower = 0 > sigma_w; // year SD
   real < lower = 0 > sigma_u; // plot SD
-  //real d_0;                   // scale intercept
-  //real d_size;                // scale size
-  //real d_size2;
-  //real a_0;                   // skew intercept
-  //real a_size;                // skew size
-  //real a_size2;
+  real d_0;                   // scale intercept
+  real d_size;                // scale size
+  real d_size2;
+  real a_0;                   // skew intercept
+  real a_size;                // skew size
+  real a_size2;
   //real < lower = 0 > omega;
   }
 
@@ -44,8 +44,10 @@ transformed parameters{
   for(i in 1:N){
     //xi[i] = beta0 + beta1 * vol[i];
     xi[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + beta2[ant[i]] * vol2[i] + u[plot[i]] + w[ant[i],year[i]];
-    omega[i] = exp(d_0[ant[i]] + d_size[ant[i]] * vol[i]);// + d_size2 * vol2[i]);
-    alpha[i] = a_0[ant[i]] + a_size[ant[i]] * vol[i];// + a_size2 * vol2[i];
+    //omega[i] = exp(d_0[ant[i]] + d_size[ant[i]] * vol[i]);// + d_size2 * vol2[i]);
+    //alpha[i] = a_0[ant[i]] + a_size[ant[i]] * vol[i];// + a_size2 * vol2[i];
+    omega[i] = exp(d_0 + d_size * vol[i]);
+    alpha[i] = a_0 + a_size * vol[i]
   } // beta2[ant[i]] * vol2[i] + 
 }
 model {
@@ -55,10 +57,10 @@ model {
      w[i,] ~ normal(0,sigma_w);    // year random effects
    }
   beta0 ~ normal(0,3);          // ant beta
-  beta1 ~ normal(0,3);          // size & ant beta
-  beta2 ~ normal(0,3);          // size & ant beta second order
+  beta1 ~ normal(1,1);          // size & ant beta
+  beta2 ~ normal(0,1);          // size & ant beta second order
   d_0 ~ normal(0, 3);           // intercept sd 
-  d_size ~ normal(0, 3);        // size sd
+  d_size ~ normal(0,3);        // size sd
   a_0 ~ normal(0, 3);           // intercept skew 
   a_size ~ normal(0, 3);        // size skew
   y ~ skew_normal(xi,omega,alpha);

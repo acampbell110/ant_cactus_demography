@@ -2119,8 +2119,8 @@ colMeans(t3)
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
 transition.x <- function(x,i,j,params,scenario){
-  one <- transition.1.freq(x,i,j,params,scenario)
-  two <- transition.2.freq(x,i,j,params,scenario)
+  one <- transition.1.comp(x,i,j,params,scenario)
+  two <- transition.2.comp(x,i,j,params,scenario)
   three <- transition.3(x,i,j,params)
   if(scenario == "cremvac"){return(one)}
   if(scenario == "liomvac"){return(one)}
