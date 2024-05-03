@@ -28,10 +28,10 @@ size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm 
 ################################################################################
 # Visualize the outputs of the model -- trace plots to check conve4rgence, data moments to check fit
 png("Manuscript/Figures/grow_conv_skew.png")
-bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0[1]","d_0[2]","d_0[3]","d_0[4]",
-                                           "d_size[1]","d_size[2]","d_size[3]","d_size[4]",
-                                           "a_0[1]","a_0[2]","a_0[3]","a_0[4]",
-                                           "a_size[1]","a_size[2]","a_size[3]","a_size[4]",
+bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0",
+                                           "d_size",
+                                           "a_0",
+                                           "a_size",
                                            "beta0[1]","beta0[2]","beta0[3]","beta0[4]",
                                            "beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
 dev.off()
@@ -96,14 +96,16 @@ y_liom_subset_grow <- subset(y_subset, ant_t == "liom")
 y_vac_subset_grow <- subset(y_subset, ant_t == "vacant")
 y_other_subset_grow <- subset(y_subset, ant_t == "other")
 ## Predicted sizes for each partner condition
-omega_crem <- exp(mean(params$grow_sig01) + size_dummy * mean(params$grow_sig11))
-omega_liom <- exp(mean(params$grow_sig02) + size_dummy * mean(params$grow_sig12))
-omega_other <- exp(mean(params$grow_sig03) + size_dummy * mean(params$grow_sig13))
-omega_vac <- exp(mean(params$grow_sig04) + size_dummy * mean(params$grow_sig14))
-alpha_crem <- mean(params$grow_alp01) + size_dummy * mean(params$grow_alp11)
-alpha_liom <- mean(params$grow_alp02) + size_dummy * mean(params$grow_alp12)
-alpha_other <- mean(params$grow_alp03) + size_dummy * mean(params$grow_alp13)
-alpha_vac <- mean(params$grow_alp04) + size_dummy * mean(params$grow_alp14)
+omega <- exp(mean(params$grow_sig0) + size_dummy*mean(params$grow_sig1))
+alpha <- exp(mean(params$grow_alp0) + size_dummy*mean(params$grow_alp1))
+# omega_crem <- exp(mean(params$grow_sig01) + size_dummy * mean(params$grow_sig11))
+# omega_liom <- exp(mean(params$grow_sig02) + size_dummy * mean(params$grow_sig12))
+# omega_other <- exp(mean(params$grow_sig03) + size_dummy * mean(params$grow_sig13))
+# omega_vac <- exp(mean(params$grow_sig04) + size_dummy * mean(params$grow_sig14))
+# alpha_crem <- mean(params$grow_alp01) + size_dummy * mean(params$grow_alp11)
+# alpha_liom <- mean(params$grow_alp02) + size_dummy * mean(params$grow_alp12)
+# alpha_other <- mean(params$grow_alp03) + size_dummy * mean(params$grow_alp13)
+# alpha_vac <- mean(params$grow_alp04) + size_dummy * mean(params$grow_alp14)
 # Other
 y_other_mean_grow <- mean(params$grow_beta03) + (size_dummy) * mean(params$grow_beta13 ) + (size_dummy)^2 * mean(params$grow_beta23)
 # Crem
@@ -113,10 +115,10 @@ y_liom_mean_grow <- mean(params$grow_beta02) + (size_dummy) * mean(params$grow_b
 # Vac
 y_vac_mean_grow <-  mean(params$grow_beta04) + (size_dummy) * mean(params$grow_beta14) + (size_dummy)^2 * mean(params$grow_beta24)
 
-other_mean <- y_other_mean_grow + omega_other * (alpha_other/(sqrt(1 + alpha_other^2)) * (sqrt(2/pi)))
-crem_mean <- y_crem_mean_grow + omega_crem * (alpha_crem/(sqrt(1 + alpha_crem^2)) * (sqrt(2/pi)))
-liom_mean <- y_liom_mean_grow + omega_liom * (alpha_liom/(sqrt(1 + alpha_liom^2)) * (sqrt(2/pi)))
-vac_mean <- y_vac_mean_grow + omega_vac * (alpha_vac/(sqrt(1 + alpha_vac^2)) * (sqrt(2/pi)))
+other_mean <- y_other_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
+crem_mean <- y_crem_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
+liom_mean <- y_liom_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
+vac_mean <- y_vac_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
 
 ## Create a contour plot which shows the full fit of the growth model rather than just the mean
 x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
@@ -125,59 +127,59 @@ y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), len
 # other <- outer (
 #   y,     # First dimension:  the columns (y)
 #   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,3],0.5) + quantile(grow.params$beta1[,3],0.5)*x + quantile(grow.params$beta2[,3],0.5)*x^2, 
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
+#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,3],0.5) + quantile(grow.params$beta1[,3],0.5)*x + quantile(grow.params$beta2[,3],0.5)*x^2,
+#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
 #                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 # );
 # vacant <- outer (
 #   y,     # First dimension:  the columns (y)
 #   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,4],0.5) + quantile(grow.params$beta1[,4],0.5)*x + quantile(grow.params$beta2[,4],0.5)*x^2, 
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
+#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,4],0.5) + quantile(grow.params$beta1[,4],0.5)*x + quantile(grow.params$beta2[,4],0.5)*x^2,
+#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
 #                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 # );
 # liom <- outer (
 #   y,     # First dimension:  the columns (y)
 #   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,2],0.5) + quantile(grow.params$beta1[,2],0.5)*x + quantile(grow.params$beta2[,2],0.5)*x^2, 
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
+#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,2],0.5) + quantile(grow.params$beta1[,2],0.5)*x + quantile(grow.params$beta2[,2],0.5)*x^2,
+#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
 #                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 # );
 # crem <- outer (
 #   y,     # First dimension:  the columns (y)
 #   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,1],0.5) + quantile(grow.params$beta1[,1],0.5)*x + quantile(grow.params$beta2[,1],0.5)*x^2, 
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
+#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,1],0.5) + quantile(grow.params$beta1[,1],0.5)*x + quantile(grow.params$beta2[,1],0.5)*x^2,
+#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
 #                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 # );
 ## Skew Kernels
 other <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=mean(params$grow_beta03) + mean(params$grow_beta13)*x + mean(params$grow_beta23)*x^2, 
-                         omega = exp(mean(params$grow_sig03) + x * mean(params$grow_sig13)), 
-                         alpha = (mean(params$grow_alp03) + x * mean(params$grow_alp13)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta03) + mean(params$grow_beta13)*x + mean(params$grow_beta23)*x^2,
+                         omega = exp(mean(params$grow_sig0) + x * mean(params$grow_sig1)),
+                         alpha = (mean(params$grow_alp0) + x * mean(params$grow_alp1)))
 );
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*x + mean(params$grow_beta24)*x^2, 
-                        omega = exp(mean(params$grow_sig04) + x * mean(params$grow_sig14)), 
-                        alpha = (mean(params$grow_alp04) + x * mean(params$grow_alp14)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*x + mean(params$grow_beta24)*x^2,
+                        omega = exp(mean(params$grow_sig0) + x * mean(params$grow_sig1)),
+                        alpha = (mean(params$grow_alp0) + x * mean(params$grow_alp1)))
 );
 liom <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=mean(params$grow_beta02) + mean(params$grow_beta12)*x + mean(params$grow_beta22)*x^2, 
-                        omega = exp(mean(params$grow_sig02) + x * mean(params$grow_sig12)), 
-                        alpha = (mean(params$grow_alp02) + x * mean(params$grow_alp12)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta02) + mean(params$grow_beta12)*x + mean(params$grow_beta22)*x^2,
+                        omega = exp(mean(params$grow_sig0) + x * mean(params$grow_sig1)),
+                        alpha = (mean(params$grow_alp0) + x * mean(params$grow_alp1)))
 );
 crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*x + mean(params$grow_beta21)*x^2, 
-                        omega = exp(mean(params$grow_sig01) + x * mean(params$grow_sig11)), 
-                        alpha = (mean(params$grow_alp01) + x * mean(params$grow_alp11)))
+  function (x, y)   dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*x + mean(params$grow_beta21)*x^2,
+                        omega = exp(mean(params$grow_sig0) + x * mean(params$grow_sig1)),
+                        alpha = (mean(params$grow_alp0) + x * mean(params$grow_alp1)))
 );
 # ## Skew Kernels -- No Ant
 # y_grow <-  quantile(grow.params$beta0,0.5) + (size_dummy) * quantile(grow.params$beta1,0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
@@ -185,7 +187,7 @@ crem <- outer (
 #   y,     # First dimension:  the columns (y)
 #   x,     # Second dimension: the rows    (x)
 #   function (x, y)   dsn(y,xi=quantile(grow.params$beta0,0.5) + quantile(grow.params$beta1,0.5)*x,
-#                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)), 
+#                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
 #                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
 # );
 # png("Figures/grow_skew_no_ant.png")
@@ -201,28 +203,28 @@ par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
 # Crem
-contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15), 
-        main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black") 
+contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15),
+        main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black")
 points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
 lines(size_dummy, crem_mean, col = cremcol, lwd = 2)
 # Liom
-contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
-        main = "b)      Liom.                ", cex.main = 2, lwd = 1.5) 
+contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+        main = "b)      Liom.                ", cex.main = 2, lwd = 1.5)
 points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
 lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
 # Other
-contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
-        main = "c)       Other                ", cex.main = 2, lwd = 1.5) 
+contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+        main = "c)       Other                ", cex.main = 2, lwd = 1.5)
 points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
 lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
 # Vacant
-contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15), 
-        main = "d)      Vacant                ", cex.main = 2, lwd = 1.5) 
+contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+        main = "d)      Vacant                ", cex.main = 2, lwd = 1.5)
 points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
 # All together
-plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(10,15), ylim = c(10,15), 
-     main = "e)                      All Ants                           ", cex.main = 2) 
+plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(10,15), ylim = c(10,15),
+     main = "e)                      All Ants                           ", cex.main = 2)
 lines(size_dummy, liom_mean, col = liomcol, lwd = 3)
 lines(size_dummy, other_mean, col = othercol, lwd = 3)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 3)
