@@ -2892,7 +2892,7 @@ lambdaSim=function(params,                                  ## parameters
     r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),1,replace = TRUE,prob = NULL)
     
     ## Create and store matrix
-    K_t[,]<-bigmatrix(params_mean,scenario,lower,upper,floor,ceiling,matsize,
+    K_t[,]<-bigmatrix(params,scenario,lower,upper,floor,ceiling,matsize,
                       grow_rfx1[r],grow_rfx2[r],grow_rfx3[r],grow_rfx4[r],
                       surv_rfx1[r],surv_rfx2[r],surv_rfx3[r],surv_rfx4[r],
                       flow_rfx[r],
@@ -2916,4 +2916,20 @@ lambdaSim=function(params,                                  ## parameters
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
+lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize, 
+          grow_rfx1 = grow_rfx1[m,],
+          grow_rfx2 = grow_rfx2[m,],
+          grow_rfx3 = grow_rfx3[m,],
+          grow_rfx4 = grow_rfx4[m,],
+          surv_rfx1 = surv_rfx1[m,],
+          surv_rfx2 = surv_rfx2[m,],
+          surv_rfx3 = surv_rfx3[m,],
+          surv_rfx4 = surv_rfx4[m,],
+          flow_rfx = flow_rfx[m,],
+          repro_rfx = repro_rfx[m,],
+          viab_rfx1 = viab_rfx1[m,],
+          viab_rfx2 = viab_rfx2[m,],
+          viab_rfx3 = viab_rfx3[m,],
+          viab_rfx4 = viab_rfx4[m,],## viability model year rfx
+          max_yrs = max_yrs   )
 

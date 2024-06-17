@@ -248,14 +248,13 @@ dev.off()
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 max_scenario = length(scenario)
 # Choose the number of parameter iterations 
-max_rep = 1 ## Posterior Draws from vital rate models
+max_rep = 100 ## Posterior Draws from vital rate models
 # Choose the number of years for stochasticity
-max_yrs = 1 ## Years of randomly sampled annual effects
+max_yrs = 100 ## Years of randomly sampled annual effects
 # Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
 # Rows correspond to parameter iterations
 # Columns correspond to partner scenarios
 lams_stoch <- matrix(nrow = max_rep, ncol = max_scenario)
-mats <- list()
 for(n in 1:max_scenario){
   print(scenario[n])
   for(m in 1:max_rep){
@@ -281,12 +280,12 @@ for(n in 1:max_scenario){
                                viab_rfx3 = viab_rfx3[m,],
                                viab_rfx4 = viab_rfx4[m,],## viability model year rfx
                                max_yrs = max_yrs        ## the # years you want to iterate
-                               )$lambdaS
+                               )
   }
 }
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_stoch) <- scenario
-write.csv(lams_stoch,"stoch_post_lambda.csv")
+write.csv(lams_stoch,"stoch_freq_lambda.csv")
 
 
 ################################################################################
