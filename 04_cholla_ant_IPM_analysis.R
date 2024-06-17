@@ -285,7 +285,7 @@ for(n in 1:max_scenario){
 }
 # Set the names of each column to the corresponding partner scenario and save the results as a csv
 colnames(lams_stoch) <- scenario
-write.csv(lams_stoch,"stoch_freq_lambda.csv")
+write.csv(lams_stoch,"stoch_null_comp_lambda.csv")
 
 
 ################################################################################

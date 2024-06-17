@@ -32,14 +32,15 @@ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism proj
 #Tom
 #mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
-#mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters
 # growth model
+mcmc_dir <- "/Users/Labuser/Desktop/Model_Reads/"
 fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
 grow.params <- rstan::extract(fit_grow_skew, permuted = F)
 grow.params <- grow.params[,c(2),]
-# fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
-# grow.params.null <- rstan::extract(fit_grow_skew_null)
+fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
+grow.params.null <- rstan::extract(fit_grow_skew_null)
 # fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
 # grow.params <- rstan::extract(fit_grow_stud)
 # fit_grow_stud_null<-readRDS(paste0(mcmc_dir,"fit_grow_student_t_null.rds"))
@@ -184,13 +185,16 @@ grow_rfx4 <- cbind(grow.params[draws,"w[4,1]"],grow.params[draws,"w[4,2]"],
                    grow.params[draws,"w[4,11]"],grow.params[draws,"w[4,12]"],
                    grow.params[draws,"w[4,13]"],grow.params[draws,"w[4,14]"],
                    rep(0,N_draws),grow.params[draws,"w[4,15]"],grow.params[draws,"w[4,16]"])
-# Non ant specific
+# Non ant specific -- Only run for the Stochastic Null Version
 grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
                    grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
                    grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
                    grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
                    rep(0,N_draws),rep(0,N_draws))
-
+grow_rfx1 <- grow_rfx
+grow_rfx2 <- grow_rfx
+grow_rfx3 <- grow_rfx
+grow_rfx4 <- grow_rfx
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -234,12 +238,16 @@ surv_rfx4 <- cbind(surv.params$w[draws,4,1],surv.params$w[draws,4,2],surv.params
                    surv.params$w[draws,4,8],surv.params$w[draws,4,9],surv.params$w[draws,4,10],surv.params$w[draws,4,11],
                    surv.params$w[draws,4,12],surv.params$w[draws,4,13],surv.params$w[draws,4,14],rep(0,N_draws),
                    surv.params$w[draws,4,15],surv.params$w[draws,4,16])
-# Non ant specific
+# Non ant specific -- Only run for the Stochastic Null Version
 surv_rfx <- cbind(surv.params.null$w[draws,1],surv.params.null$w[draws,2],surv.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
                   surv.params.null$w[draws,4],surv.params.null$w[draws,5],surv.params.null$w[draws,6],surv.params.null$w[draws,7],
                   surv.params.null$w[draws,8],surv.params.null$w[draws,9],surv.params.null$w[draws,10],surv.params.null$w[draws,11],
                   surv.params.null$w[draws,12],surv.params.null$w[draws,13],surv.params.null$w[draws,14],rep(0,N_draws),
                   surv.params.null$w[draws,15],surv.params.null$w[draws,16])
+surv_rfx1 <- surv_rfx
+surv_rfx2 <- surv_rfx
+surv_rfx3 <- surv_rfx
+surv_rfx4 <- surv_rfx
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
 #head(flow.params)
@@ -308,11 +316,16 @@ viab_rfx4 <- cbind(viab.params$w[draws,4,1],viab.params$w[draws,4,2],viab.params
                    viab.params$w[draws,4,8],viab.params$w[draws,4,9],viab.params$w[draws,4,10],
                    viab.params$w[draws,4,11],rep(0,N_draws),
                    viab.params$w[draws,4,12])
+## Non-ant specific -- Onnly Run for Stochastic Null Version
 viab_rfx <- cbind(viab.params.null$w[draws,1],viab.params.null$w[draws,2],viab.params.null$w[draws,3],
                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
                   viab.params.null$w[draws,4],viab.params.null$w[draws,5],viab.params.null$w[draws,6],viab.params.null$w[draws,7],
                   viab.params.null$w[draws,8],viab.params.null$w[draws,9],viab.params.null$w[draws,10],rep(0,N_draws),
                   viab.params.null$w[draws,11],viab.params.null$w[draws,12])
+viab_rfx1 <- viab_rfx
+viab_rfx2 <- viab_rfx
+viab_rfx3 <- viab_rfx
+viab_rfx4 <- viab_rfx
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
 #head(seed.params)
@@ -426,7 +439,7 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 ## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
 ## will get a vector of probabilities.                                                               ####
 #########################################################################################################
-## Student T Growth Dist
+## Student T Growth Dist GXY function
 # gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
 #   #Transform all values below/above limits in min/max size
 #   xb=pmin(pmax(x,cholla_min),cholla_max)
@@ -450,7 +463,7 @@ invlogit<-function(x){exp(x)/(1+exp(x))}
 #   if(i == "vacant"){ return(g_vac)}
 # }
 
-## Skew Growth Dist
+## Skew Growth Dist GXY function
 gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   #Transform all values below/above limits in min/max size
   xb=pmin(pmax(x,cholla_min),cholla_max)
@@ -474,8 +487,6 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "vacant"){ return(g_vac)}
 }
 
-#gxy(x = 4,y = 3,i ="crem",params = params[1,],grow_rfx1 = grow_rfx1[1,1],grow_rfx2 = grow_rfx2[1,1],grow_rfx3 = grow_rfx3[1,1],grow_rfx4 = grow_rfx4[1,1])
-
 # # ##Check that it works properly
 # i = c("vacant","crem","liom","other")
 # x = c(-1,-5,3,4)
@@ -495,52 +506,6 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
 # g
 # l
 
-# gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
-#   #Transform all values below/above limits in min/max size
-#   xb=pmin(pmax(x,cholla_min),cholla_max)
-#   #Density probability function which uses the parameters that are ant specific
-#   g_crem = dsn(y,xi=(params$grow_beta01) + (params$grow_beta11)*xb + (params$grow_beta21)*xb^2 + grow_rfx1,
-#                omega = exp((params$grow_sig01) + (params$grow_sig11)*xb),
-#                alpha = ((params$grow_alp01) + (params$grow_alp11)*xb))
-#   g_vac = dsn(y, xi = (params$grow_beta04) + (params$grow_beta14)*xb + (params$grow_beta24)*xb^2 + grow_rfx4,
-#               omega = exp((params$grow_sig04) + (params$grow_sig14)*xb),
-#               alpha = ((params$grow_alp04) + (params$grow_alp14)*xb))
-#   g_other = dsn(y, xi = (params$grow_beta03) + (params$grow_beta13)*xb + (params$grow_beta23)*xb^2 + grow_rfx3,
-#                 omega = exp((params$grow_sig03) + (params$grow_sig13)*xb),
-#                 alpha = ((params$grow_alp03) + (params$grow_alp13)*xb))
-#   g_liom = dsn(y, xi = (params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2 + grow_rfx2,
-#                omega = exp((params$grow_sig02) + (params$grow_sig12)*xb),
-#                alpha = ((params$grow_alp02) + (params$grow_alp12)*xb))
-#   #Return the probability of growing from size x to y
-#   if(i == "crem"){ return(g_crem)}
-#   if(i == "liom"){ return(g_liom)}
-#   if(i == "other"){ return(g_other)}
-#   if(i == "vacant"){ return(g_vac)}
-# }
-
-
-# gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
-#   #Transform all values below/above limits in min/max size
-#   xb=pmin(pmax(x,cholla_min),cholla_max)
-#   #Density probability function which uses the parameters that are ant specific
-#   g_crem = dsn(y,xi=(params$grow_beta01) + (params$grow_beta11)*xb + (params$grow_beta21)*xb^2 + grow_rfx1,
-#                omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#                alpha = ((params$grow_alp0) + (params$grow_alp1)*xb))
-#   g_vac = dsn(y, xi = (params$grow_beta04) + (params$grow_beta14)*xb + (params$grow_beta24)*xb^2 + grow_rfx4,
-#               omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#               alpha = ((params$grow_alp0) + (params$grow_alp1)*xb))
-#   g_other = dsn(y, xi = (params$grow_beta03) + (params$grow_beta13)*xb + (params$grow_beta23)*xb^2 + grow_rfx3,
-#                 omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#                 alpha = ((params$grow_alp0) + (params$grow_alp1)*xb))
-#   g_liom = dsn(y, xi = (params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2 + grow_rfx2,
-#                omega = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#                alpha = ((params$grow_alp0) + (params$grow_alp1)*xb))
-#   #Return the probability of growing from size x to y
-#   if(i == "crem"){ return(g_crem)}
-#   if(i == "liom"){ return(g_liom)}
-#   if(i == "other"){ return(g_other)}
-#   if(i == "vacant"){ return(g_vac)}
-# }
 #########################################################################################################
 ## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
 ## You input the size of the cactus and ant state and in return you get the probability of surviving ####
@@ -736,23 +701,23 @@ transition.1<-function(x, i, j,params, scenario){
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
   }
 }
-
-# ## Scenario options are "liomvac", "cremvac", "othervac"
-# ## Check if it works
-i = c("vacant","vacant","liom","liom")
-j = c("liom","vacant","liom","vacant")
-x = c(15,15,15,15)
-y = c(-1,-4,4.5,3.01)
-scenario = c("liomvac","liomvac","liomvac","liomvac")
-t1 <- matrix(NA,ncol = length(i), nrow = (10))
-for(m in 1:10){
-  for(n in 1:length(i)){
-    t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario[n])
-  }
-}
-t1
-rowSums(t1)
-colMeans(t1)
+# 
+# # ## Scenario options are "liomvac", "cremvac", "othervac"
+# # ## Check if it works
+# i = c("vacant","vacant","liom","liom")
+# j = c("liom","vacant","liom","vacant")
+# x = c(15,15,15,15)
+# y = c(-1,-4,4.5,3.01)
+# scenario = c("liomvac","liomvac","liomvac","liomvac")
+# t1 <- matrix(NA,ncol = length(i), nrow = (10))
+# for(m in 1:10){
+#   for(n in 1:length(i)){
+#     t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario[n])
+#   }
+# }
+# t1
+# rowSums(t1)
+# colMeans(t1)
 
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE. One ant option
 transition.1.comp<-function(x, i, j,params, scenario){
@@ -885,21 +850,21 @@ transition.1.comp<-function(x, i, j,params, scenario){
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
   }
 }
-# ## Scenario options are "liomvac", "cremvac", "othervac"
-# ## Check if it works
-i = c("vacant","vacant","other","other")
-j = c("other","vacant","other","vacant")
-x = c(15,15,15,15)
-scenario = "othervac"
-t1_comp <- matrix(NA,ncol = length(i), nrow = (10))
-for(m in 1:10){
-  for(n in 1:length(i)){
-    t1_comp[m,n] <- transition.1.comp(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t1_comp
-rowSums(t1_comp)
-colMeans(t1_comp)
+# # ## Scenario options are "liomvac", "cremvac", "othervac"
+# # ## Check if it works
+# i = c("vacant","vacant","other","other")
+# j = c("other","vacant","other","vacant")
+# x = c(15,15,15,15)
+# scenario = "othervac"
+# t1_comp <- matrix(NA,ncol = length(i), nrow = (10))
+# for(m in 1:10){
+#   for(n in 1:length(i)){
+#     t1_comp[m,n] <- transition.1.comp(x[n],i[n],j[n],params[m,],scenario)
+#   }
+# }
+# t1_comp
+# rowSums(t1_comp)
+# colMeans(t1_comp)
 
 transition.1.freq<-function(x, i, j,params, scenario){
   #Transforms all values below/above limits in min/max size
@@ -1046,23 +1011,23 @@ transition.1.freq<-function(x, i, j,params, scenario){
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
   }
 }
-# ## Scenario options are "liomvac", "cremvac", "othervac"
-# ## Check if it works
-i = c("vacant","vacant","other","other")
-j = c("other","vacant","other","vacant")
-x = c(15,15,15,15)
-scenario = c("othervac","othervac","othervac","othervac")
-t1_freq <- matrix(NA,ncol = length(i), nrow = (10))
-for(m in 1:10){
-  for(n in 1:length(i)){
-    t1_freq[m,n] <- transition.1.freq(x[n],i[n],j[n],params[m,],scenario[n])
-  }
-}
-t1_freq
-rowSums(t1_freq)
-rowSums(t1_freq)
-rowSums(t1_comp)
-colMeans(t1)
+# # ## Scenario options are "liomvac", "cremvac", "othervac"
+# # ## Check if it works
+# i = c("vacant","vacant","other","other")
+# j = c("other","vacant","other","vacant")
+# x = c(15,15,15,15)
+# scenario = c("othervac","othervac","othervac","othervac")
+# t1_freq <- matrix(NA,ncol = length(i), nrow = (10))
+# for(m in 1:10){
+#   for(n in 1:length(i)){
+#     t1_freq[m,n] <- transition.1.freq(x[n],i[n],j[n],params[m,],scenario[n])
+#   }
+# }
+# t1_freq
+# rowSums(t1_freq)
+# rowSums(t1_freq)
+# rowSums(t1_comp)
+# colMeans(t1)
 
 ##########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (THREE STATES)
@@ -1385,21 +1350,21 @@ transition.2<-function(x, i, j, params,scenario){
  }
  
  
- # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
- # ## Check if it works
- i = c("liom","liom","liom", "vacant","vacant","vacant","other","other","other")
- j = c("vacant","liom","other","vacant","liom","other","vacant","liom","other")
- x = c(15,15,15,15,15,15,15,15,15)
- scenario = "liomvacother"
- t2_comp <- matrix(NA,ncol = length(i), nrow = (10))
- for(m in 1:10){
-   for(n in 1:length(i)){
-     t2_comp[m,n] <- transition.2.comp(x[n],i[n],j[n],params[m,],scenario)
-   }
- }
- t2_comp
- rowSums(t2_comp)
- a <- colMeans(t2_comp)
+ # # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
+ # # ## Check if it works
+ # i = c("liom","liom","liom", "vacant","vacant","vacant","other","other","other")
+ # j = c("vacant","liom","other","vacant","liom","other","vacant","liom","other")
+ # x = c(15,15,15,15,15,15,15,15,15)
+ # scenario = "liomvacother"
+ # t2_comp <- matrix(NA,ncol = length(i), nrow = (10))
+ # for(m in 1:10){
+ #   for(n in 1:length(i)){
+ #     t2_comp[m,n] <- transition.2.comp(x[n],i[n],j[n],params[m,],scenario)
+ #   }
+ # }
+ # t2_comp
+ # rowSums(t2_comp)
+ # a <- colMeans(t2_comp)
  
  
  transition.2.freq<-function(x, i, j, params,scenario){
@@ -1553,21 +1518,21 @@ transition.2<-function(x, i, j, params,scenario){
  }
  
  
- # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
- # ## Check if it works
- i = c("crem","crem","crem", "vacant","vacant","vacant","other","other","other")
- j = c("vacant","crem","other","vacant","crem","other","vacant","crem","other")
- x = c(15,15,15,15,15,15,15,15,15)
- scenario = "othercremvac"
- t2_freq <- matrix(NA,ncol = length(i), nrow = (10))
- for(m in 1:10){
-   for(n in 1:length(i)){
-     t2_freq[m,n] <- transition.2.freq(x[n],i[n],j[n],params[m,],scenario)
-   }
- }
- t2_freq
- rowSums(t2_freq)
- colMeans(t2_freq)
+ # # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
+ # # ## Check if it works
+ # i = c("crem","crem","crem", "vacant","vacant","vacant","other","other","other")
+ # j = c("vacant","crem","other","vacant","crem","other","vacant","crem","other")
+ # x = c(15,15,15,15,15,15,15,15,15)
+ # scenario = "othercremvac"
+ # t2_freq <- matrix(NA,ncol = length(i), nrow = (10))
+ # for(m in 1:10){
+ #   for(n in 1:length(i)){
+ #     t2_freq[m,n] <- transition.2.freq(x[n],i[n],j[n],params[m,],scenario)
+ #   }
+ # }
+ # t2_freq
+ # rowSums(t2_freq)
+ # colMeans(t2_freq)
 
 
 transition.2.equal<-function(x, i, j, params,scenario){
@@ -1860,22 +1825,22 @@ transition.2.equal<-function(x, i, j, params,scenario){
 }
 
 
-# ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
-# ## Check if it works
-i = c("liom","liom","liom", "vacant","vacant","vacant","other","other","other")
-j = c("vacant","liom","other","vacant","liom","other","vacant","liom","other")
-x = c(15,15,15,15,15,15,15,15,15)
-scenario = "liomvacother"
-t2_comp <- matrix(NA,ncol = length(i), nrow = (10))
-for(m in 1:10){
-  for(n in 1:length(i)){
-    t2_comp[m,n] <- transition.2.comp(x[n],i[n],j[n],params[m,],scenario)
-  }
-}
-t2_comp
-rowSums(t2_comp)
-colMeans(t2_comp)
-a
+# # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
+# # ## Check if it works
+# i = c("liom","liom","liom", "vacant","vacant","vacant","other","other","other")
+# j = c("vacant","liom","other","vacant","liom","other","vacant","liom","other")
+# x = c(15,15,15,15,15,15,15,15,15)
+# scenario = "liomvacother"
+# t2_comp <- matrix(NA,ncol = length(i), nrow = (10))
+# for(m in 1:10){
+#   for(n in 1:length(i)){
+#     t2_comp[m,n] <- transition.2.comp(x[n],i[n],j[n],params[m,],scenario)
+#   }
+# }
+# t2_comp
+# rowSums(t2_comp)
+# colMeans(t2_comp)
+# a
 #######################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)
 transition.3<-function(x, i, j,params){
@@ -1933,19 +1898,19 @@ transition.3<-function(x, i, j,params){
   if(i == "vacant" & j == "crem"){return(vac_crem)}
   if(i == "vacant" & j == "vacant"){return(vac_vac)}
 }
-## Chekc if it works
-i = c("liom","liom","liom","liom")
-j = c("vacant","liom","other","crem")
-x = c(5,5,5,5)
-t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
-  }
-}
-t3
-rowSums(t3)
-colMeans(t3)
+# ## Chekc if it works
+# i = c("liom","liom","liom","liom")
+# j = c("vacant","liom","other","crem")
+# x = c(5,5,5,5)
+# t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
+#   }
+# }
+# t3
+# rowSums(t3)
+# colMeans(t3)
 
 transition.3.equal<-function(x, i, j,params){
   xb=pmin(pmax(x,cholla_min),cholla_max)
@@ -2114,25 +2079,25 @@ transition.3.equal<-function(x, i, j,params){
   if(i == "vacant" & j == "crem"){return(vac_crem)}
   if(i == "vacant" & j == "vacant"){return(vac_vac)}
 }
-## Chekc if it works
-i = c("liom","liom","liom","liom")
-j = c("vacant","liom","other","crem")
-x = c(5,5,5,5)
-t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
-for(m in 1:nrow(params)){
-  for(n in 1:length(i)){
-    t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
-  }
-}
-t3
-rowSums(t3)
-colMeans(t3)
+# ## Chekc if it works
+# i = c("liom","liom","liom","liom")
+# j = c("vacant","liom","other","crem")
+# x = c(5,5,5,5)
+# t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
+# for(m in 1:nrow(params)){
+#   for(n in 1:length(i)){
+#     t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
+#   }
+# }
+# t3
+# rowSums(t3)
+# colMeans(t3)
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
 transition.x <- function(x,i,j,params,scenario){
   one <- transition.1.comp(x,i,j,params,scenario)
-  two <- transition.2.equal(x,i,j,params,scenario)
-  three <- transition.3.equal(x,i,j,params)
+  two <- transition.2.comp(x,i,j,params,scenario)
+  three <- transition.3(x,i,j,params)
   if(scenario == "cremvac"){return(one)}
   if(scenario == "liomvac"){return(one)}
   if(scenario == "othervac"){return(one)}
@@ -2916,20 +2881,20 @@ lambdaSim=function(params,                                  ## parameters
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
-lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize, 
-          grow_rfx1 = grow_rfx1[m,],
-          grow_rfx2 = grow_rfx2[m,],
-          grow_rfx3 = grow_rfx3[m,],
-          grow_rfx4 = grow_rfx4[m,],
-          surv_rfx1 = surv_rfx1[m,],
-          surv_rfx2 = surv_rfx2[m,],
-          surv_rfx3 = surv_rfx3[m,],
-          surv_rfx4 = surv_rfx4[m,],
-          flow_rfx = flow_rfx[m,],
-          repro_rfx = repro_rfx[m,],
-          viab_rfx1 = viab_rfx1[m,],
-          viab_rfx2 = viab_rfx2[m,],
-          viab_rfx3 = viab_rfx3[m,],
-          viab_rfx4 = viab_rfx4[m,],## viability model year rfx
-          max_yrs = max_yrs   )
+# lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize, 
+#           grow_rfx1 = grow_rfx1[m,],
+#           grow_rfx2 = grow_rfx2[m,],
+#           grow_rfx3 = grow_rfx3[m,],
+#           grow_rfx4 = grow_rfx4[m,],
+#           surv_rfx1 = surv_rfx1[m,],
+#           surv_rfx2 = surv_rfx2[m,],
+#           surv_rfx3 = surv_rfx3[m,],
+#           surv_rfx4 = surv_rfx4[m,],
+#           flow_rfx = flow_rfx[m,],
+#           repro_rfx = repro_rfx[m,],
+#           viab_rfx1 = viab_rfx1[m,],
+#           viab_rfx2 = viab_rfx2[m,],
+#           viab_rfx3 = viab_rfx3[m,],
+#           viab_rfx4 = viab_rfx4[m,],## viability model year rfx
+#           max_yrs = max_yrs   )
 
