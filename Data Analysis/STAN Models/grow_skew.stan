@@ -42,12 +42,10 @@ transformed parameters{
   vector[N] alpha;            // predictor for the skew
 
   for(i in 1:N){
-    //xi[i] = beta0 + beta1 * vol[i];
     xi[i] = beta0[ant[i]] + beta1[ant[i]] * vol[i] + beta2[ant[i]] * vol2[i] + u[plot[i]] + w[ant[i],year[i]];
-    //omega[i] = exp(d_0[ant[i]] + d_size[ant[i]] * vol[i]);// + d_size2 * vol2[i]);
-    //alpha[i] = a_0[ant[i]] + a_size[ant[i]] * vol[i];// + a_size2 * vol2[i];
+
     omega[i] = exp(d_0 + d_size * vol[i]);
-    alpha[i] = a_0 + a_size * vol[i]
+    alpha[i] = a_0 + a_size * vol[i];
   } // beta2[ant[i]] * vol2[i] + 
 }
 model {
