@@ -1376,7 +1376,7 @@ dev.off()
 lams_dpost <- read.csv("det_post_lambda_mean.csv")
 lams_dpost <- lams_dpost[,-c(1)]
 ## stochastic
-lams_stoch_freq <- read.csv("stoch_freq_lambda.csv")
+lams_stoch_freq <- read.csv("stoch_equal_lambda.csv")
 lams_stoch_freq <- lams_stoch_freq[,-c(1)]
 ## stochastic null
 lams_stoch_null <- read.csv("stoch_null_post_lambda.csv")
@@ -1391,7 +1391,7 @@ scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 # Set the working directory to the figures folder
 scenario_abv <- c("V","CV","LV","OV","LCV","LOV","OCV","LOCV")
 ## Plot the means of the deterministic and stochastic distributions together
-png("Figures/lambda_means_freq.png")
+png("Figures/lambda_means_equal.png")
 plot(c(1,3,5,7,9,11,13,15),colMeans(lams_stoch_freq), pch = 20, cex = 5,col = cols,
      xlim = c(0,16), ylim = c(0.92,0.99),
      xaxt = "n",cex.lab = 2,
@@ -1402,7 +1402,7 @@ legend("topleft",legend = c("Stochastic","Stochastic Null"),pch = c(20,13),cex =
 dev.off()
 
 ## Plot the distributions of the stochastic lambdas
-png("Figures/lambda_stoch_freq.png")
+png("Figures/lambda_stoch_equal.png")
 par(mar=c(4,4,1,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1))
