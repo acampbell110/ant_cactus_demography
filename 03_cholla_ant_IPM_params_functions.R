@@ -32,15 +32,15 @@ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism proj
 #Tom
 #mcmc_dir <- "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 #Lab
-mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+# mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 ## These files contain all draws from the posterior distributions of all parameters
 # growth model
-mcmc_dir <- "/Users/Labuser/Desktop/Model_Reads/"
+# mcmc_dir <- "/Users/Labuser/Desktop/Model_Reads/"
 fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
 grow.params <- rstan::extract(fit_grow_skew, permuted = F)
 grow.params <- grow.params[,c(2),]
-fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
-grow.params.null <- rstan::extract(fit_grow_skew_null)
+# fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
+# grow.params.null <- rstan::extract(fit_grow_skew_null)
 # fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
 # grow.params <- rstan::extract(fit_grow_stud)
 # fit_grow_stud_null<-readRDS(paste0(mcmc_dir,"fit_grow_student_t_null.rds"))
@@ -185,16 +185,16 @@ grow_rfx4 <- cbind(grow.params[draws,"w[4,1]"],grow.params[draws,"w[4,2]"],
                    grow.params[draws,"w[4,11]"],grow.params[draws,"w[4,12]"],
                    grow.params[draws,"w[4,13]"],grow.params[draws,"w[4,14]"],
                    rep(0,N_draws),grow.params[draws,"w[4,15]"],grow.params[draws,"w[4,16]"])
-# Non ant specific -- Only run for the Stochastic Null Version
-grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-                   grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
-                   grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
-                   grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
-                   rep(0,N_draws),rep(0,N_draws))
-grow_rfx1 <- grow_rfx
-grow_rfx2 <- grow_rfx
-grow_rfx3 <- grow_rfx
-grow_rfx4 <- grow_rfx
+# # Non ant specific -- Only run for the Stochastic Null Version
+# grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
+#                    grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
+#                    grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
+#                    grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
+#                    rep(0,N_draws),rep(0,N_draws))
+# grow_rfx1 <- grow_rfx
+# grow_rfx2 <- grow_rfx
+# grow_rfx3 <- grow_rfx
+# grow_rfx4 <- grow_rfx
 
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
@@ -238,16 +238,16 @@ surv_rfx4 <- cbind(surv.params$w[draws,4,1],surv.params$w[draws,4,2],surv.params
                    surv.params$w[draws,4,8],surv.params$w[draws,4,9],surv.params$w[draws,4,10],surv.params$w[draws,4,11],
                    surv.params$w[draws,4,12],surv.params$w[draws,4,13],surv.params$w[draws,4,14],rep(0,N_draws),
                    surv.params$w[draws,4,15],surv.params$w[draws,4,16])
-# Non ant specific -- Only run for the Stochastic Null Version
-surv_rfx <- cbind(surv.params.null$w[draws,1],surv.params.null$w[draws,2],surv.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-                  surv.params.null$w[draws,4],surv.params.null$w[draws,5],surv.params.null$w[draws,6],surv.params.null$w[draws,7],
-                  surv.params.null$w[draws,8],surv.params.null$w[draws,9],surv.params.null$w[draws,10],surv.params.null$w[draws,11],
-                  surv.params.null$w[draws,12],surv.params.null$w[draws,13],surv.params.null$w[draws,14],rep(0,N_draws),
-                  surv.params.null$w[draws,15],surv.params.null$w[draws,16])
-surv_rfx1 <- surv_rfx
-surv_rfx2 <- surv_rfx
-surv_rfx3 <- surv_rfx
-surv_rfx4 <- surv_rfx
+# # Non ant specific -- Only run for the Stochastic Null Version
+# surv_rfx <- cbind(surv.params.null$w[draws,1],surv.params.null$w[draws,2],surv.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
+#                   surv.params.null$w[draws,4],surv.params.null$w[draws,5],surv.params.null$w[draws,6],surv.params.null$w[draws,7],
+#                   surv.params.null$w[draws,8],surv.params.null$w[draws,9],surv.params.null$w[draws,10],surv.params.null$w[draws,11],
+#                   surv.params.null$w[draws,12],surv.params.null$w[draws,13],surv.params.null$w[draws,14],rep(0,N_draws),
+#                   surv.params.null$w[draws,15],surv.params.null$w[draws,16])
+# surv_rfx1 <- surv_rfx
+# surv_rfx2 <- surv_rfx
+# surv_rfx3 <- surv_rfx
+# surv_rfx4 <- surv_rfx
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
 #head(flow.params)
@@ -317,15 +317,15 @@ viab_rfx4 <- cbind(viab.params$w[draws,4,1],viab.params$w[draws,4,2],viab.params
                    viab.params$w[draws,4,11],rep(0,N_draws),
                    viab.params$w[draws,4,12])
 ## Non-ant specific -- Onnly Run for Stochastic Null Version
-viab_rfx <- cbind(viab.params.null$w[draws,1],viab.params.null$w[draws,2],viab.params.null$w[draws,3],
-                  rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                  viab.params.null$w[draws,4],viab.params.null$w[draws,5],viab.params.null$w[draws,6],viab.params.null$w[draws,7],
-                  viab.params.null$w[draws,8],viab.params.null$w[draws,9],viab.params.null$w[draws,10],rep(0,N_draws),
-                  viab.params.null$w[draws,11],viab.params.null$w[draws,12])
-viab_rfx1 <- viab_rfx
-viab_rfx2 <- viab_rfx
-viab_rfx3 <- viab_rfx
-viab_rfx4 <- viab_rfx
+# viab_rfx <- cbind(viab.params.null$w[draws,1],viab.params.null$w[draws,2],viab.params.null$w[draws,3],
+#                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
+#                   viab.params.null$w[draws,4],viab.params.null$w[draws,5],viab.params.null$w[draws,6],viab.params.null$w[draws,7],
+#                   viab.params.null$w[draws,8],viab.params.null$w[draws,9],viab.params.null$w[draws,10],rep(0,N_draws),
+#                   viab.params.null$w[draws,11],viab.params.null$w[draws,12])
+# viab_rfx1 <- viab_rfx
+# viab_rfx2 <- viab_rfx
+# viab_rfx3 <- viab_rfx
+# viab_rfx4 <- viab_rfx
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
 #head(seed.params)
@@ -2828,11 +2828,11 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
 # For every diversity scenario analyzed there should be a posterior distribution of lambdas estimated ###
 #########################################################################################################
 lambdaSim=function(params,                                  ## parameters
-                   grow_rfx1=0,grow_rfx2=0,
-                   grow_rfx3=0,grow_rfx4=0,
-                   surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
-                   flow_rfx=0,repro_rfx=0,
-                   viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,
+                   grow_rfx1,grow_rfx2,
+                   grow_rfx3,grow_rfx4,
+                   surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
+                   flow_rfx,repro_rfx,
+                   viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,
                    max_yrs,                                 ## the # years you want to iterate
                    matsize,                                 ## size of transition matrix
                    scenario,                                ## partner diversity scenario
@@ -2881,20 +2881,14 @@ lambdaSim=function(params,                                  ## parameters
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
-# lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize, 
-#           grow_rfx1 = grow_rfx1[m,],
-#           grow_rfx2 = grow_rfx2[m,],
-#           grow_rfx3 = grow_rfx3[m,],
-#           grow_rfx4 = grow_rfx4[m,],
-#           surv_rfx1 = surv_rfx1[m,],
-#           surv_rfx2 = surv_rfx2[m,],
-#           surv_rfx3 = surv_rfx3[m,],
-#           surv_rfx4 = surv_rfx4[m,],
-#           flow_rfx = flow_rfx[m,],
-#           repro_rfx = repro_rfx[m,],
-#           viab_rfx1 = viab_rfx1[m,],
-#           viab_rfx2 = viab_rfx2[m,],
-#           viab_rfx3 = viab_rfx3[m,],
-#           viab_rfx4 = viab_rfx4[m,],## viability model year rfx
-#           max_yrs = max_yrs   )
+lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize,
+          grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
+          grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
+          surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
+          surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
+          flow_rfx=colMeans(flow_rfx),
+          repro_rfx= colMeans(repro_rfx),
+          viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
+          viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),## viability model year rfx
+          max_yrs = 100   )
 

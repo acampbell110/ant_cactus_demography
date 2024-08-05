@@ -198,7 +198,7 @@ crem <- outer (
 # dev.off()
 
 ## Plot the countour lines of the studetn t growth model with the mean fit of the model and the real data
-png("Manuscript/Figures/grow_skew.png")
+png("Manuscript/Figures/grow_contour.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
@@ -258,7 +258,7 @@ v_other <- colMeans((viab_rfx3))
 v_vac <- colMeans((viab_rfx4))
 v_years <- seq(2004,2022, by = 1)
 unique(viability_data$Year_t)
-png("Figures/year_ant_timeseries.png")
+png("Manuscript/Figures/year_ant_timeseries.png")
 par(mar=c(4,2,2,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3),
               ncol = 3, byrow = TRUE), heights = c(1), widths = c(4,4,4))
@@ -355,7 +355,7 @@ a[4,3] <- ovg$estimate
 a[4,4] <- vvg$estimate
 colnames(a) <- c("Crem.","Liom.","Other","Vacant")
 rownames(a) <- c("Crem.","Liom.","Other","Vacant")
-png("Figures/corr_GRFX.png")
+png("Manuscript/Figures/corr_GRFX.png")
 corrplot(a, method = "shade", col.lim = c(0,1), addCoef.col = T)
 dev.off()
 
@@ -384,7 +384,7 @@ b[4,3] <- ovs$estimate
 b[4,4] <- vvs$estimate
 colnames(b) <- c("Crem.","Liom.","Other","Vacant")
 rownames(b) <- c("Crem.","Liom.","Other","Vacant")
-png("Figures/corr_SRFX.png")
+png("Manuscript/Figures/corr_SRFX.png")
 corrplot(b, method = "shade", col.lim = c(0,1), addCoef.col = T)
 dev.off()
 
@@ -412,7 +412,7 @@ c[4,3] <- ovv$estimate
 c[4,4] <- vvv$estimate
 colnames(c) <- c("Crem.","Liom.","Other","Vacant")
 rownames(c) <- c("Crem.","Liom.","Other","Vacant")
-png("Figures/corr_VRFX.png")
+png("Manuscript/Figures/corr_VRFX.png")
 corrplot(c, method = "shade", col.lim = c(0,1), addCoef.col = T)
 dev.off()
 
@@ -1372,15 +1372,24 @@ dev.off()
 ######################################################################################################
 ######################################################################################################
 ## Read in lambda estimates
-## deterministic
-lams_dpost <- read.csv("det_post_lambda_mean.csv")
-lams_dpost <- lams_dpost[,-c(1)]
-## stochastic
-lams_stoch_freq <- read.csv("stoch_equal_lambda.csv")
-lams_stoch_freq <- lams_stoch_freq[,-c(1)]
-## stochastic null
-lams_stoch_null <- read.csv("stoch_null_post_lambda.csv")
-lams_stoch_null <- lams_stoch_null[,-c(1)]
+## Competitive Exclusion
+lams_comp_stoch <- read.csv("stoch_comp_lambda.csv")
+lams_comp_stoch <- lams_comp_stoch[,-c(1)]
+## Competitive Exclusion Null Stochastic
+lams_comp_stoch_null <- read.csv("stoch_null_comp_lambda.csv")
+lams_comp_stoch_null <- lams_comp_stoch_null[,-c(1)]
+## Frequency Based
+lams_freq_stoch <- read.csv("stoch_freq_lambda.csv")
+lams_freq_stoch <- lams_freq_stoch[,-c(1)]
+## Frequency Based Null
+lams_freq_stoch_null <- read.csv("stoch_null_freq_lambda.csv")
+lams_freq_stoch_null <- lams_freq_stoch_null[,-c(1)]
+## Equal Probability
+lams_equal_stoch <- read.csv("stoch_equal_lambda.csv")
+lams_equal_stoch <- lams_equal_stoch[,-c(1)]
+## Equal Probability Null Stochastic
+lams_equal_stoch_null <- read.csv("stoch_null_equal_lambda.csv")
+lams_equal_stoch_null <- lams_equal_stoch_null[,-c(1)]
 scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 
 ######################################################################################################
@@ -1390,76 +1399,274 @@ scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 ######################################################################################################
 # Set the working directory to the figures folder
 scenario_abv <- c("V","CV","LV","OV","LCV","LOV","OCV","LOCV")
-## Plot the means of the deterministic and stochastic distributions together
-png("Figures/lambda_means_equal.png")
-plot(c(1,3,5,7,9,11,13,15),colMeans(lams_stoch_freq), pch = 20, cex = 5,col = cols,
-     xlim = c(0,16), ylim = c(0.92,0.99),
+## Plot the means the stochastic and stochastic null competitive exclusion models
+png("Manuscript/Figures/comp_outputmeans_s_sn.png")
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,16), ylim = c(0.79,1.01),
      xaxt = "n",cex.lab = 2,
-     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "Full Partner Diversity Leads to \n Highest Fitness")
-text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_stoch_freq)+0.004,cex = 2, labels = scenario_abv)
-legend("topleft",legend = c("Stochastic","Stochastic Null"),pch = c(20,13),cex = 1.5)
-#points(c(1,3,5,7,9,11,13,15),colMeans(lams_stoch_null), col = cols, cex = 5, pch = 13)
+     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_comp_stoch)+0.004,cex = 2, labels = scenario_abv)
+legend("topleft",legend = c("Stochastic","Stochastic Null"),pch = c(19,15),cex = 1.5)
+points(c(1,3,5,7,9,11,13,15),colMeans(lams_comp_stoch_null), col = cols, cex = 3, pch = 15)
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_comp_stoch_null)+0.004,cex = 2, labels = scenario_abv)
 dev.off()
 
-## Plot the distributions of the stochastic lambdas
-png("Figures/lambda_stoch_equal.png")
+# plot the lambda values against the number of partners
+no_part <- colMeans(lams_comp_stoch)[1]
+one_part <- mean(colMeans(lams_comp_stoch)[2:4])
+two_part <- mean(colMeans(lams_comp_stoch)[5:7])
+three_part <- colMeans(lams_comp_stoch)[8]
+png("Manuscript/Figures/comp_num_partners_s.png")
+plot(c(1,2,3,4),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.92, 0.98), xaxt = "n", cex.lab = 2, 
+     xlab = "Number of Partners", ylab = "Mean Lambda Value", main = "")
+axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
+dev.off()
+
+## Plot the means the stochastic and stochastic null frequency based models
+png("Manuscript/Figures/freq_outputmeans_s_sn.png")
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,16), ylim = c(0.79,1.01),
+     xaxt = "n",cex.lab = 2,
+     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_freq_stoch)+0.004,cex = 2, labels = scenario_abv)
+legend("topleft",legend = c("Stochastic","Stochastic Null"),pch = c(19,15),cex = 1.5)
+points(c(1,3,5,7,9,11,13,15),colMeans(lams_freq_stoch_null), col = cols, cex = 3, pch = 15)
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_freq_stoch_null)+0.004,cex = 2, labels = scenario_abv)
+dev.off()
+# plot the lambda values against the number of partners
+no_part <- colMeans(lams_freq_stoch)[1]
+one_part <- mean(colMeans(lams_freq_stoch)[2:4])
+two_part <- mean(colMeans(lams_freq_stoch)[5:7])
+three_part <- colMeans(lams_freq_stoch)[8]
+png("Manuscript/Figures/freq_num_partners_s.png")
+plot(c(1,2,3,4),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.92, 0.98), xaxt = "n", cex.lab = 2, 
+     xlab = "Number of Partners", ylab = "Mean Lambda Value", main = "")
+axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
+dev.off()
+## Plot the means the stochastic and stochastic null equal opportunity models
+png("Manuscript/Figures/equal_outputmeans_s_sn.png")
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,16), ylim = c(0.79,1.01),
+     xaxt = "n",cex.lab = 2,
+     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_equal_stoch)+0.004,cex = 2, labels = scenario_abv)
+legend("topleft",legend = c("Stochastic","Stochastic Null"),pch = c(19,15),cex = 1.5)
+points(c(1,3,5,7,9,11,13,15),colMeans(lams_equal_stoch_null), col = cols, cex = 3, pch = 15)
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_equal_stoch_null)+0.004,cex = 2, labels = scenario_abv)
+dev.off()
+
+
+# Set the working directory to the figures folder
+scenario_abv <- c("V","CV","LV","OV","LCV","LOV","OCV","LOCV")
+## Plot the means the stochastic and stochastic null competitive exclusion models
+png("Manuscript/Figures/comp_outputmeans_s.png")
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,16), ylim = c(0.930,0.985),
+     xaxt = "n",cex.lab = 2,
+     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_comp_stoch)+0.002,cex = 2, labels = scenario_abv)
+dev.off()
+
+## Plot the means the stochastic and stochastic null frequency based models
+png("Manuscript/Figures/freq_outputmeans_s.png")
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,16), ylim = c(0.930,0.985),
+     xaxt = "n",cex.lab = 2,
+     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_freq_stoch)+0.002,cex = 2, labels = scenario_abv)
+dev.off()
+
+## Plot the means the stochastic and stochastic null equal opportunity models
+png("Manuscript/Figures/equal_outputmeans_s.png")
+plot(c(1,3,5,7,9,11,13,15),colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,16), ylim = c(0.930,0.985),
+     xaxt = "n",cex.lab = 2,
+     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = colMeans(lams_equal_stoch)+0.002,cex = 2, labels = scenario_abv)
+dev.off()
+
+## Plot the distributions of the stochastic lambdas competitive exclusion
+png("Manuscript/Figures/comp_conv_s.png")
 par(mar=c(4,4,1,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_stoch_freq[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
-abline(v = mean(lams_stoch_freq[,1]),col = vcol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_comp_stoch[,1]),col = vcol, lty = 2, lwd =3)
 legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_stoch_freq[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
-abline(v = mean(lams_stoch_freq[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_stoch_freq[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_stoch_freq[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_stoch_freq[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_stoch_freq[,4]),col = ocol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_comp_stoch[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch[,3]), col = lcol, lwd =3)
+abline(v = mean(lams_comp_stoch[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch[,4]), col = ocol, lwd =3)
+abline(v = mean(lams_comp_stoch[,4]),col = ocol, lty = 2, lwd =3)
 legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_stoch_freq[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
-abline(v = mean(lams_stoch_freq[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_stoch_freq[,6]), col = locol, lwd =3)
-abline(v = mean(lams_stoch_freq[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_stoch_freq[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_stoch_freq[,7]),col = cocol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_comp_stoch[,5]),col = lccol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch[,6]), col = locol, lwd =3)
+abline(v = mean(lams_comp_stoch[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch[,7]), col = cocol, lwd =3)
+abline(v = mean(lams_comp_stoch[,7]),col = cocol, lty = 2, lwd =3)
 legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_stoch_freq[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
-abline(v = mean(lams_stoch_freq[,8]),col = acol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_comp_stoch[,8]),col = acol, lty = 2, lwd =3)
 mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
 legend("topright",legend = c("All Ants"),fill = c(acol),
        cex = 1.5)
 dev.off()
 
-## Plot the distributions of the stochastic null lambdas
-png("lambda_stoch_null.png")
+## Plot the distributions of the stochastic null lambdas competitive exclusion
+png("Manuscript/Figures/comp_conv_sn.png")
 par(mar=c(4,4,1,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.91,0.97))
-abline(v = mean(lams_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_comp_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
 legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.91,0.97))
-abline(v = mean(lams_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_stoch_null[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_stoch_null[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_comp_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch_null[,3]), col = lcol, lwd =3)
+abline(v = mean(lams_comp_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch_null[,4]), col = ocol, lwd =3)
+abline(v = mean(lams_comp_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.91,0.97))
-abline(v = mean(lams_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_stoch_null[,6]), col = locol, lwd =3)
-abline(v = mean(lams_stoch_null[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_stoch_null[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_comp_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch_null[,6]), col = locol, lwd =3)
+abline(v = mean(lams_comp_stoch_null[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams_comp_stoch_null[,7]), col = cocol, lwd =3)
+abline(v = mean(lams_comp_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
 legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.91,0.97))
-abline(v = mean(lams_stoch_null[,8]),col = acol, lty = 2, lwd =3)
+plot(density(lams_comp_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_comp_stoch_null[,8]),col = acol, lty = 2, lwd =3)
 mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
 legend("topright",legend = c("All Ants"),fill = c(acol),
        cex = 1.5)
 dev.off()
+
+## Plot the distributions of the stochastic lambdas frequency based
+png("Manuscript/Figures/freq_conv_s.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1))
+plot(density(lams_freq_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_freq_stoch[,1]),col = vcol, lty = 2, lwd =3)
+legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+plot(density(lams_freq_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_freq_stoch[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch[,3]), col = lcol, lwd =3)
+abline(v = mean(lams_freq_stoch[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch[,4]), col = ocol, lwd =3)
+abline(v = mean(lams_freq_stoch[,4]),col = ocol, lty = 2, lwd =3)
+legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+plot(density(lams_freq_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_freq_stoch[,5]),col = lccol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch[,6]), col = locol, lwd =3)
+abline(v = mean(lams_freq_stoch[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch[,7]), col = cocol, lwd =3)
+abline(v = mean(lams_freq_stoch[,7]),col = cocol, lty = 2, lwd =3)
+legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+plot(density(lams_freq_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_freq_stoch[,8]),col = acol, lty = 2, lwd =3)
+mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+legend("topright",legend = c("All Ants"),fill = c(acol),
+       cex = 1.5)
+dev.off()
+
+## Plot the distributions of the stochastic null lambdas frequency based
+png("Manuscript/Figures/freq_conv_sn.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1))
+plot(density(lams_freq_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_freq_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
+legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+plot(density(lams_freq_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_freq_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch_null[,3]), col = lcol, lwd =3)
+abline(v = mean(lams_freq_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch_null[,4]), col = ocol, lwd =3)
+abline(v = mean(lams_freq_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
+legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+plot(density(lams_freq_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_freq_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch_null[,6]), col = locol, lwd =3)
+abline(v = mean(lams_freq_stoch_null[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams_freq_stoch_null[,7]), col = cocol, lwd =3)
+abline(v = mean(lams_freq_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
+legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+plot(density(lams_freq_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_freq_stoch_null[,8]),col = acol, lty = 2, lwd =3)
+mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+legend("topright",legend = c("All Ants"),fill = c(acol),
+       cex = 1.5)
+dev.off()
+
+## Plot the distributions of the stochastic lambdas equal likelihood
+png("Manuscript/Figures/equal_conv_s.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1))
+plot(density(lams_equal_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_equal_stoch[,1]),col = vcol, lty = 2, lwd =3)
+legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+plot(density(lams_equal_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_equal_stoch[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch[,3]), col = lcol, lwd =3)
+abline(v = mean(lams_equal_stoch[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch[,4]), col = ocol, lwd =3)
+abline(v = mean(lams_equal_stoch[,4]),col = ocol, lty = 2, lwd =3)
+legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+plot(density(lams_equal_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_equal_stoch[,5]),col = lccol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch[,6]), col = locol, lwd =3)
+abline(v = mean(lams_equal_stoch[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch[,7]), col = cocol, lwd =3)
+abline(v = mean(lams_equal_stoch[,7]),col = cocol, lty = 2, lwd =3)
+legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+plot(density(lams_equal_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,0.99))
+abline(v = mean(lams_equal_stoch[,8]),col = acol, lty = 2, lwd =3)
+mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+legend("topright",legend = c("All Ants"),fill = c(acol),
+       cex = 1.5)
+dev.off()
+
+## Plot the distributions of the stochastic null lambdas equal likelihood
+png("Manuscript/Figures/equal_conv_sn.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2,3,4),
+              ncol = 1, nrow = 4), heights = c(1,1,1,1))
+plot(density(lams_equal_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_equal_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
+legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+plot(density(lams_equal_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_equal_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch_null[,3]), col = lcol, lwd =3)
+abline(v = mean(lams_equal_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch_null[,4]), col = ocol, lwd =3)
+abline(v = mean(lams_equal_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
+legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+plot(density(lams_equal_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_equal_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch_null[,6]), col = locol, lwd =3)
+abline(v = mean(lams_equal_stoch_null[,6]),col = locol, lty = 2, lwd =3)
+lines(density(lams_equal_stoch_null[,7]), col = cocol, lwd =3)
+abline(v = mean(lams_equal_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
+legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+plot(density(lams_equal_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,10), xlim = c(0.5,1))
+abline(v = mean(lams_equal_stoch_null[,8]),col = acol, lty = 2, lwd =3)
+mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+legend("topright",legend = c("All Ants"),fill = c(acol),
+       cex = 1.5)
+dev.off()
+
 
 ######################################################################################################
 ######################################################################################################
@@ -1467,19 +1674,18 @@ dev.off()
 ######################################################################################################
 ######################################################################################################
 
-########################################### STOCHASTIC ##############################################
+############################### Competitive Exclusion ##########################
 # Compare the stochastic posterior distributions to vacancy
 # Calculate the difference in the between the posterior distributions of lambda
-all_vac <- lams_stoch$all - lams_stoch$none
-cl_vac <- lams_stoch$liomcremvac - lams_stoch$none
-lo_vac <- lams_stoch$liomvacother - lams_stoch$none
-co_vac <- lams_stoch$othercremvac - lams_stoch$none
-c_vac <- lams_stoch$cremvac - lams_stoch$none
-l_vac <- lams_stoch$liomvac - lams_stoch$none
-o_vac <- lams_stoch$othervac - lams_stoch$none
-vac_vac <- lams_stoch$none - lams_stoch$none
+all_vac <- lams_comp_stoch$all - lams_comp_stoch$none
+cl_vac <- lams_comp_stoch$liomcremvac - lams_comp_stoch$none
+lo_vac <- lams_comp_stoch$liomvacother - lams_comp_stoch$none
+co_vac <- lams_comp_stoch$othercremvac - lams_comp_stoch$none
+c_vac <- lams_comp_stoch$cremvac - lams_comp_stoch$none
+l_vac <- lams_comp_stoch$liomvac - lams_comp_stoch$none
+o_vac <- lams_comp_stoch$othervac - lams_comp_stoch$none
+vac_vac <- lams_comp_stoch$none - lams_comp_stoch$none
 #plot them
-png("lambda_stoch_difftovac.png")
 par(mar=c(1,1,1,1))
 layout(matrix(c(1,2,3,4,5,6,7),
               ncol = 1, nrow = 7), heights = c(1,1,1,1,1,1,1))
@@ -1504,18 +1710,81 @@ abline(v = 0, col = lcol, lty = 2)
 ## Other
 plot(density(o_vac), col = ocol, xlim = c(-0.025,0.04))
 abline(v = 0, col = ocol, lty = 2)
-dev.off()
 #calculate what proportion of each is > 0
 #aka what proportion of lambda estimations are greater than when vacant
 proportions <- vector()
 proportions[1] <- 0
-proportions[2] <- length(subset(c_vac, c_vac>0))/50
-proportions[3] <- length(subset(l_vac, l_vac>0))/50
-proportions[4] <- length(subset(o_vac, o_vac>0))/50
-proportions[5] <- length(subset(cl_vac, cl_vac>0))/50
-proportions[6] <- length(subset(lo_vac, lo_vac>0))/50
-proportions[7] <- length(subset(co_vac, co_vac>0))/50
-proportions[8] <- length(subset(all_vac, all_vac>0))/50
+proportions[2] <- length(subset(c_vac, c_vac>0))/100
+proportions[3] <- length(subset(l_vac, l_vac>0))/100
+proportions[4] <- length(subset(o_vac, o_vac>0))/100
+proportions[5] <- length(subset(cl_vac, cl_vac>0))/100
+proportions[6] <- length(subset(lo_vac, lo_vac>0))/100
+proportions[7] <- length(subset(co_vac, co_vac>0))/100
+proportions[8] <- length(subset(all_vac, all_vac>0))/100
+proportions
+prop <- as.data.frame(matrix(rep(NA,8), ncol = 8))
+colnames(prop) <- scenario_abv
+prop[1,] <- proportions
+prop
+
+## Compare the stochastic posterior distributions to scenarios with liom
+none_l <- lams_comp_stoch$liomvac - lams_comp_stoch$none
+crem_l <- lams_comp_stoch$liomvac - lams_comp_stoch$cremvac
+other_l <- lams_comp_stoch$liomvac - lams_comp_stoch$othervac
+co_l <- lams_comp_stoch$liomvac - lams_comp_stoch$othercremvac
+proportions <- vector()
+proportions[1] <- length(subset(none_l, none_l>=0))/100
+proportions[2] <- length(subset(crem_l, crem_l>=0))/100
+proportions[3] <- length(subset(other_l, other_l>=0))/100
+proportions
+
+################################ Frequency Based ###############################
+# Compare the stochastic posterior distributions to vacancy
+# Calculate the difference in the between the posterior distributions of lambda
+all_vac <- lams_freq_stoch$all - lams_freq_stoch$none
+cl_vac <- lams_freq_stoch$liomcremvac - lams_freq_stoch$none
+lo_vac <- lams_freq_stoch$liomvacother - lams_freq_stoch$none
+co_vac <- lams_freq_stoch$othercremvac - lams_freq_stoch$none
+c_vac <- lams_freq_stoch$cremvac - lams_freq_stoch$none
+l_vac <- lams_freq_stoch$liomvac - lams_freq_stoch$none
+o_vac <- lams_freq_stoch$othervac - lams_freq_stoch$none
+vac_vac <- lams_freq_stoch$none - lams_freq_stoch$none
+#plot them
+par(mar=c(1,1,1,1))
+layout(matrix(c(1,2,3,4,5,6,7),
+              ncol = 1, nrow = 7), heights = c(1,1,1,1,1,1,1))
+## All
+plot(density(all_vac), col = acol, xlim = c(-0.025,0.04))
+abline(v = 0, col = acol, lty = 2)
+## Crem and Liom
+plot(density(cl_vac), col = lccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lccol, lty = 2)
+## Other and Liom
+plot(density(lo_vac), col = locol, xlim = c(-0.025,0.04))
+abline(v = 0, col = locol, lty = 2)
+## Other and Crem
+plot(density(co_vac), col = cocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = cocol, lty = 2)
+## Crem
+plot(density(c_vac), col = ccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ccol, lty = 2)
+## Liom
+plot(density(l_vac), col = lcol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lcol, lty = 2)
+## Other
+plot(density(o_vac), col = ocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ocol, lty = 2)
+#calculate what proportion of each is > 0
+#aka what proportion of lambda estimations are greater than when vacant
+proportions <- vector()
+proportions[1] <- 0
+proportions[2] <- length(subset(c_vac, c_vac>0))/100
+proportions[3] <- length(subset(l_vac, l_vac>0))/100
+proportions[4] <- length(subset(o_vac, o_vac>0))/100
+proportions[5] <- length(subset(cl_vac, cl_vac>0))/100
+proportions[6] <- length(subset(lo_vac, lo_vac>0))/100
+proportions[7] <- length(subset(co_vac, co_vac>0))/100
+proportions[8] <- length(subset(all_vac, all_vac>0))/100
 proportions
 prop <- as.data.frame(matrix(rep(NA,8), ncol = 8))
 colnames(prop) <- scenario
@@ -1523,51 +1792,93 @@ prop[1,] <- proportions
 prop
 
 ## Compare the stochastic posterior distributions to scenarios with liom
-none_l <- lams_stoch$liomvac - lams_stoch$none
-crem_l <- lams_stoch$liomvac - lams_stoch$cremvac
-other_l <- lams_stoch$liomvac - lams_stoch$othervac
-co_l <- lams_stoch$liomvac - lams_stoch$othercremvac
+none_l <- lams_freq_stoch$liomvac - lams_freq_stoch$none
+crem_l <- lams_freq_stoch$liomvac - lams_freq_stoch$cremvac
+other_l <- lams_freq_stoch$liomvac - lams_freq_stoch$othervac
+co_l <- lams_freq_stoch$liomvac - lams_freq_stoch$othercremvac
 proportions <- vector()
-proportions[1] <- length(subset(none_l, none_l>=0))/50
-proportions[2] <- length(subset(crem_l, crem_l>=0))/50
-proportions[3] <- length(subset(other_l, other_l>=0))/50
-proportions[4] <- length(subset(co_l, co_l>=0))/50
-none_lc <- lams_stoch$liomcremvac - lams_stoch$none
-crem_lc <- lams_stoch$liomcremvac - lams_stoch$cremvac
-other_lc <- lams_stoch$liomcremvac - lams_stoch$othervac
-co_lc <- lams_stoch$liomcremvac - lams_stoch$othercremvac
-proportions[5] <- length(subset(none_lc, none_lc>=0))/50
-proportions[6] <- length(subset(crem_lc, crem_lc>=0))/50
-proportions[7] <- length(subset(other_lc, other_lc>=0))/50
-proportions[8] <- length(subset(co_lc, co_lc>=0))/50
-none_lo <- lams_stoch$liomvacother - lams_stoch$none
-crem_lo <- lams_stoch$liomvacother - lams_stoch$cremvac
-other_lo <- lams_stoch$liomvacother - lams_stoch$othervac
-co_lo <- lams_stoch$liomvacother - lams_stoch$othercremvac
-proportions[9] <- length(subset(none_lo, none_lo>=0))/50
-proportions[10] <- length(subset(crem_lo, crem_lo>=0))/50
-proportions[11] <- length(subset(other_lo, other_lo>=0))/50
-proportions[12] <- length(subset(co_lo, co_lo>=0))/50
-none_a <- lams_stoch$all - lams_stoch$none
-crem_a <- lams_stoch$all - lams_stoch$cremvac
-other_a <- lams_stoch$all - lams_stoch$othervac
-co_a <- lams_stoch$all - lams_stoch$othercremvac
-proportions[13] <- length(subset(none_a, none_a>=0))/50
-proportions[14] <- length(subset(crem_a, crem_a>=0))/50
-proportions[15] <- length(subset(other_a, other_a>=0))/50
-proportions[16] <- length(subset(co_a, co_a>=0))/50
+proportions[1] <- length(subset(none_l, none_l>=0))/100
+proportions[2] <- length(subset(crem_l, crem_l>=0))/100
+proportions[3] <- length(subset(other_l, other_l>=0))/100
 proportions
-prop <- as.data.frame(matrix(rep(NA,16), ncol = 16))
+
+
+############################### Equal Opportunity ##############################
+# Compare the stochastic posterior distributions to vacancy
+# Calculate the difference in the between the posterior distributions of lambda
+all_vac <- lams_equal_stoch$all - lams_equal_stoch$none
+cl_vac <- lams_equal_stoch$liomcremvac - lams_equal_stoch$none
+lo_vac <- lams_equal_stoch$liomvacother - lams_equal_stoch$none
+co_vac <- lams_equal_stoch$othercremvac - lams_equal_stoch$none
+c_vac <- lams_equal_stoch$cremvac - lams_equal_stoch$none
+l_vac <- lams_equal_stoch$liomvac - lams_equal_stoch$none
+o_vac <- lams_equal_stoch$othervac - lams_equal_stoch$none
+vac_vac <- lams_equal_stoch$none - lams_equal_stoch$none
+#plot them
+par(mar=c(1,1,1,1))
+layout(matrix(c(1,2,3,4,5,6,7),
+              ncol = 1, nrow = 7), heights = c(1,1,1,1,1,1,1))
+## All
+plot(density(all_vac), col = acol, xlim = c(-0.025,0.04))
+abline(v = 0, col = acol, lty = 2)
+## Crem and Liom
+plot(density(cl_vac), col = lccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lccol, lty = 2)
+## Other and Liom
+plot(density(lo_vac), col = locol, xlim = c(-0.025,0.04))
+abline(v = 0, col = locol, lty = 2)
+## Other and Crem
+plot(density(co_vac), col = cocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = cocol, lty = 2)
+## Crem
+plot(density(c_vac), col = ccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ccol, lty = 2)
+## Liom
+plot(density(l_vac), col = lcol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lcol, lty = 2)
+## Other
+plot(density(o_vac), col = ocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ocol, lty = 2)
+#calculate what proportion of each is > 0
+#aka what proportion of lambda estimations are greater than when vacant
+proportions <- vector()
+proportions[1] <- 0
+proportions[2] <- length(subset(c_vac, c_vac>0))/100
+proportions[3] <- length(subset(l_vac, l_vac>0))/100
+proportions[4] <- length(subset(o_vac, o_vac>0))/100
+proportions[5] <- length(subset(cl_vac, cl_vac>0))/100
+proportions[6] <- length(subset(lo_vac, lo_vac>0))/100
+proportions[7] <- length(subset(co_vac, co_vac>0))/100
+proportions[8] <- length(subset(all_vac, all_vac>0))/100
+proportions
+prop <- as.data.frame(matrix(rep(NA,8), ncol = 8))
+colnames(prop) <- scenario_abv
 prop[1,] <- proportions
 prop
+
+## Compare the stochastic posterior distributions to scenarios with liom
+none_l <- lams_equal_stoch$liomvac - lams_equal_stoch$none
+crem_l <- lams_equal_stoch$liomvac - lams_equal_stoch$cremvac
+other_l <- lams_equal_stoch$liomvac - lams_equal_stoch$othervac
+co_l <- lams_equal_stoch$liomvac - lams_equal_stoch$othercremvac
+proportions <- vector()
+proportions[1] <- length(subset(none_l, none_l>=0))/100
+proportions[2] <- length(subset(crem_l, crem_l>=0))/100
+proportions[3] <- length(subset(other_l, other_l>=0))/100
+proportions
+
+
+
+
+
 ########################################### STOCHASTIC AND DETERMINISTIC #############################
 # Compare the deterministic difference distributions to the stochastic difference distributions
 # to determine if portfolio effect is at play
-all_vac_stoch_null <- lams_stoch_null$all - lams_stoch_null$none
-all_vac_stoch <- lams_stoch$all - lams_stoch$none
+all_vac_stoch_null <- lams_comp_stoch$all - lams_comp_stoch_null$none
+all_vac_stoch <- lams_comp_stoch$all - lams_comp_stoch$none
 # Plot the boost offered by the real ant scenario based on stochastic and deterministic lambda estimates
-png("Figures/portfolio_effect.png")
-plot(density(all_vac_stoch_null), lwd = 3, col = "chartreuse4", ylim = c(0,100), xlab = "Effect of Partner Presence on Fitness", main = "", cex.lab = 2)
+png("Manuscript/Figures/portfolio_effect.png")
+plot(density(all_vac_stoch_null), lwd = 3, col = "chartreuse4", ylim = c(0,30), xlab = "Effect of Partner Presence on Fitness", main = "", cex.lab = 2)
 lines(density(all_vac_stoch), lwd = 3, col = "violet")
 abline(v = 0, lty = 2, lwd = 3)
 legend("topright",legend = c("Synchronicity Possible","Synchronicity Excluded"), fill = c("violet","chartreuse4"))
@@ -1578,12 +1889,12 @@ mean(all_vac_stoch>0)
 # there appears to be a stronger fitness effect when the ants can fluctuate independently -- not a very strong portfolio effect
 
 # What proprotion of the difference in these is >0
-# 52% confident that there is a fitness boost from partner diversity
+# 0% confident that there is a fitness boost from partner diversity
 length(subset((all_vac_stoch-all_vac_stoch_null), (all_vac_stoch-all_vac_stoch_null)>0))/50
 
 ## Check which mean has a larger difference -- the answer is null has a greater difference (portfolio effect)
-mean(lams_stoch$all) - mean(lams_stoch$none)
-mean(lams_stoch_null$all) - mean(lams_stoch_null$none)
+mean(lams_comp_stoch$all) - mean(lams_comp_stoch$none)
+mean(lams_comp_stoch_null$all) - mean(lams_comp_stoch_null$none)
 
 #################################################################################################
 #################################################################################################
