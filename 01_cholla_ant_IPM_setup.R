@@ -257,6 +257,13 @@ cactus$plot_ID <- paste(cactus$Plot, cactus$TagID)
 length(unique(cactus$plot_ID))
 # get the number of years
 length(unique(cactus$Year_t1))
+# get the number of complete transition years
+cactus %>% filter(Year_t1 == Year_t +1) %>% group_by(Year_t1) %>% summarise(n())
+## get total number of transition-year observations, excluding the last, incomplete transition
+cactus %>% filter(Year_t!=2023) %>% summarise(n())
+## it looks like there is a 2019-2021 transition year -- which is a problem!
+cactus %>% filter(Year_t==2019)
+#
 
 ## Get the proportions of each species
 # how many ant observations are there
