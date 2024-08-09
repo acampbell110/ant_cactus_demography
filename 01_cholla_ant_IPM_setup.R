@@ -236,8 +236,32 @@ colnames(cactus) <- c("Plot" ,            "TagID"     ,       "Transplant"   ,  
 # Remove extra columns
 cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1"                            ,"ant_t","ant_t1",
                       "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1"                            ,"Antcount_t1","flower1_YN","Newplant","Damage","NP_adult","NP_juv","CV","WVL","MA")]
+
+## break up the 2019-2021 transition year into two incomplete transition years
+cactus %>% filter(Year_t==2019) %>% select(Year_t1)
+#create the 2019-2020 transition year
+##drop the rows added for 2021 recruits
+cactus_2019temp<-cactus[cactus$Year_t==2019 & cactus$Newplant==0,]
+cactus_2019temp$Year_t1<-2020
+cactus_2019temp[,c("logsize_t1","Survival_t1","ant_t1",
+                   "Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1",
+                   "flower1_YN")]<-NA
+## create the 2020-2021 transition year
+cactus_2020temp_notnew<-cactus[cactus$Year_t1==2021 & cactus$Newplant==0,]
+cactus_2020temp_notnew$Year_t<-2020
+cactus_2020temp_notnew[,c("Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t",
+                   "logsize_t","ant_t","Antcount_t")]<-NA
+#note that 2021 survival is still here but we don't know whether mortality occurred in 2019 or 2020 transition year
+cactus_2020temp_new<-cactus[cactus$Year_t1==2021 & cactus$Newplant==1,]
+cactus_2020temp_new$Year_t<-2020
+## put them together
+cactus_2020temp<-rbind(cactus_2020temp_notnew,cactus_2020temp_new)
+## now drop the 2019-2021 transition year and add these two new transition years
+cactus_final <- rbind(cactus[cactus$Year_t!=2019,],cactus_2019temp,cactus_2020temp)
+
+
 # Export cactus to a csv
-write.csv(cactus, "Data Analysis/cholla_demography_20042023_cleaned.csv")
+write.csv(cactus_final, "Data Analysis/cholla_demography_20042023_cleaned.csv")
 
 
 
