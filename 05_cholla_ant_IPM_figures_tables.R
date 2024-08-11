@@ -197,8 +197,82 @@ crem <- outer (
 # lines(size_dummy,size_dummy, lty = 2, col = "grey")
 # dev.off()
 
+##plot showing future size distribution conditional on initial size
+##small size is the 5th percentile of tended plants
+initsmall<-quantile(cactus$logsize_t[cactus$ant_t!="vacant"],probs=0.01,na.rm=T)
+##large size is the 95th percentile of tended plants
+initlarge<-quantile(cactus$logsize_t[cactus$ant_t!="vacant"],probs=0.99,na.rm=T)
+
 ## Plot the countour lines of the studetn t growth model with the mean fit of the model and the real data
-png("Manuscript/Figures/grow_contour.png")
+png("Manuscript/Figures/grow_contour_v1.png")
+par(mar=c(3,5,3,1),oma=c(2,2,0,0))
+layout(matrix(c(1,2,3,4,5,5),
+              ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
+# Crem
+contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15),
+        main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black")
+points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
+lines(size_dummy, crem_mean, col = cremcol, lwd = 2)
+# Liom
+contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+        main = "b)      Liom.                ", cex.main = 2, lwd = 1.5)
+points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
+lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
+# Other
+contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+        main = "c)       Other                ", cex.main = 2, lwd = 1.5)
+points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
+lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
+# Vacant
+contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+        main = "d)      Vacant                ", cex.main = 2, lwd = 1.5)
+points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
+lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
+# All together
+
+plot(size_dummy,dsn(x=size_dummy,
+                    xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initlarge + mean(params$grow_beta23)*initlarge^2,
+                    omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+                    alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3,
+     xlim=c(0,15),ylab="Probability of size next year",main= "e)                      All Ants                           ", cex.main = 2)
+lines(size_dummy,dsn(x=size_dummy,
+                     xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initlarge + mean(params$grow_beta24)*initlarge^2,
+                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
+lines(size_dummy,dsn(x=size_dummy,
+                     xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initlarge + mean(params$grow_beta22)*initlarge^2,
+                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
+lines(size_dummy,dsn(x=size_dummy,
+                     xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initlarge + mean(params$grow_beta21)*initlarge^2,
+                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
+abline(v=initlarge,lty=3)
+
+lines(size_dummy,dsn(x=size_dummy,
+                     xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initsmall + mean(params$grow_beta23)*initsmall^2,
+                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3)
+lines(size_dummy,dsn(x=size_dummy,
+                     xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initsmall + mean(params$grow_beta24)*initsmall^2,
+                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
+lines(size_dummy,dsn(x=size_dummy,
+                     xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initsmall + mean(params$grow_beta22)*initsmall^2,
+                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
+lines(size_dummy,dsn(x=size_dummy,
+                     xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initsmall + mean(params$grow_beta21)*initsmall^2,
+                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
+abline(v=initsmall,lty=3)
+legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), lwd = 2)
+
+mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
+mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
+dev.off()
+
+png("Manuscript/Figures/grow_contour_v2.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
@@ -223,18 +297,17 @@ contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15
 points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
 # All together
-plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(10,15), ylim = c(10,15),
+plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(-5,15), ylim = c(-4,15),
      main = "e)                      All Ants                           ", cex.main = 2)
 lines(size_dummy, liom_mean, col = liomcol, lwd = 3)
 lines(size_dummy, other_mean, col = othercol, lwd = 3)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 3)
 lines(size_dummy, size_dummy, col = "grey", lty = 2)
-legend("bottomright", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), pch = 16)
+legend("topleft", legend = c("Crem.","Liom.","Other","Vacant"), col = c(cremcol,liomcol,othercol,vaccol), lwd = 2, cex=1)
+
 mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
 dev.off()
-
-
 
 ################################################################################
 ## Variance of random effects by year, ant, and model

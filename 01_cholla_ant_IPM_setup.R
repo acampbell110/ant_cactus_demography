@@ -10,6 +10,8 @@
 ## Load All Necessary Packages Here
 # stan models
 library(rstan)
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
 library(sn)
 library(sgt)
 library(qgam)
@@ -39,7 +41,6 @@ library(ggpubr)
 library(reshape)
 library(reshape2)
 knitr::opts_chunk$set(echo = TRUE)
-options(mc.cores = parallel::detectCores())
 # check the workign directory and make sure it is set to the right location
 #getwd()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
@@ -285,9 +286,8 @@ length(unique(cactus$Year_t1))
 cactus %>% filter(Year_t1 == Year_t +1) %>% group_by(Year_t1) %>% summarise(n())
 ## get total number of transition-year observations, excluding the last, incomplete transition
 cactus %>% filter(Year_t!=2023) %>% summarise(n())
-## it looks like there is a 2019-2021 transition year -- which is a problem!
-cactus %>% filter(Year_t==2019)
-#
+
+
 
 ## Get the proportions of each species
 # how many ant observations are there

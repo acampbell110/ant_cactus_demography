@@ -87,7 +87,7 @@ This study highlights that partner diversity does not always increase the benefi
 \newpage{}
 \section*{Introduction}
 Mutualisms are species interactions where all participants receive net benefits, leading to higher individual fitness and increased population growth rates. 
-\tom{They are widespread species interactions \citep{Bronstein1994,Chamberlain2014,Frederickson2013,Axelrod1981,Leigh2010} but can deteriorate into commensalism or parasitism under conditions that elevate costs or dampen benefits \citep{Rodriguez-Rodriguez2017,Song2020,Mandyam2014,Thrall2007, Bahia2022}.}{I suggest condensing the two sets of citations into one at the end of the sentence. The states that they are widespread species interactions is so broad and vague that it is not really worth citing.}
+\tom{They are widespread species interactions \citep{Bronstein1994,Chamberlain2014,Frederickson2013,Axelrod1981,Leigh2010} but can deteriorate into commensalism or parasitism under conditions that elevate costs or dampen benefits \citep{Rodriguez-Rodriguez2017,Song2020,Mandyam2014,Thrall2007, Bahia2022}.}{I suggest condensing the two sets of citations into one at the end of the sentence. The statement that they are widespread species interactions is so broad and vague that it is not really worth citing.}
 Mutualisms are considered more context dependent than other species interactions \citep{Chamberlain2014,Frederickson2013}, meaning the magnitude and sign of interaction strength are often determined by environmental conditions and species' identities \citep{Noe1994,Leigh2010}.
 
 Mutualism is defined at the level of a species pair (+/+) but these interactions are embedded within multi-species communities, and growing evidence suggests that pairwise interactions are poor predictors of the net effects of multi-species mutualism \citep{Afkhami2014,Palmer2010,Bascompte2009,Dattilo2014}. 
@@ -185,7 +185,7 @@ We recorded the ant species present (or vacancy if no ants present).
 Occurrences of more than one ant species on one plant were rare (less than 5\% of observations), and for the purpose of this analysis we classified the plant as being occupied by the more abundant species. 
 Plots were searched for new recruits each year, and these were added to the census.
 These data allowed us to link each plant's demographic fate (survival, growth, and reproduction) to its state of ant visitation. 
-In total, the data set includes a total of 9,787 observations of 1141 unique individuals across \tom{19}{There are actually 16 years (you can see my tally in the 01 script). In your code you took length(unique(Yeart1)). But one of these years is 2024 (for which there is no t1 data entered), one is NA, and 2019-2021 does not count.} complete transition years (spanning May/June of year $t$ to May/June of year $t+1$). 
+In total, the data set includes a total of 9,787 observations of 1141 unique individuals across \tom{19}{There are actually 15 complete transition years.} complete transition years (spanning May/June of year $t$ to May/June of year $t+1$). 
 \tom{}{You should cite the data package here. The published package only goes up to 2018, so we should talk about updating that package with you as lead author, which should be easy to do as long as the data are QAQC'd.}
 %These data were used to fit vital rate models (survival, growth, reproduction) as functions of plant size and ant occupancy state. 
 
@@ -263,10 +263,15 @@ As in the IPM, our statistical modeling assumed that demographic effects of ant 
 
 \paragraph{Growth}
 We fit the growth sub-model ($G(x',x,a;\pmb{\tau^G_{a}})$) to data on size in year $t+1$ ($y^G$) using the skewed normal distribution to account for left-skewed size transitions (at some initial sizes, transitions below the expected future size were more common than transitions above it). 
-The skew-normal has three parameters corresponding to location ($\hat{G}$), shape ($\sigma$), and skew ($\alpha$):
-$$y_i^G \sim Skewed Normal(\hat{G_i},\sigma_i,\alpha_i) $$
-$$\hat{G_i} = \beta^0_{a[i]} + \beta^1_{a[i]} x_i + \beta^2_{a[i]} x_i^2 + u_{year[i],a[i]} + w_{plot[i]} $$
-Here, the location parameter for the $i$th observation $\hat{G_i}$ is defined as a second-order polynomial with ant-size interactions because  preliminary analysis found this was an improvement over a linear relationship (note that the location parameter of the skew-normal is not the mean). 
+The skew-normal has three parameters corresponding to location ($\hat{G}$), shape ($\sigma$), and scale ($\alpha$):
+\begin{linenomath*}
+	$$y_i^G \sim Skewed Normal(\hat{G_i},\sigma_i,\alpha_i) $$
+	$$\hat{G_i} = \beta^0_{a[i]} + \beta^1_{a[i]} x_i + \beta^2_{a[i]} x_i^2 + u_{year[i],a[i]} + w_{plot[i]} $$
+	$$log(\sigma_i)  = \beta^3 + \beta^4 x_i $$
+	$$\alpha_i = \beta^5 + \beta^6 x_i$$
+	\label{eqn:growth}
+\end{linenomath*}
+Here, the location parameter for the $i$th observation $\hat{G_i}$ is defined as a second-order polynomial with ant-size interactions because  preliminary analysis found this was an improvement over a linear relationship (note that the location parameter of the skew-normal is not the mean, but the mean can be derived as $\hat{G} + \frac{\sigma\alpha}{\sqrt{1+\alpha^2}} \sqrt{\frac{2}{\pi}}$). 
 The year- and ant-specific random effect $u$ (which parameterizes the $\pmb{\tau}^G_{a}$ vectors) and plot-specific random effect $w$ are normally distributed with variances $\sigma^2_{year}$ and $\sigma^2_{plot}$, respectively. 
 Parameters $\sigma_i$ and $\alpha_i$  control residual variance and skewness, respectively, and were defined as linear functions of initial size $x_i$ ($\sigma_i$ is strictly positive and was modeled with a log link function). 
 We assume growth variance and skewness were not dependent on ant occupancy state. 
@@ -292,7 +297,7 @@ Estimates for the number of seeds per fruit were ant specific, but the data (cit
 
 \paragraph{Ant Transitions}
 The ant transition model ($\epsilon(x,a,a';\pmb{\tau}^{\epsilon})$) estimates the probability of a cactus being occupied by ant partner $a'$ in year $t+1$ given that it was occupied by initial ant partner $a$  in year $t$, with fixed effect of initial size $x$.
-We fit this model to ant partner data using a multinomial distribution with a logit link function and random effects for plot and year. 
+We fit this model to ant partner data using a multinomial distribution with a logit link function and \tom{random effects for plot and year}{As far as I can tell there are no plot or year random effects in the model you fit.}. 
 
 \paragraph{Parameter estimation}
 We fit models using Stan run through version 4.0.2 of R \cite{Rcite,Rstancite}. 
@@ -306,7 +311,7 @@ For each model, we obtained three chains of 10,000 iterations, discarding the fi
 Analyzing an IPM requires that we discretize the continuous IPM kernel into an approximating matrix. 
 Size variable $x$ was discretized into $b$ bins, resulting in a $b \times b$ matrix.
 In our model there is additional complexity in the form of transitions between $A$ ant states and two additional discrete states (year one and year two seed banks), leading to a matrix size of $A(b+2) \times A(b+2)$.
-We used $b = 200$ bins, which we found to be sufficient for numerically stable outputs, and extended the integration limits beyond the minimum ($L$) and maximum ($U$) observed sizes to avoid unintentional eviction using the ``floor-and-ceiling'' method \cite{Williams2012}. 
+\tom{We used $b = 200$ bins}{In your script matsize is 500.}, which we found to be sufficient for numerically stable outputs, and extended the integration limits beyond the minimum ($L$) and maximum ($U$) observed sizes to avoid unintentional eviction using the ``floor-and-ceiling'' method \cite{Williams2012}. 
 
 For stochastic analyses, we estimated the approximating matrix corresponding to each $t$ to $t+1$ transition year. 
 To estimate population mean fitness in a stochastic environment ($\lambda_{S}$) we simulated population dynamics for 500 years by randomly sampling among the \tom{17 annual transition matrices}{Unless you add 2024 I think this is 16.}, discarding the first 100 years of the simulation to minimize the influence of initial conditions. 
@@ -366,7 +371,7 @@ We apply similar logic to other contrasts described above.
  
 \section*{Results}
 \subsection*{What are the demographic effects of association with alternative parnters and how do these effects fluctuate across years?}
-Over the 20-year data set, we found that ant partners influenced demographic performance of cactus hosts, and different ant partners had contrasting demoghraphic effects across host vital rates. 
+Over the 20-year data set, we found that ant partners influenced demographic performance of cactus hosts, and different ant partners had contrasting demographic effects across host vital rates. 
 Plants tended by \textit{C. opuntiae} had a growth advantage, particularly for small plants, while plants in states of \textit{L. apiculatum}, Other ants, and vacancy had indistinguishable growth trajectories (Figure \ref{fig:Grow}).
 For all ant states, growth was left-skewed, with transitions to sizes below the mean were more common than sizes above the mean. 
 Similarly, ant visitation enhances cactus survival, and ant partner identity has a significant impact on survival for smaller plants (Figure \ref{fig:Surv}).
@@ -526,7 +531,7 @@ We found that each ant partner had different effects on different vital rates ac
 We compared the fitness of cholla under simulations where the variation in benefits across time reflected what we found in nature to siulations where each ant was forced to react the same way to temporal variation (excluding the possibility of portfolio effect).
 We found the benefits were not stronger across time when the ants were allowed to vary naturally than when they were forced to react synchronously, indicating that portfolio effect does not explain the benefits of diversity in our system.
 Other portfolio effect studies \citep{Lazaro2022,Tornos2023} found 
-One study \cite{Dallas2021} found that while portfolio effect was easy to show in theoretical models, it is often very weak or nonexistent in empirical data across many systems. 
+One study \cite{dallas2022temporal} found that while portfolio effect was easy to show in theoretical models, it is often very weak or nonexistent in empirical data across many systems. 
 This indicates that it may be very difficult to detect, disguised by different mechanisms, or uncommon in real systems.
 
 % Value of Long-term data
