@@ -209,8 +209,9 @@ for(i in 1:nrow(cactus)){
     cactus$TotFlowerbuds_t1[i] <- cactus$ABFlowerbuds_t1[i] + cactus$Goodbuds_t1[i]
   }
 }
-cactus$flower1_YN<-cactus$TotFlowerbuds_t1>0
-#summary(cactus$flower1_YN)
+cactus$flower_YN<-cactus$TotFlowerbuds_t
+summary(cactus$flower_YN)
+View(cactus)
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 
 ## Cactus 2023 data cleaning ---- Recruitment

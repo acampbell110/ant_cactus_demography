@@ -281,7 +281,7 @@ stan_data_viab <- list(N = nrow(viability_data),                                
 ## Reproductive State Model -- Prob of reproducing at next time step   
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-reproductive_data_orig <- cactus[ , c("flower1_YN","logsize_t","Year_t","Plot")]
+reproductive_data_orig <- cactus[ , c("flower_YN","logsize_t","Year_t","Plot")]
 reproductive_data <- na.omit(reproductive_data_orig)
 # # check that you're happy with the subsetting
 # plot(reproductive_data$logsize_t, reproductive_data$flower1_YN)
@@ -292,7 +292,7 @@ reproductive_data <- na.omit(reproductive_data_orig)
 ## Create Stan Data
 stan_data_repro <- list(N = nrow(reproductive_data),                                   ## number of observations
                         vol = reproductive_data$logsize_t,                            ## predictors volume
-                        y_repro = reproductive_data$flower1_YN,                        ## response volume next year
+                        y_repro = reproductive_data$flower_YN,                        ## response volume next year
                         N_Year = max(as.integer(as.factor(reproductive_data$Year_t))), ## number of years
                         N_Plot = max(as.integer(as.factor(reproductive_data$Plot))),   ## number of plots
                         plot = as.integer(as.factor(reproductive_data$Plot)),          ## predictor plots
