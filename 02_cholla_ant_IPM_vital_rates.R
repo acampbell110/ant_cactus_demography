@@ -126,6 +126,7 @@ bayesplot::mcmc_trace(fit_grow_skew,pars = c("d_0","d_size","a_0","a_size"))
 # 
 # # ## Save the RDS file which saves all parameters, draws, and other information
 saveRDS(fit_grow_skew, "H:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_grow_skew.rds")
+fit_grow_skew<-readRDS("G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_grow_skew.rds")
 # saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 # saveRDS(fit_grow_skew,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew1.rds")
 # saveRDS(fit_grow_skew, "C:/Users/LabUser/Documents/GitHub/ant_cactus_demography/fit_grow_skew.rds")
@@ -155,11 +156,10 @@ saveRDS(fit_grow_skew, "H:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outpu
 ##  Survival Model -- What is the probability of surviving to the next time step?   
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-survival_data_orig <- subset(cactus, is.na(Survival_t1) == FALSE,c("Plot","Year_t","Survival_t1","ant_t","logsize_t"))
+#survival_data_orig <- subset(cactus, is.na(Survival_t1) == FALSE,c("Plot","Year_t","Survival_t1","ant_t","logsize_t"))
 survival_data_orig <- cactus[,c("Plot","Year_t","Survival_t1","ant_t","logsize_t")]
 survival_data <- na.omit(survival_data_orig)
-survival_data <- subset(survival_data, survival_data$Survival_t1 != 2)
-# levels(survival_data$ant_t)
+
 # # check how many rows of data your lose: 1619 rows due to recruit status
 # nrow(survival_data_orig)
 # nrow(survival_data)
@@ -175,13 +175,14 @@ stan_data_surv <- list(N = nrow(survival_data),                                 
                        year = as.integer(as.factor(survival_data$Year_t))          ## predictor years
 ) 
 # ## Run the survival model with a bernoulli distribution ---- fixed effects: previous size and ant state; random effects: plot and year
-# surv_model <- stan_model("Data Analysis/STAN Models/surv_code.stan")
-# fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
-#                    control = list(adapt_delta=0.99,stepsize=0.1),
-#                    iter=10000,cores=3,thin=2,
-#                    pars = c("beta0","beta1","u","w"),   #location coefficients)
-#                    save_warmup=F)
+surv_model <- stan_model("Data Analysis/STAN Models/surv_code.stan")
+fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
+                   control = list(adapt_delta=0.99,stepsize=0.1),
+                   iter=10000,cores=3,thin=2,
+                   pars = c("beta0","beta1","u","w"),   #location coefficients)
+                   save_warmup=F)
 # ##Save the RDS file which saves all parameters, draws, and other information
+saveRDS(fit_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_surv.rds")
 # saveRDS(fit_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
 # saveRDS(fit_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
 # surv_model_null <- stan_model("Data Analysis/STAN Models/surv_code_null.stan")
@@ -219,16 +220,18 @@ stan_data_flow_trunc <- list(N = nrow(flower_data),                             
                              year = as.integer(as.factor(flower_data$Year_t))         ## predictor years
 ) 
 # ## Run the flower model with a negative binomial distribution ---- fixed effects: previous size; random effects: plot and year
-# flow_model <- stan_model("Data Analysis/STAN Models/flower_trunc_code.stan")
-# fit_flow<-sampling(flow_model, data = stan_data_flow_trunc,chains=3,
-#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
-#                                                 iter=10000,cores=3,thin=2,
-#                                                 pars = c("u","w",          # plot and year random effects
-#                                                          "beta0","beta1",  #location coefficients
-#                                                          "phi"),save_warmup=F)
+flow_model <- stan_model("Data Analysis/STAN Models/flower_trunc_code.stan")
+fit_flow<-sampling(flow_model, data = stan_data_flow_trunc,chains=3,
+                                                control = list(adapt_delta=0.99,stepsize=0.1),
+                                                iter=10000,cores=3,thin=2,
+                                                pars = c("u","w",          # plot and year random effects
+                                                         "beta0","beta1",  #location coefficients
+                                                         "phi"),save_warmup=F)
 # ## Save the RDS file which saves all parameters, draws, and other information
+saveRDS(fit_flow, "fit_flow.rds")
 # saveRDS(fit_flow, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_flow.rds")
 # saveRDS(fit_flow,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_flow.rds")
+bayesplot::mcmc_trace(fit_flow,pars = c("beta0","beta1","phi"))
 
 
 ################################################################################
@@ -260,14 +263,17 @@ stan_data_viab <- list(N = nrow(viability_data),                                
                        year = as.integer(as.factor(viability_data$Year_t))         ## predictor years
 ) 
 # ## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
-# viab_model <- stan_model("Data Analysis/STAN Models/viab_code.stan")
-# fit_viab<-sampling(viab_model, data = stan_data_viab,chains=3,
-#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
-#                                                 iter=10000,cores=3,thin=2,
-#                                                 pars = c("u","w",          # plot and year random effects
-#                                                          "beta0"           #location coefficients
-#                                                          ),save_warmup=F)
+viab_model <- stan_model("Data Analysis/STAN Models/viab_code.stan")
+fit_viab<-sampling(viab_model, data = stan_data_viab,chains=3,
+                                                control = list(adapt_delta=0.99,stepsize=0.1),
+                                                iter=10000,cores=3,thin=2,
+                                                pars = c("u","w",          # plot and year random effects
+                                                         "beta0"           #location coefficients
+                                                         ),save_warmup=F)
+bayesplot::mcmc_trace(fit_viab,pars = c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
+
 # ## Save the RDS file which saves all parameters, draws, and other information
+saveRDS(fit_viab, "fit_viab.rds")
 # saveRDS(fit_viab, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
 # saveRDS(fit_viab,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
 # ## Run the Viability model with a binomial distribution but no ant effects on the random effects of years
@@ -286,7 +292,7 @@ stan_data_viab <- list(N = nrow(viability_data),                                
 ## Reproductive State Model -- Prob of reproducing at next time step   
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-reproductive_data_orig <- cactus[ , c("flower_YN","logsize_t","Year_t","Plot")]
+reproductive_data_orig <- cactus[ , c("flower1_YN","logsize_t","Year_t","Plot")]
 reproductive_data <- na.omit(reproductive_data_orig)
 # # check that you're happy with the subsetting
 # plot(reproductive_data$logsize_t, reproductive_data$flower1_YN)
@@ -297,7 +303,7 @@ reproductive_data <- na.omit(reproductive_data_orig)
 ## Create Stan Data
 stan_data_repro <- list(N = nrow(reproductive_data),                                   ## number of observations
                         vol = reproductive_data$logsize_t,                            ## predictors volume
-                        y_repro = reproductive_data$flower_YN,                        ## response volume next year
+                        y_repro = reproductive_data$flower1_YN,                        ## response volume next year
                         N_Year = max(as.integer(as.factor(reproductive_data$Year_t))), ## number of years
                         N_Plot = max(as.integer(as.factor(reproductive_data$Plot))),   ## number of plots
                         plot = as.integer(as.factor(reproductive_data$Plot)),          ## predictor plots
