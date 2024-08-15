@@ -110,101 +110,6 @@ params$grow_beta02<-grow.params$beta0[draws,2]      	## growth intercept
 params$grow_beta12<-grow.params$beta1[draws,2]				## growth slope
 params$grow_beta22<-grow.params$beta2[draws,2]				## growth slope
 
-# # No ant specific
-# params$grow_sig0 <- grow.params[draws,"d_0"]
-# params$grow_sig1 <- grow.params[draws,"d_size"]
-# params$grow_alp0 <- grow.params[draws,"a_0"]
-# params$grow_alp1 <- grow.params[draws,"a_size"]
-# # Crem
-# params$grow_beta01 <- grow.params[draws,"beta0[1]"]
-# params$grow_beta11 <- grow.params[draws,"beta1[1]"]
-# params$grow_beta21 <- grow.params[draws,"beta2[1]"]
-# # Liom
-# params$grow_beta02 <- grow.params[draws,"beta0[2]"]
-# params$grow_beta12 <- grow.params[draws,"beta1[2]"]
-# params$grow_beta22 <- grow.params[draws,"beta2[2]"]
-# # Other
-# params$grow_beta03 <- grow.params[draws,"beta0[3]"]
-# params$grow_beta13 <- grow.params[draws,"beta1[3]"]
-# params$grow_beta23 <- grow.params[draws,"beta2[3]"]
-# # Vac
-# params$grow_beta04 <- grow.params[draws,"beta0[4]"]
-# params$grow_beta14 <- grow.params[draws,"beta1[4]"]
-# params$grow_beta24 <- grow.params[draws,"beta2[4]"]
-
-
-## Year Random Effects -- 2004:2022 (missing 2007,2008,2019,2020)
-# Ant 1 (prev crem)
-grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],
-                   rep(0,N_draws),rep(0,N_draws), ##2007,2008
-                   grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
-                   grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
-                   grow.params$w[draws,1,12],grow.params$w[draws,1,13],
-                   rep(0,N_draws),rep(0,N_draws), ##2019,2020
-                   grow.params$w[draws,1,14],grow.params$w[draws,1,15])
-#grow_rfx1 <- cbind(grow.params[draws,"w[1,1]"],grow.params[draws,"w[1,2]"],grow.params[draws,"w[1,3]"],rep(0,N_draws),rep(0,N_draws),grow.params[draws,"w[1,4]"],grow.params[draws,"w[1,5]"],grow.params[draws,"w[1,6]"],grow.params[draws,"w[1,7]"],grow.params[draws,"w[1,8]"],grow.params[draws,"w[1,9]"],grow.params[draws,"w[1,10]"],grow.params[draws,"w[1,11]"],grow.params[draws,"w[1,12]"],grow.params[draws,"w[1,13]"],grow.params[draws,"w[1,14]"],rep(0,N_draws),grow.params[draws,"w[1,15]"],grow.params[draws,"w[1,16]"])
-# Ant 2 (prev liom)
-grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],
-                   rep(0,N_draws),rep(0,N_draws), ##2007,2008
-                   grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
-                   grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
-                   grow.params$w[draws,2,12],grow.params$w[draws,2,13],
-                   rep(0,N_draws),rep(0,N_draws), ##2019,2020
-                   grow.params$w[draws,2,14],grow.params$w[draws,2,15])
-# grow_rfx2 <- cbind(grow.params[draws,"w[2,1]"],grow.params[draws,"w[2,2]"],
-#                    grow.params[draws,"w[2,3]"],rep(0,N_draws),
-#                    rep(0,N_draws),grow.params[draws,"w[2,4]"],
-#                    grow.params[draws,"w[2,5]"],grow.params[draws,"w[2,6]"],
-#                    grow.params[draws,"w[2,7]"],grow.params[draws,"w[2,8]"],
-#                    grow.params[draws,"w[2,9]"],grow.params[draws,"w[2,10]"],
-#                    grow.params[draws,"w[2,11]"],grow.params[draws,"w[2,12]"],
-#                    grow.params[draws,"w[2,13]"],grow.params[draws,"w[2,14]"],
-#                    rep(0,N_draws),grow.params[draws,"w[2,15]"],grow.params[draws,"w[2,16]"])
-# Ant 3 (prev other)
-grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],
-                   rep(0,N_draws),rep(0,N_draws), ##2007,2008
-                   grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
-                   grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
-                   grow.params$w[draws,3,12],grow.params$w[draws,3,13],
-                   rep(0,N_draws),rep(0,N_draws), ##2019,2020
-                   grow.params$w[draws,3,14],grow.params$w[draws,3,15])
-# grow_rfx3 <- cbind(grow.params[draws,"w[3,1]"],grow.params[draws,"w[3,2]"],
-#                    grow.params[draws,"w[3,3]"],rep(0,N_draws),
-#                    rep(0,N_draws),grow.params[draws,"w[3,4]"],
-#                    grow.params[draws,"w[3,5]"],grow.params[draws,"w[3,6]"],
-#                    grow.params[draws,"w[3,7]"],grow.params[draws,"w[3,8]"],
-#                    grow.params[draws,"w[3,9]"],grow.params[draws,"w[3,10]"],
-#                    grow.params[draws,"w[3,11]"],grow.params[draws,"w[3,12]"],
-#                    grow.params[draws,"w[3,13]"],grow.params[draws,"w[3,14]"],
-#                    rep(0,N_draws),grow.params[draws,"w[3,15]"],grow.params[draws,"w[3,16]"])
-# Ant 4 (prev vac)
-grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],
-                   rep(0,N_draws),rep(0,N_draws), ##2007,2008
-                   grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
-                   grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
-                   grow.params$w[draws,4,12],grow.params$w[draws,4,13],
-                   rep(0,N_draws),rep(0,N_draws), ##2019,2020
-                   grow.params$w[draws,4,14],grow.params$w[draws,4,15])
-# grow_rfx4 <- cbind(grow.params[draws,"w[4,1]"],grow.params[draws,"w[4,2]"],
-#                    grow.params[draws,"w[4,3]"],rep(0,N_draws),
-#                    rep(0,N_draws),grow.params[draws,"w[4,4]"],
-#                    grow.params[draws,"w[4,5]"],grow.params[draws,"w[4,6]"],
-#                    grow.params[draws,"w[4,7]"],grow.params[draws,"w[4,8]"],
-#                    grow.params[draws,"w[4,9]"],grow.params[draws,"w[4,10]"],
-#                    grow.params[draws,"w[4,11]"],grow.params[draws,"w[4,12]"],
-#                    grow.params[draws,"w[4,13]"],grow.params[draws,"w[4,14]"],
-#                    rep(0,N_draws),grow.params[draws,"w[4,15]"],grow.params[draws,"w[4,16]"])
-# # Non ant specific -- Only run for the Stochastic Null Version
-# grow_rfx <- cbind(grow.params.null$w[draws,1],grow.params.null$w[draws,2],grow.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-#                    grow.params.null$w[draws,4],grow.params.null$w[draws,5],grow.params.null$w[draws,6],grow.params.null$w[draws,7],
-#                    grow.params.null$w[draws,8],grow.params.null$w[draws,9],grow.params.null$w[draws,10],grow.params.null$w[draws,11],
-#                    grow.params.null$w[draws,12],grow.params.null$w[draws,13],grow.params.null$w[draws,14],grow.params.null$w[draws,15],
-#                    rep(0,N_draws),rep(0,N_draws))
-# grow_rfx1 <- grow_rfx
-# grow_rfx2 <- grow_rfx
-# grow_rfx3 <- grow_rfx
-# grow_rfx4 <- grow_rfx
-
 ##-----------------------Survival Parameters-----------------## 
 ## Check the names of the parameters
 #head(surv.params)
@@ -222,41 +127,7 @@ params$surv_beta11<-surv.params$beta1[draws,1]				## surv slope
 # Ant 2 (liom)
 params$surv_beta02<-surv.params$beta0[draws,2]     	  ## surv intercept
 params$surv_beta12<-surv.params$beta1[draws,2]				##surv slope
-# ## Year Random Effects
-# Ant 1 (prev crem)
-surv_rfx1 <- cbind(surv.params$w[draws,1,1],surv.params$w[draws,1,2],surv.params$w[draws,1,3],rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w[draws,1,4],surv.params$w[draws,1,5],surv.params$w[draws,1,6],surv.params$w[draws,1,7],
-                   surv.params$w[draws,1,8],surv.params$w[draws,1,9],surv.params$w[draws,1,10],surv.params$w[draws,1,11],
-                   surv.params$w[draws,1,12],surv.params$w[draws,1,13],surv.params$w[draws,1,14],rep(0,N_draws),
-                   surv.params$w[draws,1,15],surv.params$w[draws,1,16])
-# Ant 2 (prev liom)
-surv_rfx2 <- cbind(surv.params$w[draws,2,1],surv.params$w[draws,2,2],surv.params$w[draws,2,3],rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w[draws,2,4],surv.params$w[draws,2,5],surv.params$w[draws,2,6],surv.params$w[draws,2,7],
-                   surv.params$w[draws,2,8],surv.params$w[draws,2,9],surv.params$w[draws,2,10],surv.params$w[draws,2,11],
-                   surv.params$w[draws,2,12],surv.params$w[draws,2,13],surv.params$w[draws,2,14],rep(0,N_draws),
-                   surv.params$w[draws,2,15],surv.params$w[draws,2,16])
-# Ant 3 (prev other)
-surv_rfx3 <- cbind(surv.params$w[draws,3,1],surv.params$w[draws,3,2],surv.params$w[draws,3,3],rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w[draws,3,4],surv.params$w[draws,3,5],surv.params$w[draws,3,6],surv.params$w[draws,3,7],
-                   surv.params$w[draws,3,8],surv.params$w[draws,3,9],surv.params$w[draws,3,10],surv.params$w[draws,3,11],
-                   surv.params$w[draws,3,12],surv.params$w[draws,3,13],surv.params$w[draws,3,14],rep(0,N_draws),
-                   surv.params$w[draws,3,15],surv.params$w[draws,3,16])
-# Ant 4 (prev vac)
-surv_rfx4 <- cbind(surv.params$w[draws,4,1],surv.params$w[draws,4,2],surv.params$w[draws,4,3],rep(0,N_draws),rep(0,N_draws),
-                   surv.params$w[draws,4,4],surv.params$w[draws,4,5],surv.params$w[draws,4,6],surv.params$w[draws,4,7],
-                   surv.params$w[draws,4,8],surv.params$w[draws,4,9],surv.params$w[draws,4,10],surv.params$w[draws,4,11],
-                   surv.params$w[draws,4,12],surv.params$w[draws,4,13],surv.params$w[draws,4,14],rep(0,N_draws),
-                   surv.params$w[draws,4,15],surv.params$w[draws,4,16])
-# # Non ant specific -- Only run for the Stochastic Null Version
-# surv_rfx <- cbind(surv.params.null$w[draws,1],surv.params.null$w[draws,2],surv.params.null$w[draws,3],rep(0,N_draws),rep(0,N_draws),
-#                   surv.params.null$w[draws,4],surv.params.null$w[draws,5],surv.params.null$w[draws,6],surv.params.null$w[draws,7],
-#                   surv.params.null$w[draws,8],surv.params.null$w[draws,9],surv.params.null$w[draws,10],surv.params.null$w[draws,11],
-#                   surv.params.null$w[draws,12],surv.params.null$w[draws,13],surv.params.null$w[draws,14],rep(0,N_draws),
-#                   surv.params.null$w[draws,15],surv.params.null$w[draws,16])
-# surv_rfx1 <- surv_rfx
-# surv_rfx2 <- surv_rfx
-# surv_rfx3 <- surv_rfx
-# surv_rfx4 <- surv_rfx
+
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
 ## Check the names of the parameters
 #head(flow.params)
@@ -266,13 +137,6 @@ params$flow_sig_w<-flow.params$sigma_w[draws]        ## flow sigma w
 
 params$flow_beta0<-flow.params$beta0[draws]          ## flow intercept
 params$flow_beta1<-flow.params$beta1[draws]          ## flow slopes
-#### --- Year Random Effects --- ####
-flow_rfx <- cbind(flow.params$w[draws,1],flow.params$w[draws,2],flow.params$w[draws,3],
-                  flow.params$w[draws,4],rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                  flow.params$w[draws,5],flow.params$w[draws,6],flow.params$w[draws,7],
-                  flow.params$w[draws,8],flow.params$w[draws,9],flow.params$w[draws,10],flow.params$w[draws,11],
-                  rep(0,N_draws),
-                  flow.params$w[draws,12],flow.params$w[draws,13],flow.params$w[draws,14])
 ##-----------------------Reproductive State Parameters-----------------## 
 ## Check the names of the parameters
 #head(repro.params)
@@ -280,12 +144,7 @@ params$repro_beta0<-repro.params$beta0[draws]      ## repro intercept
 params$repro_beta1<-repro.params$beta1[draws]      ## repro slope
 params$repro_sig_u<-repro.params$sigma_u[draws]    ## repro sigma u
 params$repro_sig_w<-repro.params$sigma_w[draws]    ## repro sigma w
-## --- Year Random Effects --- ####
-repro_rfx <- cbind(repro.params$w[draws,1],repro.params$w[draws,2],repro.params$w[draws,3],
-                   repro.params$w[draws,4],rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                   repro.params$w[draws,5],repro.params$w[draws,6],repro.params$w[draws,7],
-                   repro.params$w[draws,8],repro.params$w[draws,9],repro.params$w[draws,10],repro.params$w[draws,11],
-                   repro.params$w[draws,12],rep(0,N_draws),repro.params$w[draws,13],repro.params$w[draws,14])
+
 ##-----------------------Viability Parameters-----------------## 
 ## Check the names of the parameters
 #head(viab.params) 
@@ -300,41 +159,6 @@ params$viab_beta03<-viab.params$beta0[draws,3]     	  ## viab intercept
 params$viab_beta01<-viab.params$beta0[draws,1]     	  ## viab intercept
 # Ant 2 (liom)
 params$viab_beta02<-viab.params$beta0[draws,2]     	  ## viab intercept
-# ## Year random effects
-viab_rfx1 <- cbind(viab.params$w[draws,1,1],viab.params$w[draws,1,2],viab.params$w[draws,1,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                   viab.params$w[draws,1,4],viab.params$w[draws,1,5],viab.params$w[draws,1,6],viab.params$w[draws,1,7],
-                   viab.params$w[draws,1,8],viab.params$w[draws,1,9],viab.params$w[draws,1,10],
-                   viab.params$w[draws,1,11],rep(0,N_draws),
-                   viab.params$w[draws,1,12])
-viab_rfx2 <- cbind(viab.params$w[draws,2,1],viab.params$w[draws,2,2],viab.params$w[draws,2,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                   viab.params$w[draws,2,4],viab.params$w[draws,2,5],viab.params$w[draws,2,6],viab.params$w[draws,2,7],
-                   viab.params$w[draws,2,8],viab.params$w[draws,2,9],viab.params$w[draws,2,10],
-                   viab.params$w[draws,2,11],rep(0,N_draws),
-                   viab.params$w[draws,2,12])
-viab_rfx3 <- cbind(viab.params$w[draws,3,1],viab.params$w[draws,3,2],viab.params$w[draws,3,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                   viab.params$w[draws,3,4],viab.params$w[draws,3,5],viab.params$w[draws,3,6],viab.params$w[draws,3,7],
-                   viab.params$w[draws,3,8],viab.params$w[draws,3,9],viab.params$w[draws,3,10],
-                   viab.params$w[draws,3,11],rep(0,N_draws),
-                   viab.params$w[draws,3,12])
-viab_rfx4 <- cbind(viab.params$w[draws,4,1],viab.params$w[draws,4,2],viab.params$w[draws,4,3],
-                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-                   viab.params$w[draws,4,4],viab.params$w[draws,4,5],viab.params$w[draws,4,6],viab.params$w[draws,4,7],
-                   viab.params$w[draws,4,8],viab.params$w[draws,4,9],viab.params$w[draws,4,10],
-                   viab.params$w[draws,4,11],rep(0,N_draws),
-                   viab.params$w[draws,4,12])
-## Non-ant specific -- Onnly Run for Stochastic Null Version
-# viab_rfx <- cbind(viab.params.null$w[draws,1],viab.params.null$w[draws,2],viab.params.null$w[draws,3],
-#                   rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),rep(0,N_draws),
-#                   viab.params.null$w[draws,4],viab.params.null$w[draws,5],viab.params.null$w[draws,6],viab.params.null$w[draws,7],
-#                   viab.params.null$w[draws,8],viab.params.null$w[draws,9],viab.params.null$w[draws,10],rep(0,N_draws),
-#                   viab.params.null$w[draws,11],viab.params.null$w[draws,12])
-# viab_rfx1 <- viab_rfx
-# viab_rfx2 <- viab_rfx
-# viab_rfx3 <- viab_rfx
-# viab_rfx4 <- viab_rfx
 ##-----------------------Seeds Prod Parameters-----------------## 
 ## Check the names of the parameters
 #head(seed.params)
@@ -406,32 +230,136 @@ params$multi_betalc <- multi.params$beta[draws,2,1]
 params$multi_betall <- multi.params$beta[draws,2,2]
 params$multi_betal <- multi.params$beta[draws,5,2]
 
+# Random effects for transition year --------------------------------------
+## We are only using transition years that are complete for all vital rates
+## Growth, survival and viability are ant-specific
+## consecutively since 2004, there are 20 transition years through 2024 but not all years have data
 
+## Year Random Effects -- 2004:2022 (missing 2007,2008,2019,2020)
+# Ant 1 (prev crem)
+grow_rfx1 <- cbind(grow.params$w[draws,1,1],grow.params$w[draws,1,2],grow.params$w[draws,1,3],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2007,2008
+                   grow.params$w[draws,1,4],grow.params$w[draws,1,5],grow.params$w[draws,1,6],grow.params$w[draws,1,7],
+                   grow.params$w[draws,1,8],grow.params$w[draws,1,9],grow.params$w[draws,1,10],grow.params$w[draws,1,11],
+                   grow.params$w[draws,1,12],grow.params$w[draws,1,13],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2019,2020
+                   grow.params$w[draws,1,14],grow.params$w[draws,1,15],
+                   rep(NA,N_draws))##2023
+# Ant 2 (prev liom)
+grow_rfx2 <- cbind(grow.params$w[draws,2,1],grow.params$w[draws,2,2],grow.params$w[draws,2,3],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2007,2008
+                   grow.params$w[draws,2,4],grow.params$w[draws,2,5],grow.params$w[draws,2,6],grow.params$w[draws,2,7],
+                   grow.params$w[draws,2,8],grow.params$w[draws,2,9],grow.params$w[draws,2,10],grow.params$w[draws,2,11],
+                   grow.params$w[draws,2,12],grow.params$w[draws,2,13],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2019,2020
+                   grow.params$w[draws,2,14],grow.params$w[draws,2,15],
+                   rep(NA,N_draws))##2023
+# Ant 3 (prev other)
+grow_rfx3 <- cbind(grow.params$w[draws,3,1],grow.params$w[draws,3,2],grow.params$w[draws,3,3],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2007,2008
+                   grow.params$w[draws,3,4],grow.params$w[draws,3,5],grow.params$w[draws,3,6],grow.params$w[draws,3,7],
+                   grow.params$w[draws,3,8],grow.params$w[draws,3,9],grow.params$w[draws,3,10],grow.params$w[draws,3,11],
+                   grow.params$w[draws,3,12],grow.params$w[draws,3,13],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2019,2020
+                   grow.params$w[draws,3,14],grow.params$w[draws,3,15],
+                   rep(NA,N_draws))##2023
+# Ant 4 (prev vac)
+grow_rfx4 <- cbind(grow.params$w[draws,4,1],grow.params$w[draws,4,2],grow.params$w[draws,4,3],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2007,2008
+                   grow.params$w[draws,4,4],grow.params$w[draws,4,5],grow.params$w[draws,4,6],grow.params$w[draws,4,7],
+                   grow.params$w[draws,4,8],grow.params$w[draws,4,9],grow.params$w[draws,4,10],grow.params$w[draws,4,11],
+                   grow.params$w[draws,4,12],grow.params$w[draws,4,13],
+                   rep(NA,N_draws),rep(NA,N_draws), ##2019,2020
+                   grow.params$w[draws,4,14],grow.params$w[draws,4,15],
+                   rep(NA,N_draws))##2023
+# # Non ant specific -- average the ant-specific year effects
+grow_rfx <- (grow_rfx1+grow_rfx2+grow_rfx3+grow_rfx4)/4
 
-# # Prev Vac
-# params$multi_betavv <- multi.params$beta[draws,1,1] ## intercept for vacant to vacant
-# params$multi_betavo <- multi.params$beta[draws,1,2] ## intercept for vacant to other
-# params$multi_betavc <- multi.params$beta[draws,1,3] ## intercept for vacant to crem
-# params$multi_betavl <- multi.params$beta[draws,1,4] ## intercept for vacant to liom
-# params$multi_betav <- multi.params$beta[draws,5,1] ## Size specific vacant slope
-# # Prev Other
-# params$multi_betaov <- multi.params$beta[draws,2,1]
-# params$multi_betaoo <- multi.params$beta[draws,2,2]
-# params$multi_betaoc <- multi.params$beta[draws,2,3]
-# params$multi_betaol <- multi.params$beta[draws,2,4]
-# params$multi_betao <- multi.params$beta[draws,5,2]
-# # Prev Crem
-# params$multi_betacv <- multi.params$beta[draws,3,1]
-# params$multi_betaco <- multi.params$beta[draws,3,2]
-# params$multi_betacc <- multi.params$beta[draws,3,3]
-# params$multi_betacl <- multi.params$beta[draws,3,4]
-# params$multi_betac <- multi.params$beta[draws,5,3]
-# # Prev Liom
-# params$multi_betalv <- multi.params$beta[draws,4,1]
-# params$multi_betalo <- multi.params$beta[draws,4,2]
-# params$multi_betalc <- multi.params$beta[draws,4,3]
-# params$multi_betall <- multi.params$beta[draws,4,4]
-# params$multi_betal <- multi.params$beta[draws,5,4]
+# ## Survival Random Effects
+# Ant 1 (prev crem)
+surv_rfx1 <- cbind(surv.params$w[draws,1,1],surv.params$w[draws,1,2],surv.params$w[draws,1,3],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,1,4],surv.params$w[draws,1,5],surv.params$w[draws,1,6],surv.params$w[draws,1,7],
+                   surv.params$w[draws,1,8],surv.params$w[draws,1,9],surv.params$w[draws,1,10],surv.params$w[draws,1,11],
+                   surv.params$w[draws,1,12],surv.params$w[draws,1,13],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,1,14],surv.params$w[draws,1,15],
+                   rep(NA,N_draws))#2023
+# Ant 2 (prev liom)
+surv_rfx2 <- cbind(surv.params$w[draws,2,1],surv.params$w[draws,2,2],surv.params$w[draws,2,3],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,2,4],surv.params$w[draws,2,5],surv.params$w[draws,2,6],surv.params$w[draws,2,7],
+                   surv.params$w[draws,2,8],surv.params$w[draws,2,9],surv.params$w[draws,2,10],surv.params$w[draws,2,11],
+                   surv.params$w[draws,2,12],surv.params$w[draws,2,13],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,2,14],surv.params$w[draws,2,15],
+                   rep(NA,N_draws))#2023
+# Ant 3 (prev other)
+surv_rfx3 <- cbind(surv.params$w[draws,3,1],surv.params$w[draws,3,2],surv.params$w[draws,3,3],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,3,4],surv.params$w[draws,3,5],surv.params$w[draws,3,6],surv.params$w[draws,3,7],
+                   surv.params$w[draws,3,8],surv.params$w[draws,3,9],surv.params$w[draws,3,10],surv.params$w[draws,3,11],
+                   surv.params$w[draws,3,12],surv.params$w[draws,3,13],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,3,14],surv.params$w[draws,3,15],
+                   rep(NA,N_draws))#2023
+# Ant 4 (prev vac)
+surv_rfx4 <- cbind(surv.params$w[draws,4,1],surv.params$w[draws,4,2],surv.params$w[draws,4,3],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,4,4],surv.params$w[draws,4,5],surv.params$w[draws,4,6],surv.params$w[draws,4,7],
+                   surv.params$w[draws,4,8],surv.params$w[draws,4,9],surv.params$w[draws,4,10],surv.params$w[draws,4,11],
+                   surv.params$w[draws,4,12],surv.params$w[draws,4,13],
+                   rep(NA,N_draws),rep(NA,N_draws),
+                   surv.params$w[draws,4,14],surv.params$w[draws,4,15],
+                   rep(NA,N_draws))#2023
+# # Non ant specific -- Only run for the Stochastic Null Version
+surv_rfx <- (surv_rfx1+surv_rfx2+surv_rfx3+surv_rfx4)/4
+
+# ## viability random effects
+viab_rfx1 <- cbind(viab.params$w[draws,1,1],viab.params$w[draws,1,2],viab.params$w[draws,1,3],
+                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2007-2012
+                   viab.params$w[draws,1,4],viab.params$w[draws,1,5],viab.params$w[draws,1,6],viab.params$w[draws,1,7],
+                   viab.params$w[draws,1,8],viab.params$w[draws,1,9],viab.params$w[draws,1,10],
+                   rep(NA,N_draws),#2020
+                   viab.params$w[draws,1,11],viab.params$w[draws,1,12],viab.params$w[draws,1,13])
+viab_rfx2 <- cbind(viab.params$w[draws,2,1],viab.params$w[draws,2,2],viab.params$w[draws,2,3],
+                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2007-2012
+                   viab.params$w[draws,2,4],viab.params$w[draws,2,5],viab.params$w[draws,2,6],viab.params$w[draws,2,7],
+                   viab.params$w[draws,2,8],viab.params$w[draws,2,9],viab.params$w[draws,2,10],
+                   rep(NA,N_draws),#2020
+                   viab.params$w[draws,2,11],viab.params$w[draws,2,12],viab.params$w[draws,2,13])
+viab_rfx3 <- cbind(viab.params$w[draws,3,1],viab.params$w[draws,3,2],viab.params$w[draws,3,3],
+                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2007-2012
+                   viab.params$w[draws,3,4],viab.params$w[draws,3,5],viab.params$w[draws,3,6],viab.params$w[draws,3,7],
+                   viab.params$w[draws,3,8],viab.params$w[draws,3,9],viab.params$w[draws,3,10],
+                   rep(NA,N_draws),#2020
+                   viab.params$w[draws,3,11],viab.params$w[draws,3,12],viab.params$w[draws,3,13])
+viab_rfx4 <- cbind(viab.params$w[draws,4,1],viab.params$w[draws,4,2],viab.params$w[draws,4,3],
+                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2007-2012
+                   viab.params$w[draws,4,4],viab.params$w[draws,4,5],viab.params$w[draws,4,6],viab.params$w[draws,4,7],
+                   viab.params$w[draws,4,8],viab.params$w[draws,4,9],viab.params$w[draws,4,10],
+                   rep(NA,N_draws),#2020
+                   viab.params$w[draws,4,11],viab.params$w[draws,4,12],viab.params$w[draws,4,13])
+## Non-ant specific -- Onnly Run for Stochastic Null Version
+viab_rfx <- (viab_rfx1+viab_rfx2+viab_rfx3+viab_rfx4)/4
+
+## year variation in flowering and flowerbud number are not ant-specific
+repro_rfx <- cbind(repro.params$w[draws,1],repro.params$w[draws,2],repro.params$w[draws,3],repro.params$w[draws,4],
+                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2008-2012
+                   repro.params$w[draws,5],repro.params$w[draws,6],repro.params$w[draws,7],
+                   repro.params$w[draws,8],repro.params$w[draws,9],repro.params$w[draws,10],repro.params$w[draws,11],
+                   rep(NA,N_draws),#2020
+                   repro.params$w[draws,12],repro.params$w[draws,13],repro.params$w[draws,14])
+
+flow_rfx <- cbind(flow.params$w[draws,1],flow.params$w[draws,2],flow.params$w[draws,3],flow.params$w[draws,4],
+                  rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2008-2012
+                  flow.params$w[draws,5],flow.params$w[draws,6],flow.params$w[draws,7],
+                  flow.params$w[draws,8],flow.params$w[draws,9],flow.params$w[draws,10],flow.params$w[draws,11],
+                  rep(NA,N_draws),#2020
+                  flow.params$w[draws,12],flow.params$w[draws,13],flow.params$w[draws,14])
+
+## check that all rfx have the same number of years
+dim(grow_rfx);dim(surv_rfx);dim(viab_rfx);dim(repro_rfx);dim(flow_rfx)
 
 #########################################################################################################
 ##            This will be an IPM which allows you to choose how many ants are present

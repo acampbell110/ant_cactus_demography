@@ -1,20 +1,19 @@
-// Stan model for simple total flowers regression
+// Stan model for logit regression of flowering Y/N
 
 data {
   int <lower = 1> N; // number of observations
   vector[N] vol;	//size_t
-  int <lower = 0, upper = 1> y_repro[N]; // survival in year t1
+  int <lower = 0, upper = 1> y_repro[N]; // reproducing in year t
   int<lower=1> N_Year; //number of plots
   int<lower=1> N_Plot; //number of years
   int<lower=1, upper=N_Plot> plot[N]; // plot
   int<lower=1, upper=N_Year> year[N]; // year
 }
 parameters {
-  real beta0; //intercept, unique to ant sp
-  real beta1; //slope, unique to ant sp
-  vector[N_Plot] u; //subject intercepts
-  vector[N_Year] w; //item intercepts
-  real < lower = 0 > sigma; // Error SD
+  real beta0; //intercept
+  real beta1; //size slope
+  vector[N_Plot] u; //plot intercepts
+  vector[N_Year] w; //year intercepts
   real < lower = 0 > sigma_u; // plot SD
   real < lower = 0 > sigma_w; // year SD
 }
