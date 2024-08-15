@@ -292,7 +292,8 @@ saveRDS(fit_viab, "fit_viab.rds")
 ## Reproductive State Model -- Prob of reproducing at next time step   
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-reproductive_data_orig <- cactus[ , c("flower1_YN","logsize_t","Year_t","Plot")]
+reproductive_data_orig <- cactus[ , c("TotFlowerbuds_t","logsize_t","Year_t","Plot")]
+reproductive_data_orig$flower_YN<-reproductive_data_orig$TotFlowerbuds_t>0
 reproductive_data <- na.omit(reproductive_data_orig)
 # # check that you're happy with the subsetting
 # plot(reproductive_data$logsize_t, reproductive_data$flower1_YN)
@@ -303,20 +304,20 @@ reproductive_data <- na.omit(reproductive_data_orig)
 ## Create Stan Data
 stan_data_repro <- list(N = nrow(reproductive_data),                                   ## number of observations
                         vol = reproductive_data$logsize_t,                            ## predictors volume
-                        y_repro = reproductive_data$flower1_YN,                        ## response volume next year
+                        y_repro = reproductive_data$flower_YN,                        ## response volume next year
                         N_Year = max(as.integer(as.factor(reproductive_data$Year_t))), ## number of years
                         N_Plot = max(as.integer(as.factor(reproductive_data$Plot))),   ## number of plots
                         plot = as.integer(as.factor(reproductive_data$Plot)),          ## predictor plots
                         year = as.integer(as.factor(reproductive_data$Year_t))         ## predictor years
 ) 
 # ## Run the reproductive Model with a bernoulli distribution ---- fixed effects: previous size ; random effects: plot and year
-# repro_model <- stan_model("Data Analysis/STAN Models/repro_code.stan")
-# fit_repro<-sampling(repro_model, data = stan_data_repro,chains=3,
-#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
-#                                                 iter=10000,cores=3,thin=2,
-#                                                 pars = c("u","w",          # plot and year random effects
-#                                                          "beta0","beta1"   #location coefficients
-#                                                          ),save_warmup=F)
+repro_model <- stan_model("Data Analysis/STAN Models/repro_code.stan")
+fit_repro<-sampling(repro_model, data = stan_data_repro,chains=3,
+                                                control = list(adapt_delta=0.99,stepsize=0.1),
+                                                iter=10000,cores=3,thin=2,
+                                                pars = c("u","w",          # plot and year random effects
+                                                         "beta0","beta1"   #location coefficients
+                                                         ),save_warmup=F)
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_repro, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
 # saveRDS(fit_repro,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
