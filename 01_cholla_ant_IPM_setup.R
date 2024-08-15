@@ -210,7 +210,8 @@ for(i in 1:nrow(cactus)){
     cactus$TotFlowerbuds_t1[i] <- cactus$ABFlowerbuds_t1[i] + cactus$Goodbuds_t1[i]
   }
 }
-cactus$flower_YN<-cactus$TotFlowerbuds_t
+# Create a variable called Flower Yes No, that determines if there are flowers present
+cactus$flower_YN<-as.integer(cactus$TotFlowerbuds_t > 0)
 summary(cactus$flower_YN)
 # View(cactus)
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
