@@ -328,56 +328,34 @@ fit_repro<-sampling(repro_model, data = stan_data_repro,chains=3,
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 seed_uncleaned <- read.csv("Data Analysis/JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
-# PEAA = Ant Access
-# PAAA = Ant Access
-# PEAE = Ant Exclusion
-# PAAE = Ant Exclusion
-seed <- subset(seed_uncleaned, treatment == "PAAA" | treatment == "PAAE")
-#make the column for the ant state of the part of the plant producing seeds
-for(i in 1:nrow(seed)){
-  #If there is no ant access then vacant
-  if(seed$ant.access[i] == "n" & is.na(seed$ant.access[i]) == FALSE){
-    seed$ant_state[i] <- "Vacant"
-  }
-  #If there is ant access but it is still vacant then vacant
-  if(seed$ant.access[i] == "y" & is.na(seed$ant.access[i]) == FALSE & seed$vacant[i] == "y"){
-    seed$ant_state[i] <- "Vacant"
-  }
-  #if there is ant access and it is not vacant and the ant is crem then crem
-  if(seed$ant.access[i] == "y" & is.na(seed$ant.access[i]) == FALSE & seed$vacant[i] == "n" & seed$species[i] == "c"){
-    seed$ant_state[i] <- "Crem"
-  }
-  #if there is ant access and it is not vacant and the ant is liom then liom
-  if(seed$ant.access[i] == "y" & is.na(seed$ant.access[i]) == FALSE & seed$vacant[i] == "n" & seed$species[i] == "l"){
-    seed$ant_state[i] <- "Liom"
-  }
-}
-seed_data <- seed
-seed_data <- na.omit(seed_data)
-seed_data$ant <- as.integer(as.factor(seed_data$ant_state))
-seed_data <- subset(seed_data, seed_count > 0)
-# str(seed_data)
- levels(as.factor(seed_data$ant_state))
-# # check if you're happy with the subsetting
-# plot(seed$fruit_number)
-# points(seed_data$fruit_number, col = "red")
-# nrow(seed)
-# nrow(seed_data)
+## drop pollinator exclusion
+seed <- subset(seed_uncleaned, treatment == "PAAA" | treatment == "PAAE" | treatment == "PA")
+## create ant state
+seed$ant_state <- NA
+seed$ant_state[seed$ant.access=="n"]<-"Vacant"
+seed$ant_state[seed$ant.access=="y" & seed$species=="c"]<-"Crem"
+seed$ant_state[seed$ant.access=="y" & seed$species=="l"]<-"Liom"
+seed_data <- seed %>% select(plant,ant_state,seed_count) %>% drop_na()
+
 ## Create Stan Data
 stan_data_seed <- list(N = nrow(seed_data),                            ## number of observations
+                       N_plants = length(unique(seed_data$plant)),
                        K = 3,                                          ## number of ant states
-                       ant = as.integer(as.factor(seed_data$ant)),     ## ant partners data
+                       plant = as.integer(as.factor(seed_data$plant)),     ## ant partners data
+                       ant = as.integer(as.factor(seed_data$ant_state)),     ## ant partners data
                        seed = seed_data$seed_count)                    ## number of seeds data
 # ## Run the seeds Model with a negative binomial distribution ---- fixed effects: ant partner ;
-# seed_model <- stan_model("Data Analysis/STAN Models/seed_code.stan")
-# fit_seed<-sampling(seed_model, data = stan_data_seed,chains=3,
-#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
-#                                                 iter=10000,cores=3,thin=2,
-#                                                 pars = c("beta0","phi"   #location coefficients
-#                                                          ),save_warmup=F)
+seed_model <- stan_model("Data Analysis/STAN Models/seed_code.stan")
+fit_seed<-sampling(seed_model, data = stan_data_seed,chains=3,
+                                                control = list(adapt_delta=0.99,stepsize=0.1),
+                                                iter=5000,cores=3,thin=2,
+                                                pars = c("beta0","phi"   #location coefficients
+                                                         ),save_warmup=F)
+bayesplot::mcmc_trace(fit_seed,pars = c("beta0[1]","beta0[2]","beta0[3]"))
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_seed, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed.rds")
 # saveRDS(fit_seed,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed.rds")
+saveRDS(fit_seed, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_seed.rds")
 
 
 ################################################################################
