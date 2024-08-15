@@ -498,29 +498,36 @@ cactus_real$ant_t1 <- factor(cactus_real$ant_t1, levels = c("crem","liom","other
 cactus_real$ant_t <- factor(cactus_real$ant_t, levels = c("crem","liom","other","vacant"))
 levels(cactus_real$ant_t)
 levels(cactus_real$ant_t1)
-(stan_data_multi$x)
 cactus_real <- subset(cactus_real, cactus_real$Year_t != 2022 & cactus_real$Year_t != 2021)
 ## make stan data set
 stan_data_multi <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
                        N = dim(cactus_real)[1], #number of observations
                        D = 5, #number of predictors
-                       P = 16, #number of random effect predictors
+                       P = 13, #number of random effect predictors
                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
                        x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real), #design matrix
                        z = model.matrix(~0 + as.factor(Year_t), cactus_real),
                        N_Year = as.integer(length(unique(cactus_real$Year_t)))
 )
 ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-#multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
-# fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
-#                         control = list(adapt_delta=0.99,stepsize=0.1),
-#                         iter=7500,cores=3,thin=3,
-#                         pars = c("beta"   #location coefficients
-#                         ),save_warmup=F)
-## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_multi, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
-#saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
+multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
+fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
+                        control = list(adapt_delta=0.99,stepsize=0.1),
+                        iter=10000,cores=3,thin=3,
+                        pars = c("beta"   #location coefficients
+                        ),save_warmup=F)
+# Save the RDS file which saves all parameters, draws, and other information
+saveRDS(fit_multi, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
+saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
 
+bayesplot::mcmc_trace(fit_multi,pars = c("beta[1,1]","beta[1,2]","beta[1,3]","beta[1,4]"))
+bayesplot::mcmc_trace(fit_multi,pars = c("beta[2,1]","beta[2,2]","beta[2,3]","beta[2,4]"))
+bayesplot::mcmc_trace(fit_multi,pars = c("beta[3,1]","beta[3,2]","beta[3,3]","beta[3,4]"))
+bayesplot::mcmc_trace(fit_multi,pars = c("beta[4,1]","beta[4,2]","beta[4,3]","beta[4,4]"))
+bayesplot::mcmc_trace(fit_multi,pars = c("theta[1,1]","theta[1,2]","theta[1,3]","theta[1,4]"))
+bayesplot::mcmc_trace(fit_multi,pars = c("theta[2,1]","theta[2,2]","theta[2,3]","theta[2,4]"))
+bayesplot::mcmc_trace(fit_multi,pars = c("theta[3,1]","theta[3,2]","theta[3,3]","theta[3,4]"))
+bayesplot::mcmc_trace(fit_multi,pars = c("theta[4,1]","theta[4,2]","theta[4,3]","theta[4,4]"))
 ## Calculate global turnover rate
 # transition_rate_tended <- subset(cactus_real, cactus_real$ant_t != "vacant" & cactus_real$ant_t != cactus_real$ant_t1)
 # tt_rate <- nrow(transition_rate_tended)/nrow(cactus_real)
