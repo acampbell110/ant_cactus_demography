@@ -212,7 +212,7 @@ for(i in 1:nrow(cactus)){
 }
 cactus$flower_YN<-cactus$TotFlowerbuds_t
 summary(cactus$flower_YN)
-View(cactus)
+# View(cactus)
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 
 ## Cactus 2023 data cleaning ---- Recruitment
@@ -233,11 +233,14 @@ colnames(cactus) <- c("Plot" ,            "TagID"     ,       "Transplant"   ,  
                       "Antcount_t1"    ,  "Antsp_t1"    ,     "NP_adult"      ,   "NP_juv"    ,      
                       "CV"      ,         "WVL"         ,     "Damage"        ,   "MA"    ,          
                       "comments"    ,     "logsize_t"   ,     "logsize_t1"   ,    "ant_t"       ,    
-                      "ant_t1"  ,         "flower1_YN" )     
+                      "ant_t1"  ,         "flower_YN" )     
 
 # Remove extra columns
-cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t", "logsize_t","logsize_t1"                            ,"ant_t","ant_t1",
-                      "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1"                            ,"Antcount_t1","flower1_YN","Newplant","Damage","NP_adult","NP_juv","CV","WVL","MA")]
+cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t",
+                      "ABFlowerbuds_t", "logsize_t","logsize_t1","ant_t","ant_t1",
+                      "Antcount_t","Year_t1","Recruit","Survival_t1","Goodbuds_t1",
+                      "TotFlowerbuds_t1","ABFlowerbuds_t1","Antcount_t1",
+                      "flower_YN","Newplant","Damage","NP_adult","NP_juv","CV","WVL","MA")]
 
 ## break up the 2019-2021 transition year into two incomplete transition years
 cactus %>% filter(Year_t==2019) %>% select(Year_t1)
@@ -247,7 +250,7 @@ cactus_2019temp<-cactus[cactus$Year_t==2019 & cactus$Newplant==0,]
 cactus_2019temp$Year_t1<-2020
 cactus_2019temp[,c("logsize_t1","Survival_t1","ant_t1",
                    "Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1",
-                   "flower1_YN")]<-NA
+                   "flower_YN")]<-NA
 ## create the 2020-2021 transition year
 cactus_2020temp_notnew<-cactus[cactus$Year_t1==2021 & cactus$Newplant==0,]
 cactus_2020temp_notnew$Year_t<-2020
