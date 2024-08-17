@@ -221,6 +221,16 @@ cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$Survival_t1[cactus$Recruit == 1] <- NA
 cactus$Survival_t1[cactus$Newplant == 1] <- NA
 
+## clean up recruit info
+recruit_check<-cactus %>% filter(Recruit==1)
+hist(recruit_check$Height_t1)
+##for reference, the seedlings in the seed addition plots were "true" recruits
+true_recruits<-recruit_check %>% filter(Plot %in% c("T1","T2","T3","T4"))
+## note these sizes appear in year t
+hist(true_recruits$Height_t)
+## I don't believe that any recruits are taller than 5cm, so apply this rule
+cactus$Recruit<-ifelse(cactus$Recruit==1 & cactus$Height_t1>5,0,cactus$Recruit)
+hist(cactus$Height_t1[cactus$Recruit==1])
 
 ## Export the data ---- Write a data file which has "cleaned" data with proper column headings
 #head(cactus) # some of the columns are not names properly
