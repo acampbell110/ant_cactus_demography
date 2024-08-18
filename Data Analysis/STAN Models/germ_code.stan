@@ -4,25 +4,22 @@ data {
   int <lower = 1> N; // number of observations
   int y_germ[N]; // number of seeds germinated
   int<lower=1> trials[N]; // number of seeds put out
+  int<lower=1,upper=2> year[N];
 }
 parameters {
-  real beta0; //intercept
-  real < lower = 0 > sigma; // Error SD
+  vector[2] beta0; //intercept
 }
 transformed parameters{
   vector[N] mu; //linear predictor for the mean
   for(i in 1:N){
-   	mu[i] = beta0;
+   	mu[i] = beta0[year[i]];
   }
   
 }
 model {
   // Model
   beta0 ~ normal(0,100); // intercept distribution
-  
-  for(i in 1:N){
-    y_germ[i] ~ binomial_logit(trials[i], (mu[i]));
-  }
+  y_germ ~ binomial_logit(trials, mu);
 }
 generated quantities {
   int<lower = 0> y_rep[N] = binomial_rng(trials, inv_logit(mu));

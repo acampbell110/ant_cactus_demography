@@ -16,7 +16,6 @@ parameters {
   real beta1; //slope
   vector[N_Plot] u; //subject intercepts
   vector[N_Year] w; //item intercepts
-  real < lower = 0 > sigma; // Error SD
   real < lower = 0 > sigma_u; // plot SD
   real < lower = 0 > sigma_w; // year SD
 }
@@ -30,8 +29,9 @@ model {
   // Model
   u ~ normal(0, sigma_u); // plot random effects
   w ~ normal(0, sigma_w); // year random effects
-  beta0 ~ normal(0,100); // intercept distribution
-  beta1 ~ normal(0,100); // slope distribution
+  beta0 ~ normal(0,10); // intercept distribution
+  beta1 ~ normal(1,10); // slope distribution
+  phi ~ gamma(0.01, 0.01);
   for(i in 1:N){
     y_flow[i] ~ neg_binomial_2(exp(mu[i]), phi);
     target += - log1m(neg_binomial_2_log_lpmf(0 | mu[i], phi)); // manually adjusting computation of likelihood

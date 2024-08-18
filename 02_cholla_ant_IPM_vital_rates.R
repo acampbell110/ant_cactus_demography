@@ -373,63 +373,51 @@ precensus.dat <- na.omit(precensus.dat)
 # points(precensus.dat.orig$Log.size, jitter(precensus.dat.orig$survive0405), col = "red")
 ## Create Stan Data
 stan_data_seed_surv <- list(N = nrow(precensus.dat),                                  ## number of observations
-                            N_Transect = length(unique(precensus.dat$Transect)),      ## Number of transects
-                            transect = as.integer(as.factor(precensus.dat$Transect)), ## transect
                             y = precensus.dat$survive0405)                            ## survival data
 ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-# seed_surv_model <- stan_model("Data Analysis/STAN Models/seed_surv_code.stan")
-# fit_seed_surv<-sampling(seed_surv_model, data = stan_data_seed_surv,chains=3,
-#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
-#                                                 iter=10000,cores=3,thin=2,
-#                                                 pars = c("beta0"   #location coefficients
-#                                                          ),save_warmup=F)
+seed_surv_model <- stan_model("Data Analysis/STAN Models/seed_surv_code.stan")
+fit_seed_surv<-sampling(seed_surv_model, data = stan_data_seed_surv,chains=3,
+                                                control = list(adapt_delta=0.99,stepsize=0.1),
+                                                iter=5000,cores=3,thin=2,
+                                                pars = c("beta0"   #location coefficients
+                                                         ),save_warmup=F)
+bayesplot::mcmc_trace(fit_seed_surv,pars = c("beta0"))
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_seed_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
 # saveRDS(fit_seed_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
+saveRDS(fit_seed_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_seed_surv.rds")
 
 ################################################################################
 ## Germination -- Probability of germinating by the next time step (yr 1&2) 
 ################################################################################
 germ.dat_orig<-read.csv("Data Analysis/Germination.csv") 
-germ.dat_orig$rate <- 0
-for(i in 1:nrow(germ.dat_orig)){
-  if(germ.dat_orig$Seedlings04[i] != 0){
-    germ.dat_orig$rate[i] <- (germ.dat_orig$Seedlings04[i] - germ.dat_orig$Seedlings05[i])/germ.dat_orig$Seedlings04[i]
-  }
-}
-germ.dat <- na.omit(germ.dat_orig)
-germ.dat <- germ.dat[-c(42,39,40),]
-## Most of the rows are included. We only lose 3, but it is still a small dataset. 
-# nrow(germ.dat)
-# nrow(germ.dat_orig)
-# #Check that you are happy with the subsetting
-# plot(germ.dat$rate)
-# points(germ.dat_orig$rate, col = "red")
-# nrow(germ.dat)
+germ.dat_orig$input04<-germ.dat_orig$Input
+germ.dat_orig$input05<-germ.dat_orig$Input-germ.dat_orig$Seedlings04
+germ.dat04<-germ.dat_orig[,c("input04","Seedlings04")];names(germ.dat04)<-c("seeds","seedlings")
+germ.dat04$year<-1
+germ.dat05<-germ.dat_orig[,c("input05","Seedlings05")];names(germ.dat05)<-c("seeds","seedlings")
+germ.dat05$year<-2
+germ.dat<-rbind(germ.dat04,germ.dat05)
+
 ## Create Stan Data
-stan_data_germ1 <- list(N = nrow(germ.dat),
-                        y_germ = as.integer(germ.dat$Seedlings04),
-                        trials = germ.dat$Input)
-stan_data_germ2 <- list(N = nrow(germ.dat),
-                        y_germ = germ.dat$Seedlings05,
-                        trials = germ.dat$Input-germ.dat$Seedlings04)
+stan_data_germ <- list(N = nrow(germ.dat),
+                        y_germ = germ.dat$seedlings,
+                        trials = germ.dat$seeds,
+                       year=germ.dat$year)
 ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-# germ_model <- stan_model("Data Analysis/STAN Models/germ_code.stan")
-# fit_germ1<-sampling(germ_model, data = stan_data_germ1,chains=3,
-#                         control = list(adapt_delta=0.99,stepsize=0.1),
-#                         iter=10000,cores=3,thin=2,
-#                         pars = c("beta0"   #location coefficients
-#                         ),save_warmup=F)
-# fit_germ2<-sampling(germ_model, data = stan_data_germ2,chains=3,
-#                         control = list(adapt_delta=0.99,stepsize=0.1),
-#                         iter=10000,cores=3,thin=2,
-#                         pars = c("beta0"   #location coefficients
-#                         ),save_warmup=F)
+germ_model <- stan_model("Data Analysis/STAN Models/germ_code.stan")
+fit_germ<-sampling(germ_model, data = stan_data_germ,chains=3,
+                        control = list(adapt_delta=0.99,stepsize=0.1),
+                        iter=5000,cores=3,thin=2,
+                        pars = c("beta0"   #location coefficients
+                        ),save_warmup=F)
+bayesplot::mcmc_trace(fit_germ,pars = c("beta0[1]","beta0[2]"))
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_germ1, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ1.rds")
 # saveRDS(fit_germ1,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ1.rds")
 # saveRDS(fit_germ2, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
 # saveRDS(fit_germ2,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
+saveRDS(fit_germ, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_germ.rds")
 
 ################################################################################
 ##.    Fruit Survival Model 
@@ -439,46 +427,50 @@ fruit_data_orig <- read.csv("Data Analysis/FruitSurvival.csv", header = TRUE,str
 fruit_data <- na.omit(fruit_data_orig)
 ## Create stan data subset
 stan_data_fruit <- list(N = nrow(fruit_data),                                   ## number of observations
-                       good = fruit_data$Fr.on.plant,                          ## number of good flowerbuds 
-                       abort = fruit_data$Fr.on.grnd.not.chewed,                     ## aborted buds data
-                       tot = fruit_data$Fr.on.plant+fruit_data$Fr.on.grnd                      ## number of trials
+                       good = fruit_data$Fr.on.grnd.not.chewed,                          ## number of good flowerbuds 
+                       tot = fruit_data$Fr.on.plant                      ## number of trials
 ) 
 ## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
-# fruit_model <- stan_model("Data Analysis/STAN Models/fruit_code.stan")
-# fit_fruit<-sampling(fruit_model, data = stan_data_fruit,chains=3,
-#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
-#                                                 iter=10000,cores=3,thin=2,
-#                                                 pars = c("beta0"),save_warmup=F)
+fruit_model <- stan_model("Data Analysis/STAN Models/fruit_code.stan")
+fit_fruit<-sampling(fruit_model, data = stan_data_fruit,chains=3,
+                                                control = list(adapt_delta=0.99,stepsize=0.1),
+                                                iter=5000,cores=3,thin=2,
+                                                pars = c("beta0"),save_warmup=F)
+bayesplot::mcmc_trace(fit_fruit,pars = c("beta0"))
 ## Save the RDS file which saves all parameters, draws, and other information
 #saveRDS(fit_fruit, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
 #saveRDS(fit_fruit,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
+saveRDS(fit_fruit, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_fruit.rds")
 
 
 ################################################################################
 #### Recruits -- Size Distribution of  ################################################################################
 ################################################################################
-seedling.dat_orig <- cactus[,c("logsize_t1","Recruit","Year_t1")]
-seedling.dat_orig <- filter(seedling.dat_orig, Recruit == 1)
-seedling.dat <- na.omit(seedling.dat_orig)
-# nrow(seedling.dat_orig)
-# nrow(seedling.dat)
-# # check that you are happy with the subsetting
-# plot(seedling.dat$logsize_t1, seedling.dat$Recruit, xlim = c(-5,15), ylim = c(0,1))
-# points(cactus$logsize_t1, cactus$Recruit, col = "red")
+## pull out the seedlings from the seed addition plots
+# there is seedling size info in two places:
+#1. the seed addition plots, where seedling size appears in year t
+# these tag IDs are the only ones that start with H
+seed_add<-cactus %>% filter(substr(TagID,1,1)=="H") %>% drop_na()
+#2. the main census, where new plants get called recruits or not by observers
+recruits<-cactus %>% filter(Recruit==1) %>% select(logsize_t1) %>% drop_na()
+seedling.dat <- c(recruits$logsize_t1,seed_add$logsize_t)
+
 ## Create Stan Data
-stan_data_rec <- list(N = length(seedling.dat$logsize_t1),
-                      y_rec = (seedling.dat$logsize_t1)
+stan_data_rec <- list(N = length(seedling.dat),
+                      y_rec = (seedling.dat)
 )
 # ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-# rec_model <- stan_model("Data Analysis/STAN Models/rec_code.stan")
-# fit_rec<-sampling(rec_model, data = stan_data_rec,chains=3,
-#                         control = list(adapt_delta=0.99,stepsize=0.1),
-#                         iter=10000,cores=3,thin=2,
-#                         pars = c("beta0","sigma"   #location coefficients
-#                         ),save_warmup=F)
+rec_model <- stan_model("Data Analysis/STAN Models/rec_code.stan")
+fit_rec<-sampling(rec_model, data = stan_data_rec,chains=3,
+                        control = list(adapt_delta=0.99,stepsize=0.1),
+                        iter=5000,cores=3,thin=2,
+                        pars = c("beta0","sigma"   #location coefficients
+                        ),save_warmup=F)
+bayesplot::mcmc_trace(fit_rec,pars = c("beta0","sigma"))
 # ## Save the RDS file which saves all parameters, draws, and other information
 # saveRDS(fit_rec, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_rec.rds")
 # saveRDS(fit_rec,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_rec.rds")
+saveRDS(fit_rec, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_rec.rds")
 
 
 
