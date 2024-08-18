@@ -2550,8 +2550,8 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))   ## Top Third
   Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
   # Put it all together
-  colSums(Tmat[3:(4*n+2),3:(4*n+2)])
-  colSums(Tmat[3:(4*n+2),3:(4*n+2)])[1000:1200]
+  #colSums(Tmat[3:(4*n+2),3:(4*n+2)])
+  #colSums(Tmat[3:(4*n+2),3:(4*n+2)])[1000:1200]
   IPMmat<-Fmat+Tmat
   # eviction tests
   CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))
@@ -2736,7 +2736,8 @@ lambdaSim=function(params,                                  ## parameters
                    matsize,                                 ## size of transition matrix
                    scenario,                                ## partner diversity scenario
                    lower,upper,                             ## extensions to avoid eviction
-                   floor,ceiling
+                   floor,ceiling,
+                   trans_years ## trans_years is a vector of complete transition years, a subset of 1:20
                    
 ){
   
@@ -2753,7 +2754,7 @@ lambdaSim=function(params,                                  ## parameters
     #   ## scale this to the stochastic growth rate
     #   ## Randomly sample the years we have data for by calling column r in all matricies of
     #   ## the year random effects
-    r <- sample(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),1,replace = TRUE,prob = NULL)
+    r <- sample(trans_years,1,replace = TRUE,prob = NULL)
     
     ## Create and store matrix
     K_t[,]<-bigmatrix(params,scenario,lower,upper,floor,ceiling,matsize,
@@ -2780,14 +2781,14 @@ lambdaSim=function(params,                                  ## parameters
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
-lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize,
-          grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
-          grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
-          surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
-          surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
-          flow_rfx=colMeans(flow_rfx),
-          repro_rfx= colMeans(repro_rfx),
-          viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
-          viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),## viability model year rfx
-          max_yrs = 100   )
+# lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize,
+#           grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
+#           grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
+#           surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
+#           surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
+#           flow_rfx=colMeans(flow_rfx),
+#           repro_rfx= colMeans(repro_rfx),
+#           viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
+#           viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),## viability model year rfx
+#           max_yrs = 100   )
 
