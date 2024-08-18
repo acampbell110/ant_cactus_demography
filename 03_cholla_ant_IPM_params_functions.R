@@ -5,8 +5,8 @@
 ################################################################################
 ################################################################################
 ## Source the IPM vital rates code 
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-source("02_cholla_ant_IPM_vital_rates.R")
+#setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
+#source("02_cholla_ant_IPM_vital_rates.R")
 ## Set conditions for the IPM 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
@@ -2064,11 +2064,11 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
   IPMmat<-Fmat+Tmat
   # 
   # # eviction tests
-  # growmat<-t(outer(y,y,gxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
-  # p <- colSums(growmat) # Shows the column sums, each should be as close to 1 as possible
-  # evict<-matsize-sum(colSums(growmat)) # Should be as close to 0 as possible
+  growmat<-t(outer(y,y,gxy,"vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h
+  p <- colSums(growmat) # Shows the column sums, each should be as close to 1 as possible
+  evict<-matsize-sum(colSums(growmat)) # Should be as close to 0 as possible
   # 
-  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y = y))#, y=y, evict=evict, p=p))
+  return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, evict=evict, p=p))
 }
 # x <- c(1,1)
 #  lam <- matrix(rep(NA,120), nrow = 10)
@@ -2564,8 +2564,8 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
   VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all"))
   VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all"))
-  p_v <- colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat,VLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
-  evict_v<-matsize-sum(colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat,VLgrowmat))) # Should be as close to 0 as possible
+  p_v <- colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat,VLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
+  evict_v<-matsize-sum(colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat,VLgrowmat))) # Should be as close to 0 as possible
   OCgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all"))
   OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))
   OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all"))
