@@ -20,9 +20,10 @@ matsize<-500
 ceiling <- 4
 floor <- 25
 
+
 set.seed(333) # picked random number
-N_draws <- 1000
-draws <- sample(1000,N_draws, replace=F)
+N_draws <- 100
+draws <- sample(3500,N_draws, replace=F)
 years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
 ## Choose your pathway to pull from 
@@ -38,7 +39,7 @@ mcmc_dir <- "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
 # growth model
 # mcmc_dir <- "/Users/Labuser/Desktop/Model_Reads/"
 fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
-grow.params <- rstan::extract(fit_grow_skew)
+grow.params <- rstan::extract(fit_grow_skew);rm(fit_grow_skew)
 # grow.params <- grow.params[,c(2),]
 # fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
 # grow.params.null <- rstan::extract(fit_grow_skew_null)
@@ -48,41 +49,39 @@ grow.params <- rstan::extract(fit_grow_skew)
 # grow.params.null <- rstan::extract(fit_grow_stud_null)
 # survival model
 fit_surv<-readRDS(paste0(mcmc_dir,"fit_surv.rds"))
-surv.params <- rstan::extract(fit_surv)
-fit_surv_null<-readRDS(paste0(mcmc_dir,"fit_surv_null.rds"))
-surv.params.null <- rstan::extract(fit_surv_null)
+surv.params <- rstan::extract(fit_surv);rm(fit_surv)
+# fit_surv_null<-readRDS(paste0(mcmc_dir,"fit_surv_null.rds"))
+# surv.params.null <- rstan::extract(fit_surv_null)
 # flowers produced model
 fit_flow<-readRDS(paste0(mcmc_dir,"fit_flow.rds"))
-flow.params <- rstan::extract(fit_flow)
+flow.params <- rstan::extract(fit_flow);rm(fit_flow)
 # viability of flowers model
 fit_viab<-readRDS(paste0(mcmc_dir,"fit_viab.rds"))
-viab.params <- rstan::extract(fit_viab)
-fit_viab_null<-readRDS(paste0(mcmc_dir,"fit_viab_null.rds"))
-viab.params.null <- rstan::extract(fit_viab_null)
+viab.params <- rstan::extract(fit_viab);rm(fit_viab)
+# fit_viab_null<-readRDS(paste0(mcmc_dir,"fit_viab_null.rds"))
+# viab.params.null <- rstan::extract(fit_viab_null)
 # reproducing model
 fit_repro<-readRDS(paste0(mcmc_dir,"fit_repro.rds"))
-repro.params <- rstan::extract(fit_repro)
+repro.params <- rstan::extract(fit_repro);rm(fit_repro)
 # seeds per flower model
 fit_seed<-readRDS(paste0(mcmc_dir,"fit_seed.rds"))
-seed.params <- rstan::extract(fit_seed)
+seed.params <- rstan::extract(fit_seed);rm(fit_seed)
 # pre census seed survival model
 fit_seed_surv<-readRDS(paste0(mcmc_dir,"fit_seed_surv.rds"))
-pre.seed.params <- rstan::extract(fit_seed_surv)
-# germination year 1 model
-fit_germ1<-readRDS(paste0(mcmc_dir,"fit_germ1.rds"))
-germ1.params <- rstan::extract(fit_germ1)
-# germination year 2 model
-fit_germ2<-readRDS(paste0(mcmc_dir,"fit_germ2.rds"))
-germ2.params <- rstan::extract(fit_germ2)
+pre.seed.params <- rstan::extract(fit_seed_surv);rm(fit_seed_surv)
+# germination  model
+fit_germ<-readRDS(paste0(mcmc_dir,"fit_germ.rds"))
+germ.params <- rstan::extract(fit_germ);rm(fit_germ)
 # recruit size distribution model
 fit_rec<-readRDS(paste0(mcmc_dir,"fit_rec.rds"))
-rec.params <- rstan::extract(fit_rec)
+rec.params <- rstan::extract(fit_rec);rm(fit_rec)
 # Fruit survival model
 fit_fruit<-readRDS(paste0(mcmc_dir,"fit_fruit.rds"))
-fruit.params <- rstan::extract(fit_fruit)
+fruit.params <- rstan::extract(fit_fruit);rm(fit_fruit)
 # ant transitions model
 fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi.rds"))
-multi.params <- rstan::extract(fit_multi)
+multi.params <- rstan::extract(fit_multi);rm(fit_multi)
+
 ## 'params' is a matrix where rows are vital rate coefficients and columns are posterior draws
 # below, we will loop over columns, sending each set of coefficients into the IPM
 params <- data.frame(matrix(NA,nrow=N_draws,ncol=1))
@@ -111,10 +110,6 @@ params$grow_beta12<-grow.params$beta1[draws,2]				## growth slope
 params$grow_beta22<-grow.params$beta2[draws,2]				## growth slope
 
 ##-----------------------Survival Parameters-----------------## 
-## Check the names of the parameters
-#head(surv.params)
-#params$surv_sig_u<-surv.params$sigma_u[draws]        ## surv sigma u
-#params$surv_sig_w<-surv.params$sigma_w[draws]        ## surv sigma w
 # Ant 4 (vacant)
 params$surv_beta04<-surv.params$beta0[draws,4]     	  ## surv intercept
 params$surv_beta14<-surv.params$beta1[draws,4]				## surv slope
@@ -129,28 +124,14 @@ params$surv_beta02<-surv.params$beta0[draws,2]     	  ## surv intercept
 params$surv_beta12<-surv.params$beta1[draws,2]				##surv slope
 
 ##-----------------------Flowering/Fecundity Parameters-----------------## 
-## Check the names of the parameters
-#head(flow.params)
 params$flow_phi<-flow.params$phi[draws]   	      ## flow phi
-params$flow_sig_u<-flow.params$sigma_u[draws]        ## flow sigma u
-params$flow_sig_w<-flow.params$sigma_w[draws]        ## flow sigma w
-
 params$flow_beta0<-flow.params$beta0[draws]          ## flow intercept
 params$flow_beta1<-flow.params$beta1[draws]          ## flow slopes
 ##-----------------------Reproductive State Parameters-----------------## 
-## Check the names of the parameters
-#head(repro.params)
 params$repro_beta0<-repro.params$beta0[draws]      ## repro intercept
 params$repro_beta1<-repro.params$beta1[draws]      ## repro slope
-params$repro_sig_u<-repro.params$sigma_u[draws]    ## repro sigma u
-params$repro_sig_w<-repro.params$sigma_w[draws]    ## repro sigma w
 
 ##-----------------------Viability Parameters-----------------## 
-## Check the names of the parameters
-#head(viab.params) 
-params$viab_sig<-viab.params$sigma[draws]              ## viab sigma
-params$viab_sig_u<-viab.params$sigma_u[draws]          ## viab sigma u
-params$viab_sig_w<-viab.params$sigma_w[draws]          ## viab sigma w
 # Ant 4 (vacant)
 params$viab_beta04<-viab.params$beta0[draws,4]     	  ## viab intercept
 # Ant 3 (other)
@@ -160,10 +141,6 @@ params$viab_beta01<-viab.params$beta0[draws,1]     	  ## viab intercept
 # Ant 2 (liom)
 params$viab_beta02<-viab.params$beta0[draws,2]     	  ## viab intercept
 ##-----------------------Seeds Prod Parameters-----------------## 
-## Check the names of the parameters
-#head(seed.params)
-params$seed_phi<-seed.params$phi[draws]          ## seed phi
-params$seed_sig<-seed.params$sigma[draws]        ## seed sigma
 # Ant 1 (Crem)
 params$seed_beta01<-seed.params$beta0[draws,1]      ## seed intercept 
 # Ant 2 (Liom)
@@ -172,35 +149,17 @@ params$seed_beta02<-seed.params$beta0[draws,2]      ## seed intercept
 params$seed_beta03<-seed.params$beta0[draws,3]      ## seed intercept
 
 ##-----------------------Seeds Precensus Surv Parameters-----------------## 
-## Check the names of the parameters
-#head(pre.seed.params)
-params$preseed_sig<-pre.seed.params$sigma[draws]         ## pre seed sigma
-params$preseed_sig_w<-pre.seed.params$sigma_w[draws]       ## pre seed sigma w
 params$preseed_beta0<-pre.seed.params$beta0[draws]       ## pre seed intercept
 
-##-----------------------Germ1 Parameters-----------------## Ant 1 (crem)
-## Check the names of the parameters
-#head(germ1.params)
-params$germ1_phi<-germ1.params$phi[draws]            ## germ 1 phi
-params$germ1_sig<-germ1.params$sigma[draws]            ## germ 1 sigma
-params$germ1_beta0<-germ1.params$beta0[draws]        ## germ 1 intercept
+##-----------------------Germ Parameters-----------------
+params$germ1_beta0<-germ.params$beta0[draws,1]        ## germ 1 intercept
+params$germ2_beta0<-germ.params$beta0[draws,2]        ## germ 2 intercept
 
-##-----------------------Germ2 Parameters-----------------## Ant 1 (crem)
-## Check the names of the parameters
-#head(germ2.params)
-params$germ2_phi<-germ2.params$phi[draws]            ## germ 2 phi
-params$germ2_sig<-germ2.params$sigma[draws]        ## germ 2 sigma
-params$germ2_beta0<-germ2.params$beta0[draws]        ## germ 2 intercept
-
-##------------------------- Recruitment-------------------##
-## Check the names of the parameters
-#head(rec.params)
+##------------------------- Recruit size distribution-------------------##
 params$rec_beta0<-rec.params$beta0[draws]        ## Rec intercept
 params$rec_sig<-rec.params$sigma[draws]         ## Rec error
 
 ##------------------------- Fruit Survival -------------------##
-## Check the names of the parameters
-head(fruit.params)
 params$fruit_beta0<-fruit.params$beta0[draws]
 
 ##-------------------------Transition Parameters-------------------##
@@ -360,6 +319,9 @@ flow_rfx <- cbind(flow.params$w[draws,1],flow.params$w[draws,2],flow.params$w[dr
 
 ## check that all rfx have the same number of years
 dim(grow_rfx);dim(surv_rfx);dim(viab_rfx);dim(repro_rfx);dim(flow_rfx)
+
+## remove all the big lists
+rm(multi.params);rm(viab.params);rm(surv.params);rm(repro.params);rm(grow.params);rm(flow.params)
 
 #########################################################################################################
 ##            This will be an IPM which allows you to choose how many ants are present
@@ -523,9 +485,9 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
   flow.surv_crem<-invlogit((params$viab_beta01 + viab_rfx1))       ## Proportion of Flowers survive to fruit
   flow.surv_liom<-invlogit((params$viab_beta02 + viab_rfx2))       ## Proportion of Flowers survive to fruit
   flow.surv_vac<-invlogit((params$viab_beta04 + viab_rfx4))      ## Proportion of Flowers survive to fruit
-  seeds.per.fruit_crem<-(params$seed_beta01)      ## Number of Seeds per Fruit
-  seeds.per.fruit_liom<-(params$seed_beta03)      ## Number of Seeds per Fruit
-  seeds.per.fruit_vac<-(params$seed_beta02)     ## Number of Seeds per Fruit
+  seeds.per.fruit_crem<-exp(params$seed_beta01)      ## Number of Seeds per Fruit
+  seeds.per.fruit_liom<-exp(params$seed_beta03)      ## Number of Seeds per Fruit
+  seeds.per.fruit_vac<-exp(params$seed_beta02)     ## Number of Seeds per Fruit
   fruit.survival<-invlogit((params$fruit_beta0))^2       ## Seed per Fruit Survival ---------I measured 6-month seed survival; annual survival is its square
   #Calculate the fecundity probabilities by ant species
   f_crem = p.flow*nflow*flow.surv_crem*seeds.per.fruit_crem*fruit.survival
