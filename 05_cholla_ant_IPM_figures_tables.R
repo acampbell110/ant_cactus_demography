@@ -317,48 +317,44 @@ g_crem <- colMeans((grow_rfx1))
 g_liom <- colMeans((grow_rfx2))
 g_other <- colMeans((grow_rfx3))
 g_vac <- colMeans((grow_rfx4))
-g_years <- seq(2004,2022, by = 1)
+years_seq <- 2004:2023
 ## Show the correlation between ant and year -- from survival model random effects
 s_crem <- colMeans((surv_rfx1))
 s_liom <- colMeans((surv_rfx2))
 s_other <- colMeans((surv_rfx3))
 s_vac <- colMeans((surv_rfx4))
-s_years <- seq(2004,2022, by = 1)
 ## Show the correlation between ant and year -- from growth model random effects
 v_crem <- colMeans((viab_rfx1))
 v_liom <- colMeans((viab_rfx2))
 v_other <- colMeans((viab_rfx3))
 v_vac <- colMeans((viab_rfx4))
-v_years <- seq(2004,2022, by = 1)
-unique(viability_data$Year_t)
-png("Manuscript/Figures/year_ant_timeseries.png")
-par(mar=c(4,2,2,1),oma=c(2,2,0,0))
-layout(matrix(c(1,2,3),
-              ncol = 3, byrow = TRUE), heights = c(1), widths = c(4,4,4))
+
+pdf("Manuscript/Figures/year_ant_timeseries.pdf",width=10,height=4)
+par(mfrow=c(1,3),mar=c(4,2,2,1),oma=c(2,2,0,0))
 ## Growth Ant EEffects
-plot(g_years,g_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+plot(years_seq,g_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
      main = "a)                               ",
-     ylim = c(-1.5,2.1), xlab = " ",ylab = " ",cex.lab = 2)
-lines(g_years, g_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(g_years, g_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-lines(g_years, g_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-legend("topleft",legend = c("Liom.","Crem.","Other","Vacant"),fill = c(liomcol,cremcol,othercol,vaccol),cex=1.8)
+     ylim = c(-2.5,2.5), xlab = " ",ylab = " ",cex.lab = 2)
+lines(years_seq, g_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, g_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, g_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+legend("topleft",legend = c("Liom.","Crem.","Other","Vacant"),fill = c(liomcol,cremcol,othercol,vaccol),cex=1.4)
 ## Survival ant effects
-plot(s_years,s_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+plot(years_seq,s_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
      main = "b)                                 ",
-     ylim = c(-1.5,2.1), xlab = "",ylab = " ",cex.lab = 1.5)
-lines(s_years, s_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(s_years, s_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-lines(s_years, s_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+     ylim = c(-2.5,2.5), xlab = "",ylab = " ",cex.lab = 1.5)
+lines(years_seq, s_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, s_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, s_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
 ## Viability Ant Effects
-plot(v_years,v_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+plot(years_seq,v_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
      main = "c)                                ",
-     ylim = c(-1.5,2.1), xlab = " ",ylab = " ",cex.lab = 1.5)
-lines(v_years, v_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(v_years, v_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-lines(v_years, v_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-mtext("Year",side=1,line=0,outer=TRUE,cex=1.7)
-mtext("Ant-Year Effects",side=2,line=0,outer=TRUE,cex=1.7,las=0)
+     ylim = c(-2.5,2.5), xlab = " ",ylab = " ",cex.lab = 1.5)
+lines(years_seq, v_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, v_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, v_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+mtext("Year",side=1,line=0,outer=TRUE,cex=1.4)
+mtext("Year-specific deviation",side=2,line=0,outer=TRUE,cex=1.4,las=0)
 dev.off()
 
 
@@ -793,6 +789,14 @@ axis(1,at=1:4,labels=c(expression(italic("C.opuntiae")),expression(italic("L.api
 mtext("Flowerbud viability", side = 2, line = 1, cex=1.7)
 box()
 dev.off()
+
+################################################################################
+## Seed number visuals
+################################################################################
+plot(density(exp(seed.params$beta0[,3])),lwd=3,col=vaccol,
+     xlab="Mean seeds per fruit",main=" ",xlim=c(50,250))
+lines(density(exp(seed.params$beta0[,2])),lwd=3,col=liomcol)
+lines(density(exp(seed.params$beta0[,1])),lwd=3,col=cremcol)
 
 ################################################################################
 ## Probability of Reproducing Model Visuals
