@@ -102,7 +102,7 @@ ggplot(cactus)+
 
 stable_ants<-stable.stage(full_mat$IPMmat)
 stable_ants<-stable_ants[-(1:2)]/sum(stable_ants[-(1:2)])
-plot(full_mat$y,stable_ants[1:matsize],type="l",lwd=3,col=cremcol,ylim=c(0,.01))
+plot(full_mat$y,stable_ants[1:matsize],type="l",lwd=3,col=cremcol,ylim=c(0,.015))
 lines(full_mat$y,stable_ants[(matsize+1):(2*matsize)],lwd=3,col=liomcol)
 lines(full_mat$y,stable_ants[(2*matsize+1):(3*matsize)],lwd=3,col=othercol)
 lines(full_mat$y,stable_ants[(3*matsize+1):(4*matsize)],lwd=3,col=vaccol)
@@ -113,13 +113,14 @@ sum(stable_ants[(2*matsize+1):(3*matsize)])
 sum(stable_ants[(3*matsize+1):(4*matsize)])
 
 cactus %>% 
+  select(Year_t,ant_t) %>% drop_na() %>% 
   group_by(Year_t,ant_t) %>% 
   summarise(n=n()) %>%
   mutate(freq = n / sum(n)) -> ant_tally
 
 ant_tally %>% 
   ggplot()+
-  geom_col(aes(ant_t,freq))+facet_wrap("Year_t")
+  geom_col(aes(ant_t,freq,fill=ant_t))+facet_wrap("Year_t")
 
 
 ## find how many years until lambdaS stabilizes
