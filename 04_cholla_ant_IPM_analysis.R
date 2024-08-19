@@ -169,7 +169,7 @@ for(i in 1:length(scenario)){
             repro_rfx= colMeans(repro_rfx),
             viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
             viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),
-            trans_years=year_seq)
+            trans_years=year_seq[1:600])
   lambdaS_comp_sync[i] <- lambdaSim(params = params_mean,
                                scenario = scenario[i],
                                lower = cholla_min, upper = cholla_max, 
@@ -183,9 +183,18 @@ for(i in 1:length(scenario)){
                                repro_rfx= colMeans(repro_rfx),
                                viab_rfx1=colMeans(viab_rfx),viab_rfx2=colMeans(viab_rfx),
                                viab_rfx3=colMeans(viab_rfx),viab_rfx4=colMeans(viab_rfx),
-                               trans_years=year_seq)
+                               trans_years=year_seq[1:600])
 print(scenario[i])}
 
+pdf("Manuscript/Figures/lambdaS_tom.pdf")
+plot(c(1,3,5,7,9,11,13,15),lambdaS_comp, pch = 19, cex = 3,col = colors_lambdas,
+     xlim = c(0,16), ylim = c(0.95,1),
+     xaxt = "n",cex.lab = 2,
+     xlab = "Ant Scenario", ylab = "Mean LambdaS", main = "")
+points(c(1,3,5,7,9,11,13,15),lambdaS_comp_sync, pch = 1, cex = 3,col = colors_lambdas)
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = lambdaS_comp_sync+0.002,cex = 2, labels = scenario_abv)
+legend("bottomright",legend=c("synchronized","non-synchronized"),pch=c(1,19),cex=1.5)
+dev.off()
 #######################################################################
 
 ## Competitive Exclusion Model Run
