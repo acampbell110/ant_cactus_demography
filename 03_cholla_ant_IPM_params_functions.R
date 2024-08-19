@@ -2732,7 +2732,6 @@ lambdaSim=function(params,                                  ## parameters
                    surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                    flow_rfx,repro_rfx,
                    viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,
-                   max_yrs,                                 ## the # years you want to iterate
                    matsize,                                 ## size of transition matrix
                    scenario,                                ## partner diversity scenario
                    lower,upper,                             ## extensions to avoid eviction
@@ -2747,6 +2746,7 @@ lambdaSim=function(params,                                  ## parameters
   if(scenario == "liomcremvac"|scenario == "liomvacother"|scenario == "othercremvac"){K_t <- matrix(0,3*matsize+2,3*matsize+2)}
   if(scenario == "all"){K_t <- matrix(0,4*matsize+2,4*matsize+2)}
   matdim        <- ncol(K_t)
+  max_yrs <- length(trans_years)
   rtracker      <- (rep(0,max_yrs))  ## Empty vector to store growth rates in
   n0            <- rep(1/matdim,matdim)  ## Create dummy initial growth rate vector that sums to 1
   
@@ -2754,7 +2754,7 @@ lambdaSim=function(params,                                  ## parameters
     #   ## scale this to the stochastic growth rate
     #   ## Randomly sample the years we have data for by calling column r in all matricies of
     #   ## the year random effects
-    r <- sample(trans_years,1,replace = TRUE,prob = NULL)
+    r <- trans_years[t]#sample(trans_years,1,replace = TRUE,prob = NULL)
     
     ## Create and store matrix
     K_t[,]<-bigmatrix(params,scenario,lower,upper,floor,ceiling,matsize,
