@@ -1486,6 +1486,62 @@ scenario_abv <- c("V","CV","LV","OV","LCV","LOV","OCV","LOCV")
 # axis(side=1,at=c(1,3,5,7),labels=c("0","1","2","3"))
 # dev.off()
 
+###### Manuscript Visual
+
+## Plot the means for the competitive exclusion model
+png("Manuscript/Figures/Lambdas_Comp_Full.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2,3),
+              ncol = 3, nrow = 1), heights = c(1,1,1))
+plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,31), ylim = c(0.962,0.995),xaxt = "n",cex.lab = 2,
+     xlab = " ", ylab = " ",
+     main = "Non-Synchronous")
+axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
+
+plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols,
+     xlim = c(0,31), ylim = c(0.962,0.995),xaxt = "n",cex.lab = 2,
+     xlab = " ", ylab = " ",
+     main = "Synchronous")
+axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+legend("bottomright", legend = scenario_abv, fill = cols)
+mtext("Number of Ant Partners", side = 1, cex = 2.2, line = 3, adj = 1.25)
+
+no_part <- colMeans(lams_comp_stoch)[1]
+one_part <- mean(colMeans(lams_comp_stoch)[2:4])
+two_part <- mean(colMeans(lams_comp_stoch)[5:7])
+three_part <- colMeans(lams_comp_stoch)[8]
+no_part_sync <- colMeans(lams_comp_stoch_null)[1]
+one_part_sync <- mean(colMeans(lams_comp_stoch_null)[2:4])
+two_part_sync <- mean(colMeans(lams_comp_stoch_null)[5:7])
+three_part_sync <- colMeans(lams_comp_stoch_null)[8]
+plot(c(1,2,3,4),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.94, 1), xaxt = "n", cex.lab = 2, 
+     xlab = "Number of Partners", ylab = "Mean Lambda Value", main = "")
+axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
+points(c(1,2,3,4),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
+legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
+dev.off()
+
+png("Manuscript/Figures/Lambdas_Comp_lines.png")
+par(mar=c(4,4,1,1))
+layout(matrix(c(1,2),
+              ncol = 2, nrow = 1), heights = c(1,1,1,1))
+plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
+     xlab = " ", ylab = " ",
+     main = "Non-Synchronous")
+arrows(x0 = c(1,10,11,9,20,21,19,30), 
+       y0 = c(min(lams_comp_stoch[,1]),min(lams_comp_stoch[,2]),min(lams_comp_stoch[,3]),min(lams_comp_stoch[,4]),min(lams_comp_stoch[,5]),min(lams_comp_stoch[,6]),min(lams_comp_stoch[,7]),min(lams_comp_stoch[,8])),
+       x1 = c(1,10,11,9,20,21,19,30), 
+       y1 = c(max(lams_comp_stoch[,1]),max(lams_comp_stoch[,2]),max(lams_comp_stoch[,3]),max(lams_comp_stoch[,4]),max(lams_comp_stoch[,5]),max(lams_comp_stoch[,6]),max(lams_comp_stoch[,7]),max(lams_comp_stoch[,8])),
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
+points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols)
+axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
+
+
 ## Plot the means for the competitive exclusion model
 png("Manuscript/Figures/Lambdas_Comp.png")
 par(mar=c(4,4,1,1))
