@@ -12,7 +12,7 @@ cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
 Nplots <- length(unique(cactus$Plot))
 Nyears <- length(unique(cactus$Year_t))
-iter <- 1000
+iter <- 100
 lower<- cholla_min
 upper<- cholla_max
 ## these values were tested and found to work well in all scenarios
@@ -28,10 +28,10 @@ years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
 ## Choose your pathway to pull from 
 #Ali
-mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
-#mcmc_dir <- "/Users/alicampbell/Desktop/"
+# mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "/Users/alicampbell/Library/CloudStorage/GoogleDrive-amc49@rice.edu/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
 #Tom
-mcmc_dir <- "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
+# mcmc_dir <- "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
 
 #Lab
 # mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
@@ -385,7 +385,7 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "other"){ return(g_other)}
   if(i == "vacant"){ return(g_vac)}
 }
-
+# 
 # # ##Check that it works properly
 # i = c("vacant","crem","liom","other")
 # x = c(-1,-5,3,4)
@@ -436,7 +436,7 @@ sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
 #   for(m in 1:10){ ## iteration
 #     for(n in seq(1:length(i))){ ## input info
 #       s[m,n] <- sx(x[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a])
-#      
+# 
 #     }
 #   }
 #   l[[a]] <- s
@@ -455,23 +455,23 @@ pxy<-function(x,y,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,gro
   return(px)
 }
 
-# ##Check that it works properly
-# i = c("liom","vacant","crem","other")
-# x = c(-1,-5,4,3)
-# y = c(-1,-4,4,3)
-# px <- matrix(NA,ncol = length(i), nrow = (10))
-# l <- list()
-# for(a in 1:17){ ## year
-# for(m in 1:10){ ## iteration
-#   for(n in 1:length(i)){ ## input info
-#     px[m,n] <- pxy(x[n],y[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-#     }
-# }
-#   l[[a]] <- px
-# }
-# 
-# px
-# l
+##Check that it works properly
+i = c("liom","vacant","crem","other")
+x = c(-1,-5,4,3)
+y = c(-1,-4,4,3)
+px <- matrix(NA,ncol = length(i), nrow = (10))
+l <- list()
+for(a in 1:5){ ## year
+for(m in 1:10){ ## iteration
+  for(n in 1:length(i)){ ## input info
+    px[m,n] <- pxy(x[n],y[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
+    }
+}
+  l[[a]] <- px
+}
+
+px
+l
 
 #################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
@@ -533,951 +533,689 @@ recruits<-function(y,params){
 # }
 # r
 
-
-######################################################
-#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE. One ant option
-transition.1<-function(x, i, j,params, scenario){
-  #Transforms all values below/above limits in min/max size
+################################################################################
+# FUNCTION TO DETERMINE THE PROPORTION OF ANTS BASED ON SIZE -- used for comp exclusion simulations
+prop.ant <- function(x,scenario,ant_to){
   xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## Crem and Vac
-  if(scenario == "cremvac"){
-    #Denom of previously tended by None
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavc) + xb*(params$multi_betac))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_crem = exp((params$multi_betavc) + xb*(params$multi_betac))/Denominator_vac
-    #Denom of previously tended by Crem
-    Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
-      exp((params$multi_betacc) + xb*(params$multi_betac))
-    #Calculate the probabilities by next ant state
-    crem_vac = exp((params$multi_betacv) + xb*(params$multi_betav))/Denominator_crem
-    crem_crem = exp((params$multi_betacc) + xb*(params$multi_betac))/Denominator_crem
-    #Return them
-    if(i == "crem" & j == "crem"){return(crem_crem)}
-    if(i == "crem" & j == "vacant"){return(crem_vac)}
-    if(i == "vacant" & j == "crem"){return(vac_crem)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-  ## Liom and Vac
-  if(scenario == "liomvac"){
-    #Denom of previously tended by None
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_liom = exp((params$multi_betavl) + xb*(params$multi_betal))/Denominator_vac
-    #Denom of previously tended by Liom
-    Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
-      exp((params$multi_betall) + xb*(params$multi_betal))
-    #Calculate the probabilities by next ant state
-    liom_vac = exp((params$multi_betalv) + xb*(params$multi_betav))/Denominator_liom
-    liom_liom = exp((params$multi_betall) + xb*(params$multi_betal))/Denominator_liom
-    #Return the probabilities
-    if(i == "liom" & j == "liom"){return(liom_liom)}
-    if(i == "liom" & j == "vacant"){return(liom_vac)}
-    if(i == "vacant" & j == "liom"){return(vac_liom)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-  ## Other and Vac
-  if(scenario == "othervac"){
-    #Denom of previously tended by None
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_other = exp((params$multi_betavo) + xb*(params$multi_betao))/Denominator_vac
-    #Denom of previously tended by Liom
-    Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
-      exp((params$multi_betaoo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    other_vac = exp((params$multi_betaov) + xb*(params$multi_betav))/Denominator_other
-    other_other = exp((params$multi_betaoo) + xb*(params$multi_betao))/Denominator_other
-    #Return the probabilities
-    if(i == "other" & j == "other"){return(other_other)}
-    if(i == "other" & j == "vacant"){return(other_vac)}
-    if(i == "vacant" & j == "other"){return(vac_other)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
+  ## calculate the actual proportions of each ant across all sizes
+  Lx <- exp(mean(params$multi_betall) + xb*mean(params$multi_betal)) + 
+    exp(mean(params$multi_betacl) + xb*mean(params$multi_betal)) + 
+    exp(mean(params$multi_betaol) + xb*mean(params$multi_betal)) + 
+    exp(mean(params$multi_betavl) + xb*mean(params$multi_betal))
+  Cx <- exp(mean(params$multi_betalc) + xb*mean(params$multi_betac)) + 
+    exp(mean(params$multi_betacc) + xb*mean(params$multi_betac)) + 
+    exp(mean(params$multi_betaoc) + xb*mean(params$multi_betac)) + 
+    exp(mean(params$multi_betavc) + xb*mean(params$multi_betac))
+  Ox <- exp(mean(params$multi_betalo) + xb*mean(params$multi_betao)) + 
+    exp(mean(params$multi_betaco) + xb*mean(params$multi_betao)) + 
+    exp(mean(params$multi_betaoo) + xb*mean(params$multi_betao)) + 
+    exp(mean(params$multi_betavo) + xb*mean(params$multi_betao))
+  Vx <- exp(mean(params$multi_betalv) + xb*mean(params$multi_betav)) + 
+    exp(mean(params$multi_betacv) + xb*mean(params$multi_betav)) + 
+    exp(mean(params$multi_betaov) + xb*mean(params$multi_betav)) + 
+    exp(mean(params$multi_betavv) + xb*mean(params$multi_betav))
+  ## calculate the redistribution scalars
+  # Crem redistributed to Liom and Other
+  Clx <- Lx/(Lx + Ox)
+  Cox <- Ox/(Lx + Ox)
+  # Other redistributed to Liom and Crem
+  Olx <- Lx/(Lx + Cx)
+  Ocx <- Cx/(Lx + Cx)
+  # Liom redistributed to Other and Crem
+  Lcx <- Cx/(Cx + Ox)
+  Lox <- Ox/(Cx + Ox)
+  ## return the proper scalar
+  # Crem redistributed to Liom and Other
+  if(scenario == "liomvacother" & ant_to == "liom"){return(Clx)}
+  if(scenario == "liomvacother" & ant_to == "other"){return(Cox)}
+  # Other redistributed to Liom and Crem
+  if(scenario == "liomcremvac" & ant_to == "crem"){return(Ocx)}
+  if(scenario == "liomcremvac" & ant_to == "liom"){return(Olx)}
+  # Liom redistributed to Other and Crem
+  if(scenario == "othercremvac" & ant_to == "crem"){return(Lcx)}
+  if(scenario == "othercremvac" & ant_to == "other"){return(Lox)}
 }
-# 
-# # ## Scenario options are "liomvac", "cremvac", "othervac"
-# # ## Check if it works
-# i = c("vacant","vacant","liom","liom")
-# j = c("liom","vacant","liom","vacant")
-# x = c(15,15,15,15)
-# y = c(-1,-4,4.5,3.01)
-# scenario = c("liomvac","liomvac","liomvac","liomvac")
-# t1 <- matrix(NA,ncol = length(i), nrow = (10))
-# for(m in 1:10){
-#   for(n in 1:length(i)){
-#     t1[m,n] <- transition.1(x[n],i[n],j[n],params[m,],scenario[n])
+################################################################################
+# PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME, ANT STATE, SIMULATION
+# SCENARIO, WHEN THERE IS ONLY 1 ANT PRESENT 
+
+transition.1 <- function(x,i,j,params,scenario,simulation){
+  xb=pmin(pmax(x,cholla_min),cholla_max)
+  if(simulation == "comp" | simulation == "equal"){
+    # all possible ants that vacant can become in year t1
+    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+      exp((params$multi_betavo) + xb*(params$multi_betao)) +
+      exp((params$multi_betavc) + xb*(params$multi_betac)) +
+      exp((params$multi_betavl) + xb*(params$multi_betal))
+    # probability vacant stays vacant
+    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+    # probability vacant becomes occupied
+    vac_occ = (exp(params$multi_betavc + xb * params$multi_betac) + exp(params$multi_betavl + xb * params$multi_betal) + exp(params$multi_betavo + xb * params$multi_betao))/Denominator_vac
+    # all possible ants that occupied can become in year t1
+    Denominator_occ <- exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+      exp((params$multi_betall) + xb*(params$multi_betal)) + 
+      exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+      exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+      exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+      exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+      exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+      exp((params$multi_betaoo) + xb*(params$multi_betao))
+    # probability occupied becomes vacant
+    occ_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+                 exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+                 exp((params$multi_betaov) + xb*(params$multi_betav)))/Denominator_occ
+    # probability occupied stays occupied
+    occ_occ = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+                 exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+                 exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+                 exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+                 exp((params$multi_betall) + xb*(params$multi_betal)) + 
+                 exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+                 exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+                 exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+                 exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_occ
+    # check if it sums to 1
+    vac_vac + vac_occ
+    occ_vac + occ_occ
+    # return the proper probability
+    if((i == "liom" | i == "crem" | i == "other") & (j == "liom" | j == "crem" | j == "other")){return(occ_occ)}
+    if((i == "liom" | i == "crem" | i == "other") & j == "vacant"){return(occ_vac)}
+    if(i == "vacant" & (j == "liom" | j == "crem" | j == "other")){return(vac_occ)}
+    if(i == "vacant" & j == "vacant"){return(vac_vac)}
+  } # end of sim = equal or comp
+  if(simulation == "freq"){
+    if(scenario == "liomvac"){
+      #all possible options for previously vacant
+      Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+        exp((params$multi_betavo) + xb*(params$multi_betao)) +
+        exp((params$multi_betavc) + xb*(params$multi_betac)) +
+        exp((params$multi_betavl) + xb*(params$multi_betal)) + 
+        exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+        exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+        exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaoo) + xb*(params$multi_betao))
+      # probability vacant stays vacant
+      # vacant becomes all but liom
+      vac_vac = (exp(params$multi_betavv + xb*(params$multi_betav)) + 
+                   exp(params$multi_betavc + xb*(params$multi_betac)) + 
+                   exp(params$multi_betavo + xb*(params$multi_betao)) + 
+                   # crem becomes all but liom
+                   exp(params$multi_betacv + xb * params$multi_betav) + 
+                   exp(params$multi_betacc + xb*(params$multi_betac)) + 
+                   exp(params$multi_betaco + xb*(params$multi_betao)) + 
+                   # other becomes all but liom
+                   exp(params$multi_betaov + xb * params$multi_betav) +
+                   exp(params$multi_betaoc + xb*(params$multi_betac)) + 
+                   exp(params$multi_betaoo + xb*(params$multi_betao)))/Denominator_vac
+      # probability vacant becomes liom
+      vac_liom = (exp(params$multi_betavl + xb * params$multi_betal) +
+                    exp(params$multi_betacl + xb * params$multi_betal) + 
+                    exp(params$multi_betaol + xb * params$multi_betal))/Denominator_vac
+      #all possible options for previously liom
+      Denominator_liom <- 
+        exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betall) + xb*(params$multi_betal)) + 
+        exp((params$multi_betalo) + xb*(params$multi_betao)) 
+      # probability that liom becomes vacant
+      liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+                    exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+                    exp((params$multi_betalc) + xb*(params$multi_betac)))/Denominator_liom
+      # probability that liom stays liom
+      liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)))/Denominator_liom
+      # check if this works
+      liom_vac + liom_liom
+      vac_vac + vac_liom
+      #Return them
+      if(i == "liom" & j == "liom"){return(liom_liom)}
+      if(i == "liom" & j == "vacant"){return(liom_vac)}
+      if(i == "vacant" & j == "liom"){return(vac_liom)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+    } # end of scenario = liomvac
+    if(scenario == "cremvac"){
+      #all possible options for previously vacant
+      Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+        exp((params$multi_betavo) + xb*(params$multi_betao)) +
+        exp((params$multi_betavc) + xb*(params$multi_betac)) +
+        exp((params$multi_betavl) + xb*(params$multi_betal)) + 
+        exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betall) + xb*(params$multi_betal)) + 
+        exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+        exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaoo) + xb*(params$multi_betao))
+      # probability vacant stays vacant
+      # vacant becomes all but crem
+      vac_vac = (exp(params$multi_betavv + xb*(params$multi_betav)) + 
+                   exp(params$multi_betavl + xb*(params$multi_betal)) + 
+                   exp(params$multi_betavo + xb*(params$multi_betao)) + 
+                   exp(params$multi_betalv + xb * params$multi_betav) + 
+                   exp(params$multi_betall + xb*(params$multi_betal)) + 
+                   exp(params$multi_betalo + xb*(params$multi_betao)) + 
+                   exp(params$multi_betaov + xb * params$multi_betav) +
+                   exp(params$multi_betaol + xb*(params$multi_betal)) + 
+                   exp(params$multi_betaoo + xb*(params$multi_betao)))/Denominator_vac
+      # probability vacant becomes crem
+      vac_crem = (exp(params$multi_betavc + xb * params$multi_betac) +
+                    exp(params$multi_betalc + xb * params$multi_betac) + 
+                    exp(params$multi_betaoc + xb * params$multi_betac))/Denominator_vac
+      #all possible options for previously crem
+      Denominator_crem <- 
+        exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaco) + xb*(params$multi_betao)) 
+      # probability that crem becomes vacant
+      crem_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+                    exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+                    exp((params$multi_betacl) + xb*(params$multi_betal)))/Denominator_crem
+      # probability that crem stays crem
+      crem_crem = (exp((params$multi_betacc) + xb*(params$multi_betac)))/Denominator_crem
+      # check if this works
+      crem_vac + crem_crem
+      vac_vac + vac_crem
+      #Return them
+      if(i == "crem" & j == "crem"){return(crem_crem)}
+      if(i == "crem" & j == "vacant"){return(crem_vac)}
+      if(i == "vacant" & j == "crem"){return(vac_crem)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}      
+    } # end of scenario = cremvac
+    if(scenario == "othervac"){
+      #all possible options for previously vacant
+      Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+        exp((params$multi_betavo) + xb*(params$multi_betao)) +
+        exp((params$multi_betavc) + xb*(params$multi_betac)) +
+        exp((params$multi_betavl) + xb*(params$multi_betal)) + 
+        exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+        exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betall) + xb*(params$multi_betal)) + 
+        exp((params$multi_betalo) + xb*(params$multi_betao))
+      # probability vacant stays vacant
+      # vacant becomes all but other
+      vac_vac = (exp(params$multi_betavv + xb*(params$multi_betav)) + 
+                   exp(params$multi_betavc + xb*(params$multi_betac)) + 
+                   exp(params$multi_betavl + xb*(params$multi_betal)) + 
+                   exp(params$multi_betacv + xb * params$multi_betav) + 
+                   exp(params$multi_betacc + xb*(params$multi_betac)) + 
+                   exp(params$multi_betacl + xb*(params$multi_betal)) + 
+                   exp(params$multi_betalv + xb * params$multi_betav) +
+                   exp(params$multi_betalc + xb*(params$multi_betac)) + 
+                   exp(params$multi_betall + xb*(params$multi_betal)))/Denominator_vac
+      # probability vacant becomes other
+      vac_other = (exp(params$multi_betavo + xb * params$multi_betao) +
+                     exp(params$multi_betaco + xb * params$multi_betao) + 
+                     exp(params$multi_betalo + xb * params$multi_betao))/Denominator_vac
+      #all possible options for previously other
+      Denominator_other <- 
+        exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+        exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaoo) + xb*(params$multi_betao)) 
+      # probability that other becomes vacant
+      other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+                     exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+                     exp((params$multi_betaoc) + xb*(params$multi_betac)))/Denominator_other
+      # probability that other stays other
+      other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_other
+      # check if this works
+      other_vac + other_other
+      vac_vac + vac_other
+      #Return them
+      if(i == "other" & j == "other"){return(other_other)}
+      if(i == "other" & j == "vacant"){return(other_vac)}
+      if(i == "vacant" & j == "other"){return(vac_other)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}      
+    } # end of scenario = othervac
+  } # end of sim = freq
+} # end of fnc
+
+# check that the function works ("liomvac","cremvac","othervac")
+# x <- c(1,1,1,1)
+# i <- c("vacant","other","vacant","other")
+# j <- c("other","other","vacant","vacant")
+# scenario <- "othervac"
+# simulation <- c("comp","equal","freq")
+# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
+# for(n in 1:3){ # each simulation
+#   for(m in 1:length(x)){ # each ant combo
+#     t.mat[n,m] <- transition.1(x[m],i[m],j[m],params = params[1,],scenario,simulation[n])
 #   }
 # }
-# t1
-# rowSums(t1)
-# colMeans(t1)
-
-#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE. One ant option
-transition.1.comp<-function(x, i, j,params, scenario){
-  #Transforms all values below/above limits in min/max size
+# t.mat
+# rowSums(t.mat)
+transition.2 <- function(x,i,j,params,scenario,simulation){
   xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## Crem and Vac
-  if(scenario == "cremvac"){
-    #Denom of previously vacant
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) +
-      exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_crem = (exp(params$multi_betavc + xb * params$multi_betac) + exp(params$multi_betavl + xb * params$multi_betal) + exp(params$multi_betavo + xb * params$multi_betao))/Denominator_vac
-    #Denom of previously tended 
-    Denominator_crem <- exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betall) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-      exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-      exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaoo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    crem_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betaov) + xb*(params$multi_betav)))/Denominator_crem
-    crem_crem = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betall) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_crem
-    #Return them
-    if(i == "crem" & j == "crem"){return(crem_crem)}
-    if(i == "crem" & j == "vacant"){return(crem_vac)}
-    if(i == "vacant" & j == "crem"){return(vac_crem)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-  ## Liom and Vac
-  if(scenario == "liomvac"){
-    #Denom of previously vacant
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) +
-      exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_liom = (exp(params$multi_betavc + xb * params$multi_betac) + exp(params$multi_betavl + xb * params$multi_betal) + exp(params$multi_betavo + xb * params$multi_betao))/Denominator_vac
-    #Denom of previously tended 
-    Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betall) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-      exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-      exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaoo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    liom_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betaov) + xb*(params$multi_betav)))/Denominator_liom
-    liom_liom = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-                   exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-                   exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betall) + xb*(params$multi_betal)) + 
-                   exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-                   exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-                   exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_liom
-    #Return the probabilities
-    if(i == "liom" & j == "liom"){return(liom_liom)}
-    if(i == "liom" & j == "vacant"){return(liom_vac)}
-    if(i == "vacant" & j == "liom"){return(vac_liom)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-  ## Other and Vac
-  if(scenario == "othervac"){
-    #Denom of previously vacant
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) +
-      exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_other = (exp(params$multi_betavc + xb * params$multi_betac) + exp(params$multi_betavl + xb * params$multi_betal) + exp(params$multi_betavo + xb * params$multi_betao))/Denominator_vac
-    #Denom of previously tended 
-    Denominator_other <- exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betall) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-      exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-      exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaoo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    other_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betaov) + xb*(params$multi_betav)))/Denominator_other
-    other_other = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-                   exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-                   exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betall) + xb*(params$multi_betal)) + 
-                   exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-                   exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-                   exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_other
-    #Return the probabilities
-    if(i == "other" & j == "other"){return(other_other)}
-    if(i == "other" & j == "vacant"){return(other_vac)}
-    if(i == "vacant" & j == "other"){return(vac_other)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-}
-# # ## Scenario options are "liomvac", "cremvac", "othervac"
-# # ## Check if it works
-# i = c("vacant","vacant","other","other")
-# j = c("other","vacant","other","vacant")
-# x = c(15,15,15,15)
-# scenario = "othervac"
-# t1_comp <- matrix(NA,ncol = length(i), nrow = (10))
-# for(m in 1:10){
-#   for(n in 1:length(i)){
-#     t1_comp[m,n] <- transition.1.comp(x[n],i[n],j[n],params[m,],scenario)
-#   }
-# }
-# t1_comp
-# rowSums(t1_comp)
-# colMeans(t1_comp)
-
-transition.1.freq<-function(x, i, j,params, scenario){
-  #Transforms all values below/above limits in min/max size
-  xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## Crem and Vac
-  if(scenario == "cremvac"){
-    #Denom of previously vacant
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) +
-      exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betall) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-      exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaoo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    vac_vac = (exp(params$multi_betavv + xb*(params$multi_betav)) + 
-                 exp(params$multi_betavl + xb*(params$multi_betal)) + 
-                 exp(params$multi_betavo + xb*(params$multi_betao)) + 
-                 exp(params$multi_betalv + xb * params$multi_betav) + 
-                 exp(params$multi_betall + xb*(params$multi_betal)) + 
-                 exp(params$multi_betalo + xb*(params$multi_betao)) + 
-                 exp(params$multi_betaov + xb * params$multi_betav) +
-                 exp(params$multi_betaol + xb*(params$multi_betal)) + 
-                 exp(params$multi_betaoo + xb*(params$multi_betao)))/Denominator_vac
-    vac_crem = (exp(params$multi_betavc + xb * params$multi_betac) +
-                  exp(params$multi_betalc + xb * params$multi_betac) + 
-                  exp(params$multi_betaoc + xb * params$multi_betac))/Denominator_vac
-    #vac_crem + vac_vac
-    #Denom of previously tended 
-    Denominator_crem <- 
-      exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaco) + xb*(params$multi_betao)) 
-    #Calculate the probabilities by next ant state
-    crem_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-                  exp((params$multi_betacl) + xb*(params$multi_betal)))/Denominator_crem
-    crem_crem = (exp((params$multi_betacc) + xb*(params$multi_betac)))/Denominator_crem
-    #crem_vac + crem_crem
-    #Return them
-    if(i == "crem" & j == "crem"){return(crem_crem)}
-    if(i == "crem" & j == "vacant"){return(crem_vac)}
-    if(i == "vacant" & j == "crem"){return(vac_crem)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-  ## Liom and Vac
-  if(scenario == "liomvac"){
-    #Denom of previously vacant
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) +
-      exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-      exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaoo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    vac_vac = (exp(params$multi_betavv + xb*(params$multi_betav)) + 
-                 exp(params$multi_betavc + xb*(params$multi_betac)) + 
-                 exp(params$multi_betavo + xb*(params$multi_betao)) + 
-                 exp(params$multi_betacv + xb * params$multi_betav) + 
-                 exp(params$multi_betacc + xb*(params$multi_betac)) + 
-                 exp(params$multi_betaco + xb*(params$multi_betao)) + 
-                 exp(params$multi_betaov + xb * params$multi_betav) +
-                 exp(params$multi_betaoc + xb*(params$multi_betac)) + 
-                 exp(params$multi_betaoo + xb*(params$multi_betao)))/Denominator_vac
-    vac_liom = (exp(params$multi_betavl + xb * params$multi_betal) +
-                  exp(params$multi_betacl + xb * params$multi_betal) + 
-                  exp(params$multi_betaol + xb * params$multi_betal))/Denominator_vac
-    #vac_vac + vac_liom
-    #Denom of previously tended 
-    Denominator_liom <- 
-      exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betall) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalo) + xb*(params$multi_betao)) 
-    #Calculate the probabilities by next ant state
-    liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-                  exp((params$multi_betalc) + xb*(params$multi_betac)))/Denominator_liom
-    liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)))/Denominator_liom
-    #liom_vac + liom_liom
-    #Return them
-    if(i == "liom" & j == "liom"){return(liom_liom)}
-    if(i == "liom" & j == "vacant"){return(liom_vac)}
-    if(i == "vacant" & j == "liom"){return(vac_liom)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-  ## Other and Vac
-  if(scenario == "othervac"){
-    #Denom of previously vacant
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) +
-      exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-      exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-      exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betall) + xb*(params$multi_betal)) + 
-      exp((params$multi_betalo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    vac_vac = (exp(params$multi_betavv + xb*(params$multi_betav)) + 
-                 exp(params$multi_betavc + xb*(params$multi_betac)) + 
-                 exp(params$multi_betavl + xb*(params$multi_betal)) + 
-                 exp(params$multi_betacv + xb * params$multi_betav) + 
-                 exp(params$multi_betacc + xb*(params$multi_betac)) + 
-                 exp(params$multi_betacl + xb*(params$multi_betal)) + 
-                 exp(params$multi_betalv + xb * params$multi_betav) +
-                 exp(params$multi_betalc + xb*(params$multi_betac)) + 
-                 exp(params$multi_betall + xb*(params$multi_betal)))/Denominator_vac
-    vac_other = (exp(params$multi_betavo + xb * params$multi_betao) +
-                  exp(params$multi_betaco + xb * params$multi_betao) + 
-                  exp(params$multi_betalo + xb * params$multi_betao))/Denominator_vac
-    #vac_vac + vac_other
-    #Denom of previously tended 
-    Denominator_other <- 
-      exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-      exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-      exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-      exp((params$multi_betaoo) + xb*(params$multi_betao)) 
-    #Calculate the probabilities by next ant state
-    other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-       exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-       exp((params$multi_betaoc) + xb*(params$multi_betac)))/Denominator_other
-    other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_other
-    #other_vac + other_other
-    #Return them
-    if(i == "other" & j == "other"){return(other_other)}
-    if(i == "other" & j == "vacant"){return(other_vac)}
-    if(i == "vacant" & j == "other"){return(vac_other)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-}
-# # ## Scenario options are "liomvac", "cremvac", "othervac"
-# # ## Check if it works
-# i = c("vacant","vacant","other","other")
-# j = c("other","vacant","other","vacant")
-# x = c(15,15,15,15)
-# scenario = c("othervac","othervac","othervac","othervac")
-# t1_freq <- matrix(NA,ncol = length(i), nrow = (10))
-# for(m in 1:10){
-#   for(n in 1:length(i)){
-#     t1_freq[m,n] <- transition.1.freq(x[n],i[n],j[n],params[m,],scenario[n])
-#   }
-# }
-# t1_freq
-# rowSums(t1_freq)
-# rowSums(t1_freq)
-# rowSums(t1_comp)
-# colMeans(t1)
-
-##########################################################
-#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (THREE STATES)
-transition.2<-function(x, i, j, params,scenario){
-  xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## Liom, Vac, Other
-  #Denom of previously tended by None
-  if(scenario == "liomvacother"){
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_liom = exp((params$multi_betavl) + xb*(params$multi_betal))/Denominator_vac
-    vac_other = exp((params$multi_betavo) + xb*(params$multi_betao))/Denominator_vac
-    #Denom of previously tended by Liom
-    Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
-      exp((params$multi_betall) + xb*(params$multi_betal)) +
-      exp((params$multi_betalo) + xb*(params$multi_betao))
-    #
-    liom_vac = exp((params$multi_betalv) + xb*(params$multi_betav))/Denominator_liom
-    liom_liom = exp((params$multi_betall) + xb*(params$multi_betal))/Denominator_liom
-    liom_other = exp((params$multi_betalo) + xb*(params$multi_betao))/Denominator_liom
-    ## Previously tended by Other
-    Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
-      exp((params$multi_betaol) + xb*(params$multi_betal)) +
-      exp((params$multi_betaoo) + xb*(params$multi_betao))
-    other_vac = exp((params$multi_betaov) + xb*(params$multi_betav))/Denominator_other
-    other_liom = exp((params$multi_betaol) + xb*(params$multi_betal))/Denominator_other
-    other_other = exp((params$multi_betaoo) + xb*(params$multi_betao))/Denominator_other
-    if(i == "liom" & j == "liom"){return(liom_liom)}
-    if(i == "liom" & j == "vacant"){return(liom_vac)}
-    if(i == "liom" & j == "other"){return(liom_other)}
-    if(i == "vacant" & j == "liom"){return(vac_liom)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-    if(i == "vacant" & j == "other"){return(vac_other)}
-    if(i == "other" & j == "liom"){return(other_liom)}
-    if(i == "other" & j == "vacant"){return(other_vac)}
-    if(i == "other" & j == "other"){return(other_other)}
-  }
-  ## Liom, Crem, vac
-  ## Previously tended by None
-  if(scenario == "liomcremvac"){
-    Denominator_crem <- exp((params$multi_betacc) + xb*(params$multi_betac)) +
-      exp((params$multi_betacl) + xb*(params$multi_betal)) +
-      exp((params$multi_betacv) + xb*(params$multi_betav))
-    crem_crem = exp((params$multi_betacc) + xb*(params$multi_betac))/Denominator_crem
-    crem_liom = exp((params$multi_betacl) + xb*(params$multi_betal))/Denominator_crem
-    crem_vac = exp((params$multi_betacv) + xb*(params$multi_betav))/Denominator_crem
-    ## Previously tended by Liom
-    Denominator_liom <- exp((params$multi_betalc) + xb*(params$multi_betac)) +
-      exp((params$multi_betall) + xb*(params$multi_betal)) +
-      exp((params$multi_betalv) + xb*(params$multi_betav))
-    liom_crem = exp((params$multi_betalc) + xb*(params$multi_betac))/Denominator_liom
-    liom_liom = exp((params$multi_betall) + xb*(params$multi_betal))/Denominator_liom
-    liom_vac = exp((params$multi_betalv) + xb*(params$multi_betav))/Denominator_liom
-    ## Previously tended by None
-    Denominator_vac <- exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal)) +
-      exp((params$multi_betavv) + xb*(params$multi_betav))
-    vac_crem = exp((params$multi_betavc) + xb*(params$multi_betac))/Denominator_vac
-    vac_liom = exp((params$multi_betavl) + xb*(params$multi_betal))/Denominator_vac
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    if(i == "liom" & j == "liom"){return(liom_liom)}
-    if(i == "liom" & j == "crem"){return(liom_crem)}
-    if(i == "liom" & j == "vacant"){return(liom_vac)}
-    if(i == "crem" & j == "liom"){return(crem_liom)}
-    if(i == "crem" & j == "crem"){return(crem_crem)}
-    if(i == "crem" & j == "vacant"){return(crem_vac)}
-    if(i == "vacant" & j == "liom"){return(vac_liom)}
-    if(i == "vacant" & j == "crem"){return(vac_crem)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-  ## Other, Crem, vac
-  ## Previously tended by None
-  if(scenario == "othercremvac"){
-    Denominator_crem <- exp((params$multi_betacc) + xb*(params$multi_betac)) +
-      exp((params$multi_betaco) + xb*(params$multi_betao)) +
-      exp((params$multi_betacv) + xb*(params$multi_betav))
-    crem_crem = exp((params$multi_betacc) + xb*(params$multi_betac))/Denominator_crem
-    crem_other = exp((params$multi_betaco) + xb*(params$multi_betao))/Denominator_crem
-    crem_vac = exp((params$multi_betacv) + xb*(params$multi_betav))/Denominator_crem
-    ## Previously tended by Liom
-    Denominator_other <- exp((params$multi_betaoc) + xb*(params$multi_betac)) +
-      exp((params$multi_betaoo) + xb*(params$multi_betao)) +
-      exp((params$multi_betaov) + xb*(params$multi_betav))
-    other_crem = exp((params$multi_betaoc) + xb*(params$multi_betac))/Denominator_other
-    other_other = exp((params$multi_betaoo) + xb*(params$multi_betao))/Denominator_other
-    other_vac = exp((params$multi_betaov) + xb*(params$multi_betav))/Denominator_other
-    ## Previously tended by None
-    Denominator_vac <- exp((params$multi_betavc) + xb*(params$multi_betac)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) +
-      exp((params$multi_betavv) + xb*(params$multi_betav))
-    vac_crem = exp((params$multi_betavc) + xb*(params$multi_betac))/Denominator_vac
-    vac_other = exp((params$multi_betavo) + xb*(params$multi_betao))/Denominator_vac
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    if(i == "other" & j == "other"){return(other_other)}
-    if(i == "other" & j == "crem"){return(other_crem)}
-    if(i == "other" & j == "vacant"){return(other_vac)}
-    if(i == "crem" & j == "other"){return(crem_other)}
-    if(i == "crem" & j == "crem"){return(crem_crem)}
-    if(i == "crem" & j == "vacant"){return(crem_vac)}
-    if(i == "vacant" & j == "other"){return(vac_other)}
-    if(i == "vacant" & j == "crem"){return(vac_crem)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-  }
-}
-# # ## Scenario options are "liomvacother", "liomcremother", "liomcremvac", "othercremvac"
-# # ## Check if it works
-# i = c("liom","liom","liom", "vacant","vacant","vacant","crem","crem","crem")
-# j = c("vacant","liom","crem","vacant","liom","crem","vacant","liom","crem")
-# x = c(15,15,15,15,15,15,15,15,15)
-# scenario = "liomcremvac"
-# t2 <- matrix(NA,ncol = length(i), nrow = (10))
-#  for(m in 1:10){
-#    for(n in 1:length(i)){
-#      t2[m,n] <- transition.2(x[n],i[n],j[n],params[m,],scenario)
-#    }
-#  }
-#  t2
-#  rowSums(t2)
-#  colMeans(t2)
- 
- transition.2.comp<-function(x, i, j, params,scenario){
-   xb=pmin(pmax(x,cholla_min),cholla_max)
-   ## Liom, Vac, Other
-   #Denom of previously tended by None
-   if(scenario == "liomvacother"){
-     Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-       exp((params$multi_betavl) + xb*(params$multi_betal)) +
-       exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betavc) + xb*(params$multi_betac))
-     #Calculate the probabilities by next ant state
-     vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-     vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
-       0.9*(exp((params$multi_betavc) + xb*(params$multi_betac))))/Denominator_vac
-     vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       0.1*(exp((params$multi_betavc) + xb*(params$multi_betac))))/Denominator_vac
-     #vac_vac + vac_liom + vac_other
-     #Denom of previously tended by Liom
-     Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
-       exp((params$multi_betall) + xb*(params$multi_betal)) +
-       exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-       exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-       0.1*exp((params$multi_betacv) + xb*(params$multi_betav)) +
-       0.9*exp((params$multi_betacl) + xb*(params$multi_betal)) +
-       0.9*exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-       0.5*exp((params$multi_betacc) + xb*(params$multi_betac))
-     #
-     liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-       0.1*(exp((params$multi_betacv) + xb*(params$multi_betav))))/Denominator_liom
-     liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)) + 
-       0.9*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-       0.9*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
-       0.45*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_liom
-     liom_other = (exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-       0.9*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
-       0.1*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-       0.05*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_liom
-     #liom_vac + liom_liom + liom_other
-     ## Previously tended by Other
-     Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
-       exp((params$multi_betaol) + xb*(params$multi_betal)) +
-       exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-       0.9*(exp((params$multi_betacv) + xb*(params$multi_betav))) + 
-       0.5*exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-       0.1*exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-       0.1*exp((params$multi_betaco) + xb*(params$multi_betao))
-     other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-       0.9*(exp((params$multi_betacv) + xb*(params$multi_betav))))/Denominator_other
-     other_liom = (exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-       0.1*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
-       0.9*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
-       0.45*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_other
-     other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-       0.1*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
-       0.1*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
-       0.05*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_other
-     #other_vac + other_liom + other_other
-     if(i == "liom" & j == "liom"){return(liom_liom)}
-     if(i == "liom" & j == "vacant"){return(liom_vac)}
-     if(i == "liom" & j == "other"){return(liom_other)}
-     if(i == "vacant" & j == "liom"){return(vac_liom)}
-     if(i == "vacant" & j == "vacant"){return(vac_vac)}
-     if(i == "vacant" & j == "other"){return(vac_other)}
-     if(i == "other" & j == "liom"){return(other_liom)}
-     if(i == "other" & j == "vacant"){return(other_vac)}
-     if(i == "other" & j == "other"){return(other_other)}
-   }
-   ## Liom, Crem, vac
-   ## Previously tended by None
-   if(scenario == "liomcremvac"){
-     Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-       exp((params$multi_betavl) + xb*(params$multi_betal)) +
-       exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betavc) + xb*(params$multi_betac))
-     #Calculate the probabilities by next ant state
-     vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-     vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
-     0.8*(exp((params$multi_betavo) + xb*(params$multi_betao))))/Denominator_vac
-     vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
-     0.2*(exp((params$multi_betavo) + xb*(params$multi_betao))))/Denominator_vac
-     #vac_vac + vac_liom + vac_crem
-     #Denom of previously tended by Liom
-     Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
-       exp((params$multi_betall) + xb*(params$multi_betal)) +
-       exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-       exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-       0.2*exp((params$multi_betaov) + xb*(params$multi_betav)) +
-       0.8*exp((params$multi_betaol) + xb*(params$multi_betal)) +
-       0.5*exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-       0.8*exp((params$multi_betaoc) + xb*(params$multi_betac))
-     #
-     liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-       0.2*(exp((params$multi_betaov) + xb*(params$multi_betav))))/Denominator_liom
-     liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)) + 
-       0.8*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
-       0.8*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
-       0.4*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_liom
-     liom_crem = (exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-       0.8*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
-       0.2*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
-       0.1*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_liom
-     #liom_vac + liom_liom + liom_crem
-     ## Previously tended by Crem
-     Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
-       exp((params$multi_betacl) + xb*(params$multi_betal)) +
-       exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-       exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-       0.8*exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-       0.5*exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-       0.2*exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-       0.2*exp((params$multi_betaoc) + xb*(params$multi_betac))
-     crem_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-       0.8*(exp((params$multi_betaov) + xb*(params$multi_betav))))/Denominator_crem
-     crem_liom = (exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-       0.2*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
-       0.8*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
-       0.4*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_crem
-     crem_crem = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-       0.2*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
-       0.2*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
-       0.1*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_crem
-     #crem_vac + crem_liom + crem_crem
-     if(i == "liom" & j == "liom"){return(liom_liom)}
-     if(i == "liom" & j == "crem"){return(liom_crem)}
-     if(i == "liom" & j == "vacant"){return(liom_vac)}
-     if(i == "crem" & j == "liom"){return(crem_liom)}
-     if(i == "crem" & j == "crem"){return(crem_crem)}
-     if(i == "crem" & j == "vacant"){return(crem_vac)}
-     if(i == "vacant" & j == "liom"){return(vac_liom)}
-     if(i == "vacant" & j == "crem"){return(vac_crem)}
-     if(i == "vacant" & j == "vacant"){return(vac_vac)}
-   }
-   ## Previously tended by None
-   if(scenario == "othercremvac"){
-     Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-       exp((params$multi_betavc) + xb*(params$multi_betac)) +
-       exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betavl) + xb*(params$multi_betal))
-     #Calculate the probabilities by next ant state
-     vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-     vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
-       0.6*(exp((params$multi_betavl) + xb*(params$multi_betal))))/Denominator_vac
-     vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       0.4*(exp((params$multi_betavl) + xb*(params$multi_betal))))/Denominator_vac
-     #vac_vac + vac_crem + vac_other
-     #Denom of previously tended by Liom
-     Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
-       exp((params$multi_betacl) + xb*(params$multi_betal)) +
-       exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-       exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-       0.4*exp((params$multi_betalv) + xb*(params$multi_betav)) +
-       0.5*exp((params$multi_betall) + xb*(params$multi_betal)) +
-       0.6*exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-       0.6*exp((params$multi_betalc) + xb*(params$multi_betac))
-     #
-     crem_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-       0.4*(exp((params$multi_betalv) + xb*(params$multi_betav))))/Denominator_crem
-     crem_crem = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-       0.6*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-       0.6*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
-       0.3*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_crem
-     crem_other = (exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-       0.6*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
-       0.4*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
-       0.2*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_crem
-     #crem_crem + crem_vac + crem_other
-     ## Previously tended by Other
-     Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
-       exp((params$multi_betaol) + xb*(params$multi_betal)) +
-       exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-       0.6*exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-       0.4*exp((params$multi_betalc) + xb*(params$multi_betac)) + 
-       0.5*exp((params$multi_betall) + xb*(params$multi_betal)) + 
-       0.4*exp((params$multi_betalo) + xb*(params$multi_betao))
-     other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-       0.6*(exp((params$multi_betalv) + xb*(params$multi_betav))))/Denominator_other
-     other_crem = (exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
-       0.4*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-       0.6*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
-       0.3*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_other
-     other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-       0.4*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
-       0.4*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
-       0.2*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_other
-     #other_other + other_vac + other_crem
-     if(i == "other" & j == "other"){return(other_other)}
-     if(i == "other" & j == "crem"){return(other_crem)}
-     if(i == "other" & j == "vacant"){return(other_vac)}
-     if(i == "crem" & j == "other"){return(crem_other)}
-     if(i == "crem" & j == "crem"){return(crem_crem)}
-     if(i == "crem" & j == "vacant"){return(crem_vac)}
-     if(i == "vacant" & j == "other"){return(vac_other)}
-     if(i == "vacant" & j == "crem"){return(vac_crem)}
-     if(i == "vacant" & j == "vacant"){return(vac_vac)}
-   }
- }
- 
- 
- # # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
- # # ## Check if it works
- # i = c("liom","liom","liom", "vacant","vacant","vacant","other","other","other")
- # j = c("vacant","liom","other","vacant","liom","other","vacant","liom","other")
- # x = c(15,15,15,15,15,15,15,15,15)
- # scenario = "liomvacother"
- # t2_comp <- matrix(NA,ncol = length(i), nrow = (10))
- # for(m in 1:10){
- #   for(n in 1:length(i)){
- #     t2_comp[m,n] <- transition.2.comp(x[n],i[n],j[n],params[m,],scenario)
- #   }
- # }
- # t2_comp
- # rowSums(t2_comp)
- # a <- colMeans(t2_comp)
- 
- 
- transition.2.freq<-function(x, i, j, params,scenario){
-   xb=pmin(pmax(x,cholla_min),cholla_max)
-   ## Liom, Vac, Other
-   #Denom of previously tended by None
-   if(scenario == "liomvacother"){
-     Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-       exp((params$multi_betavl) + xb*(params$multi_betal)) +
-       exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betavc) + xb*(params$multi_betac)) + 
-       exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-       exp((params$multi_betacl) + xb*(params$multi_betal)) + 
-       exp((params$multi_betaco) + xb*(params$multi_betao)) + 
-       exp((params$multi_betacc) + xb*(params$multi_betac))
-     #Calculate the probabilities by next ant state
-     vac_vac = (exp((params$multi_betavv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betacv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betacc) + xb*(params$multi_betac)) + 
-                  exp((params$multi_betavc) + xb*(params$multi_betac)))/Denominator_vac
-     vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-                   exp((params$multi_betaco) + xb*(params$multi_betao)))/Denominator_vac
-     vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
-                    exp((params$multi_betacl) + xb*(params$multi_betal)))/Denominator_vac
-     #Denom of previously tended by Liom
-     Denominator_other <- exp(params$multi_betaov + xb*(params$multi_betav)) +
-       exp(params$multi_betaol + xb*(params$multi_betal)) +
-       exp(params$multi_betaoo + xb*(params$multi_betao)) +  
-       exp(params$multi_betaoc + xb*(params$multi_betac)) 
-     #
-     other_vac = (exp(params$multi_betaov + xb*(params$multi_betav)) + 
-       exp(params$multi_betaoc + xb*(params$multi_betac)))/Denominator_other
-     other_other = (exp(params$multi_betaoo + xb*(params$multi_betao)))/Denominator_other
-     other_liom = (exp(params$multi_betaol + xb*(params$multi_betal)))/Denominator_other
-     ## Previously tended by Other
-     Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
-       exp((params$multi_betall) + xb*(params$multi_betal)) +
-       exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betalc) + xb*(params$multi_betac))
-     liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-                    (exp((params$multi_betalc) + xb*(params$multi_betac))))/Denominator_liom
-     liom_other = (exp((params$multi_betalo) + xb*(params$multi_betao)) )/Denominator_liom
-     liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)))/Denominator_liom
-     if(i == "other" & j == "other"){return(other_other)}
-     if(i == "other" & j == "vacant"){return(other_vac)}
-     if(i == "other" & j == "liom"){return(other_liom)}
-     if(i == "vacant" & j == "other"){return(vac_other)}
-     if(i == "vacant" & j == "vacant"){return(vac_vac)}
-     if(i == "vacant" & j == "liom"){return(vac_liom)}
-     if(i == "liom" & j == "other"){return(liom_other)}
-     if(i == "liom" & j == "vacant"){return(liom_vac)}
-     if(i == "liom" & j == "liom"){return(liom_liom)}
-   }
-   ## Liom, Crem, vac
-   ## Previously tended by None
-   if(scenario == "liomcremvac"){
-     Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-       exp((params$multi_betavl) + xb*(params$multi_betal)) +
-       exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betavc) + xb*(params$multi_betac)) + 
-       exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-       exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-       exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betaoc) + xb*(params$multi_betac))
-     #Calculate the probabilities by next ant state
-     vac_vac = (exp((params$multi_betavv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
-                  exp((params$multi_betavo) + xb*(params$multi_betao)))/Denominator_vac
-     vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betaoc) + xb*(params$multi_betac)))/Denominator_vac
-     vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
-                    exp((params$multi_betaol) + xb*(params$multi_betal)))/Denominator_vac
-     #Denom of previously tended by Liom
-     Denominator_crem <- exp(params$multi_betacv + xb*(params$multi_betav)) +
-       exp(params$multi_betacl + xb*(params$multi_betal)) +
-       exp(params$multi_betaco + xb*(params$multi_betao)) +  
-       exp(params$multi_betacc + xb*(params$multi_betac)) 
-     #
-     crem_vac = (exp(params$multi_betacv + xb*(params$multi_betav)) + 
-       exp(params$multi_betaco + xb*(params$multi_betao)))/Denominator_crem
-     crem_crem = (exp(params$multi_betacc + xb*(params$multi_betac)))/Denominator_crem
-     crem_liom = (exp(params$multi_betacl + xb*(params$multi_betal)))/Denominator_crem
-     ## Previously tended by Other
-     Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
-       exp((params$multi_betall) + xb*(params$multi_betal)) +
-       exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betalc) + xb*(params$multi_betac))
-     liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-                    (exp((params$multi_betalo) + xb*(params$multi_betao))))/Denominator_liom
-     liom_crem = (exp((params$multi_betalc) + xb*(params$multi_betac)) )/Denominator_liom
-     liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)))/Denominator_liom
-     if(i == "crem" & j == "crem"){return(crem_crem)}
-     if(i == "crem" & j == "vacant"){return(crem_vac)}
-     if(i == "crem" & j == "liom"){return(crem_liom)}
-     if(i == "vacant" & j == "crem"){return(vac_crem)}
-     if(i == "vacant" & j == "vacant"){return(vac_vac)}
-     if(i == "vacant" & j == "liom"){return(vac_liom)}
-     if(i == "liom" & j == "crem"){return(liom_crem)}
-     if(i == "liom" & j == "vacant"){return(liom_vac)}
-     if(i == "liom" & j == "liom"){return(liom_liom)}
-   }
-   ## Previously tended by None
-   if(scenario == "othercremvac"){
-     Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-       exp((params$multi_betavl) + xb*(params$multi_betal)) +
-       exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betavc) + xb*(params$multi_betac)) + 
-       exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-       exp((params$multi_betall) + xb*(params$multi_betal)) + 
-       exp((params$multi_betalo) + xb*(params$multi_betao)) + 
-       exp((params$multi_betalc) + xb*(params$multi_betac))
-     #Calculate the probabilities by next ant state
-     vac_vac = (exp((params$multi_betavv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betalv) + xb*(params$multi_betav)) + 
-                  exp((params$multi_betall) + xb*(params$multi_betal)) + 
-                  exp((params$multi_betavl) + xb*(params$multi_betal)))/Denominator_vac
-     vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
-                   exp((params$multi_betalc) + xb*(params$multi_betac)))/Denominator_vac
-     vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-                   exp((params$multi_betalo) + xb*(params$multi_betao)))/Denominator_vac
-     #Denom of previously tended by Liom
-     Denominator_crem <- exp(params$multi_betacv + xb*(params$multi_betav)) +
-       exp(params$multi_betacl + xb*(params$multi_betal)) +
-       exp(params$multi_betaco + xb*(params$multi_betao)) +  
-       exp(params$multi_betacc + xb*(params$multi_betac)) 
-     #
-     crem_vac = (exp(params$multi_betacv + xb*(params$multi_betav)) + 
-                   exp(params$multi_betacl + xb*(params$multi_betal)))/Denominator_crem
-     crem_crem = (exp(params$multi_betacc + xb*(params$multi_betac)))/Denominator_crem
-     crem_other = (exp(params$multi_betaco + xb*(params$multi_betao)))/Denominator_crem
-     ## Previously tended by Other
-     Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
-       exp((params$multi_betaoo) + xb*(params$multi_betao)) +
-       exp((params$multi_betaol) + xb*(params$multi_betal)) + 
-       exp((params$multi_betaoc) + xb*(params$multi_betac))
-     other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
-                   (exp((params$multi_betaol) + xb*(params$multi_betal))))/Denominator_other
-     other_crem = (exp((params$multi_betaoc) + xb*(params$multi_betac)) )/Denominator_other
-     other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_other
-     if(i == "crem" & j == "crem"){return(crem_crem)}
-     if(i == "crem" & j == "vacant"){return(crem_vac)}
-     if(i == "crem" & j == "other"){return(crem_other)}
-     if(i == "vacant" & j == "crem"){return(vac_crem)}
-     if(i == "vacant" & j == "vacant"){return(vac_vac)}
-     if(i == "vacant" & j == "other"){return(vac_other)}
-     if(i == "other" & j == "crem"){return(other_crem)}
-     if(i == "other" & j == "vacant"){return(other_vac)}
-     if(i == "other" & j == "other"){return(other_other)}
-   }
- }
- 
- 
- # # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
- # # ## Check if it works
- # i = c("crem","crem","crem", "vacant","vacant","vacant","other","other","other")
- # j = c("vacant","crem","other","vacant","crem","other","vacant","crem","other")
- # x = c(15,15,15,15,15,15,15,15,15)
- # scenario = "othercremvac"
- # t2_freq <- matrix(NA,ncol = length(i), nrow = (10))
- # for(m in 1:10){
- #   for(n in 1:length(i)){
- #     t2_freq[m,n] <- transition.2.freq(x[n],i[n],j[n],params[m,],scenario)
- #   }
- # }
- # t2_freq
- # rowSums(t2_freq)
- # colMeans(t2_freq)
-
-
-transition.2.equal<-function(x, i, j, params,scenario){
-  xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## Liom, Vac, Other
-  #Denom of previously tended by None
-  if(scenario == "liomvacother"){
+  if(simulation == "comp"){
+    # all possible ants for prev vacant
     Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
       exp((params$multi_betavl) + xb*(params$multi_betal)) +
       exp((params$multi_betavo) + xb*(params$multi_betao)) + 
       exp((params$multi_betavc) + xb*(params$multi_betac))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_liom = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
-      exp(params$multi_betavo + xb * params$multi_betao) + 
-      exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-    vac_other = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                       exp(params$multi_betavo + xb * params$multi_betao) + 
-                       exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-    #Denom of previously tended by Liom
-    Denominator_liom <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+    if(scenario == "liomvacother"){
+      # probability vacant stays vacant
+      vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+      # probability vacant becomes liom
+      vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
+                    prop.ant(xb,"liomvacother","liom")*(exp((params$multi_betavc) + xb*(params$multi_betac))))/Denominator_vac
+      # probability vacant becomes other
+      vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+                     prop.ant(xb,"liomvacother","other")*(exp((params$multi_betavc) + xb*(params$multi_betac))))/Denominator_vac
+      # check that they sum to 1
+      vac_vac + vac_liom + vac_other
+      # all possible ants for prev liom
+      Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
+        exp((params$multi_betall) + xb*(params$multi_betal)) +
+        exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+        exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+        prop.ant(xb,"liomvacother","liom")*exp((params$multi_betacv) + xb*(params$multi_betav)) +
+        prop.ant(xb,"liomvacother","liom")*exp((params$multi_betacl) + xb*(params$multi_betal)) +
+        prop.ant(xb,"liomvacother","liom")*exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+        (0.5)*exp((params$multi_betacc) + xb*(params$multi_betac))
+      # probability liom becomes vacant
+      liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+                    prop.ant(xb,"liomvacother","liom")*(exp((params$multi_betacv) + xb*(params$multi_betav))))/Denominator_liom
+      # probability liom stays liom
+      liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)) + 
+                     prop.ant(xb,"liomvacother","liom")*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+                     prop.ant(xb,"liomvacother","liom")*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
+                     (0.5*prop.ant(xb,"liomvacother","liom"))*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_liom
+      # probability liom becomes other
+      liom_other = (exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+                      prop.ant(xb,"liomvacother","liom")*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
+                      prop.ant(xb,"liomvacother","other")*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+                      (0.5*prop.ant(xb,"liomvacother","other"))*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_liom
+      # check that this works
+      liom_vac + liom_other + liom_liom
+      # all possible ants for prev other
+      Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
+        exp((params$multi_betaol) + xb*(params$multi_betal)) +
+        exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+        prop.ant(xb,"liomvacother","other")*(exp((params$multi_betacv) + xb*(params$multi_betav))) + 
+        (0.5)*exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+        prop.ant(xb,"liomvacother","other")*exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+        prop.ant(xb,"liomvacother","other")*exp((params$multi_betaco) + xb*(params$multi_betao))
+      # probability other becomes vac
+      other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+                     prop.ant(xb,"liomvacother","other")*(exp((params$multi_betacv) + xb*(params$multi_betav))))/Denominator_other
+      # pprobability other becomes liom
+      other_liom = (exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+                      prop.ant(xb,"liomvacother","other")*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
+                      prop.ant(xb,"liomvacother","liom")*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
+                      (0.5*prop.ant(xb,"liomvacother","liom"))*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_other
+      # probability other stays other
+      other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+                       prop.ant(xb,"liomvacother","other")*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
+                       prop.ant(xb,"liomvacother","other")*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
+                       (0.5*prop.ant(xb,"liomvacother","other"))*(exp((params$multi_betacc) + xb*(params$multi_betac))))/Denominator_other
+      # check that it works
+      other_vac + other_liom + other_other
+      if(i == "liom" & j == "liom"){return(liom_liom)}
+      if(i == "liom" & j == "vacant"){return(liom_vac)}
+      if(i == "liom" & j == "other"){return(liom_other)}
+      if(i == "vacant" & j == "liom"){return(vac_liom)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+      if(i == "vacant" & j == "other"){return(vac_other)}
+      if(i == "other" & j == "liom"){return(other_liom)}
+      if(i == "other" & j == "vacant"){return(other_vac)}
+      if(i == "other" & j == "other"){return(other_other)}
+    } # end of scenario = liomvacother
+    if(scenario == "liomcremvac"){
+      # probability vacant stays vacant
+      vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+      # probability vacant becomes liom
+      vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
+                    prop.ant(xb,"liomcremvac","liom")*(exp((params$multi_betavo) + xb*(params$multi_betao))))/Denominator_vac
+      # probability vacant stays crem
+      vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
+                    prop.ant(xb,"liomcremvac","crem")*(exp((params$multi_betavo) + xb*(params$multi_betao))))/Denominator_vac
+      vac_vac + vac_liom + vac_crem
+      #all possible ants for prev liom
+      Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
+        exp((params$multi_betall) + xb*(params$multi_betal)) +
+        exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+        exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+        prop.ant(xb,"liomcremvac","liom")*exp((params$multi_betaov) + xb*(params$multi_betav)) +
+        prop.ant(xb,"liomcremvac","liom")*exp((params$multi_betaol) + xb*(params$multi_betal)) +
+        (0.5)*exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+        prop.ant(xb,"liomcremvac","liom")*exp((params$multi_betaoc) + xb*(params$multi_betac))
+      # probability liom becomes vacant
+      liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+                    prop.ant(xb,"liomcremvac","liom")*(exp((params$multi_betaov) + xb*(params$multi_betav))))/Denominator_liom
+      # probability liom stays liom
+      liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)) + 
+                     prop.ant(xb,"liomcremvac","liom")*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
+                     prop.ant(xb,"liomcremvac","liom")*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
+                     (0.5*prop.ant(xb,"liomcremvac","liom"))*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_liom
+      # probability liom becomes crem
+      liom_crem = (exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+                     prop.ant(xb,"liomcremvac","liom")*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
+                     prop.ant(xb,"liomcremvac","crem")*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
+                     (0.5*prop.ant(xb,"liomcremvac","crem"))*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_liom
+      liom_vac + liom_liom + liom_crem
+      # all possible ants for prev crem
+      Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
+        exp((params$multi_betacl) + xb*(params$multi_betal)) +
+        exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+        exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+        prop.ant(xb,"liomcremvac","crem")*exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+        (0.5)*exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+        prop.ant(xb,"liomcremvac","crem")*exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+        prop.ant(xb,"liomcremvac","crem")*exp((params$multi_betaoc) + xb*(params$multi_betac))
+      # probability crem becomes vac
+      crem_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+                    prop.ant(xb,"liomcremvac","crem")*(exp((params$multi_betaov) + xb*(params$multi_betav))))/Denominator_crem
+      # probability crem becomes liom
+      crem_liom = (exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+                     prop.ant(xb,"liomcremvac","crem")*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
+                     prop.ant(xb,"liomcremvac","liom")*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
+                     (0.5*prop.ant(xb,"liomcremvac","liom"))*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_crem
+      # probability crem stays crem
+      crem_crem = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+                     prop.ant(xb,"liomcremvac","crem")*(exp((params$multi_betaoc) + xb*(params$multi_betac))) + 
+                     prop.ant(xb,"liomcremvac","crem")*(exp((params$multi_betaco) + xb*(params$multi_betao))) + 
+                     (0.5*prop.ant(xb,"liomcremvac","crem"))*(exp((params$multi_betaoo) + xb*(params$multi_betao))))/Denominator_crem
+      crem_vac + crem_liom + crem_crem
+      if(i == "liom" & j == "liom"){return(liom_liom)}
+      if(i == "liom" & j == "crem"){return(liom_crem)}
+      if(i == "liom" & j == "vacant"){return(liom_vac)}
+      if(i == "crem" & j == "liom"){return(crem_liom)}
+      if(i == "crem" & j == "crem"){return(crem_crem)}
+      if(i == "crem" & j == "vacant"){return(crem_vac)}
+      if(i == "vacant" & j == "liom"){return(vac_liom)}
+      if(i == "vacant" & j == "crem"){return(vac_crem)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+    } # end of scenario = liomcremvac
+    if(scenario == "othercremvac"){
+      # probability vacant stays vacant
+      vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+      # probability vacant becomes crem
+      vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
+                    prop.ant(xb,"othercremvac","crem")*(exp((params$multi_betavl) + xb*(params$multi_betal))))/Denominator_vac
+      # probability vacant becomes other
+      vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+                     prop.ant(xb,"othercremvac","other")*(exp((params$multi_betavl) + xb*(params$multi_betal))))/Denominator_vac
+      vac_vac + vac_crem + vac_other
+      # all possible ants for prev crem
+      Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
+        exp((params$multi_betacl) + xb*(params$multi_betal)) +
+        exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+        exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+        prop.ant(xb,"othercremvac","crem")*exp((params$multi_betalv) + xb*(params$multi_betav)) +
+        0.5*exp((params$multi_betall) + xb*(params$multi_betal)) +
+        prop.ant(xb,"othercremvac","crem")*exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+        prop.ant(xb,"othercremvac","crem")*exp((params$multi_betalc) + xb*(params$multi_betac))
+      # probability crem becomes vacant
+      crem_vac = (exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+                    prop.ant(xb,"othercremvac","crem")*(exp((params$multi_betalv) + xb*(params$multi_betav))))/Denominator_crem
+      # probability crem becomes crem
+      crem_crem = (exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+                     prop.ant(xb,"othercremvac","crem")*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+                     prop.ant(xb,"othercremvac","crem")*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
+                     0.5*prop.ant(xb,"othercremvac","crem")*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_crem
+      # probability crem becomes other
+      crem_other = (exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+                      prop.ant(xb,"othercremvac","crem")*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
+                      prop.ant(xb,"othercremvac","other")*(exp((params$multi_betacl) + xb*(params$multi_betal))) + 
+                      0.5*prop.ant(xb,"othercremvac","other")*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_crem
+      crem_crem + crem_vac + crem_other
+      # all possible ants for prev other
+      Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
+        exp((params$multi_betaol) + xb*(params$multi_betal)) +
+        exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+        prop.ant(xb,"othercremvac","other")*exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+        prop.ant(xb,"othercremvac","other")*exp((params$multi_betalc) + xb*(params$multi_betac)) + 
+        (0.5)*exp((params$multi_betall) + xb*(params$multi_betal)) + 
+        prop.ant(xb,"othercremvac","other")*exp((params$multi_betalo) + xb*(params$multi_betao))
+      # probability other becomes vacant
+      other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+                     prop.ant(xb,"othercremvac","other")*(exp((params$multi_betalv) + xb*(params$multi_betav))))/Denominator_other
+      # probability other becomes crem
+      other_crem = (exp((params$multi_betaoc) + xb*(params$multi_betac)) + 
+                      prop.ant(xb,"othercremvac","other")*(exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+                      prop.ant(xb,"othercremvac","crem")*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
+                      (0.5*prop.ant(xb,"othercremvac","crem"))*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_other
+      # probability other stays other
+      other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+                       prop.ant(xb,"othercremvac","other")*(exp((params$multi_betaol) + xb*(params$multi_betal))) + 
+                       prop.ant(xb,"othercremvac","other")*(exp((params$multi_betalo) + xb*(params$multi_betao))) + 
+                       (0.5*prop.ant(xb,"othercremvac","other"))*(exp((params$multi_betall) + xb*(params$multi_betal))))/Denominator_other
+      other_other + other_vac + other_crem
+      if(i == "other" & j == "other"){return(other_other)}
+      if(i == "other" & j == "crem"){return(other_crem)}
+      if(i == "other" & j == "vacant"){return(other_vac)}
+      if(i == "crem" & j == "other"){return(crem_other)}
+      if(i == "crem" & j == "crem"){return(crem_crem)}
+      if(i == "crem" & j == "vacant"){return(crem_vac)}
+      if(i == "vacant" & j == "other"){return(vac_other)}
+      if(i == "vacant" & j == "crem"){return(vac_crem)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+    } # end of scenario = othercremvac
+  } # end of sim = comp
+  if(simulation == "freq"){
+    # all possible ants for prev Other
+    Denominator_other <- exp(params$multi_betaov + xb*(params$multi_betav)) +
+      exp(params$multi_betaol + xb*(params$multi_betal)) +
+      exp(params$multi_betaoo + xb*(params$multi_betao)) +  
+      exp(params$multi_betaoc + xb*(params$multi_betac)) 
+    # all possible ants for prev Liom
+    Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
       exp((params$multi_betall) + xb*(params$multi_betal)) +
-      exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-      exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-      exp((params$multi_betacl) + xb*(params$multi_betal)) +
-      exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-      exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-      exp((params$multi_betaol) + xb*(params$multi_betal)) +
-      exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-      exp((params$multi_betaoc) + xb*(params$multi_betac)))
-    #
-    liom_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
-      exp(params$multi_betacv + xb * params$multi_betav) + 
-      exp(params$multi_betaov + xb * params$multi_betav))/Denominator_liom
-    liom_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-      exp(params$multi_betalc + xb * params$multi_betac) + 
-      exp(params$multi_betalo + xb* params$multi_betao) + 
-      exp(params$multi_betacl + xb * params$multi_betal) + 
-      exp(params$multi_betacc + xb*params$multi_betac) + 
-      exp(params$multi_betaco + xb*params$multi_betao) + 
-        exp(params$multi_betaol + xb * params$multi_betal) + 
-        exp(params$multi_betaoc + xb*params$multi_betac) + 
-        exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-    liom_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+      exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+      exp((params$multi_betalc) + xb*(params$multi_betac))
+    # all possible ants for prev Crem
+    Denominator_crem <- exp(params$multi_betacv + xb*(params$multi_betav)) +
+      exp(params$multi_betacl + xb*(params$multi_betal)) +
+      exp(params$multi_betaco + xb*(params$multi_betao)) +  
+      exp(params$multi_betacc + xb*(params$multi_betac)) 
+    if(scenario == "liomvacother"){
+      # all possible ants for prev vac
+      Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+        exp((params$multi_betavl) + xb*(params$multi_betal)) +
+        exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betavc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betacl) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaco) + xb*(params$multi_betao)) + 
+        exp((params$multi_betacc) + xb*(params$multi_betac))
+      # probability of vacant staying vacant
+      vac_vac = (exp((params$multi_betavv) + xb*(params$multi_betav)) + 
+                   exp((params$multi_betacv) + xb*(params$multi_betav)) + 
+                   exp((params$multi_betacc) + xb*(params$multi_betac)) + 
+                   exp((params$multi_betavc) + xb*(params$multi_betac)))/Denominator_vac
+      # probability of vacant becoming other
+      vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+                     exp((params$multi_betaco) + xb*(params$multi_betao)))/Denominator_vac
+      # probability of vacant becoming liom
+      vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
+                    exp((params$multi_betacl) + xb*(params$multi_betal)))/Denominator_vac
+      # check that this works (sums to 1)
+      vac_vac + vac_other + vac_liom
+      # probability of other becoming vacant
+      other_vac = (exp(params$multi_betaov + xb*(params$multi_betav)) + 
+                     exp(params$multi_betaoc + xb*(params$multi_betac)))/Denominator_other
+      # probability of other staying other
+      other_other = (exp(params$multi_betaoo + xb*(params$multi_betao)))/Denominator_other
+      # probability of other becoming liom
+      other_liom = (exp(params$multi_betaol + xb*(params$multi_betal)))/Denominator_other
+      # check that this works (sums to 1)
+      other_vac + other_other + other_liom
+      # probability of liom becoming vacant
+      liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+                    (exp((params$multi_betalc) + xb*(params$multi_betac))))/Denominator_liom
+      # probability of liom becoming other
+      liom_other = (exp((params$multi_betalo) + xb*(params$multi_betao)) )/Denominator_liom
+      # probability of liom staying liom
+      liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)))/Denominator_liom
+      # check that this works (sums to 1)
+      liom_vac + liom_other + liom_liom
+      if(i == "other" & j == "other"){return(other_other)}
+      if(i == "other" & j == "vacant"){return(other_vac)}
+      if(i == "other" & j == "liom"){return(other_liom)}
+      if(i == "vacant" & j == "other"){return(vac_other)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+      if(i == "vacant" & j == "liom"){return(vac_liom)}
+      if(i == "liom" & j == "other"){return(liom_other)}
+      if(i == "liom" & j == "vacant"){return(liom_vac)}
+      if(i == "liom" & j == "liom"){return(liom_liom)}
+    } # end of scenario = liomvacother
+    if(scenario == "liomcremvac"){
+      # all possible ants for prev vacant
+      Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+        exp((params$multi_betavl) + xb*(params$multi_betal)) +
+        exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betavc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+        exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betaoc) + xb*(params$multi_betac))
+      # probability of vacant staying vacant
+      vac_vac = (exp((params$multi_betavv) + xb*(params$multi_betav)) + 
+                   exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+                   exp((params$multi_betaoo) + xb*(params$multi_betao)) + 
+                   exp((params$multi_betavo) + xb*(params$multi_betao)))/Denominator_vac
+      # probability of vacant becoming crem
+      vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
+                    exp((params$multi_betaoc) + xb*(params$multi_betac)))/Denominator_vac
+      # probability of vacant becoming liom
+      vac_liom = (exp((params$multi_betavl) + xb*(params$multi_betal)) + 
+                    exp((params$multi_betaol) + xb*(params$multi_betal)))/Denominator_vac
+      # check that this worked (sums to 1)
+      vac_vac + vac_crem + vac_liom 
+      # probability that crem becomes vacant
+      crem_vac = (exp(params$multi_betacv + xb*(params$multi_betav)) + 
+                    exp(params$multi_betaco + xb*(params$multi_betao)))/Denominator_crem
+      # probability that crem stays crem
+      crem_crem = (exp(params$multi_betacc + xb*(params$multi_betac)))/Denominator_crem
+      # probability that crem becomes liom
+      crem_liom = (exp(params$multi_betacl + xb*(params$multi_betal)))/Denominator_crem
+      # check that this worked (sums to 1)
+      crem_vac + crem_crem + crem_liom
+      # probability that liom becomes vac
+      liom_vac = (exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+                    (exp((params$multi_betalo) + xb*(params$multi_betao))))/Denominator_liom
+      # probability that liom becomes crem
+      liom_crem = (exp((params$multi_betalc) + xb*(params$multi_betac)) )/Denominator_liom
+      # probability that liom stays liom
+      liom_liom = (exp((params$multi_betall) + xb*(params$multi_betal)))/Denominator_liom
+      # check that this worked (sums to 1)
+      liom_vac + liom_crem + liom_liom
+      if(i == "crem" & j == "crem"){return(crem_crem)}
+      if(i == "crem" & j == "vacant"){return(crem_vac)}
+      if(i == "crem" & j == "liom"){return(crem_liom)}
+      if(i == "vacant" & j == "crem"){return(vac_crem)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+      if(i == "vacant" & j == "liom"){return(vac_liom)}
+      if(i == "liom" & j == "crem"){return(liom_crem)}
+      if(i == "liom" & j == "vacant"){return(liom_vac)}
+      if(i == "liom" & j == "liom"){return(liom_liom)}
+    } # end of scenario = liomcremvac
+    if(scenario == "othercremvac"){
+      Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+        exp((params$multi_betavl) + xb*(params$multi_betal)) +
+        exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betavc) + xb*(params$multi_betac)) + 
+        exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+        exp((params$multi_betall) + xb*(params$multi_betal)) + 
+        exp((params$multi_betalo) + xb*(params$multi_betao)) + 
+        exp((params$multi_betalc) + xb*(params$multi_betac))
+      #Calculate the probabilities by next ant state
+      vac_vac = (exp((params$multi_betavv) + xb*(params$multi_betav)) + 
+                   exp((params$multi_betalv) + xb*(params$multi_betav)) + 
+                   exp((params$multi_betall) + xb*(params$multi_betal)) + 
+                   exp((params$multi_betavl) + xb*(params$multi_betal)))/Denominator_vac
+      vac_crem = (exp((params$multi_betavc) + xb*(params$multi_betac)) + 
+                    exp((params$multi_betalc) + xb*(params$multi_betac)))/Denominator_vac
+      vac_other = (exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+                     exp((params$multi_betalo) + xb*(params$multi_betao)))/Denominator_vac
+      # check that this worked
+      vac_vac + vac_crem + vac_other
+      #Denom of previously tended by Liom
+      Denominator_crem <- exp(params$multi_betacv + xb*(params$multi_betav)) +
+        exp(params$multi_betacl + xb*(params$multi_betal)) +
+        exp(params$multi_betaco + xb*(params$multi_betao)) +  
+        exp(params$multi_betacc + xb*(params$multi_betac)) 
+      #
+      crem_vac = (exp(params$multi_betacv + xb*(params$multi_betav)) + 
+                    exp(params$multi_betacl + xb*(params$multi_betal)))/Denominator_crem
+      crem_crem = (exp(params$multi_betacc + xb*(params$multi_betac)))/Denominator_crem
+      crem_other = (exp(params$multi_betaco + xb*(params$multi_betao)))/Denominator_crem
+      # check that this worked
+      crem_vac + crem_crem + crem_other
+      ## Previously tended by Other
+      Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
+        exp((params$multi_betaoo) + xb*(params$multi_betao)) +
+        exp((params$multi_betaol) + xb*(params$multi_betal)) + 
+        exp((params$multi_betaoc) + xb*(params$multi_betac))
+      other_vac = (exp((params$multi_betaov) + xb*(params$multi_betav)) + 
+                     (exp((params$multi_betaol) + xb*(params$multi_betal))))/Denominator_other
+      other_crem = (exp((params$multi_betaoc) + xb*(params$multi_betac)) )/Denominator_other
+      other_other = (exp((params$multi_betaoo) + xb*(params$multi_betao)))/Denominator_other
+      # check that this worked
+      other_vac + other_other + other_crem
+      if(i == "crem" & j == "crem"){return(crem_crem)}
+      if(i == "crem" & j == "vacant"){return(crem_vac)}
+      if(i == "crem" & j == "other"){return(crem_other)}
+      if(i == "vacant" & j == "crem"){return(vac_crem)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+      if(i == "vacant" & j == "other"){return(vac_other)}
+      if(i == "other" & j == "crem"){return(other_crem)}
+      if(i == "other" & j == "vacant"){return(other_vac)}
+      if(i == "other" & j == "other"){return(other_other)}
+    } # end of othercremvac
+  } # end of sim = freq
+  if(simulation == "equal"){
+    # all possible ants for prev vacant
+    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+      exp((params$multi_betavl) + xb*(params$multi_betal)) +
+      exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+      exp((params$multi_betavc) + xb*(params$multi_betac))
+    if(scenario == "liomvacother"){
+      # probability of vac staying vac
+      vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+      # probability of vac becoming liom
+      vac_liom = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                        exp(params$multi_betavo + xb * params$multi_betao) + 
+                        exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+      # probability of vac becoming other
+      vac_other = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                         exp(params$multi_betavo + xb * params$multi_betao) + 
+                         exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+      vac_vac + vac_liom + vac_other
+      # all possible ants for prev liom
+      Denominator_liom <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                  exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                  exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                  exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+                exp((params$multi_betacl) + xb*(params$multi_betal)) +
+                exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+                exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+                exp((params$multi_betaol) + xb*(params$multi_betal)) +
+                exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+                exp((params$multi_betaoc) + xb*(params$multi_betac)))
+      # probability of liom becoming vac
+      liom_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                       exp(params$multi_betacv + xb * params$multi_betav) + 
+                       exp(params$multi_betaov + xb * params$multi_betav))/Denominator_liom
+      # probability of liom staying liom
+      liom_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
                          exp(params$multi_betalc + xb * params$multi_betac) + 
                          exp(params$multi_betalo + xb* params$multi_betao) + 
                          exp(params$multi_betacl + xb * params$multi_betal) + 
@@ -1486,411 +1224,98 @@ transition.2.equal<-function(x, i, j, params,scenario){
                          exp(params$multi_betaol + xb * params$multi_betal) + 
                          exp(params$multi_betaoc + xb*params$multi_betac) + 
                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-    liom_vac + liom_liom + liom_other
-    ## Previously tended by Other
-    Denominator_other <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                               exp((params$multi_betall) + xb*(params$multi_betal)) +
-                               exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                               exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-             exp((params$multi_betacl) + xb*(params$multi_betal)) +
-             exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-             exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-             exp((params$multi_betaol) + xb*(params$multi_betal)) +
-             exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-             exp((params$multi_betaoc) + xb*(params$multi_betac)))
-    #
-    other_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                    exp(params$multi_betacv + xb * params$multi_betav) + 
-                    exp(params$multi_betaov + xb * params$multi_betav))/Denominator_other
-    other_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                      exp(params$multi_betalc + xb * params$multi_betac) + 
-                      exp(params$multi_betalo + xb* params$multi_betao) + 
-                      exp(params$multi_betacl + xb * params$multi_betal) + 
-                      exp(params$multi_betacc + xb*params$multi_betac) + 
-                      exp(params$multi_betaco + xb*params$multi_betao) + 
-                      exp(params$multi_betaol + xb * params$multi_betal) + 
-                      exp(params$multi_betaoc + xb*params$multi_betac) + 
-                      exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
-    other_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                       exp(params$multi_betalc + xb * params$multi_betac) + 
-                       exp(params$multi_betalo + xb* params$multi_betao) + 
-                       exp(params$multi_betacl + xb * params$multi_betal) + 
-                       exp(params$multi_betacc + xb*params$multi_betac) + 
-                       exp(params$multi_betaco + xb*params$multi_betao) + 
-                       exp(params$multi_betaol + xb * params$multi_betal) + 
-                       exp(params$multi_betaoc + xb*params$multi_betac) + 
-                       exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-    if(i == "liom" & j == "liom"){return(liom_liom)}
-    if(i == "liom" & j == "vacant"){return(liom_vac)}
-    if(i == "liom" & j == "other"){return(liom_other)}
-    if(i == "vacant" & j == "liom"){return(vac_liom)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-    if(i == "vacant" & j == "other"){return(vac_other)}
-    if(i == "other" & j == "liom"){return(other_liom)}
-    if(i == "other" & j == "vacant"){return(other_vac)}
-    if(i == "other" & j == "other"){return(other_other)}
-  }
-  ## Liom, Crem, vac
-  ## Previously tended by None
-  if(scenario == "liomcremvac"){
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-      exp((params$multi_betavc) + xb*(params$multi_betac))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_liom = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                      exp(params$multi_betavo + xb * params$multi_betao) + 
-                      exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-    vac_crem = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                       exp(params$multi_betavo + xb * params$multi_betao) + 
-                       exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-    #Denom of previously tended by Liom
-    Denominator_liom <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                               exp((params$multi_betall) + xb*(params$multi_betal)) +
-                               exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                               exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-             exp((params$multi_betacl) + xb*(params$multi_betal)) +
-             exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-             exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-             exp((params$multi_betaol) + xb*(params$multi_betal)) +
-             exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-             exp((params$multi_betaoc) + xb*(params$multi_betac)))
-    #
-    liom_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                    exp(params$multi_betacv + xb * params$multi_betav) + 
-                    exp(params$multi_betaov + xb * params$multi_betav))/Denominator_liom
-    liom_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                      exp(params$multi_betalc + xb * params$multi_betac) + 
-                      exp(params$multi_betalo + xb* params$multi_betao) + 
-                      exp(params$multi_betacl + xb * params$multi_betal) + 
-                      exp(params$multi_betacc + xb*params$multi_betac) + 
-                      exp(params$multi_betaco + xb*params$multi_betao) + 
-                      exp(params$multi_betaol + xb * params$multi_betal) + 
-                      exp(params$multi_betaoc + xb*params$multi_betac) + 
-                      exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-    liom_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                       exp(params$multi_betalc + xb * params$multi_betac) + 
-                       exp(params$multi_betalo + xb* params$multi_betao) + 
-                       exp(params$multi_betacl + xb * params$multi_betal) + 
-                       exp(params$multi_betacc + xb*params$multi_betac) + 
-                       exp(params$multi_betaco + xb*params$multi_betao) + 
-                       exp(params$multi_betaol + xb * params$multi_betal) + 
-                       exp(params$multi_betaoc + xb*params$multi_betac) + 
-                       exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-    ## Previously tended by Other
-    Denominator_crem <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                                exp((params$multi_betall) + xb*(params$multi_betal)) +
-                                exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                                exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-             exp((params$multi_betacl) + xb*(params$multi_betal)) +
-             exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-             exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-             exp((params$multi_betaol) + xb*(params$multi_betal)) +
-             exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-             exp((params$multi_betaoc) + xb*(params$multi_betac)))
-    #
-    crem_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                     exp(params$multi_betacv + xb * params$multi_betav) + 
-                     exp(params$multi_betaov + xb * params$multi_betav))/Denominator_crem
-    crem_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                        exp(params$multi_betalc + xb * params$multi_betac) + 
-                        exp(params$multi_betalo + xb* params$multi_betao) + 
-                        exp(params$multi_betacl + xb * params$multi_betal) + 
-                        exp(params$multi_betacc + xb*params$multi_betac) + 
-                        exp(params$multi_betaco + xb*params$multi_betao) + 
-                        exp(params$multi_betaol + xb * params$multi_betal) + 
-                        exp(params$multi_betaoc + xb*params$multi_betac) + 
-                        exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-    crem_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                       exp(params$multi_betalc + xb * params$multi_betac) + 
-                       exp(params$multi_betalo + xb* params$multi_betao) + 
-                       exp(params$multi_betacl + xb * params$multi_betal) + 
-                       exp(params$multi_betacc + xb*params$multi_betac) + 
-                       exp(params$multi_betaco + xb*params$multi_betao) + 
-                       exp(params$multi_betaol + xb * params$multi_betal) + 
-                       exp(params$multi_betaoc + xb*params$multi_betac) + 
-                       exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-    if(i == "liom" & j == "liom"){return(liom_liom)}
-    if(i == "liom" & j == "vacant"){return(liom_vac)}
-    if(i == "liom" & j == "crem"){return(liom_crem)}
-    if(i == "vacant" & j == "liom"){return(vac_liom)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-    if(i == "vacant" & j == "crem"){return(vac_crem)}
-    if(i == "crem" & j == "liom"){return(crem_liom)}
-    if(i == "crem" & j == "vacant"){return(crem_vac)}
-    if(i == "crem" & j == "crem"){return(crem_crem)}
-  }
-  ## Previously tended by None
-  if(scenario == "othercremvac"){
-    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-      exp((params$multi_betavl) + xb*(params$multi_betal)) +
-      exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-      exp((params$multi_betavc) + xb*(params$multi_betac))
-    #Calculate the probabilities by next ant state
-    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-    vac_crem = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                      exp(params$multi_betavo + xb * params$multi_betao) + 
-                      exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-    vac_other = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                      exp(params$multi_betavo + xb * params$multi_betao) + 
-                      exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-    #Denom of previously tended by Liom
-    Denominator_crem <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                               exp((params$multi_betall) + xb*(params$multi_betal)) +
-                               exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                               exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-             exp((params$multi_betacl) + xb*(params$multi_betal)) +
-             exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-             exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-             exp((params$multi_betaol) + xb*(params$multi_betal)) +
-             exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-             exp((params$multi_betaoc) + xb*(params$multi_betac)))
-    #
-    crem_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                    exp(params$multi_betacv + xb * params$multi_betav) + 
-                    exp(params$multi_betaov + xb * params$multi_betav))/Denominator_crem
-    crem_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                      exp(params$multi_betalc + xb * params$multi_betac) + 
-                      exp(params$multi_betalo + xb* params$multi_betao) + 
-                      exp(params$multi_betacl + xb * params$multi_betal) + 
-                      exp(params$multi_betacc + xb*params$multi_betac) + 
-                      exp(params$multi_betaco + xb*params$multi_betao) + 
-                      exp(params$multi_betaol + xb * params$multi_betal) + 
-                      exp(params$multi_betaoc + xb*params$multi_betac) + 
-                      exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-    crem_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                      exp(params$multi_betalc + xb * params$multi_betac) + 
-                      exp(params$multi_betalo + xb* params$multi_betao) + 
-                      exp(params$multi_betacl + xb * params$multi_betal) + 
-                      exp(params$multi_betacc + xb*params$multi_betac) + 
-                      exp(params$multi_betaco + xb*params$multi_betao) + 
-                      exp(params$multi_betaol + xb * params$multi_betal) + 
-                      exp(params$multi_betaoc + xb*params$multi_betac) + 
-                      exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-    ## Previously tended by Other
-    Denominator_other <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                               exp((params$multi_betall) + xb*(params$multi_betal)) +
-                               exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                               exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-             exp((params$multi_betacl) + xb*(params$multi_betal)) +
-             exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-             exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-      (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-             exp((params$multi_betaol) + xb*(params$multi_betal)) +
-             exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-             exp((params$multi_betaoc) + xb*(params$multi_betac)))
-    #
-    other_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                    exp(params$multi_betacv + xb * params$multi_betav) + 
-                    exp(params$multi_betaov + xb * params$multi_betav))/Denominator_other
-    other_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                      exp(params$multi_betalc + xb * params$multi_betac) + 
-                      exp(params$multi_betalo + xb* params$multi_betao) + 
-                      exp(params$multi_betacl + xb * params$multi_betal) + 
-                      exp(params$multi_betacc + xb*params$multi_betac) + 
-                      exp(params$multi_betaco + xb*params$multi_betao) + 
-                      exp(params$multi_betaol + xb * params$multi_betal) + 
-                      exp(params$multi_betaoc + xb*params$multi_betac) + 
-                      exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
-    other_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
-                      exp(params$multi_betalc + xb * params$multi_betac) + 
-                      exp(params$multi_betalo + xb* params$multi_betao) + 
-                      exp(params$multi_betacl + xb * params$multi_betal) + 
-                      exp(params$multi_betacc + xb*params$multi_betac) + 
-                      exp(params$multi_betaco + xb*params$multi_betao) + 
-                      exp(params$multi_betaol + xb * params$multi_betal) + 
-                      exp(params$multi_betaoc + xb*params$multi_betac) + 
-                      exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-    if(i == "crem" & j == "crem"){return(crem_crem)}
-    if(i == "crem" & j == "vacant"){return(crem_vac)}
-    if(i == "crem" & j == "other"){return(crem_other)}
-    if(i == "vacant" & j == "crem"){return(vac_crem)}
-    if(i == "vacant" & j == "vacant"){return(vac_vac)}
-    if(i == "vacant" & j == "other"){return(vac_other)}
-    if(i == "other" & j == "crem"){return(other_crem)}
-    if(i == "other" & j == "vacant"){return(other_vac)}
-    if(i == "other" & j == "other"){return(other_other)}
-  }
-}
-
-
-# # ## Scenario options are "liomvacother", "liomcremvac", "othercremvac"
-# # ## Check if it works
-# i = c("liom","liom","liom", "vacant","vacant","vacant","other","other","other")
-# j = c("vacant","liom","other","vacant","liom","other","vacant","liom","other")
-# x = c(15,15,15,15,15,15,15,15,15)
-# scenario = "liomvacother"
-# t2_comp <- matrix(NA,ncol = length(i), nrow = (10))
-# for(m in 1:10){
-#   for(n in 1:length(i)){
-#     t2_comp[m,n] <- transition.2.comp(x[n],i[n],j[n],params[m,],scenario)
-#   }
-# }
-# t2_comp
-# rowSums(t2_comp)
-# colMeans(t2_comp)
-# a
-#######################################################
-#PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE (ALL STATES)
-transition.3<-function(x, i, j,params){
-  xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## Previously tended by None
-  Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-    exp((params$multi_betavo) + xb*(params$multi_betao)) +
-    exp((params$multi_betavc) + xb*(params$multi_betac)) +
-    exp((params$multi_betavl) + xb*(params$multi_betal))
-  vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-  vac_other = exp((params$multi_betavo) + xb*(params$multi_betao))/Denominator_vac
-  vac_crem = exp((params$multi_betavc) + xb*(params$multi_betac))/Denominator_vac
-  vac_liom = exp((params$multi_betavl) + xb*(params$multi_betal))/Denominator_vac
-  ## Previously tended by Other
-  Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
-    exp((params$multi_betaoo) + xb*(params$multi_betao)) +
-    exp((params$multi_betaoc) + xb*(params$multi_betac)) +
-    exp((params$multi_betaol) + xb*(params$multi_betal))
-  other_vac = exp((params$multi_betaov) + xb*(params$multi_betav))/Denominator_other
-  other_other = exp((params$multi_betaoo) + xb*(params$multi_betao))/Denominator_other
-  other_crem = exp((params$multi_betaoc) + xb*(params$multi_betac))/Denominator_other
-  other_liom = exp((params$multi_betaol) + xb*(params$multi_betal))/Denominator_other
-  ## Previously tended by Crem
-  Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
-    exp((params$multi_betaco) + xb*(params$multi_betao)) +
-    exp((params$multi_betacc) + xb*(params$multi_betac)) +
-    exp((params$multi_betacl) + xb*(params$multi_betal))
-  crem_vac = exp((params$multi_betacv) + xb*(params$multi_betav))/Denominator_crem
-  crem_other = exp((params$multi_betaco) + xb*(params$multi_betao))/Denominator_crem
-  crem_crem = exp((params$multi_betacc) + xb*(params$multi_betac))/Denominator_crem
-  crem_liom = exp((params$multi_betacl) + xb*(params$multi_betal))/Denominator_crem
-  ## Previously tended by Liom
-  Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
-    exp((params$multi_betalo) + xb*(params$multi_betao)) +
-    exp((params$multi_betalc) + xb*(params$multi_betac)) +
-    exp((params$multi_betall) + xb*(params$multi_betal))
-  liom_vac = exp((params$multi_betalv) + xb*(params$multi_betav))/Denominator_liom
-  liom_other = exp((params$multi_betalo) + xb*(params$multi_betao))/Denominator_liom
-  liom_crem = exp((params$multi_betalc) + xb*(params$multi_betac))/Denominator_liom
-  liom_liom = exp((params$multi_betall) + xb*(params$multi_betal))/Denominator_liom
-  if(i == "liom" & j == "liom"){return(liom_liom)}
-  if(i == "liom" & j == "other"){return(liom_other)}
-  if(i == "liom" & j == "crem"){return(liom_crem)}
-  if(i == "liom" & j == "vacant"){return(liom_vac)}
-  if(i == "other" & j == "liom"){return(other_liom)}
-  if(i == "other" & j == "other"){return(other_other)}
-  if(i == "other" & j == "crem"){return(other_crem)}
-  if(i == "other" & j == "vacant"){return(other_vac)}
-  if(i == "crem" & j == "liom"){return(crem_liom)}
-  if(i == "crem" & j == "other"){return(crem_other)}
-  if(i == "crem" & j == "crem"){return(crem_crem)}
-  if(i == "crem" & j == "vacant"){return(crem_vac)}
-  if(i == "vacant" & j == "liom"){return(vac_liom)}
-  if(i == "vacant" & j == "other"){return(vac_other)}
-  if(i == "vacant" & j == "crem"){return(vac_crem)}
-  if(i == "vacant" & j == "vacant"){return(vac_vac)}
-}
-# ## Chekc if it works
-# i = c("liom","liom","liom","liom")
-# j = c("vacant","liom","other","crem")
-# x = c(5,5,5,5)
-# t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
-# for(m in 1:nrow(params)){
-#   for(n in 1:length(i)){
-#     t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
-#   }
-# }
-# t3
-# rowSums(t3)
-# colMeans(t3)
-
-transition.3.equal<-function(x, i, j,params){
-  xb=pmin(pmax(x,cholla_min),cholla_max)
-  ## Previously tended by None
-  Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
-    exp((params$multi_betavl) + xb*(params$multi_betal)) +
-    exp((params$multi_betavo) + xb*(params$multi_betao)) + 
-    exp((params$multi_betavc) + xb*(params$multi_betac))
-  #Calculate the probabilities by next ant state
-  vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
-  vac_liom = (1/3)*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                    exp(params$multi_betavo + xb * params$multi_betao) + 
-                    exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-  vac_other = (1/3)*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                     exp(params$multi_betavo + xb * params$multi_betao) + 
-                     exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-  vac_crem = (1/3)*(exp(params$multi_betavl + xb * params$multi_betal) + 
-                      exp(params$multi_betavo + xb * params$multi_betao) + 
-                      exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
-  #Denom of previously tended by Liom
-  Denominator_liom <- (1/3)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                             exp((params$multi_betall) + xb*(params$multi_betal)) +
-                             exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                             exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-    (1/3)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-           exp((params$multi_betacl) + xb*(params$multi_betal)) +
-           exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-           exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-    (1/3)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-           exp((params$multi_betaol) + xb*(params$multi_betal)) +
-           exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-           exp((params$multi_betaoc) + xb*(params$multi_betac)))
-  #
-  liom_vac = (1/3)*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                  exp(params$multi_betacv + xb * params$multi_betav) + 
-                  exp(params$multi_betaov + xb * params$multi_betav))/Denominator_liom
-  liom_liom = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                    exp(params$multi_betalc + xb * params$multi_betac) + 
-                    exp(params$multi_betalo + xb* params$multi_betao) + 
-                    exp(params$multi_betacl + xb * params$multi_betal) + 
-                    exp(params$multi_betacc + xb*params$multi_betac) + 
-                    exp(params$multi_betaco + xb*params$multi_betao) + 
-                    exp(params$multi_betaol + xb * params$multi_betal) + 
-                    exp(params$multi_betaoc + xb*params$multi_betac) + 
-                    exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-  liom_other = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                     exp(params$multi_betalc + xb * params$multi_betac) + 
-                     exp(params$multi_betalo + xb* params$multi_betao) + 
-                     exp(params$multi_betacl + xb * params$multi_betal) + 
-                     exp(params$multi_betacc + xb*params$multi_betac) + 
-                     exp(params$multi_betaco + xb*params$multi_betao) + 
-                     exp(params$multi_betaol + xb * params$multi_betal) + 
-                     exp(params$multi_betaoc + xb*params$multi_betac) + 
-                     exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-  liom_crem = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                       exp(params$multi_betalc + xb * params$multi_betac) + 
-                       exp(params$multi_betalo + xb* params$multi_betao) + 
-                       exp(params$multi_betacl + xb * params$multi_betal) + 
-                       exp(params$multi_betacc + xb*params$multi_betac) + 
-                       exp(params$multi_betaco + xb*params$multi_betao) + 
-                       exp(params$multi_betaol + xb * params$multi_betal) + 
-                       exp(params$multi_betaoc + xb*params$multi_betac) + 
-                       exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
-  ## Previously tended by Other
-  Denominator_other <- (1/3)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                              exp((params$multi_betall) + xb*(params$multi_betal)) +
-                              exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                              exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-    (1/3)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-           exp((params$multi_betacl) + xb*(params$multi_betal)) +
-           exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-           exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-    (1/3)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-           exp((params$multi_betaol) + xb*(params$multi_betal)) +
-           exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-           exp((params$multi_betaoc) + xb*(params$multi_betac)))
-  #
-  other_vac = (1/3)*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                   exp(params$multi_betacv + xb * params$multi_betav) + 
-                   exp(params$multi_betaov + xb * params$multi_betav))/Denominator_other
-  other_other = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+      # probability of liom becoming other
+      liom_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
+      liom_vac + liom_liom + liom_other
+      # all possible ants for prev other
+      Denominator_other <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                   exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                   exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                   exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+                exp((params$multi_betacl) + xb*(params$multi_betal)) +
+                exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+                exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+                exp((params$multi_betaol) + xb*(params$multi_betal)) +
+                exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+                exp((params$multi_betaoc) + xb*(params$multi_betac)))
+      # probability of other becoming vac
+      other_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                        exp(params$multi_betacv + xb * params$multi_betav) + 
+                        exp(params$multi_betaov + xb * params$multi_betav))/Denominator_other
+      # probability of other becoming other
+      other_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                           exp(params$multi_betalc + xb * params$multi_betac) + 
+                           exp(params$multi_betalo + xb* params$multi_betao) + 
+                           exp(params$multi_betacl + xb * params$multi_betal) + 
+                           exp(params$multi_betacc + xb*params$multi_betac) + 
+                           exp(params$multi_betaco + xb*params$multi_betao) + 
+                           exp(params$multi_betaol + xb * params$multi_betal) + 
+                           exp(params$multi_betaoc + xb*params$multi_betac) + 
+                           exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
+      # probability of other becoming liom
+      other_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
+      # check that it works
+      other_vac + other_other + other_liom
+      if(i == "liom" & j == "liom"){return(liom_liom)}
+      if(i == "liom" & j == "vacant"){return(liom_vac)}
+      if(i == "liom" & j == "other"){return(liom_other)}
+      if(i == "vacant" & j == "liom"){return(vac_liom)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+      if(i == "vacant" & j == "other"){return(vac_other)}
+      if(i == "other" & j == "liom"){return(other_liom)}
+      if(i == "other" & j == "vacant"){return(other_vac)}
+      if(i == "other" & j == "other"){return(other_other)}
+    } # end of scenario = liomvacother
+    if(scenario == "liomcremvac"){
+      # probability of vacant staying vacant
+      vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+      # probability of vacant becoming liom
+      vac_liom = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                        exp(params$multi_betavo + xb * params$multi_betao) + 
+                        exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+      # probability of vacant becoming crem
+      vac_crem = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                        exp(params$multi_betavo + xb * params$multi_betao) + 
+                        exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+      # check that it works
+      vac_vac + vac_liom + vac_crem
+      # all possible ants for prev liom
+      Denominator_liom <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                  exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                  exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                  exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+                exp((params$multi_betacl) + xb*(params$multi_betal)) +
+                exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+                exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+                exp((params$multi_betaol) + xb*(params$multi_betal)) +
+                exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+                exp((params$multi_betaoc) + xb*(params$multi_betac)))
+      # probability of liom becoming vac
+      liom_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                       exp(params$multi_betacv + xb * params$multi_betav) + 
+                       exp(params$multi_betaov + xb * params$multi_betav))/Denominator_liom
+      # probability of liom staying liom
+      liom_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
                          exp(params$multi_betalc + xb * params$multi_betac) + 
                          exp(params$multi_betalo + xb* params$multi_betao) + 
                          exp(params$multi_betacl + xb * params$multi_betal) + 
@@ -1898,105 +1323,453 @@ transition.3.equal<-function(x, i, j,params){
                          exp(params$multi_betaco + xb*params$multi_betao) + 
                          exp(params$multi_betaol + xb * params$multi_betal) + 
                          exp(params$multi_betaoc + xb*params$multi_betac) + 
-                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
-  other_liom = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                        exp(params$multi_betalc + xb * params$multi_betac) + 
-                        exp(params$multi_betalo + xb* params$multi_betao) + 
-                        exp(params$multi_betacl + xb * params$multi_betal) + 
-                        exp(params$multi_betacc + xb*params$multi_betac) + 
-                        exp(params$multi_betaco + xb*params$multi_betao) + 
-                        exp(params$multi_betaol + xb * params$multi_betal) + 
-                        exp(params$multi_betaoc + xb*params$multi_betac) + 
-                        exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
-  other_crem = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                        exp(params$multi_betalc + xb * params$multi_betac) + 
-                        exp(params$multi_betalo + xb* params$multi_betao) + 
-                        exp(params$multi_betacl + xb * params$multi_betal) + 
-                        exp(params$multi_betacc + xb*params$multi_betac) + 
-                        exp(params$multi_betaco + xb*params$multi_betao) + 
-                        exp(params$multi_betaol + xb * params$multi_betal) + 
-                        exp(params$multi_betaoc + xb*params$multi_betac) + 
-                        exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
-  # Previously tended by crem
-  Denominator_crem <- (1/3)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
-                              exp((params$multi_betall) + xb*(params$multi_betal)) +
-                              exp((params$multi_betalo) + xb*(params$multi_betao)) +  
-                              exp((params$multi_betalc) + xb*(params$multi_betac))) + 
-    (1/3)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
-           exp((params$multi_betacl) + xb*(params$multi_betal)) +
-           exp((params$multi_betaco) + xb*(params$multi_betao)) +  
-           exp((params$multi_betacc) + xb*(params$multi_betac))) + 
-    (1/3)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
-           exp((params$multi_betaol) + xb*(params$multi_betal)) +
-           exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
-           exp((params$multi_betaoc) + xb*(params$multi_betac)))
-  #
-  crem_vac = (1/3)*(exp(params$multi_betalv + xb * params$multi_betav) + 
-                   exp(params$multi_betacv + xb * params$multi_betav) + 
-                   exp(params$multi_betaov + xb * params$multi_betav))/Denominator_crem
-  crem_crem = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                      exp(params$multi_betalc + xb * params$multi_betac) + 
-                      exp(params$multi_betalo + xb* params$multi_betao) + 
-                      exp(params$multi_betacl + xb * params$multi_betal) + 
-                      exp(params$multi_betacc + xb*params$multi_betac) + 
-                      exp(params$multi_betaco + xb*params$multi_betao) + 
-                      exp(params$multi_betaol + xb * params$multi_betal) + 
-                      exp(params$multi_betaoc + xb*params$multi_betac) + 
-                      exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-  crem_liom = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                     exp(params$multi_betalc + xb * params$multi_betac) + 
-                     exp(params$multi_betalo + xb* params$multi_betao) + 
-                     exp(params$multi_betacl + xb * params$multi_betal) + 
-                     exp(params$multi_betacc + xb*params$multi_betac) + 
-                     exp(params$multi_betaco + xb*params$multi_betao) + 
-                     exp(params$multi_betaol + xb * params$multi_betal) + 
-                     exp(params$multi_betaoc + xb*params$multi_betac) + 
-                     exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-  crem_other = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
-                       exp(params$multi_betalc + xb * params$multi_betac) + 
-                       exp(params$multi_betalo + xb* params$multi_betao) + 
-                       exp(params$multi_betacl + xb * params$multi_betal) + 
-                       exp(params$multi_betacc + xb*params$multi_betac) + 
-                       exp(params$multi_betaco + xb*params$multi_betao) + 
-                       exp(params$multi_betaol + xb * params$multi_betal) + 
-                       exp(params$multi_betaoc + xb*params$multi_betac) + 
-                       exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
-  if(i == "liom" & j == "liom"){return(liom_liom)}
-  if(i == "liom" & j == "other"){return(liom_other)}
-  if(i == "liom" & j == "crem"){return(liom_crem)}
-  if(i == "liom" & j == "vacant"){return(liom_vac)}
-  if(i == "other" & j == "liom"){return(other_liom)}
-  if(i == "other" & j == "other"){return(other_other)}
-  if(i == "other" & j == "crem"){return(other_crem)}
-  if(i == "other" & j == "vacant"){return(other_vac)}
-  if(i == "crem" & j == "liom"){return(crem_liom)}
-  if(i == "crem" & j == "other"){return(crem_other)}
-  if(i == "crem" & j == "crem"){return(crem_crem)}
-  if(i == "crem" & j == "vacant"){return(crem_vac)}
-  if(i == "vacant" & j == "liom"){return(vac_liom)}
-  if(i == "vacant" & j == "other"){return(vac_other)}
-  if(i == "vacant" & j == "crem"){return(vac_crem)}
-  if(i == "vacant" & j == "vacant"){return(vac_vac)}
-}
-# ## Chekc if it works
-# i = c("liom","liom","liom","liom")
-# j = c("vacant","liom","other","crem")
-# x = c(5,5,5,5)
-# t3 <- matrix(NA,ncol = length(i), nrow = (N_draws))
-# for(m in 1:nrow(params)){
-#   for(n in 1:length(i)){
-#     t3[m,n] <- transition.3(x[n],i[n],j[n],params[m,])
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
+      # probability of liom becoming crem
+      liom_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
+      # check that it works
+      liom_vac + liom_liom + liom_crem
+      # all possible ants for prev crem
+      Denominator_crem <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                  exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                  exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                  exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+                exp((params$multi_betacl) + xb*(params$multi_betal)) +
+                exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+                exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+                exp((params$multi_betaol) + xb*(params$multi_betal)) +
+                exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+                exp((params$multi_betaoc) + xb*(params$multi_betac)))
+      # probability of crem becoming vac
+      crem_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                       exp(params$multi_betacv + xb * params$multi_betav) + 
+                       exp(params$multi_betaov + xb * params$multi_betav))/Denominator_crem
+      # probability fo crem staying crem
+      crem_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+      # proabbility fo crem becoming liom
+      crem_liom = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+      # check that it works
+      crem_vac + crem_crem + crem_liom
+      if(i == "liom" & j == "liom"){return(liom_liom)}
+      if(i == "liom" & j == "vacant"){return(liom_vac)}
+      if(i == "liom" & j == "crem"){return(liom_crem)}
+      if(i == "vacant" & j == "liom"){return(vac_liom)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+      if(i == "vacant" & j == "crem"){return(vac_crem)}
+      if(i == "crem" & j == "liom"){return(crem_liom)}
+      if(i == "crem" & j == "vacant"){return(crem_vac)}
+      if(i == "crem" & j == "crem"){return(crem_crem)}
+    } # end of scenario = liomcremvac
+    if(scenario == "othercremvac"){
+      # proabbility of vac staying vac
+      vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+      # probabilty of vac becoming crem
+      vac_crem = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                        exp(params$multi_betavo + xb * params$multi_betao) + 
+                        exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+      # probability of vac becoming other
+      vac_other = 0.5*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                         exp(params$multi_betavo + xb * params$multi_betao) + 
+                         exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+      # chek that it works
+      vac_vac + vac_crem + vac_other
+      # all possible ants for prev crem
+      Denominator_crem <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                  exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                  exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                  exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+                exp((params$multi_betacl) + xb*(params$multi_betal)) +
+                exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+                exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+                exp((params$multi_betaol) + xb*(params$multi_betal)) +
+                exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+                exp((params$multi_betaoc) + xb*(params$multi_betac)))
+      # probability of crem becoming vac
+      crem_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                       exp(params$multi_betacv + xb * params$multi_betav) + 
+                       exp(params$multi_betaov + xb * params$multi_betav))/Denominator_crem
+      # probability of crem staying crem
+      crem_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+      # probability of crem becoming other
+      crem_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+      # check that it works 
+      crem_vac + crem_crem + crem_other
+      # all possible ants for prev other
+      Denominator_other <- (.5)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                   exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                   exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                   exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+                exp((params$multi_betacl) + xb*(params$multi_betal)) +
+                exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+                exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+        (.5)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+                exp((params$multi_betaol) + xb*(params$multi_betal)) +
+                exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+                exp((params$multi_betaoc) + xb*(params$multi_betac)))
+      # probability of other becoming vacant
+      other_vac = .5*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                        exp(params$multi_betacv + xb * params$multi_betav) + 
+                        exp(params$multi_betaov + xb * params$multi_betav))/Denominator_other
+      # probability of other becoming other
+      other_other = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                           exp(params$multi_betalc + xb * params$multi_betac) + 
+                           exp(params$multi_betalo + xb* params$multi_betao) + 
+                           exp(params$multi_betacl + xb * params$multi_betal) + 
+                           exp(params$multi_betacc + xb*params$multi_betac) + 
+                           exp(params$multi_betaco + xb*params$multi_betao) + 
+                           exp(params$multi_betaol + xb * params$multi_betal) + 
+                           exp(params$multi_betaoc + xb*params$multi_betac) + 
+                           exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
+      # probability of other becomign crem
+      other_crem = .25*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+      if(i == "crem" & j == "crem"){return(crem_crem)}
+      if(i == "crem" & j == "vacant"){return(crem_vac)}
+      if(i == "crem" & j == "other"){return(crem_other)}
+      if(i == "vacant" & j == "crem"){return(vac_crem)}
+      if(i == "vacant" & j == "vacant"){return(vac_vac)}
+      if(i == "vacant" & j == "other"){return(vac_other)}
+      if(i == "other" & j == "crem"){return(other_crem)}
+      if(i == "other" & j == "vacant"){return(other_vac)}
+      if(i == "other" & j == "other"){return(other_other)}
+    } # end of scenario = othercremvac
+  } # end of sim = equal
+} # end of fnc
+
+# # check that the function works ("liomvacother","liomcremvac","othercremvac")
+# x <- c(1,1,1,1,1,1,1,1,1)
+# i <- c("vacant","other","crem","vacant","other","crem","vacant","other","crem")
+# j <- c("other","other","other","vacant","vacant","vacant","crem","crem","crem")
+# scenario <- "othercremvac"
+# simulation <- c("comp","equal","freq")
+# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
+# for(n in 1:3){ # each simulation
+#   for(m in 1:length(x)){ # each ant combo
+#     t.mat[n,m] <- transition.2(x[m],i[m],j[m],params = params[10,],scenario,simulation[n])
 #   }
 # }
-# t3
-# rowSums(t3)
-# colMeans(t3)
+# t.mat
+
+
+transition.3 <- function(x,i,j,params,scenario,simulation){
+  xb=pmin(pmax(x,cholla_min),cholla_max)
+  if(simulation == "comp" | simulation == "freq"){
+    # all possible ants prev vac
+    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+      exp((params$multi_betavo) + xb*(params$multi_betao)) +
+      exp((params$multi_betavc) + xb*(params$multi_betac)) +
+      exp((params$multi_betavl) + xb*(params$multi_betal))
+    # probability of vac staying vac
+    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+    # probability of vac becoming other
+    vac_other = exp((params$multi_betavo) + xb*(params$multi_betao))/Denominator_vac
+    # probability of vac becoming crem
+    vac_crem = exp((params$multi_betavc) + xb*(params$multi_betac))/Denominator_vac
+    # probability of vac becoming liom
+    vac_liom = exp((params$multi_betavl) + xb*(params$multi_betal))/Denominator_vac
+    # check that this works
+    vac_vac + vac_other + vac_crem + vac_liom
+    # all possible ants for prev other
+    Denominator_other <- exp((params$multi_betaov) + xb*(params$multi_betav)) +
+      exp((params$multi_betaoo) + xb*(params$multi_betao)) +
+      exp((params$multi_betaoc) + xb*(params$multi_betac)) +
+      exp((params$multi_betaol) + xb*(params$multi_betal))
+    # probability of other becoming vac
+    other_vac = exp((params$multi_betaov) + xb*(params$multi_betav))/Denominator_other
+    # probability of other becoming other
+    other_other = exp((params$multi_betaoo) + xb*(params$multi_betao))/Denominator_other
+    # probability of other becoming crem
+    other_crem = exp((params$multi_betaoc) + xb*(params$multi_betac))/Denominator_other
+    # probability of other becoming liom
+    other_liom = exp((params$multi_betaol) + xb*(params$multi_betal))/Denominator_other
+    # check that this works
+    other_vac + other_other + other_crem + other_liom
+    # all possible ants for prev crem
+    Denominator_crem <- exp((params$multi_betacv) + xb*(params$multi_betav)) +
+      exp((params$multi_betaco) + xb*(params$multi_betao)) +
+      exp((params$multi_betacc) + xb*(params$multi_betac)) +
+      exp((params$multi_betacl) + xb*(params$multi_betal))
+    # probability of crem becoming vacangt
+    crem_vac = exp((params$multi_betacv) + xb*(params$multi_betav))/Denominator_crem
+    # probability of crem becoming other
+    crem_other = exp((params$multi_betaco) + xb*(params$multi_betao))/Denominator_crem
+    # probability of crem staying crem
+    crem_crem = exp((params$multi_betacc) + xb*(params$multi_betac))/Denominator_crem
+    # probability of crem becoming liom
+    crem_liom = exp((params$multi_betacl) + xb*(params$multi_betal))/Denominator_crem
+    # check that this works
+    crem_vac + crem_other + crem_crem + crem_liom
+    # all possible ants for prev liom
+    Denominator_liom <- exp((params$multi_betalv) + xb*(params$multi_betav)) +
+      exp((params$multi_betalo) + xb*(params$multi_betao)) +
+      exp((params$multi_betalc) + xb*(params$multi_betac)) +
+      exp((params$multi_betall) + xb*(params$multi_betal))
+    # probability of liom becoming vac
+    liom_vac = exp((params$multi_betalv) + xb*(params$multi_betav))/Denominator_liom
+    # probability of liom becomig other
+    liom_other = exp((params$multi_betalo) + xb*(params$multi_betao))/Denominator_liom
+    # probability of liom becoming crem
+    liom_crem = exp((params$multi_betalc) + xb*(params$multi_betac))/Denominator_liom
+    # probability of liom staying liom
+    liom_liom = exp((params$multi_betall) + xb*(params$multi_betal))/Denominator_liom
+    # check that this works
+    liom_vac + liom_other + liom_crem + liom_liom
+    if(i == "liom" & j == "liom"){return(liom_liom)}
+    if(i == "liom" & j == "other"){return(liom_other)}
+    if(i == "liom" & j == "crem"){return(liom_crem)}
+    if(i == "liom" & j == "vacant"){return(liom_vac)}
+    if(i == "other" & j == "liom"){return(other_liom)}
+    if(i == "other" & j == "other"){return(other_other)}
+    if(i == "other" & j == "crem"){return(other_crem)}
+    if(i == "other" & j == "vacant"){return(other_vac)}
+    if(i == "crem" & j == "liom"){return(crem_liom)}
+    if(i == "crem" & j == "other"){return(crem_other)}
+    if(i == "crem" & j == "crem"){return(crem_crem)}
+    if(i == "crem" & j == "vacant"){return(crem_vac)}
+    if(i == "vacant" & j == "liom"){return(vac_liom)}
+    if(i == "vacant" & j == "other"){return(vac_other)}
+    if(i == "vacant" & j == "crem"){return(vac_crem)}
+    if(i == "vacant" & j == "vacant"){return(vac_vac)}
+  } # end of sim = comp or freq
+  if(simulation == "equal"){
+    ## Previously tended by None
+    Denominator_vac <- exp((params$multi_betavv) + xb*(params$multi_betav)) +
+      exp((params$multi_betavl) + xb*(params$multi_betal)) +
+      exp((params$multi_betavo) + xb*(params$multi_betao)) + 
+      exp((params$multi_betavc) + xb*(params$multi_betac))
+    #Calculate the probabilities by next ant state
+    vac_vac = exp((params$multi_betavv) + xb*(params$multi_betav))/Denominator_vac
+    vac_liom = (1/3)*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                        exp(params$multi_betavo + xb * params$multi_betao) + 
+                        exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+    vac_other = (1/3)*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                         exp(params$multi_betavo + xb * params$multi_betao) + 
+                         exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+    vac_crem = (1/3)*(exp(params$multi_betavl + xb * params$multi_betal) + 
+                        exp(params$multi_betavo + xb * params$multi_betao) + 
+                        exp(params$multi_betavc + xb * params$multi_betac))/Denominator_vac
+    #Denom of previously tended by Liom
+    Denominator_liom <- (1/3)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                 exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                 exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                 exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+      (1/3)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+               exp((params$multi_betacl) + xb*(params$multi_betal)) +
+               exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+               exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+      (1/3)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+               exp((params$multi_betaol) + xb*(params$multi_betal)) +
+               exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+               exp((params$multi_betaoc) + xb*(params$multi_betac)))
+    #
+    liom_vac = (1/3)*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                        exp(params$multi_betacv + xb * params$multi_betav) + 
+                        exp(params$multi_betaov + xb * params$multi_betav))/Denominator_liom
+    liom_liom = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
+    liom_other = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
+    liom_crem = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_liom
+    ## Previously tended by Other
+    Denominator_other <- (1/3)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                  exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                  exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                  exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+      (1/3)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+               exp((params$multi_betacl) + xb*(params$multi_betal)) +
+               exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+               exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+      (1/3)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+               exp((params$multi_betaol) + xb*(params$multi_betal)) +
+               exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+               exp((params$multi_betaoc) + xb*(params$multi_betac)))
+    #
+    other_vac = (1/3)*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                         exp(params$multi_betacv + xb * params$multi_betav) + 
+                         exp(params$multi_betaov + xb * params$multi_betav))/Denominator_other
+    other_other = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                           exp(params$multi_betalc + xb * params$multi_betac) + 
+                           exp(params$multi_betalo + xb* params$multi_betao) + 
+                           exp(params$multi_betacl + xb * params$multi_betal) + 
+                           exp(params$multi_betacc + xb*params$multi_betac) + 
+                           exp(params$multi_betaco + xb*params$multi_betao) + 
+                           exp(params$multi_betaol + xb * params$multi_betal) + 
+                           exp(params$multi_betaoc + xb*params$multi_betac) + 
+                           exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
+    other_liom = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
+    other_crem = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_other
+    # Previously tended by crem
+    Denominator_crem <- (1/3)*(exp((params$multi_betalv) + xb*(params$multi_betav)) +
+                                 exp((params$multi_betall) + xb*(params$multi_betal)) +
+                                 exp((params$multi_betalo) + xb*(params$multi_betao)) +  
+                                 exp((params$multi_betalc) + xb*(params$multi_betac))) + 
+      (1/3)*(exp((params$multi_betacv) + xb*(params$multi_betav)) +
+               exp((params$multi_betacl) + xb*(params$multi_betal)) +
+               exp((params$multi_betaco) + xb*(params$multi_betao)) +  
+               exp((params$multi_betacc) + xb*(params$multi_betac))) + 
+      (1/3)*(exp((params$multi_betaov) + xb*(params$multi_betav)) +
+               exp((params$multi_betaol) + xb*(params$multi_betal)) +
+               exp((params$multi_betaoo) + xb*(params$multi_betao)) +  
+               exp((params$multi_betaoc) + xb*(params$multi_betac)))
+    #
+    crem_vac = (1/3)*(exp(params$multi_betalv + xb * params$multi_betav) + 
+                        exp(params$multi_betacv + xb * params$multi_betav) + 
+                        exp(params$multi_betaov + xb * params$multi_betav))/Denominator_crem
+    crem_crem = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+    crem_liom = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                         exp(params$multi_betalc + xb * params$multi_betac) + 
+                         exp(params$multi_betalo + xb* params$multi_betao) + 
+                         exp(params$multi_betacl + xb * params$multi_betal) + 
+                         exp(params$multi_betacc + xb*params$multi_betac) + 
+                         exp(params$multi_betaco + xb*params$multi_betao) + 
+                         exp(params$multi_betaol + xb * params$multi_betal) + 
+                         exp(params$multi_betaoc + xb*params$multi_betac) + 
+                         exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+    crem_other = (1/9)*(exp(params$multi_betall + xb*params$multi_betal) + 
+                          exp(params$multi_betalc + xb * params$multi_betac) + 
+                          exp(params$multi_betalo + xb* params$multi_betao) + 
+                          exp(params$multi_betacl + xb * params$multi_betal) + 
+                          exp(params$multi_betacc + xb*params$multi_betac) + 
+                          exp(params$multi_betaco + xb*params$multi_betao) + 
+                          exp(params$multi_betaol + xb * params$multi_betal) + 
+                          exp(params$multi_betaoc + xb*params$multi_betac) + 
+                          exp(params$multi_betaoo + xb*params$multi_betao))/Denominator_crem
+    if(i == "liom" & j == "liom"){return(liom_liom)}
+    if(i == "liom" & j == "other"){return(liom_other)}
+    if(i == "liom" & j == "crem"){return(liom_crem)}
+    if(i == "liom" & j == "vacant"){return(liom_vac)}
+    if(i == "other" & j == "liom"){return(other_liom)}
+    if(i == "other" & j == "other"){return(other_other)}
+    if(i == "other" & j == "crem"){return(other_crem)}
+    if(i == "other" & j == "vacant"){return(other_vac)}
+    if(i == "crem" & j == "liom"){return(crem_liom)}
+    if(i == "crem" & j == "other"){return(crem_other)}
+    if(i == "crem" & j == "crem"){return(crem_crem)}
+    if(i == "crem" & j == "vacant"){return(crem_vac)}
+    if(i == "vacant" & j == "liom"){return(vac_liom)}
+    if(i == "vacant" & j == "other"){return(vac_other)}
+    if(i == "vacant" & j == "crem"){return(vac_crem)}
+    if(i == "vacant" & j == "vacant"){return(vac_vac)}
+  } # end of sim = equal
+} # end of fnc
+# # check that this works
+# x <- c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+# i <- c("vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem")
+# j <- c("liom","liom","liom","liom","vacant","vacant","vacant","vacant","other","other","other","other","crem","crem","crem","crem")
+# scenario <- "all"
+# simulation <- c("comp","equal","freq")
+# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
+# for(n in 1:3){ # each simulation
+#   for(m in 1:length(x)){ # each ant combo
+#     t.mat[n,m] <- transition.3(x[m],i[m],j[m],params = params[10,],scenario,simulation[n])
+#   }
+# }
+# t.mat
+
+
 #########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
-transition.x <- function(x,i,j,params,scenario){
-  one <- transition.1.comp(x,i,j,params,scenario)
-  two <- transition.2.comp(x,i,j,params,scenario)
-  three <- transition.3(x,i,j,params)
+transition.x <- function(x,i,j,params,scenario,simulation){
+  one <- transition.1(x,i,j,params,scenario,simulation)
+  two <- transition.2(x,i,j,params,scenario,simulation)
+  three <- transition.3(x,i,j,params,scenario,simulation)
   if(scenario == "cremvac"){return(one)}
   if(scenario == "liomvac"){return(one)}
   if(scenario == "othervac"){return(one)}
@@ -2006,19 +1779,19 @@ transition.x <- function(x,i,j,params,scenario){
   if(scenario == "all"){return(three)}
 }
 
-# ## Check if it works
-# i = c("liom","vacant","crem","other")
-# j = c("vacant","crem","crem","liom")
-# x = c(-1,-5,4,3)
-# y = c(-1,-4,4.5,3.01)
-# scenario = "all"
-# t <- matrix(NA,ncol = length(i), nrow = (10))
-# for(m in 1:10){
-#   for(n in 1:length(i)){
-#     t[m,n] <- transition.x(x[n],i[n],j[n],params[m,],scenario)
+# # check that this works
+# x <- c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+# i <- c("vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem")
+# j <- c("liom","liom","liom","liom","vacant","vacant","vacant","vacant","other","other","other","other","crem","crem","crem","crem")
+# scenario <- "all"
+# simulation <- c("comp","equal","freq")
+# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
+# for(n in 1:3){ # each simulation
+#   for(m in 1:length(x)){ # each ant combo
+#     t.mat[n,m] <- transition.x(x[m],i[m],j[m],params = params[10,],scenario,simulation[n])
 #   }
 # }
-# t
+# t.mat
 
 ##################################################################################################
 ############################# ONE ANT MATRIX #####################################################
@@ -2027,7 +1800,7 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
-                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,x=y){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -2074,23 +1847,23 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
 #  lam <- matrix(rep(NA,120), nrow = 10)
 #  growmat<-c()
 #  l <- list()
-#  for(a in 1:12){
-#  for(m in 1:10){ ## years
-#   lam[m,a] <- lambda(bigmatrix.1(params=params[m,],
+#  for(a in 1:12){ # each column is a year 
+#     for(m in 1:10){ # each row is an iteration
+#         lam[m,a] <- lambda(bigmatrix.1(params=params[m,],
 #                          lower=lower,
 #                          upper=upper,
 #                          floor=25,
 #                          ceiling=4,
-#                          matsize=500,
+#                          matsize=100,
 #                          grow_rfx1[m,a],grow_rfx2[m,a],
 #                          grow_rfx3[m,a],grow_rfx4[m,a],
 #                          surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
 #                          flow_rfx[m,a],repro_rfx[m,a],
-#                          viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-#  }
+#                          viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a],x = y)$IPMmat)
+#     }
 #  }
 # lam # each row is different iteration and each column is a year
-# # l
+# l
 #################################################################################################
 ##################################### One Ant Species and Vacant ################################
 #################################################################################################
@@ -2098,7 +1871,7 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
-                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -2136,13 +1909,13 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     Tmat[3:(n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ## liom-liom
-    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac"))
+    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac",simulation))
     ## liom-vacant
-    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac",simulation))
     ## vacant-liom
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac",simulation))
     ## vacant-vacant
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac",simulation))
     # Put it all together
     colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat
@@ -2151,12 +1924,12 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     # return(lambda)
     
     # eviction tests
-    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac"))
-    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac"))
+    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvac",simulation))
+    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvac",simulation))
     p_l <- colSums(rbind(LLgrowmat,LVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_l<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat))) # Should be as close to 0 as possible
-    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac"))
-    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac"))
+    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvac",simulation))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvac",simulation))
     p_v <- colSums(rbind(LLgrowmat,LVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_v<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, p_v=p_v, evict_v=evict_v, p_l=p_l, evict_l=evict_l))
@@ -2177,20 +1950,20 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     Tmat[3:(n+2),2]<-0
     Tmat[(n+3):(2*n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
     # Growth/survival transitions among cts sizes
-    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"cremvac"))
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"cremvac"))
-    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac"))
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac"))
+    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"cremvac",simulation))
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"cremvac",simulation))
+    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac",simulation))
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,i = "vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac",simulation))
     # Put it all together
     colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat# Calculate the lambda
     # eviction tests
-    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"cremvac"))
-    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac"))
+    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"cremvac",simulation))
+    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"cremvac",simulation))
     p_c <- colSums(rbind(CCgrowmat,CVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_c<-matsize-sum(colSums(rbind(CCgrowmat,CVgrowmat))) # Should be as close to 0 as possible
-    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"cremvac"))
-    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac"))
+    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"cremvac",simulation))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"cremvac",simulation))
     p_v <- colSums(rbind(VCgrowmat,VVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_v<-matsize-sum(colSums(rbind(VCgrowmat,VVgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, y = y))
@@ -2211,30 +1984,30 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     Tmat[3:(n+2),2]<-0
     Tmat[(n+3):(2*n+2)]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
     # Growth/survival transitions among cts sizes
-    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac"))
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac"))
-    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac"))
+    Tmat[3:(n+2),3:(n+2)]<-(t(outer(y,y,pxy,i = "other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac",simulation))
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac",simulation))
+    Tmat[(n+3):(2*n+2),3:(n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac",simulation))
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac",simulation))
     # Put it all together
     colSums(Tmat[3:(2*n+2),3:(2*n+2)])
     IPMmat<-Fmat+Tmat
     # eviction tests
-    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac"))
-    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac"))
+    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othervac",simulation))
+    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othervac",simulation))
     p_o <- colSums(rbind(OOgrowmat,OVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_o<-matsize-sum(colSums(rbind(OOgrowmat,OVgrowmat))) # Should be as close to 0 as possible
-    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac"))
-    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac"))
+    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othervac",simulation))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othervac",simulation))
     p_v <- colSums(rbind(VOgrowmat,VVgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_v<-matsize-sum(colSums(rbind(VOgrowmat,VVgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_o = evict_o, p_o = p_o, evict_v = evict_v, p_v = p_v,y = y))
   }
 }
 
-
+# 
 # x <- c(1,1)
 # scenario = c("othervac","liomvac","cremvac")
-# lam <- matrix(rep(NA,2), nrow = 1)
+# lam <- matrix(rep(NA,length(scenario)), nrow = 1)
 # growmat<-c()
 # l <- list()
 # for(i in 1:length(scenario)){
@@ -2251,7 +2024,7 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
 #                                    grow_rfx3[m,a],grow_rfx4[m,a],
 #                                    surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
 #                                    flow_rfx[m,a],repro_rfx[m,a],
-#                                    viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#                                    viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a],simulation = "comp")$IPMmat)
 #     }
 #   }
 #   l[[i]] <- lam[m,a]
@@ -2271,7 +2044,7 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
-                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -2310,34 +2083,34 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     Tmat[(2*n+3):(3*n+2),2]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"liomcremvac")) ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"liomcremvac"))   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"liomcremvac"))   ## Top Third
+    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"liomcremvac",simulation)) ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"liomcremvac",simulation))   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"liomcremvac",simulation))   ## Top Third
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"liomcremvac"))   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomcremvac"))   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomcremvac"))   ## Middle Third
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"liomcremvac",simulation))   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomcremvac",simulation))   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomcremvac",simulation))   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"liomcremvac"))   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac"))   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac"))   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"liomcremvac",simulation))   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac",simulation))   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac",simulation))   ## Bottom Third
     # Put it all together
     colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
     # eviction tests
-    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomcremvac"))
-    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac"))
-    LCgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"liomcremvac"))
+    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomcremvac",simulation))
+    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomcremvac",simulation))
+    LCgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"liomcremvac",simulation))
     p_l <- colSums(rbind(LLgrowmat,LVgrowmat,LCgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_l<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat,LCgrowmat))) # Should be as close to 0 as possible
-    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomcremvac"))
-    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac"))
-    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"liomcremvac"))
+    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomcremvac",simulation))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomcremvac",simulation))
+    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"liomcremvac",simulation))
     p_v <- colSums(rbind(VLgrowmat,VVgrowmat,VCgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_v<-matsize-sum(colSums(rbind(VLgrowmat,VVgrowmat,VCgrowmat))) # Should be as close to 0 as possible
-    CLgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"liomcremvac"))
-    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"liomcremvac"))
-    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"liomcremvac"))
+    CLgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"liomcremvac",simulation))
+    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"liomcremvac",simulation))
+    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"liomcremvac",simulation))
     p_c <- colSums(rbind(CLgrowmat,CVgrowmat,CCgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_c<-matsize-sum(colSums(rbind(CLgrowmat,CVgrowmat,CCgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_l = evict_l, p_l = p_l, evict_v = evict_v, p_v = p_v,p_c=p_c, evict_c=evict_c,y = y))
@@ -2361,42 +2134,42 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     # Growth/survival transitions among cts sizes
     ##Top Row
     ## vacant-vacant
-    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother"))   ## Top First
+    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother",simulation))   ## Top First
     #liom-vacant
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother"))   ## Top Second
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother",simulation))   ## Top Second
     #other-vacant
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother"))   ## Top Third
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother",simulation))   ## Top Third
     ##Middle Row
     #vacant-liom
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother"))   ## Middle First
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother",simulation))   ## Middle First
     #liom-liom
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother"))   ## Middle Second
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother",simulation))   ## Middle Second
     #other-liom
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother"))   ## Middle Third
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother",simulation))   ## Middle Third
     ##Bottom Row
     #vacant-other
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother"))   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother",simulation))   ## Bottom First
     #liom-other
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother"))   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother",simulation))   ## Bottom Second
     #other-other
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother"))   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother",simulation))   ## Bottom Third
     # Put it all together
     colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
     # eviction tests
-    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother"))
-    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother"))
-    LOgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother"))
+    LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"liomvacother",simulation))
+    LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"liomvacother",simulation))
+    LOgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"liomvacother",simulation))
     p_l <- colSums(rbind(LLgrowmat,LVgrowmat,LOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_l<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat,LOgrowmat))) # Should be as close to 0 as possible
-    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother"))
-    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother"))
-    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother"))
+    VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"liomvacother",simulation))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"liomvacother",simulation))
+    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"liomvacother",simulation))
     p_v <- colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_v<-matsize-sum(colSums(rbind(VLgrowmat,VVgrowmat,VOgrowmat))) # Should be as close to 0 as possible
-    OLgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother"))
-    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother"))
-    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother"))
+    OLgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"liomvacother",simulation))
+    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"liomvacother",simulation))
+    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"liomvacother",simulation))
     p_o <- colSums(rbind(OLgrowmat,OVgrowmat,OOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_o<-matsize-sum(colSums(rbind(OLgrowmat,OVgrowmat,OOgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_l = evict_l, p_l = p_l, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o,y = y))
@@ -2419,34 +2192,34 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     Tmat[(2*n+3):(3*n+2),2]<-0
     # Growth/survival transitions among cts sizes
     ##Top Row
-    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"othercremvac"))   ## Top First
-    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"othercremvac"))   ## Top Second
-    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"othercremvac"))   ## Top Third
+    Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"othercremvac",simulation))   ## Top First
+    Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"othercremvac",simulation))   ## Top Second
+    Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"othercremvac",simulation))   ## Top Third
     ##Middle Row
-    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"othercremvac"))   ## Middle First
-    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othercremvac"))   ## Middle Second
-    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othercremvac"))   ## Middle Third
+    Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"othercremvac",simulation))   ## Middle First
+    Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othercremvac",simulation))   ## Middle Second
+    Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othercremvac",simulation))   ## Middle Third
     ##Bottom Row
-    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"othercremvac"))   ## Bottom First
-    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac"))   ## Bottom Second
-    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac"))   ## Bottom Third
+    Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"othercremvac",simulation))   ## Bottom First
+    Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<- (t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac",simulation))   ## Bottom Second
+    Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<- (t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac",simulation))   ## Bottom Third
     # Put it all together
     colSums(Tmat[3:(3*n+2),3:(3*n+2)])
     IPMmat<-Fmat+Tmat
     # eviction tests
-    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"othercremvac"))
-    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"othercremvac"))
-    COgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"othercremvac"))
+    CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"othercremvac",simulation))
+    CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"othercremvac",simulation))
+    COgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"othercremvac",simulation))
     p_c <- colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_c<-matsize-sum(colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat))) # Should be as close to 0 as possible
-    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"othercremvac"))
-    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othercremvac"))
-    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac"))
+    VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"othercremvac",simulation))
+    VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"othercremvac",simulation))
+    VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"othercremvac",simulation))
     p_v <- colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_v<-matsize-sum(colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat))) # Should be as close to 0 as possible
-    OCgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"othercremvac"))
-    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othercremvac"))
-    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac"))
+    OCgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"othercremvac",simulation))
+    OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"othercremvac",simulation))
+    OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"othercremvac",simulation))
     p_o <- colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat)) # Shows the column sums, each should be as close to 1 as possible
     evict_o<-matsize-sum(colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o,y = y))
@@ -2471,7 +2244,7 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
 #                                      grow_rfx3[m,a],grow_rfx4[m,a],
 #                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
 #                                      flow_rfx[m,a],repro_rfx[m,a],
-#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
+#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a],simulation = "comp")$IPMmat)
 #     }
 #   }
 #   l[[i]] <- lam[m,a]
@@ -2488,7 +2261,7 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
-                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
+                        viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -2530,52 +2303,52 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   Tmat[(3*n+3):(4*n+2),1]<-invlogit((params$germ2_beta0))*recruits(y,params)*h*invlogit((params$preseed_beta0))
   # Growth/survival transitions among cts sizes
   ##Top Row
-  Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))   ## Top First
-  Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"all"))   ## Top Second
-  Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all"))   ## Top Third
-  Tmat[3:(n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"all"))
+  Tmat[3:(n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all",simulation))   ## Top First
+  Tmat[3:(n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"all",simulation))   ## Top Second
+  Tmat[3:(n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all",simulation))   ## Top Third
+  Tmat[3:(n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"all",simulation))
   ##Second Row
-  Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"all"))   ## Top First
-  Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"all"))   ## Top Second
-  Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"all"))   ## Top Third
-  Tmat[(n+3):(2*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all"))
+  Tmat[(n+3):(2*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"all",simulation))   ## Top First
+  Tmat[(n+3):(2*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"all",simulation))   ## Top Second
+  Tmat[(n+3):(2*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"all",simulation))   ## Top Third
+  Tmat[(n+3):(2*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all",simulation))
   ##Third Row
-  Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"all"))   ## Top First
-  Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"all"))   ## Top Second
-  Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all"))   ## Top Third
-  Tmat[(2*n+3):(3*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all"))
+  Tmat[(2*n+3):(3*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"all",simulation))   ## Top First
+  Tmat[(2*n+3):(3*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"all",simulation))   ## Top Second
+  Tmat[(2*n+3):(3*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all",simulation))   ## Top Third
+  Tmat[(2*n+3):(3*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all",simulation))
   ##Bottom Row
-  Tmat[(3*n+3):(4*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"all"))   ## Top First
-  Tmat[(3*n+3):(4*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"all"))   ## Top Second
-  Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))   ## Top Third
-  Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
+  Tmat[(3*n+3):(4*n+2),3:(n+2)]<- (t(outer(y,y,pxy,"crem",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"all",simulation))   ## Top First
+  Tmat[(3*n+3):(4*n+2),(n+3):(2*n+2)]<-(t(outer(y,y,pxy,"liom",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"all",simulation))   ## Top Second
+  Tmat[(3*n+3):(4*n+2),(2*n+3):(3*n+2)]<-(t(outer(y,y,pxy,"other",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all",simulation))   ## Top Third
+  Tmat[(3*n+3):(4*n+2),(3*n+3):(4*n+2)]<-(t(outer(y,y,pxy,"vacant",params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all",simulation))
   # Put it all together
   #colSums(Tmat[3:(4*n+2),3:(4*n+2)])
   #colSums(Tmat[3:(4*n+2),3:(4*n+2)])[1000:1200]
   IPMmat<-Fmat+Tmat
   # eviction tests
-  CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all"))
-  CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"all"))
-  COgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"all"))
-  CLgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"all"))
+  CCgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "crem",params,"all",simulation))
+  CVgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "vacant",params,"all",simulation))
+  COgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "other",params,"all",simulation))
+  CLgrowmat<-(t(outer(y,y,gxy,i = "crem",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "crem",j = "liom",params,"all",simulation))
   p_c <- colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat,CLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
   evict_c<-matsize-sum(colSums(rbind(CCgrowmat,CVgrowmat,COgrowmat,CLgrowmat))) # Should be as close to 0 as possible
-  VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"all"))
-  VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all"))
-  VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all"))
-  VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all"))
+  VCgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "crem",params,"all",simulation))
+  VVgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "vacant",params,"all",simulation))
+  VOgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "other",params,"all",simulation))
+  VLgrowmat<-(t(outer(y,y,gxy,i = "vacant",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "vacant",j = "liom",params,"all",simulation))
   p_v <- colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat,VLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
   evict_v<-matsize-sum(colSums(rbind(VCgrowmat,VVgrowmat,VOgrowmat,VLgrowmat))) # Should be as close to 0 as possible
-  OCgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all"))
-  OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all"))
-  OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all"))
-  OLgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"all"))
+  OCgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "crem",params,"all",simulation))
+  OVgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "vacant",params,"all",simulation))
+  OOgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "other",params,"all",simulation))
+  OLgrowmat<-(t(outer(y,y,gxy,i = "other",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "other",j = "liom",params,"all",simulation))
   p_o <- colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat,OLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
   evict_o<-matsize-sum(colSums(rbind(OCgrowmat,OVgrowmat,OOgrowmat,OLgrowmat))) # Should be as close to 0 as possible
-  LCgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"all"))
-  LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"all"))
-  LOgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"all"))
-  LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"all"))
+  LCgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "crem",params,"all",simulation))
+  LVgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "vacant",params,"all",simulation))
+  LOgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "other",params,"all",simulation))
+  LLgrowmat<-(t(outer(y,y,gxy,i = "liom",params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4))*h)%*%diag(transition.x(y,i = "liom",j = "liom",params,"all",simulation))
   p_l <- colSums(rbind(LCgrowmat,LVgrowmat,LOgrowmat,LLgrowmat)) # Shows the column sums, each should be as close to 1 as possible
   evict_l<-matsize-sum(colSums(rbind(LCgrowmat,LVgrowmat,LOgrowmat,LLgrowmat))) # Should be as close to 0 as possible
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o, p_l = p_l, evict_l = evict_l, y = y))
@@ -2616,7 +2389,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                     grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                     surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                     flow_rfx=0,repro_rfx=0,
-                    viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0){
+                    viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
   ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
@@ -2640,7 +2413,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
                         surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                         flow_rfx,repro_rfx,
-                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,simulation))
     return(list)
   }
   if(scenario == "cremvac"){
@@ -2648,7 +2421,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
                         surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                         flow_rfx,repro_rfx,
-                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,simulation))
     return(list)
   }
   if(scenario == "othervac"){
@@ -2656,7 +2429,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
                         surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                         flow_rfx,repro_rfx,
-                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,simulation))
     return(list)
   }
   if(scenario == "liomvacother"){
@@ -2664,7 +2437,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
                         surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                         flow_rfx,repro_rfx,
-                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,simulation))
     return(list)
   }
   if(scenario == "liomcremvac"){
@@ -2672,7 +2445,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
                         surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                         flow_rfx,repro_rfx,
-                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,simulation))
     return(list)
   }
   if(scenario == "othercremvac"){
@@ -2680,7 +2453,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
                         surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                         flow_rfx,repro_rfx,
-                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,simulation))
     return(list)
   }
   if(scenario == "all"){
@@ -2688,7 +2461,7 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4,
                         surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,
                         flow_rfx,repro_rfx,
-                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4))
+                        viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4,simulation))
     return(list)
   }
 }
@@ -2736,8 +2509,8 @@ lambdaSim=function(params,                                  ## parameters
                    scenario,                                ## partner diversity scenario
                    lower,upper,                             ## extensions to avoid eviction
                    floor,ceiling,
-                   trans_years ## trans_years is a vector of complete transition years, a subset of 1:20
-                   
+                   trans_years, ## trans_years is a vector of complete transition years, a subset of 1:20
+                   simulation
 ){
   
   ## Create an actual matrix filled with 0 of the right size based on scenarios
@@ -2762,7 +2535,7 @@ lambdaSim=function(params,                                  ## parameters
                       surv_rfx1[r],surv_rfx2[r],surv_rfx3[r],surv_rfx4[r],
                       flow_rfx[r],
                       repro_rfx[r],
-                      viab_rfx1[r],viab_rfx2[r],viab_rfx3[r],viab_rfx4[r])$IPMmat
+                      viab_rfx1[r],viab_rfx2[r],viab_rfx3[r],viab_rfx4[r],simulation)$IPMmat
     #matricies[[t]] <- K_t[,]
     ## At each time step call the IPM for the proper Year
     #

@@ -33,84 +33,83 @@ colors_lambdas <- c(vcol,ccol,lcol,ocol,lccol,locol,cocol,acol)
 x_vals <- c(1,3,5,7,9,11,13,15)
 
 
-# tom ---------------------------------------------------------------------
-## as you can see below, these extension values work well
+#### check the extension values
 lower.extension<-4
 upper.extension<-0.5
-vacant_mat<-bigmatrix(params = params_mean,
-                      scenario = "none",
-                      lower = cholla_min,
-                      upper = cholla_max,
-                      floor = lower.extension,
-                      ceiling = upper.extension,
-                      matsize = matsize)
-full_mat<-bigmatrix(params = params_mean,
-                    scenario = "all",
-                    lower = cholla_min,
-                    upper = cholla_max,
-                    floor = lower.extension,
-                    ceiling = upper.extension,
-                    matsize = matsize)
-par(mfrow=c(1,2))
-plot(vacant_mat$y,vacant_mat$p,col=vaccol,ylim=c(0.75,1.05))
-plot(full_mat$y,full_mat$p_v,col=vaccol,ylim=c(0.75,1.05))
-points(full_mat$y,full_mat$p_l,col=liomcol)
-points(full_mat$y,full_mat$p_o,col=othercol)
-points(full_mat$y,full_mat$p_c,col=cremcol)
+# vacant_mat<-bigmatrix(params = params_mean,
+#                       scenario = "none",
+#                       lower = cholla_min,
+#                       upper = cholla_max,
+#                       floor = lower.extension,
+#                       ceiling = upper.extension,
+#                       matsize = matsize)
+# full_mat<-bigmatrix(params = params_mean,
+#                     scenario = "all",
+#                     lower = cholla_min,
+#                     upper = cholla_max,
+#                     floor = lower.extension,
+#                     ceiling = upper.extension,
+#                     matsize = matsize)
+# par(mfrow=c(1,2))
+# plot(vacant_mat$y,vacant_mat$p,col=vaccol,ylim=c(0.75,1.05))
+# plot(full_mat$y,full_mat$p_v,col=vaccol,ylim=c(0.75,1.05))
+# points(full_mat$y,full_mat$p_l,col=liomcol)
+# points(full_mat$y,full_mat$p_o,col=othercol)
+# points(full_mat$y,full_mat$p_c,col=cremcol)
 
 ## find the right matrix dimension
 dims<-c(10,25,50,100,150,200,250,300)
-vacant_lam<-full_lam<-c()
-for(i in 1:length(dims)){
-  vacant_lam[i]<-lambda(bigmatrix(params = params_mean,
-                        scenario = "none",
-                        lower = cholla_min,
-                        upper = cholla_max,
-                        floor = lower.extension,
-                        ceiling = upper.extension,
-                        matsize = dims[i])$IPMmat)
-  full_lam[i]<-lambda(bigmatrix(params = params_mean,
-                      scenario = "all",
-                      lower = cholla_min,
-                      upper = cholla_max,
-                      floor = lower.extension,
-                      ceiling = upper.extension,
-                      matsize = dims[i])$IPMmat)
-}
-plot(dims,full_lam)
-points(dims,vacant_lam,col="red")
+# vacant_lam<-full_lam<-c()
+# for(i in 1:length(dims)){
+#   vacant_lam[i]<-lambda(bigmatrix(params = params_mean,
+#                         scenario = "none",
+#                         lower = cholla_min,
+#                         upper = cholla_max,
+#                         floor = lower.extension,
+#                         ceiling = upper.extension,
+#                         matsize = dims[i])$IPMmat)
+#   full_lam[i]<-lambda(bigmatrix(params = params_mean,
+#                       scenario = "all",
+#                       lower = cholla_min,
+#                       upper = cholla_max,
+#                       floor = lower.extension,
+#                       ceiling = upper.extension,
+#                       matsize = dims[i])$IPMmat)
+# }
+# plot(dims,full_lam)
+# points(dims,vacant_lam,col="red")
 matsize<-150
 
 ## look at stable size and ant structure
-vacant_mat<-bigmatrix(params = params_mean,
-                      scenario = "none",
-                      lower = cholla_min,
-                      upper = cholla_max,
-                      floor = lower.extension,
-                      ceiling = upper.extension,
-                      matsize = matsize)
-full_mat<-bigmatrix(params = params_mean,
-                    scenario = "all",
-                    lower = cholla_min,
-                    upper = cholla_max,
-                    floor = lower.extension,
-                    ceiling = upper.extension,
-                    matsize = matsize)
-plot(vacant_mat$y,stable.stage(vacant_mat$IPMmat)[3:(matsize+2)])
-ggplot(cactus)+
-  geom_histogram(aes(x=logsize_t1))+facet_wrap("Year_t1")
-
-stable_ants<-stable.stage(full_mat$IPMmat)
-stable_ants<-stable_ants[-(1:2)]/sum(stable_ants[-(1:2)])
-plot(full_mat$y,stable_ants[1:matsize],type="l",lwd=3,col=cremcol,ylim=c(0,.015))
-lines(full_mat$y,stable_ants[(matsize+1):(2*matsize)],lwd=3,col=liomcol)
-lines(full_mat$y,stable_ants[(2*matsize+1):(3*matsize)],lwd=3,col=othercol)
-lines(full_mat$y,stable_ants[(3*matsize+1):(4*matsize)],lwd=3,col=vaccol)
-
-sum(stable_ants[1:matsize])
-sum(stable_ants[(matsize+1):(2*matsize)])
-sum(stable_ants[(2*matsize+1):(3*matsize)])
-sum(stable_ants[(3*matsize+1):(4*matsize)])
+# vacant_mat<-bigmatrix(params = params_mean,
+#                       scenario = "none",
+#                       lower = cholla_min,
+#                       upper = cholla_max,
+#                       floor = lower.extension,
+#                       ceiling = upper.extension,
+#                       matsize = matsize)
+# full_mat<-bigmatrix(params = params_mean,
+#                     scenario = "all",
+#                     lower = cholla_min,
+#                     upper = cholla_max,
+#                     floor = lower.extension,
+#                     ceiling = upper.extension,
+#                     matsize = matsize)
+# plot(vacant_mat$y,stable.stage(vacant_mat$IPMmat)[3:(matsize+2)])
+# ggplot(cactus)+
+#   geom_histogram(aes(x=logsize_t1))+facet_wrap("Year_t1")
+# 
+# stable_ants<-stable.stage(full_mat$IPMmat)
+# stable_ants<-stable_ants[-(1:2)]/sum(stable_ants[-(1:2)])
+# plot(full_mat$y,stable_ants[1:matsize],type="l",lwd=3,col=cremcol,ylim=c(0,.015))
+# lines(full_mat$y,stable_ants[(matsize+1):(2*matsize)],lwd=3,col=liomcol)
+# lines(full_mat$y,stable_ants[(2*matsize+1):(3*matsize)],lwd=3,col=othercol)
+# lines(full_mat$y,stable_ants[(3*matsize+1):(4*matsize)],lwd=3,col=vaccol)
+# 
+# sum(stable_ants[1:matsize])
+# sum(stable_ants[(matsize+1):(2*matsize)])
+# sum(stable_ants[(2*matsize+1):(3*matsize)])
+# sum(stable_ants[(3*matsize+1):(4*matsize)])
 
 cactus %>% 
   select(Year_t,ant_t) %>% drop_na() %>% 
@@ -118,9 +117,9 @@ cactus %>%
   summarise(n=n()) %>%
   mutate(freq = n / sum(n)) -> ant_tally
 
-ant_tally %>% 
-  ggplot()+
-  geom_col(aes(ant_t,freq,fill=ant_t))+facet_wrap("Year_t")
+# ant_tally %>% 
+#   ggplot()+
+#   geom_col(aes(ant_t,freq,fill=ant_t))+facet_wrap("Year_t")
 
 
 ## find how many years until lambdaS stabilizes
@@ -133,70 +132,188 @@ year_seq<-sample(trans_years,max_yrs,replace=T)
 ## subsample the year sequence at different lengths
 years<-seq(100,1000,100)
 vacant_lamS<-full_lamS<-c()
-for(i in 1:length(years)){
-vacant_lamS[i]<-lambdaSim(params = params_mean,
-          scenario = "none",
-          lower = cholla_min, upper = cholla_max, 
-          floor = lower.extension, ceiling = upper.extension, 
-          matsize = matsize,
-          grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
-          grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
-          surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
-          surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
-          flow_rfx=colMeans(flow_rfx),
-          repro_rfx= colMeans(repro_rfx),
-          viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
-          viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),
-          max_yrs = years[i],
-          trans_years=year_seq[1:years[i]])
-print(i)}
-
-plot(years,vacant_lamS,type="b")
-range(vacant_lamS)
+# for(i in 1:length(years)){
+# vacant_lamS[i]<-lambdaSim(params = params_mean,
+#           scenario = "none",
+#           lower = cholla_min, upper = cholla_max, 
+#           floor = lower.extension, ceiling = upper.extension, 
+#           matsize = matsize,
+#           grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
+#           grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
+#           surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
+#           surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
+#           flow_rfx=colMeans(flow_rfx),
+#           repro_rfx= colMeans(repro_rfx),
+#           viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
+#           viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),
+#           max_yrs = years[i],
+#           trans_years=year_seq[1:years[i]])
+# print(i)}
+# 
+# plot(years,vacant_lamS,type="b")
+# range(vacant_lamS)
 
 ## try all the scenarios with a shared sequence of years
-lambdaS_comp <- lambdaS_comp_sync <- c()
-for(i in 1:length(scenario)){
-  lambdaS_comp[i] <- lambdaSim(params = params_mean,
-            scenario = scenario[i],
-            lower = cholla_min, upper = cholla_max, 
-            floor = lower.extension, ceiling = upper.extension, 
-            matsize = matsize,
-            grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
-            grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
-            surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
-            surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
-            flow_rfx=colMeans(flow_rfx),
-            repro_rfx= colMeans(repro_rfx),
-            viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
-            viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),
-            trans_years=year_seq[1:600])
-  lambdaS_comp_sync[i] <- lambdaSim(params = params_mean,
-                               scenario = scenario[i],
-                               lower = cholla_min, upper = cholla_max, 
-                               floor = lower.extension, ceiling = upper.extension, 
-                               matsize = matsize,
-                               grow_rfx1=colMeans(grow_rfx),grow_rfx2=colMeans(grow_rfx),
-                               grow_rfx3=colMeans(grow_rfx),grow_rfx4=colMeans(grow_rfx),
-                               surv_rfx1=colMeans(surv_rfx),surv_rfx2=colMeans(surv_rfx),
-                               surv_rfx3=colMeans(surv_rfx),surv_rfx4=colMeans(surv_rfx),
-                               flow_rfx=colMeans(flow_rfx),
-                               repro_rfx= colMeans(repro_rfx),
-                               viab_rfx1=colMeans(viab_rfx),viab_rfx2=colMeans(viab_rfx),
-                               viab_rfx3=colMeans(viab_rfx),viab_rfx4=colMeans(viab_rfx),
-                               trans_years=year_seq[1:600])
-print(scenario[i])}
+sims <- c("comp","equal","freq")
+lambdaS <- lambdaS_sync <- matrix(NA, nrow = length(sims))
+for(n in 1:length(sims)){
+  for(i in 1:length(scenario)){
+    lambdaS[n,i] <- lambdaSim(params = params_mean,
+                              scenario = scenario[i],
+                              lower = cholla_min, upper = cholla_max, 
+                              floor = lower.extension, ceiling = upper.extension, 
+                              matsize = matsize,
+                              grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
+                              grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
+                              surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
+                              surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
+                              flow_rfx=colMeans(flow_rfx),
+                              repro_rfx= colMeans(repro_rfx),
+                              viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
+                              viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),
+                              trans_years=year_seq[1:500],simulation = sims[n])
+    lambdaS_sync[n,i] <- lambdaSim(params = params_mean,
+                              scenario = scenario[i],
+                              lower = cholla_min, upper = cholla_max, 
+                              floor = lower.extension, ceiling = upper.extension, 
+                              matsize = matsize,
+                              grow_rfx1=colMeans(grow_rfx),grow_rfx2=colMeans(grow_rfx),
+                              grow_rfx3=colMeans(grow_rfx),grow_rfx4=colMeans(grow_rfx),
+                              surv_rfx1=colMeans(surv_rfx),surv_rfx2=colMeans(surv_rfx),
+                              surv_rfx3=colMeans(surv_rfx),surv_rfx4=colMeans(surv_rfx),
+                              flow_rfx=colMeans(flow_rfx),
+                              repro_rfx= colMeans(repro_rfx),
+                              viab_rfx1=colMeans(viab_rfx),viab_rfx2=colMeans(viab_rfx),
+                              viab_rfx3=colMeans(viab_rfx),viab_rfx4=colMeans(viab_rfx),
+                              trans_years=year_seq[1:500], simulation = sims[n])
+    print(scenario[i])
+  }
+}
 
-pdf("Manuscript/Figures/lambdaS_tom.pdf")
-plot(c(1,3,5,7,9,11,13,15),lambdaS_comp, pch = 19, cex = 3,col = colors_lambdas,
+
+pdf("Manuscript/Figures/lambdaS_freq_mean.pdf")
+plot(c(1,3,5,7,9,11,13,15),lambdaS[3,], pch = 19, cex = 3,col = colors_lambdas,
      xlim = c(0,16), ylim = c(0.95,1),
      xaxt = "n",cex.lab = 2,
      xlab = "Ant Scenario", ylab = "Mean LambdaS", main = "")
-points(c(1,3,5,7,9,11,13,15),lambdaS_comp_sync, pch = 1, cex = 3,col = colors_lambdas)
-text(x = c(1,3,5,7,9,11,13,15)-0.2, y = lambdaS_comp_sync+0.002,cex = 2, labels = scenario_abv)
+points(c(1,3,5,7,9,11,13,15),lambdaS_sync[3,], pch = 1, cex = 3,col = colors_lambdas)
+text(x = c(1,3,5,7,9,11,13,15)-0.2, y = lambdaS_sync[3,]+0.002,cex = 2, labels = scenario_abv)
 legend("bottomright",legend=c("synchronized","non-synchronized"),pch=c(1,19),cex=1.5)
 dev.off()
+
 #######################################################################
+#### Run the models for all ant combinations and simulations with 100
+#### iterations of posterior data
+
+# outputs: a list where each element is corresponding to a simulation
+# and each element is a matrix of n rows and m columns. N is the 
+# number of included iterations and m is the number of ant scenarios
+
+lambda_list <- lambda_sync_list <- list()
+lambdaS_full <- lambdaS_sync_full <- matrix(NA, nrow = iter, ncol = length(scenario))
+for(i in 1:length(sims)){ # each model simulation (comp, equal, freq)
+  for(m in 1:length(scenario)){ # each ant combination
+    for(n in 1:iter){ # each iteration
+      lambdaS_full[n,m] <- lambdaSim(params = params[n,],
+                                scenario = scenario[m],
+                                lower = cholla_min, upper = cholla_max, 
+                                floor = lower.extension, ceiling = upper.extension, 
+                                matsize = matsize,
+                                grow_rfx1=(grow_rfx1[n,]),grow_rfx2=(grow_rfx2[n,]),
+                                grow_rfx3=(grow_rfx3[n,]),grow_rfx4=(grow_rfx4[n,]),
+                                surv_rfx1=(surv_rfx1[n,]),surv_rfx2=(surv_rfx2[n,]),
+                                surv_rfx3=(surv_rfx3[n,]),surv_rfx4=(surv_rfx4[n,]),
+                                flow_rfx=(flow_rfx[n,]),
+                                repro_rfx= (repro_rfx[n,]),
+                                viab_rfx1=(viab_rfx1[n,]),viab_rfx2=(viab_rfx2[n,]),
+                                viab_rfx3=(viab_rfx3[n,]),viab_rfx4=(viab_rfx4[n,]),
+                                trans_years=year_seq[1:500],simulation = sims[i])
+      lambdaS_sync_full[n,m] <- lambdaSim(params = params[n,],
+                                scenario = scenario[m],
+                                lower = cholla_min, upper = cholla_max, 
+                                floor = lower.extension, ceiling = upper.extension, 
+                                matsize = matsize,
+                                grow_rfx1=(grow_rfx[n,]),grow_rfx2=(grow_rfx[n,]),
+                                grow_rfx3=(grow_rfx[n,]),grow_rfx4=(grow_rfx[n,]),
+                                surv_rfx1=(surv_rfx[n,]),surv_rfx2=(surv_rfx[n,]),
+                                surv_rfx3=(surv_rfx[n,]),surv_rfx4=(surv_rfx[n,]),
+                                flow_rfx=(flow_rfx[n,]),
+                                repro_rfx= (repro_rfx[n,]),
+                                viab_rfx1=(viab_rfx[n,]),viab_rfx2=(viab_rfx[n,]),
+                                viab_rfx3=(viab_rfx[n,]),viab_rfx4=(viab_rfx[n,]),
+                                trans_years=year_seq[1:500], simulation = sims[i])
+     
+    } # end of iteration
+    print(scenario[m])
+  } # end ant combos
+  lambda_list[[i]] <- lambdaS_full
+  lambda_sync_list[[i]] <- lambdaS_sync_full
+} # end simulations
+
+lambda_list
+lambda_sync_list
+# Pull out the non-synchronous values
+write.csv(lambda_list[[1]],"lambda_comp.csv")
+write.csv(lambda_list[[2]],"lambda_equal.csv")
+write.csv(lambda_list[[3]],"lambda_freq.csv")
+# pull out synchronous values
+write.csv(lambda_sync_list[[1]],"lambda_sync_comp.csv")
+write.csv(lambda_sync_list[[2]],"lambda_sync_equal.csv")
+write.csv(lambda_sync_list[[3]],"lambda_sync_freq.csv")
+
+#######################################################################
+#### Run the models for all ant combinations and simulations with 100
+#### iterations of posterior data
+
+# outputs: a list where each element is corresponding to a simulation
+# and each element is a matrix of n rows and m columns. N is the 
+# number of included iterations and m is the number of ant scenarios
+
+lambda_list <- lambda_sync_list <- list()
+lambdaS_full <- lambdaS_sync_full <- matrix(NA, nrow = iter, ncol = length(scenario))
+for(i in 1:length(sims)){ # each model simulation (comp, equal, freq)
+  for(m in 1:length(scenario)){ # each ant combination
+    for(n in 1:iter){ # each iteration
+      lambdaS_full[n,m] <- lambdaSim(params = params[n,],
+                                scenario = scenario[m],
+                                lower = cholla_min, upper = cholla_max, 
+                                floor = lower.extension, ceiling = upper.extension, 
+                                matsize = matsize,
+                                grow_rfx1=(grow_rfx1[n,]),grow_rfx2=(grow_rfx2[n,]),
+                                grow_rfx3=(grow_rfx3[n,]),grow_rfx4=(grow_rfx4[n,]),
+                                surv_rfx1=(surv_rfx1[n,]),surv_rfx2=(surv_rfx2[n,]),
+                                surv_rfx3=(surv_rfx3[n,]),surv_rfx4=(surv_rfx4[n,]),
+                                flow_rfx=(flow_rfx[n,]),
+                                repro_rfx= (repro_rfx[n,]),
+                                viab_rfx1=(viab_rfx1[n,]),viab_rfx2=(viab_rfx2[n,]),
+                                viab_rfx3=(viab_rfx3[n,]),viab_rfx4=(viab_rfx4[n,]),
+                                trans_years=year_seq[1:500],simulation = sims[i])
+      lambdaS_sync_full[n,m] <- lambdaSim(params = params[n,],
+                                scenario = scenario[m],
+                                lower = cholla_min, upper = cholla_max, 
+                                floor = lower.extension, ceiling = upper.extension, 
+                                matsize = matsize,
+                                grow_rfx1=(grow_rfx[n,]),grow_rfx2=(grow_rfx[n,]),
+                                grow_rfx3=(grow_rfx[n,]),grow_rfx4=(grow_rfx[n,]),
+                                surv_rfx1=(surv_rfx[n,]),surv_rfx2=(surv_rfx[n,]),
+                                surv_rfx3=(surv_rfx[n,]),surv_rfx4=(surv_rfx[n,]),
+                                flow_rfx=(flow_rfx[n,]),
+                                repro_rfx= (repro_rfx[n,]),
+                                viab_rfx1=(viab_rfx[n,]),viab_rfx2=(viab_rfx[n,]),
+                                viab_rfx3=(viab_rfx[n,]),viab_rfx4=(viab_rfx[n,]),
+                                trans_years=year_seq[1:500], simulation = sims[i])
+     
+    } # end of iteration
+    print(scenario[m])
+  } # end ant combos
+  lambda_list[[i]] <- lambdaS_full
+  lambda_sync_list[[i]] <- lambdaS_sync_full
+} # end simulations
+
+lambda_list
+lambda_sync_list
+
+
 
 ## Competitive Exclusion Model Run
 ipm_det_comp <- c()
