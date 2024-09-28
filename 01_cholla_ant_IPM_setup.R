@@ -12,6 +12,7 @@
 library(rstan)
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
+# distributions
 library(sn)
 library(sgt)
 library(qgam)
@@ -19,10 +20,6 @@ library(brms)
 library(loo)
 # ipm analysis
 library(popbio)
-# max likelihood models
-library(lme4)
-library(nnet)
-library(extraDistr)
 # visual model checks
 library(moments)
 library("posterior")
@@ -40,7 +37,8 @@ library(corrplot)
 library(ggpubr)
 library(reshape)
 library(reshape2)
-knitr::opts_chunk$set(echo = TRUE)
+library(stats)
+knitr::oknitr::oknitr::opts_chunk$set(echo = TRUE)
 # check the workign directory and make sure it is set to the right location
 #getwd()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
@@ -62,8 +60,6 @@ Q.kurtosis<-function(q.05,q.25,q.75,q.95){
   KG = (qN[4]-qN[1])/(qN[3]-qN[2])
   return(((q.95-q.05)/(q.75-q.25))/KG - 1)
 }
-
-
 
 ## import the data -- Cacti (main) 
 cactus <- read.csv("Data Analysis/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
@@ -109,6 +105,7 @@ k <- subset(cactus, cactus$Antsp_t == "unk" | cactus$Antsp_t == "lg unk" | cactu
 nrow(k)
 l <- subset(cactus,cactus$Antsp_t == "LFOR" | cactus$Antsp_t == "for" | cactus$Antsp_t == "FOR")
 nrow(l)
+
 ## Cactus 2023 data cleaning ---- Ant Species
 # Change ant counts to numeric (some random entries are different types of strings)
 cactus$Antcount_t <- as.numeric(as.character(cactus$Antcount_t))
@@ -328,8 +325,18 @@ nrow(cactus)
 # legend("topright",legend = c("Liom.","Crem.","Other"), fill = c(liomcol,cremcol,othercol))
 # dev.off()
 
-
-
-
+## calculate the proportion of plants which have experienced at least one ant transition in their lives
+total <- nrow(cactus)
+partial <- nrow(subset(cactus, cactus$ant_t != cactus$ant_t1))
+partial/total
+cactus$antsum <- NA
+for(i in 1:nrow(cactus)){
+  ifelse(cactus$ant_t1[i] == "vacant",cactus$antsum[i] <- 0, cactus$antsum[i] <- 1)
+}
+  cactus %>% 
+  group_by(Plot) %>%
+  group_by(TagID) %>%
+    summarise(ants <- sum(antsum,na.rm=T)) -> sum_data
+nrow(subset(sum_data, sum_data$`ants <- sum(antsum, na.rm = T)`>1))/nrow(sum_data)
 
 

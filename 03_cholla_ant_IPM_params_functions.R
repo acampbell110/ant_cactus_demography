@@ -4,6 +4,10 @@
 ## and load any values which need to be loaded to run the IPM
 ################################################################################
 ################################################################################
+
+################################################################################
+## Pull in data and set necessary parameters
+################################################################################
 ## Source the IPM vital rates code 
 #setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #source("02_cholla_ant_IPM_vital_rates.R")
@@ -40,26 +44,15 @@ mcmc_dir <- "/Users/alicampbell/Library/CloudStorage/GoogleDrive-amc49@rice.edu/
 # mcmc_dir <- "/Users/Labuser/Desktop/Model_Reads/"
 fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
 grow.params <- rstan::extract(fit_grow_skew);rm(fit_grow_skew)
-# grow.params <- grow.params[,c(2),]
-# fit_grow_skew_null<-readRDS(paste0(mcmc_dir,"fit_grow_skew_null.rds"))
-# grow.params.null <- rstan::extract(fit_grow_skew_null)
-# fit_grow_stud<-readRDS(paste0(mcmc_dir,"fit_grow_student_t.rds"))
-# grow.params <- rstan::extract(fit_grow_stud)
-# fit_grow_stud_null<-readRDS(paste0(mcmc_dir,"fit_grow_student_t_null.rds"))
-# grow.params.null <- rstan::extract(fit_grow_stud_null)
 # survival model
 fit_surv<-readRDS(paste0(mcmc_dir,"fit_surv.rds"))
 surv.params <- rstan::extract(fit_surv);rm(fit_surv)
-# fit_surv_null<-readRDS(paste0(mcmc_dir,"fit_surv_null.rds"))
-# surv.params.null <- rstan::extract(fit_surv_null)
 # flowers produced model
 fit_flow<-readRDS(paste0(mcmc_dir,"fit_flow.rds"))
 flow.params <- rstan::extract(fit_flow);rm(fit_flow)
 # viability of flowers model
 fit_viab<-readRDS(paste0(mcmc_dir,"fit_viab.rds"))
 viab.params <- rstan::extract(fit_viab);rm(fit_viab)
-# fit_viab_null<-readRDS(paste0(mcmc_dir,"fit_viab_null.rds"))
-# viab.params.null <- rstan::extract(fit_viab_null)
 # reproducing model
 fit_repro<-readRDS(paste0(mcmc_dir,"fit_repro.rds"))
 repro.params <- rstan::extract(fit_repro);rm(fit_repro)
@@ -151,7 +144,7 @@ params$seed_beta03<-seed.params$beta0[draws,3]      ## seed intercept
 ##-----------------------Seeds Precensus Surv Parameters-----------------## 
 params$preseed_beta0<-pre.seed.params$beta0[draws]       ## pre seed intercept
 
-##-----------------------Germ Parameters-----------------
+##-----------------------Germ Parameters----------------- ##
 params$germ1_beta0<-germ.params$beta0[draws,1]        ## germ 1 intercept
 params$germ2_beta0<-germ.params$beta0[draws,2]        ## germ 2 intercept
 
@@ -165,11 +158,11 @@ params$fruit_beta0<-fruit.params$beta0[draws]
 ##-------------------------Transition Parameters-------------------##
 # Prev Vac
 dim(multi.params$beta)
-params$multi_betavv <- multi.params$beta[draws,4,4] ## intercept for vacant to vacant
-params$multi_betavo <- multi.params$beta[draws,4,3] ## intercept for vacant to other
-params$multi_betavc <- multi.params$beta[draws,4,1] ## intercept for vacant to crem
-params$multi_betavl <- multi.params$beta[draws,4,2] ## intercept for vacant to liom
-params$multi_betav <- multi.params$beta[draws,5,4] ## Size specific vacant slope
+params$multi_betavv <- multi.params$beta[draws,4,4] 
+params$multi_betavo <- multi.params$beta[draws,4,3]
+params$multi_betavc <- multi.params$beta[draws,4,1] 
+params$multi_betavl <- multi.params$beta[draws,4,2]
+params$multi_betav <- multi.params$beta[draws,5,4]
 # Prev Other
 params$multi_betaov <- multi.params$beta[draws,3,4]
 params$multi_betaoo <- multi.params$beta[draws,3,3]
@@ -189,7 +182,7 @@ params$multi_betalc <- multi.params$beta[draws,2,1]
 params$multi_betall <- multi.params$beta[draws,2,2]
 params$multi_betal <- multi.params$beta[draws,5,2]
 
-# Random effects for transition year --------------------------------------
+# Random effects for transition year -------------------------------------- ##
 ## We are only using transition years that are complete for all vital rates
 ## Growth, survival and viability are ant-specific
 ## consecutively since 2004, there are 20 transition years through 2024 but not all years have data
@@ -323,45 +316,14 @@ dim(grow_rfx);dim(surv_rfx);dim(viab_rfx);dim(repro_rfx);dim(flow_rfx)
 ## remove all the big lists
 rm(multi.params);rm(viab.params);rm(surv.params);rm(repro.params);rm(grow.params);rm(flow.params)
 
-#########################################################################################################
-##            This will be an IPM which allows you to choose how many ants are present
-#########################################################################################################
-#setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography/IPM Code")
-## ----------- Miscellany...we'll need an inverse logit functions ------------- ##
-invlogit<-function(x){exp(x)/(1+exp(x))}
-
-## ----------- Vital rate functions. Parameter indices are hard-coded and must correspond to rows of MCMC matrix ------------- ##
-#########################################################################################################
-## GROWTH FROM SIZE X TO Y. Returns the probability of growth from size x to y based on ant state    ####
-## This model accepts the input of previous size and ant state to determine the probability of being ####
-## y size in the next year.                                                                          ####
-## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
-## will get a vector of probabilities.                                                               ####
-#########################################################################################################
-## Student T Growth Dist GXY function
-# gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
-#   #Transform all values below/above limits in min/max size
-#   xb=pmin(pmax(x,cholla_min),cholla_max)
-#   #Density probability function which uses the parameters that are ant specific
-#   g_crem = dlst(y,mu=(params$grow_beta01) + (params$grow_beta11)*xb + (params$grow_beta21)*xb^2 + grow_rfx1,
-#                 sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#                 df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
-#   g_vac = dlst(y, mu = (params$grow_beta04) + (params$grow_beta14)*xb + (params$grow_beta24)*xb^2 + grow_rfx4,
-#                sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#                df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
-#   g_other = dlst(y, mu = (params$grow_beta03) + (params$grow_beta13)*xb + (params$grow_beta23)*xb^2 + grow_rfx3,
-#                  sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#                  df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
-#   g_liom = dlst(y, mu = (params$grow_beta02) + (params$grow_beta12)*xb + (params$grow_beta22)*xb^2 + grow_rfx2,
-#                 sigma = exp((params$grow_sig0) + (params$grow_sig1)*xb),
-#                 df = exp((params$grow_alp0) + (params$grow_alp1)*xb))
-#   #Return the probability of growing from size x to y
-#   if(i == "crem"){ return(g_crem)}
-#   if(i == "liom"){ return(g_liom)}
-#   if(i == "other"){ return(g_other)}
-#   if(i == "vacant"){ return(g_vac)}
-# }
-
+################################################################################
+## Growth from size x to y.                                             
+################################################################################
+## Returns the probability of growth from size x to y based on ant state   
+## This model accepts the input of previous size and ant state to determine the probability of being 
+## y size in the next year.                                                                          
+## This function is vectorized so if you input a vector for x and y and a single ant species you     
+## will get a vector of probabilities.                   
 ## Skew Growth Dist GXY function
 gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   #Transform all values below/above limits in min/max size
@@ -405,13 +367,14 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
 # g
 # l
 
-#########################################################################################################
-## SURVIVAL AT SIZE X. Returns the probability of survival of a cactus based on size and ant state   ####
-## You input the size of the cactus and ant state and in return you get the probability of surviving ####
-## to the next year.                                                                                 ####
-## This function is vectorized so if you input a vector for x and y and a single ant species you     ####
-## will get a vector of probabilities.                                                               ####
-#########################################################################################################
+################################################################################
+## Survival at size x
+################################################################################
+## Returns the probability of survival of a cactus based on size and ant state  
+## You input the size of the cactus and ant state and in return you get the probability of surviving 
+## to the next year.                                                                                 
+## This function is vectorized so if you input a vector for x and y and a single ant species you     
+## will get a vector of probabilities.      
 sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
@@ -444,9 +407,9 @@ sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
 # 
 # s
 # l
-
-#################################################
-#SURVIVAL*GROWTH. Combine the survival and growth probabilities
+################################################################################
+## Survival and Growth Kernel
+################################################################################
 pxy<-function(x,y,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
   xb=pmin(pmax(x,cholla_min),cholla_max)
@@ -455,25 +418,27 @@ pxy<-function(x,y,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,gro
   return(px)
 }
 
-##Check that it works properly
-i = c("liom","vacant","crem","other")
-x = c(-1,-5,4,3)
-y = c(-1,-4,4,3)
-px <- matrix(NA,ncol = length(i), nrow = (10))
-l <- list()
-for(a in 1:5){ ## year
-for(m in 1:10){ ## iteration
-  for(n in 1:length(i)){ ## input info
-    px[m,n] <- pxy(x[n],y[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-    }
-}
-  l[[a]] <- px
-}
+# ##Check that it works properly
+# i = c("liom","vacant","crem","other")
+# x = c(-1,-5,4,3)
+# y = c(-1,-4,4,3)
+# px <- matrix(NA,ncol = length(i), nrow = (10))
+# l <- list()
+# for(a in 1:5){ ## year
+# for(m in 1:10){ ## iteration
+#   for(n in 1:length(i)){ ## input info
+#     px[m,n] <- pxy(x[n],y[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
+#     }
+# }
+#   l[[a]] <- px
+# }
+# 
+# px
+# l
 
-px
-l
-
-#################################################################
+################################################################################
+## Fecundity 
+################################################################################
 #PRODUCTION OF 1-YO SEEDS IN THE SEED BANK FROM X-SIZED MOMS
 fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4){
   
@@ -514,8 +479,9 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
 # f
 # l
 
-####################################################
-#### Recruitment
+################################################################################
+## Recruitment
+################################################################################
 recruits<-function(y,params){
   yb=pmin(pmax(y,cholla_min),cholla_max)
   dnorm(yb, (params$rec_beta0),(params$rec_sig))
@@ -533,6 +499,8 @@ recruits<-function(y,params){
 # }
 # r
 
+################################################################################
+## Proportion of ants by size - Competitive Exclusion
 ################################################################################
 # FUNCTION TO DETERMINE THE PROPORTION OF ANTS BASED ON SIZE -- used for comp exclusion simulations
 prop.ant <- function(x,scenario,ant_to){
@@ -575,6 +543,8 @@ prop.ant <- function(x,scenario,ant_to){
   if(scenario == "othercremvac" & ant_to == "crem"){return(Lcx)}
   if(scenario == "othercremvac" & ant_to == "other"){return(Lox)}
 }
+################################################################################
+## Transition Functions
 ################################################################################
 # PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME, ANT STATE, SIMULATION
 # SCENARIO, WHEN THERE IS ONLY 1 ANT PRESENT 
@@ -1764,7 +1734,6 @@ transition.3 <- function(x,i,j,params,scenario,simulation){
 # t.mat
 
 
-#########################################################
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
 transition.x <- function(x,i,j,params,scenario,simulation){
   one <- transition.1(x,i,j,params,scenario,simulation)
@@ -1793,21 +1762,19 @@ transition.x <- function(x,i,j,params,scenario,simulation){
 # }
 # t.mat
 
-##################################################################################################
-############################# ONE ANT MATRIX #####################################################
-##################################################################################################
+################################################################################
+## Vacancy Matrix Construction
+################################################################################
 bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
                         viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,x=y){
-  ###################################################################################################
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
   ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
-  ###################################################################################################
   #Applying the midpoint rule
   n<-matsize
   L<-lower - floor
@@ -1864,21 +1831,20 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
 #  }
 # lam # each row is different iteration and each column is a year
 # l
-#################################################################################################
-##################################### One Ant Species and Vacant ################################
-#################################################################################################
+################################################################################
+## One Ant and Vacant Matrix Construction
+################################################################################
 bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
                         viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
-  ###################################################################################################
+
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
   ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
-  ###################################################################################################
   n<-matsize
   L<-lower - floor
   U<-upper + ceiling
@@ -1892,7 +1858,7 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   Tmat <- matrix(0,(2*n+2),(2*n+2))
   ## Full Matricies
   IPMmat <- matrix()
-  ############################################# LIOM ############################################
+  ##------------------------- LIOM --------------------------##
   if(scenario == "liomvac"){
     # Banked seeds go in top row (1 == liom, 2 == vacant)
     Fmat[1,3:(n+2)]<-fx(y,"liom",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
@@ -1934,7 +1900,7 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     evict_v<-matsize-sum(colSums(rbind(LLgrowmat,LVgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, p_v=p_v, evict_v=evict_v, p_l=p_l, evict_l=evict_l))
   }
-  ########################################### CREM ###############################################
+  ##-------------------------- CREM ----------------------------##
   if(scenario == "cremvac"){
     # Banked seeds go in top row (1 == crem, 2 == vacant)
     Fmat[1,3:(n+2)]<-fx(y,"crem",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
@@ -1968,7 +1934,7 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     evict_v<-matsize-sum(colSums(rbind(VCgrowmat,VVgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, y = y))
   }
-  ############################################# OTHER ###########################################
+  ##------------------------------- OTHER --------------------------------##
   if(scenario == "othervac"){
     # Banked seeds go in top row (1 == other, 2 == vacant)
     Fmat[1,3:(n+2)]<-fx(y,"other",params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4)
@@ -2036,22 +2002,21 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
 
 
 
-#################################################################################################
-###################################### THREE ANTS ###############################################
-#################################################################################################
-
+################################################################################
+## Two Ants and Vacant Matrix Construction
+################################################################################
 bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
                         viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
-  ###################################################################################################
+
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
   ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
-  ###################################################################################################
+
   n<-matsize
   L<-lower - floor
   U<-upper + ceiling
@@ -2065,7 +2030,7 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   Tmat <- matrix(0,(3*n+2),(3*n+2))
   ## Full Matricies
   IPMmat <- matrix()
-  ############################################# LIOM & CREM & VAC ###############################################
+  ##------------------------- LIOM & CREM & VAC -----------------------##
   if(scenario == "liomcremvac"){
     ## Fecundity of plants
     Fmat[1,3:(n+2)]<-fx(y,params=params,"crem",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
@@ -2115,7 +2080,7 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     evict_c<-matsize-sum(colSums(rbind(CLgrowmat,CVgrowmat,CCgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_l = evict_l, p_l = p_l, evict_v = evict_v, p_v = p_v,p_c=p_c, evict_c=evict_c,y = y))
   }
-  ############################################ LIOM & OTHER & VAC ###########################################
+  ##--------------------------- LIOM & OTHER & VAC ----------------------------##
   if(scenario == "liomvacother"){
     ## Fecundity of plants
     Fmat[1,3:(n+2)]<-fx(y,params=params,"vacant",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
@@ -2174,7 +2139,7 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     evict_o<-matsize-sum(colSums(rbind(OLgrowmat,OVgrowmat,OOgrowmat))) # Should be as close to 0 as possible
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_l = evict_l, p_l = p_l, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o,y = y))
   }
-  ############################################# CREM & OTHER & VAC ############################################
+  ##----------------------- CREM & OTHER & VAC --------------------------##
   if(scenario == "othercremvac"){
     ## Fecundity of plants
     Fmat[1,3:(n+2)]<-fx(y,params=params,"crem",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
@@ -2254,21 +2219,21 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
 
 
 
-##################################################################################################
-######################################### ALL ANTS PRESENT #######################################
-##################################################################################################
+################################################################################
+## Full Diversity Matrix Construction
+################################################################################
 bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
                         grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                         surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                         flow_rfx=0,repro_rfx=0,
                         viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
-  ###################################################################################################
+
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
   ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
-  ###################################################################################################
+
   n<-matsize
   L<-lower - floor
   U<-upper + ceiling
@@ -2285,7 +2250,7 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   # Graduation to 2-yo seed bank = pr(not germinating as 1-yo)
   #Tmat[2,1]<-1-1
   Tmat[2,1]<-1-invlogit((params$germ1_beta0))
-  ############################################# LIOM & CREM & OTHER & VAC ############################################
+  ##-------------------------- LIOM & CREM & OTHER & VAC --------------------------------##
   ## Fecundity of plants
   Fmat[1,3:(n+2)]<-fx(y,params=params,"crem",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with no ant visitor
   Fmat[1,(n+3):(2*n+2)]<-fx(y,params=params,"liom",flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rfx4) ## Production of seeds from x sized mom with ant visitor
@@ -2381,22 +2346,21 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
 # lam # each row is different iteration and each column is a year
 # l
 
-#################################################################################################
-############################ CHOOSE WHICH SCENARIO (COMBO OF ANTS) ##############################
-#################################################################################################
-
+################################################################################
+## Choose Which Matrix Based on Diversity Scenario
+################################################################################
 bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
                     grow_rfx1=0,grow_rfx2=0,grow_rfx3=0,grow_rfx4=0,
                     surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
                     flow_rfx=0,repro_rfx=0,
                     viab_rfx1=0,viab_rfx2=0,viab_rfx3=0,viab_rfx4=0,simulation){
-  ###################################################################################################
+
   ## returns the full IPM kernel (to be used in stochastic simulation), the F and T kernels, and meshpoints in the units of size
   ## params,yrfx,plotfx, and mwye get passed to the vital rate functions
   ## f.eps is fertility overdispersion. defaults to zero (see lambda.fun())
   ## lower and upper are the integration limits
   ## matsize is the dimension of the approximating matrix (it gets an additional 2 rows and columns for the seed banks)
-  ###################################################################################################
+
   ## Scenario options are "liomvacother", "liomcremvac", "othercremvac",
   ## "othervac", "liomvac", "cremvac", "all", "none"
   
@@ -2492,13 +2456,15 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
 # l
 
 
-#########################################################################################################
-# lambdaS Simulations for different Years Rands #########################################################
-# m indicates the number of iterations from MCMC chains #################################################
-# n indicates the diversity scenario ####################################################################
-# For every iteration included there should be a single lambda value estimated ##########################
-# For every diversity scenario analyzed there should be a posterior distribution of lambdas estimated ###
-#########################################################################################################
+################################################################################
+## Stochastic Model
+################################################################################
+# lambdaS Simulations for different Years Rands 
+# m indicates the number of iterations from MCMC chains 
+# n indicates the diversity scenario 
+# For every iteration included there should be a single lambda value estimated 
+# For every diversity scenario analyzed there should be a posterior distribution of lambdas estimated 
+
 lambdaSim=function(params,                                  ## parameters
                    grow_rfx1,grow_rfx2,
                    grow_rfx3,grow_rfx4,

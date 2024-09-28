@@ -20,8 +20,7 @@ acol <- "#5d906b"
 cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
 
 ################################################################################
-#### Get Deterministic Estimates of Lambda for each ant scenario for each 
-#### ant colonizing scenario
+#### Get Deterministic Estimates of Lambda for each ant scenario for each ant colonizing scenario
 ################################################################################
 ####### Set up parameters for all models
 # Pull out the mean matrix
@@ -36,80 +35,83 @@ x_vals <- c(1,3,5,7,9,11,13,15)
 #### check the extension values
 lower.extension<-4
 upper.extension<-0.5
-# vacant_mat<-bigmatrix(params = params_mean,
-#                       scenario = "none",
-#                       lower = cholla_min,
-#                       upper = cholla_max,
-#                       floor = lower.extension,
-#                       ceiling = upper.extension,
-#                       matsize = matsize)
-# full_mat<-bigmatrix(params = params_mean,
-#                     scenario = "all",
-#                     lower = cholla_min,
-#                     upper = cholla_max,
-#                     floor = lower.extension,
-#                     ceiling = upper.extension,
-#                     matsize = matsize)
-# par(mfrow=c(1,2))
-# plot(vacant_mat$y,vacant_mat$p,col=vaccol,ylim=c(0.75,1.05))
-# plot(full_mat$y,full_mat$p_v,col=vaccol,ylim=c(0.75,1.05))
-# points(full_mat$y,full_mat$p_l,col=liomcol)
-# points(full_mat$y,full_mat$p_o,col=othercol)
-# points(full_mat$y,full_mat$p_c,col=cremcol)
+vacant_mat<-bigmatrix(params = params_mean,
+                      scenario = "none",
+                      lower = cholla_min,
+                      upper = cholla_max,
+                      floor = lower.extension,
+                      ceiling = upper.extension,
+                      matsize = matsize)
+full_mat<-bigmatrix(params = params_mean,
+                    scenario = "all",
+                    lower = cholla_min,
+                    upper = cholla_max,
+                    floor = lower.extension,
+                    ceiling = upper.extension,
+                    matsize = matsize)
+par(mfrow=c(1,2))
+plot(vacant_mat$y,vacant_mat$p,col=vaccol,ylim=c(0.75,1.05))
+plot(full_mat$y,full_mat$p_v,col=vaccol,ylim=c(0.75,1.05))
+points(full_mat$y,full_mat$p_l,col=liomcol)
+points(full_mat$y,full_mat$p_o,col=othercol)
+points(full_mat$y,full_mat$p_c,col=cremcol)
+## They look good
 
 ## find the right matrix dimension
 dims<-c(10,25,50,100,150,200,250,300)
-# vacant_lam<-full_lam<-c()
-# for(i in 1:length(dims)){
-#   vacant_lam[i]<-lambda(bigmatrix(params = params_mean,
-#                         scenario = "none",
-#                         lower = cholla_min,
-#                         upper = cholla_max,
-#                         floor = lower.extension,
-#                         ceiling = upper.extension,
-#                         matsize = dims[i])$IPMmat)
-#   full_lam[i]<-lambda(bigmatrix(params = params_mean,
-#                       scenario = "all",
-#                       lower = cholla_min,
-#                       upper = cholla_max,
-#                       floor = lower.extension,
-#                       ceiling = upper.extension,
-#                       matsize = dims[i])$IPMmat)
-# }
-# plot(dims,full_lam)
-# points(dims,vacant_lam,col="red")
+vacant_lam<-full_lam<-c()
+for(i in 1:length(dims)){
+  vacant_lam[i]<-lambda(bigmatrix(params = params_mean,
+                        scenario = "none",
+                        lower = cholla_min,
+                        upper = cholla_max,
+                        floor = lower.extension,
+                        ceiling = upper.extension,
+                        matsize = dims[i])$IPMmat)
+  full_lam[i]<-lambda(bigmatrix(params = params_mean,
+                      scenario = "all",
+                      lower = cholla_min,
+                      upper = cholla_max,
+                      floor = lower.extension,
+                      ceiling = upper.extension,
+                      matsize = dims[i])$IPMmat)
+}
+plot(dims,full_lam)
+points(dims,vacant_lam,col="red")
+## 150 is sufficient
 matsize<-150
 
 ## look at stable size and ant structure
-# vacant_mat<-bigmatrix(params = params_mean,
-#                       scenario = "none",
-#                       lower = cholla_min,
-#                       upper = cholla_max,
-#                       floor = lower.extension,
-#                       ceiling = upper.extension,
-#                       matsize = matsize)
-# full_mat<-bigmatrix(params = params_mean,
-#                     scenario = "all",
-#                     lower = cholla_min,
-#                     upper = cholla_max,
-#                     floor = lower.extension,
-#                     ceiling = upper.extension,
-#                     matsize = matsize)
-# plot(vacant_mat$y,stable.stage(vacant_mat$IPMmat)[3:(matsize+2)])
-# ggplot(cactus)+
-#   geom_histogram(aes(x=logsize_t1))+facet_wrap("Year_t1")
-# 
-# stable_ants<-stable.stage(full_mat$IPMmat)
-# stable_ants<-stable_ants[-(1:2)]/sum(stable_ants[-(1:2)])
-# plot(full_mat$y,stable_ants[1:matsize],type="l",lwd=3,col=cremcol,ylim=c(0,.015))
-# lines(full_mat$y,stable_ants[(matsize+1):(2*matsize)],lwd=3,col=liomcol)
-# lines(full_mat$y,stable_ants[(2*matsize+1):(3*matsize)],lwd=3,col=othercol)
-# lines(full_mat$y,stable_ants[(3*matsize+1):(4*matsize)],lwd=3,col=vaccol)
-# 
-# sum(stable_ants[1:matsize])
-# sum(stable_ants[(matsize+1):(2*matsize)])
-# sum(stable_ants[(2*matsize+1):(3*matsize)])
-# sum(stable_ants[(3*matsize+1):(4*matsize)])
+vacant_mat<-bigmatrix(params = params_mean,
+                      scenario = "none",
+                      lower = cholla_min,
+                      upper = cholla_max,
+                      floor = lower.extension,
+                      ceiling = upper.extension,
+                      matsize = matsize)
+full_mat<-bigmatrix(params = params_mean,
+                    scenario = "all",
+                    lower = cholla_min,
+                    upper = cholla_max,
+                    floor = lower.extension,
+                    ceiling = upper.extension,
+                    matsize = matsize)
+plot(vacant_mat$y,stable.stage(vacant_mat$IPMmat)[3:(matsize+2)])
+ggplot(cactus)+
+  geom_histogram(aes(x=logsize_t1))+facet_wrap("Year_t1")
+
+stable_ants<-stable.stage(full_mat$IPMmat)
+stable_ants<-stable_ants[-(1:2)]/sum(stable_ants[-(1:2)])
+plot(full_mat$y,stable_ants[1:matsize],type="l",lwd=3,col=cremcol,ylim=c(0,.015))
+lines(full_mat$y,stable_ants[(matsize+1):(2*matsize)],lwd=3,col=liomcol)
+lines(full_mat$y,stable_ants[(2*matsize+1):(3*matsize)],lwd=3,col=othercol)
+lines(full_mat$y,stable_ants[(3*matsize+1):(4*matsize)],lwd=3,col=vaccol)
+
+sum(stable_ants[1:matsize])
+sum(stable_ants[(matsize+1):(2*matsize)])
+sum(stable_ants[(2*matsize+1):(3*matsize)])
+sum(stable_ants[(3*matsize+1):(4*matsize)])
+# looks good
 
 cactus %>% 
   select(Year_t,ant_t) %>% drop_na() %>% 
@@ -201,191 +203,6 @@ text(x = c(1,3,5,7,9,11,13,15)-0.2, y = lambdaS_sync[3,]+0.002,cex = 2, labels =
 legend("bottomright",legend=c("synchronized","non-synchronized"),pch=c(1,19),cex=1.5)
 dev.off()
 
-#######################################################################
-#### Run the models for all ant combinations and simulations with 100
-#### iterations of posterior data
-
-# outputs: a list where each element is corresponding to a simulation
-# and each element is a matrix of n rows and m columns. N is the 
-# number of included iterations and m is the number of ant scenarios
-
-lambda_list <- lambda_sync_list <- list()
-lambdaS_full <- lambdaS_sync_full <- matrix(NA, nrow = iter, ncol = length(scenario))
-for(i in 1:length(sims)){ # each model simulation (comp, equal, freq)
-  for(m in 1:length(scenario)){ # each ant combination
-    for(n in 1:iter){ # each iteration
-      lambdaS_full[n,m] <- lambdaSim(params = params[n,],
-                                scenario = scenario[m],
-                                lower = cholla_min, upper = cholla_max, 
-                                floor = lower.extension, ceiling = upper.extension, 
-                                matsize = matsize,
-                                grow_rfx1=(grow_rfx1[n,]),grow_rfx2=(grow_rfx2[n,]),
-                                grow_rfx3=(grow_rfx3[n,]),grow_rfx4=(grow_rfx4[n,]),
-                                surv_rfx1=(surv_rfx1[n,]),surv_rfx2=(surv_rfx2[n,]),
-                                surv_rfx3=(surv_rfx3[n,]),surv_rfx4=(surv_rfx4[n,]),
-                                flow_rfx=(flow_rfx[n,]),
-                                repro_rfx= (repro_rfx[n,]),
-                                viab_rfx1=(viab_rfx1[n,]),viab_rfx2=(viab_rfx2[n,]),
-                                viab_rfx3=(viab_rfx3[n,]),viab_rfx4=(viab_rfx4[n,]),
-                                trans_years=year_seq[1:500],simulation = sims[i])
-      lambdaS_sync_full[n,m] <- lambdaSim(params = params[n,],
-                                scenario = scenario[m],
-                                lower = cholla_min, upper = cholla_max, 
-                                floor = lower.extension, ceiling = upper.extension, 
-                                matsize = matsize,
-                                grow_rfx1=(grow_rfx[n,]),grow_rfx2=(grow_rfx[n,]),
-                                grow_rfx3=(grow_rfx[n,]),grow_rfx4=(grow_rfx[n,]),
-                                surv_rfx1=(surv_rfx[n,]),surv_rfx2=(surv_rfx[n,]),
-                                surv_rfx3=(surv_rfx[n,]),surv_rfx4=(surv_rfx[n,]),
-                                flow_rfx=(flow_rfx[n,]),
-                                repro_rfx= (repro_rfx[n,]),
-                                viab_rfx1=(viab_rfx[n,]),viab_rfx2=(viab_rfx[n,]),
-                                viab_rfx3=(viab_rfx[n,]),viab_rfx4=(viab_rfx[n,]),
-                                trans_years=year_seq[1:500], simulation = sims[i])
-     
-    } # end of iteration
-    print(scenario[m])
-  } # end ant combos
-  lambda_list[[i]] <- lambdaS_full
-  lambda_sync_list[[i]] <- lambdaS_sync_full
-} # end simulations
-
-lambda_list
-lambda_sync_list
-# Pull out the non-synchronous values
-write.csv(lambda_list[[1]],"lambda_comp.csv")
-write.csv(lambda_list[[2]],"lambda_equal.csv")
-write.csv(lambda_list[[3]],"lambda_freq.csv")
-# pull out synchronous values
-write.csv(lambda_sync_list[[1]],"lambda_sync_comp.csv")
-write.csv(lambda_sync_list[[2]],"lambda_sync_equal.csv")
-write.csv(lambda_sync_list[[3]],"lambda_sync_freq.csv")
-
-#######################################################################
-#### Run the models for all ant combinations and simulations with 100
-#### iterations of posterior data
-
-# outputs: a list where each element is corresponding to a simulation
-# and each element is a matrix of n rows and m columns. N is the 
-# number of included iterations and m is the number of ant scenarios
-
-lambda_list <- lambda_sync_list <- list()
-lambdaS_full <- lambdaS_sync_full <- matrix(NA, nrow = iter, ncol = length(scenario))
-for(i in 1:length(sims)){ # each model simulation (comp, equal, freq)
-  for(m in 1:length(scenario)){ # each ant combination
-    for(n in 1:iter){ # each iteration
-      lambdaS_full[n,m] <- lambdaSim(params = params[n,],
-                                scenario = scenario[m],
-                                lower = cholla_min, upper = cholla_max, 
-                                floor = lower.extension, ceiling = upper.extension, 
-                                matsize = matsize,
-                                grow_rfx1=(grow_rfx1[n,]),grow_rfx2=(grow_rfx2[n,]),
-                                grow_rfx3=(grow_rfx3[n,]),grow_rfx4=(grow_rfx4[n,]),
-                                surv_rfx1=(surv_rfx1[n,]),surv_rfx2=(surv_rfx2[n,]),
-                                surv_rfx3=(surv_rfx3[n,]),surv_rfx4=(surv_rfx4[n,]),
-                                flow_rfx=(flow_rfx[n,]),
-                                repro_rfx= (repro_rfx[n,]),
-                                viab_rfx1=(viab_rfx1[n,]),viab_rfx2=(viab_rfx2[n,]),
-                                viab_rfx3=(viab_rfx3[n,]),viab_rfx4=(viab_rfx4[n,]),
-                                trans_years=year_seq[1:500],simulation = sims[i])
-      lambdaS_sync_full[n,m] <- lambdaSim(params = params[n,],
-                                scenario = scenario[m],
-                                lower = cholla_min, upper = cholla_max, 
-                                floor = lower.extension, ceiling = upper.extension, 
-                                matsize = matsize,
-                                grow_rfx1=(grow_rfx[n,]),grow_rfx2=(grow_rfx[n,]),
-                                grow_rfx3=(grow_rfx[n,]),grow_rfx4=(grow_rfx[n,]),
-                                surv_rfx1=(surv_rfx[n,]),surv_rfx2=(surv_rfx[n,]),
-                                surv_rfx3=(surv_rfx[n,]),surv_rfx4=(surv_rfx[n,]),
-                                flow_rfx=(flow_rfx[n,]),
-                                repro_rfx= (repro_rfx[n,]),
-                                viab_rfx1=(viab_rfx[n,]),viab_rfx2=(viab_rfx[n,]),
-                                viab_rfx3=(viab_rfx[n,]),viab_rfx4=(viab_rfx[n,]),
-                                trans_years=year_seq[1:500], simulation = sims[i])
-     
-    } # end of iteration
-    print(scenario[m])
-  } # end ant combos
-  lambda_list[[i]] <- lambdaS_full
-  lambda_sync_list[[i]] <- lambdaS_sync_full
-} # end simulations
-
-lambda_list
-lambda_sync_list
-
-
-
-## Competitive Exclusion Model Run
-ipm_det_comp <- c()
-for(i in 1:length(scenario)){
-  ipm_det_comp[i] <-  lambda(bigmatrix(params = params_mean,
-                                       scenario = scenario[i],
-                                       lower = cholla_min, # - 5, ## don't use extra extensions here!
-                                       upper = cholla_max, # + 5,
-                                       floor = lower.extension,
-                                       ceiling = upper.extension,
-                                       matsize = matsize)$IPMmat)
-}
-
-png("Manuscript/Figures/comp_det_parammeans.png")
-plot(c(1,3,5,7,9,11,13,15),ipm_det_comp, pch = 19, cex = 3,col = colors_lambdas,
-     xlim = c(0,16), #ylim = c(0.930,0.98),
-     xaxt = "n",cex.lab = 2,
-     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
-text(x = c(1,3,5,7,9,11,13,15)-0.2, y = ipm_det_comp+0.002,cex = 2, labels = scenario_abv)
-dev.off()
-
-## Frequency Based Model Run
-ipm_det_freq <- c()
-for(i in 1:length(scenario)){
-  ipm_det_freq[i] <-  lambda(bigmatrix(params = (params_mean[m,]),
-                                       scenario = scenario[i],
-                                       lower = cholla_min - 5,
-                                       upper = cholla_max + 5,
-                                       floor = floor,
-                                       ceiling = ceiling,
-                                       matsize = matsize,
-                                       mean(0),mean(0),mean(0),mean(0),
-                                       mean(0),mean(0),mean(0),mean(0),
-                                       mean(0),
-                                       mean(0),
-                                       mean(0),mean(0),mean(0),mean(0))$IPMmat)
-}
-lambdas <- ipm_det_freq
-png("Manuscript/Figures/freq_det_parammeans.png")
-plot(c(1,3,5,7,9,11,13,15),lambdas, pch = 19, cex = 3,col = colors_lambdas,
-     xlim = c(0,16), ylim = c(0.930,0.98),
-     xaxt = "n",cex.lab = 2,
-     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
-text(x = c(1,3,5,7,9,11,13,15)-0.2, y = lambdas+0.002,cex = 2, labels = scenario_abv)
-dev.off()
-
-
-## Equal Likelihood Model Run
-ipm_det_equal <- c()
-for(i in 1:length(scenario)){
-  ipm_det_equal[i] <-  lambda(bigmatrix(params = (params_mean[m,]),
-                                        scenario = scenario[i],
-                                        lower = cholla_min - 5,
-                                        upper = cholla_max + 5,
-                                        floor = floor,
-                                        ceiling = ceiling,
-                                        matsize = matsize,
-                                        mean(0),mean(0),mean(0),mean(0),
-                                        mean(0),mean(0),mean(0),mean(0),
-                                        mean(0),
-                                        mean(0),
-                                        mean(0),mean(0),mean(0),mean(0))$IPMmat)
-}
-lambdas <- ipm_det_equal
-png("Manuscript/Figures/equal_det_parammeans.png")
-plot(c(1,3,5,7,9,11,13,15),lambdas, pch = 19, cex = 3,col = colors_lambdas,
-     xlim = c(0,16), ylim = c(0.930,0.98),
-     xaxt = "n",cex.lab = 2,
-     xlab = "Ant Scenario", ylab = "Mean Lambda Value", main = "")
-text(x = c(1,3,5,7,9,11,13,15)-0.2, y = lambdas+0.002,cex = 2, labels = scenario_abv)
-dev.off()
-
 ################################################################################
 #### Determine how many years the stochastic model must run to be stable
 ################################################################################
@@ -446,7 +263,7 @@ for(i in 1:length(scenario)){
                                viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
                                viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),
                                max_yrs = 300   )
-
+  
 }
 ipm_comp_300
 
@@ -520,7 +337,7 @@ lines(x = 1:8, y = ipm_comp_300, col = "green", lwd = 3)
 # lines(x = 1:8, y = ipm_comp_900, col = "purple", lwd = 3)
 # lines(x = 1:8, y = ipm_comp_1000, col = "pink", lwd = 3)
 legend("bottomright", legend = c("deterministic","100 yrs","200 yrs","500 yrs","700 yrs","900 yrs","1000 yrs"
-                                 ), fill = c("red","orange","yellow","green","blue","purple","pink"))
+), fill = c("red","orange","yellow","green","blue","purple","pink"))
 dev.off()
 ## I would say 300 - 500 
 
@@ -564,6 +381,65 @@ for(i in 1:length(scenario)){
   
 }
 ipm_freq_200
+
+################################################################################
+#### IPM Full Runs
+################################################################################
+# outputs: a list where each element is corresponding to a simulation
+# and each element is a matrix of n rows and m columns. N is the 
+# number of included iterations and m is the number of ant scenarios
+
+lambda_list <- lambda_sync_list <- list()
+lambdaS_full <- lambdaS_sync_full <- matrix(NA, nrow = iter, ncol = length(scenario))
+for(i in 1:length(sims)){ # each model simulation (comp, equal, freq)
+  for(m in 1:length(scenario)){ # each ant combination
+    for(n in 1:iter){ # each iteration
+      lambdaS_full[n,m] <- lambdaSim(params = params[n,],
+                                scenario = scenario[m],
+                                lower = cholla_min, upper = cholla_max, 
+                                floor = lower.extension, ceiling = upper.extension, 
+                                matsize = matsize,
+                                grow_rfx1=(grow_rfx1[n,]),grow_rfx2=(grow_rfx2[n,]),
+                                grow_rfx3=(grow_rfx3[n,]),grow_rfx4=(grow_rfx4[n,]),
+                                surv_rfx1=(surv_rfx1[n,]),surv_rfx2=(surv_rfx2[n,]),
+                                surv_rfx3=(surv_rfx3[n,]),surv_rfx4=(surv_rfx4[n,]),
+                                flow_rfx=(flow_rfx[n,]),
+                                repro_rfx= (repro_rfx[n,]),
+                                viab_rfx1=(viab_rfx1[n,]),viab_rfx2=(viab_rfx2[n,]),
+                                viab_rfx3=(viab_rfx3[n,]),viab_rfx4=(viab_rfx4[n,]),
+                                trans_years=year_seq[1:500],simulation = sims[i])
+      lambdaS_sync_full[n,m] <- lambdaSim(params = params[n,],
+                                scenario = scenario[m],
+                                lower = cholla_min, upper = cholla_max, 
+                                floor = lower.extension, ceiling = upper.extension, 
+                                matsize = matsize,
+                                grow_rfx1=(grow_rfx[n,]),grow_rfx2=(grow_rfx[n,]),
+                                grow_rfx3=(grow_rfx[n,]),grow_rfx4=(grow_rfx[n,]),
+                                surv_rfx1=(surv_rfx[n,]),surv_rfx2=(surv_rfx[n,]),
+                                surv_rfx3=(surv_rfx[n,]),surv_rfx4=(surv_rfx[n,]),
+                                flow_rfx=(flow_rfx[n,]),
+                                repro_rfx= (repro_rfx[n,]),
+                                viab_rfx1=(viab_rfx[n,]),viab_rfx2=(viab_rfx[n,]),
+                                viab_rfx3=(viab_rfx[n,]),viab_rfx4=(viab_rfx[n,]),
+                                trans_years=year_seq[1:500], simulation = sims[i])
+     
+    } # end of iteration
+    print(scenario[m])
+  } # end ant combos
+  lambda_list[[i]] <- lambdaS_full
+  lambda_sync_list[[i]] <- lambdaS_sync_full
+} # end simulations
+
+lambda_list
+lambda_sync_list
+# Pull out the non-synchronous values
+write.csv(lambda_list[[1]],"lambda_comp.csv")
+write.csv(lambda_list[[2]],"lambda_equal.csv")
+write.csv(lambda_list[[3]],"lambda_freq.csv")
+# pull out synchronous values
+write.csv(lambda_sync_list[[1]],"lambda_sync_comp.csv")
+write.csv(lambda_sync_list[[2]],"lambda_sync_equal.csv")
+write.csv(lambda_sync_list[[3]],"lambda_sync_freq.csv")
 
 ################################################################################
 #### Check the stable stage distribution of sizes
@@ -873,107 +749,3 @@ dev.off()
 
 
 
-################################################################################
-##                                   STOCHASTIC POST IPM
-##                       Calculate the lambda posterior distributions       
-################################################################################
-################################################################################
-#### Calculate the lambda posterior distributions with stochasticity
-# Set the order or the scenarios
-scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-max_scenario = length(scenario)
-# Choose the number of parameter iterations 
-max_rep = 100 ## Posterior Draws from vital rate models
-# Choose the number of years for stochasticity
-max_yrs = 100 ## Years of randomly sampled annual effects
-# Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
-# Rows correspond to parameter iterations
-# Columns correspond to partner scenarios
-lams_stoch <- matrix(nrow = max_rep, ncol = max_scenario)
-for(n in 1:max_scenario){
-  print(scenario[n])
-  for(m in 1:max_rep){
-  lams_stoch[m,n] <- lambdaSim(params=params[m,],
-                               lower=lower,
-                               upper=upper,
-                               scenario = scenario[n],
-                               floor=25,
-                               ceiling=4,
-                               matsize=500,
-                               grow_rfx1 = grow_rfx1[m,],
-                               grow_rfx2 = grow_rfx2[m,],
-                               grow_rfx3 = grow_rfx3[m,],
-                               grow_rfx4 = grow_rfx4[m,],
-                               surv_rfx1 = surv_rfx1[m,],
-                               surv_rfx2 = surv_rfx2[m,],
-                               surv_rfx3 = surv_rfx3[m,],
-                               surv_rfx4 = surv_rfx4[m,],
-                               flow_rfx = flow_rfx[m,],
-                               repro_rfx = repro_rfx[m,],
-                               viab_rfx1 = viab_rfx1[m,],
-                               viab_rfx2 = viab_rfx2[m,],
-                               viab_rfx3 = viab_rfx3[m,],
-                               viab_rfx4 = viab_rfx4[m,],## viability model year rfx
-                               max_yrs = max_yrs        ## the # years you want to iterate
-                               )
-  }
-}
-# Set the names of each column to the corresponding partner scenario and save the results as a csv
-colnames(lams_stoch) <- scenario
-write.csv(lams_stoch,"stoch_null_comp_lambda.csv")
-
-
-################################################################################
-##                               STOCHASTIC NULL POST IPM
-##                       Calculate the lambda posterior distributions           
-################################################################################
-################################################################################
-#### Calculate the lambda posterior distributions with stochasticity and no possible synchronicity of 
-#### ant effects
-# Set the order or the scenarios
-scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
-max_scenario = length(scenario)
-# Choose the number of parameter iterations 
-max_rep = 50 ## Posterior Draws from vital rate models
-# Choose the number of years for stochasticity
-max_yrs = 100 ## Years of randomly sampled annual effects
-# Create an empty matrix to fill with the lambda estimations using functions defined in IPM_Stochastic_Post.R
-# Rows correspond to parameter iterations
-# Columns correspond to partner scenarios
-lams_stoch_null <- matrix(nrow = max_rep, ncol = max_scenario)
-for(n in 1:max_scenario){
-  print(scenario[n])
-  for(m in 1:max_rep){
-    lams_stoch_null[m,n] <- lambdaSim(params=params[m,],
-                                      lower=lower,
-                                      upper=upper,
-                                      scenario = scenario[n],
-                                      floor=25,
-                                      ceiling=4,
-                                      matsize=500,
-                                      grow_rfx1 = grow_rfx[m,],
-                                      grow_rfx2 = grow_rfx[m,],
-                                      grow_rfx3 = grow_rfx[m,],
-                                      grow_rfx4 = grow_rfx[m,],
-                                      surv_rfx1 = surv_rfx[m,],
-                                      surv_rfx2 = surv_rfx[m,],
-                                      surv_rfx3 = surv_rfx[m,],
-                                      surv_rfx4 = surv_rfx[m,],
-                                      flow_rfx = flow_rfx[m,],
-                                      repro_rfx = repro_rfx[m,],
-                                      viab_rfx1 = viab_rfx[m,],
-                                      viab_rfx2 = viab_rfx[m,],
-                                      viab_rfx3 = viab_rfx[m,],
-                                      viab_rfx4 = viab_rfx[m,],
-                                      max_yrs = max_yrs  )
-  }
-}
-# Set the names of each column to the corresponding partner scenario and save the results as a csv
-colnames(lams_stoch_null) <- scenario
-write.csv(lams_stoch_null,"stoch_null_post_lambda.csv")
-
-
-
-png("Figures/tester.png")
-hist(cactus$logsize_t)
-dev.off()

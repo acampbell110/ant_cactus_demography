@@ -109,24 +109,24 @@ stan_data_grow_skew <- list(N = nrow(growth_data),                              
                             year = as.integer(as.factor(growth_data$Year_t))           ## predictor years
 )
 # Run the growth model with a student t distribution -- fixed effects: previous size and a non linear previous size variable and ant state; random effects: plot and year; size variation is included for both the omega and alpha estimates
- grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
- fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
-                       control = list(adapt_delta=0.99,stepsize=0.1),
-                       iter=5000,cores=3,thin=2,
-                       pars = c("u","w",          # plot and year random effects
-                                "beta0","beta1","beta2", #location coefficients
-                                "d_0","d_size", #scale coefficiences
-                                "a_0","a_size"), #shape coefficients
-                       save_warmup=F)
-# 
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
-bayesplot::mcmc_trace(fit_grow_skew,pars = c("d_0","d_size","a_0","a_size"))
-# 
+#  grow_skew_model <- stan_model("Data Analysis/STAN Models/grow_skew.stan")
+#  fit_grow_skew<-sampling(grow_skew_model,data = stan_data_grow_skew,chains=3,
+#                        control = list(adapt_delta=0.99,stepsize=0.1),
+#                        iter=5000,cores=3,thin=2,
+#                        pars = c("u","w",          # plot and year random effects
+#                                 "beta0","beta1","beta2", #location coefficients
+#                                 "d_0","d_size", #scale coefficiences
+#                                 "a_0","a_size"), #shape coefficients
+#                        save_warmup=F)
+# # 
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("beta2[1]","beta2[2]","beta2[3]","beta2[4]"))
+# bayesplot::mcmc_trace(fit_grow_skew,pars = c("d_0","d_size","a_0","a_size"))
+# # 
 # # ## Save the RDS file which saves all parameters, draws, and other information
-saveRDS(fit_grow_skew, "H:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_grow_skew.rds")
-fit_grow_skew<-readRDS("G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_grow_skew.rds")
+# saveRDS(fit_grow_skew, "H:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_grow_skew.rds")
+# fit_grow_skew<-readRDS("G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_grow_skew.rds")
 # saveRDS(fit_grow_skew, "C:/Users/tm9/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew.rds")
 # saveRDS(fit_grow_skew,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_grow_skew1.rds")
 # saveRDS(fit_grow_skew, "C:/Users/LabUser/Documents/GitHub/ant_cactus_demography/fit_grow_skew.rds")
@@ -175,14 +175,14 @@ stan_data_surv <- list(N = nrow(survival_data),                                 
                        year = as.integer(as.factor(survival_data$Year_t))          ## predictor years
 ) 
 # ## Run the survival model with a bernoulli distribution ---- fixed effects: previous size and ant state; random effects: plot and year
-surv_model <- stan_model("Data Analysis/STAN Models/surv_code.stan")
-fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
-                   control = list(adapt_delta=0.99,stepsize=0.1),
-                   iter=10000,cores=3,thin=2,
-                   pars = c("beta0","beta1","u","w"),   #location coefficients)
-                   save_warmup=F)
-# ##Save the RDS file which saves all parameters, draws, and other information
-saveRDS(fit_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_surv.rds")
+# surv_model <- stan_model("Data Analysis/STAN Models/surv_code.stan")
+# fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
+#                    control = list(adapt_delta=0.99,stepsize=0.1),
+#                    iter=10000,cores=3,thin=2,
+#                    pars = c("beta0","beta1","u","w"),   #location coefficients)
+#                    save_warmup=F)
+# # ##Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_surv.rds")
 # saveRDS(fit_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
 # saveRDS(fit_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
 # surv_model_null <- stan_model("Data Analysis/STAN Models/surv_code_null.stan")
@@ -220,19 +220,19 @@ stan_data_flow_trunc <- list(N = nrow(flower_data),                             
                              year = as.integer(as.factor(flower_data$Year_t))         ## predictor years
 ) 
 # ## Run the flower model with a negative binomial distribution ---- fixed effects: previous size; random effects: plot and year
-flow_model <- stan_model("Data Analysis/STAN Models/flower_trunc_code.stan")
-fit_flow<-sampling(flow_model, data = stan_data_flow_trunc,chains=3,
-                                                control = list(adapt_delta=0.99,stepsize=0.1),
-                                                iter=10000,cores=3,thin=2,
-                                                pars = c("u","w",          # plot and year random effects
-                                                         "beta0","beta1",  #location coefficients
-                                                         "phi"),save_warmup=F)
-# ## Save the RDS file which saves all parameters, draws, and other information
-saveRDS(fit_flow, "fit_flow.rds")
-# saveRDS(fit_flow, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_flow.rds")
-# saveRDS(fit_flow,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_flow.rds")
-bayesplot::mcmc_trace(fit_flow,pars = c("beta0","beta1","phi"))
-
+# flow_model <- stan_model("Data Analysis/STAN Models/flower_trunc_code.stan")
+# fit_flow<-sampling(flow_model, data = stan_data_flow_trunc,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0","beta1",  #location coefficients
+#                                                          "phi"),save_warmup=F)
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_flow, "fit_flow.rds")
+# # saveRDS(fit_flow, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_flow.rds")
+# # saveRDS(fit_flow,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_flow.rds")
+# bayesplot::mcmc_trace(fit_flow,pars = c("beta0","beta1","phi"))
+# 
 
 ################################################################################
 ## Viability Model -- What proportion of fruit are viable? 
@@ -262,19 +262,19 @@ stan_data_viab <- list(N = nrow(viability_data),                                
                        plot = as.integer(as.factor(viability_data$Plot)),          ## predictor plots
                        year = as.integer(as.factor(viability_data$Year_t))         ## predictor years
 ) 
-# ## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
-viab_model <- stan_model("Data Analysis/STAN Models/viab_code.stan")
-fit_viab<-sampling(viab_model, data = stan_data_viab,chains=3,
-                                                control = list(adapt_delta=0.99,stepsize=0.1),
-                                                iter=10000,cores=3,thin=2,
-                                                pars = c("u","w",          # plot and year random effects
-                                                         "beta0"           #location coefficients
-                                                         ),save_warmup=F)
-bayesplot::mcmc_trace(fit_viab,pars = c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
-
-# ## Save the RDS file which saves all parameters, draws, and other information
-saveRDS(fit_viab, "fit_viab.rds")
-# saveRDS(fit_viab, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
+# # ## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
+# viab_model <- stan_model("Data Analysis/STAN Models/viab_code.stan")
+# fit_viab<-sampling(viab_model, data = stan_data_viab,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0"           #location coefficients
+#                                                          ),save_warmup=F)
+# bayesplot::mcmc_trace(fit_viab,pars = c("beta0[1]","beta0[2]","beta0[3]","beta0[4]"))
+# 
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_viab, "fit_viab.rds")
+# # saveRDS(fit_viab, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
 # saveRDS(fit_viab,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_viab.rds")
 # ## Run the Viability model with a binomial distribution but no ant effects on the random effects of years
 # viab_model_null <- stan_model("Data Analysis/STAN Models/viab_code_null.stan")
@@ -310,18 +310,18 @@ stan_data_repro <- list(N = nrow(reproductive_data),                            
                         plot = as.integer(as.factor(reproductive_data$Plot)),          ## predictor plots
                         year = as.integer(as.factor(reproductive_data$Year_t))         ## predictor years
 ) 
-# ## Run the reproductive Model with a bernoulli distribution ---- fixed effects: previous size ; random effects: plot and year
-repro_model <- stan_model("Data Analysis/STAN Models/repro_code.stan")
-fit_repro<-sampling(repro_model, data = stan_data_repro,chains=3,
-                                                control = list(adapt_delta=0.99,stepsize=0.1),
-                                                iter=10000,cores=3,thin=2,
-                                                pars = c("u","w",          # plot and year random effects
-                                                         "beta0","beta1"   #location coefficients
-                                                         ),save_warmup=F)
-# ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_repro, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
-# saveRDS(fit_repro,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
-
+# # ## Run the reproductive Model with a bernoulli distribution ---- fixed effects: previous size ; random effects: plot and year
+# repro_model <- stan_model("Data Analysis/STAN Models/repro_code.stan")
+# fit_repro<-sampling(repro_model, data = stan_data_repro,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=10000,cores=3,thin=2,
+#                                                 pars = c("u","w",          # plot and year random effects
+#                                                          "beta0","beta1"   #location coefficients
+#                                                          ),save_warmup=F)
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# # saveRDS(fit_repro, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
+# # saveRDS(fit_repro,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_repro.rds")
+# 
 
 ################################################################################
 #### Seeds Model -- # Seeds per fruit/flower 
@@ -344,22 +344,22 @@ stan_data_seed <- list(N = nrow(seed_data),                            ## number
                        plant = as.integer(as.factor(seed_data$plant)),     ## ant partners data
                        ant = as.integer(as.factor(seed_data$ant_state)),     ## ant partners data
                        seed = seed_data$seed_count)                    ## number of seeds data
-# ## Run the seeds Model with a negative binomial distribution ---- fixed effects: ant partner ;
-seed_model <- stan_model("Data Analysis/STAN Models/seed_code.stan")
-fit_seed<-sampling(seed_model, data = stan_data_seed,chains=3,
-                                                control = list(adapt_delta=0.99,stepsize=0.1),
-                                                iter=5000,cores=3,thin=2,
-                                                pars = c("beta0","phi"   #location coefficients
-                                                         ),save_warmup=F)
-bayesplot::mcmc_trace(fit_seed,pars = c("beta0[1]","beta0[2]","beta0[3]"))
-# ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_seed, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed.rds")
-# saveRDS(fit_seed,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed.rds")
-saveRDS(fit_seed, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_seed.rds")
-
+# # ## Run the seeds Model with a negative binomial distribution ---- fixed effects: ant partner ;
+# seed_model <- stan_model("Data Analysis/STAN Models/seed_code.stan")
+# fit_seed<-sampling(seed_model, data = stan_data_seed,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=5000,cores=3,thin=2,
+#                                                 pars = c("beta0","phi"   #location coefficients
+#                                                          ),save_warmup=F)
+# bayesplot::mcmc_trace(fit_seed,pars = c("beta0[1]","beta0[2]","beta0[3]"))
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# # saveRDS(fit_seed, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed.rds")
+# # saveRDS(fit_seed,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed.rds")
+# saveRDS(fit_seed, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_seed.rds")
+# 
 
 ################################################################################
-## Seedling Survival Pre Census -- Proportion of seedlings that survive from germination to Census
+## Seedling Survival Pre Census Model -- Proportion of seedlings that survive from germination to Census
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 precensus.dat.orig<-read.csv("Data Analysis/PrecensusSurvival.csv") 
@@ -374,21 +374,21 @@ precensus.dat <- na.omit(precensus.dat)
 ## Create Stan Data
 stan_data_seed_surv <- list(N = nrow(precensus.dat),                                  ## number of observations
                             y = precensus.dat$survive0405)                            ## survival data
-## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-seed_surv_model <- stan_model("Data Analysis/STAN Models/seed_surv_code.stan")
-fit_seed_surv<-sampling(seed_surv_model, data = stan_data_seed_surv,chains=3,
-                                                control = list(adapt_delta=0.99,stepsize=0.1),
-                                                iter=5000,cores=3,thin=2,
-                                                pars = c("beta0"   #location coefficients
-                                                         ),save_warmup=F)
-bayesplot::mcmc_trace(fit_seed_surv,pars = c("beta0"))
-# ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_seed_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
-# saveRDS(fit_seed_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
-saveRDS(fit_seed_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_seed_surv.rds")
+# ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
+# seed_surv_model <- stan_model("Data Analysis/STAN Models/seed_surv_code.stan")
+# fit_seed_surv<-sampling(seed_surv_model, data = stan_data_seed_surv,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=5000,cores=3,thin=2,
+#                                                 pars = c("beta0"   #location coefficients
+#                                                          ),save_warmup=F)
+# bayesplot::mcmc_trace(fit_seed_surv,pars = c("beta0"))
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# # saveRDS(fit_seed_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
+# # saveRDS(fit_seed_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_seed_surv.rds")
+# saveRDS(fit_seed_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_seed_surv.rds")
 
 ################################################################################
-## Germination -- Probability of germinating by the next time step (yr 1&2) 
+## Germination Model -- Probability of germinating by the next time step (yr 1&2) 
 ################################################################################
 germ.dat_orig<-read.csv("Data Analysis/Germination.csv") 
 germ.dat_orig$input04<-germ.dat_orig$Input
@@ -404,23 +404,23 @@ stan_data_germ <- list(N = nrow(germ.dat),
                         y_germ = germ.dat$seedlings,
                         trials = germ.dat$seeds,
                        year=germ.dat$year)
-## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-germ_model <- stan_model("Data Analysis/STAN Models/germ_code.stan")
-fit_germ<-sampling(germ_model, data = stan_data_germ,chains=3,
-                        control = list(adapt_delta=0.99,stepsize=0.1),
-                        iter=5000,cores=3,thin=2,
-                        pars = c("beta0"   #location coefficients
-                        ),save_warmup=F)
-bayesplot::mcmc_trace(fit_germ,pars = c("beta0[1]","beta0[2]"))
-# ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_germ1, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ1.rds")
-# saveRDS(fit_germ1,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ1.rds")
-# saveRDS(fit_germ2, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
-# saveRDS(fit_germ2,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
-saveRDS(fit_germ, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_germ.rds")
+# ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
+# germ_model <- stan_model("Data Analysis/STAN Models/germ_code.stan")
+# fit_germ<-sampling(germ_model, data = stan_data_germ,chains=3,
+#                         control = list(adapt_delta=0.99,stepsize=0.1),
+#                         iter=5000,cores=3,thin=2,
+#                         pars = c("beta0"   #location coefficients
+#                         ),save_warmup=F)
+# bayesplot::mcmc_trace(fit_germ,pars = c("beta0[1]","beta0[2]"))
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# # saveRDS(fit_germ1, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ1.rds")
+# # saveRDS(fit_germ1,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ1.rds")
+# # saveRDS(fit_germ2, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
+# # saveRDS(fit_germ2,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_germ2.rds")
+# saveRDS(fit_germ, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_germ.rds")
 
 ################################################################################
-##.    Fruit Survival Model 
+## Fruit Survival Model -- Proportion of flowers which survive to produce fruits
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
 fruit_data_orig <- read.csv("Data Analysis/FruitSurvival.csv", header = TRUE,stringsAsFactors=T)
@@ -430,22 +430,23 @@ stan_data_fruit <- list(N = nrow(fruit_data),                                   
                        good = fruit_data$Fr.on.grnd.not.chewed,                          ## number of good flowerbuds 
                        tot = fruit_data$Fr.on.plant                      ## number of trials
 ) 
-## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
-fruit_model <- stan_model("Data Analysis/STAN Models/fruit_code.stan")
-fit_fruit<-sampling(fruit_model, data = stan_data_fruit,chains=3,
-                                                control = list(adapt_delta=0.99,stepsize=0.1),
-                                                iter=5000,cores=3,thin=2,
-                                                pars = c("beta0"),save_warmup=F)
-bayesplot::mcmc_trace(fit_fruit,pars = c("beta0"))
-## Save the RDS file which saves all parameters, draws, and other information
-#saveRDS(fit_fruit, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
-#saveRDS(fit_fruit,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
-saveRDS(fit_fruit, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_fruit.rds")
+# ## Run the Viability Modelwith a binomial distribution ---- fixed effects: ant partner ; random effects: plot and year
+# fruit_model <- stan_model("Data Analysis/STAN Models/fruit_code.stan")
+# fit_fruit<-sampling(fruit_model, data = stan_data_fruit,chains=3,
+#                                                 control = list(adapt_delta=0.99,stepsize=0.1),
+#                                                 iter=5000,cores=3,thin=2,
+#                                                 pars = c("beta0"),save_warmup=F)
+# bayesplot::mcmc_trace(fit_fruit,pars = c("beta0"))
+# ## Save the RDS file which saves all parameters, draws, and other information
+# #saveRDS(fit_fruit, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
+# #saveRDS(fit_fruit,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_fruit.rds")
+# saveRDS(fit_fruit, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_fruit.rds")
 
 
 ################################################################################
-#### Recruits -- Size Distribution of  ################################################################################
+## Recruits -- Size Distribution of recruits
 ################################################################################
+
 ## pull out the seedlings from the seed addition plots
 # there is seedling size info in two places:
 #1. the seed addition plots, where seedling size appears in year t
@@ -459,26 +460,27 @@ seedling.dat <- c(recruits$logsize_t1,seed_add$logsize_t)
 stan_data_rec <- list(N = length(seedling.dat),
                       y_rec = (seedling.dat)
 )
-# ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-rec_model <- stan_model("Data Analysis/STAN Models/rec_code.stan")
-fit_rec<-sampling(rec_model, data = stan_data_rec,chains=3,
-                        control = list(adapt_delta=0.99,stepsize=0.1),
-                        iter=5000,cores=3,thin=2,
-                        pars = c("beta0","sigma"   #location coefficients
-                        ),save_warmup=F)
-bayesplot::mcmc_trace(fit_rec,pars = c("beta0","sigma"))
-# ## Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_rec, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_rec.rds")
-# saveRDS(fit_rec,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_rec.rds")
-saveRDS(fit_rec, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_rec.rds")
+# # ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
+# rec_model <- stan_model("Data Analysis/STAN Models/rec_code.stan")
+# fit_rec<-sampling(rec_model, data = stan_data_rec,chains=3,
+#                         control = list(adapt_delta=0.99,stepsize=0.1),
+#                         iter=5000,cores=3,thin=2,
+#                         pars = c("beta0","sigma"   #location coefficients
+#                         ),save_warmup=F)
+# bayesplot::mcmc_trace(fit_rec,pars = c("beta0","sigma"))
+# # ## Save the RDS file which saves all parameters, draws, and other information
+# # saveRDS(fit_rec, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_rec.rds")
+# # saveRDS(fit_rec,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_rec.rds")
+# saveRDS(fit_rec, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_rec.rds")
+# 
 
 
 
-
-##############################################################################
-###### now include ant and size as predictors
-###### Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan
-##############################################################################
+## now include ant and size as predictors
+## Data Analysis/STAN Models/multi_prac_size_ant_Km1.stan
+################################################################################
+## Transition Model -- Probability of each ant state as the next partner
+################################################################################
 cactus_real <- cactus[,c("ant_t","ant_t1","logsize_t","Year_t","Plot")]
 cactus_real <- na.omit(cactus_real)
 cactus_real$ant_t1 <- relevel(cactus_real$ant_t1,ref = "vacant")
@@ -501,32 +503,34 @@ stan_data_multi <- list(K = length(unique(cactus_real$ant_t1)), #number of possi
                        z = model.matrix(~0 + as.factor(Year_t), cactus_real),
                        N_Year = as.integer(length(unique(cactus_real$Year_t)))
 )
-## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
-multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
-fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
-                        control = list(adapt_delta=0.99,stepsize=0.1),
-                        iter=10000,cores=3,thin=3,
-                        pars = c("beta"   #location coefficients
-                        ),save_warmup=F)
-# Save the RDS file which saves all parameters, draws, and other information
-saveRDS(fit_multi, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
-saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
-
-bayesplot::mcmc_trace(fit_multi,pars = c("beta[1,1]","beta[1,2]","beta[1,3]","beta[1,4]"))
-bayesplot::mcmc_trace(fit_multi,pars = c("beta[2,1]","beta[2,2]","beta[2,3]","beta[2,4]"))
-bayesplot::mcmc_trace(fit_multi,pars = c("beta[3,1]","beta[3,2]","beta[3,3]","beta[3,4]"))
-bayesplot::mcmc_trace(fit_multi,pars = c("beta[4,1]","beta[4,2]","beta[4,3]","beta[4,4]"))
-bayesplot::mcmc_trace(fit_multi,pars = c("theta[1,1]","theta[1,2]","theta[1,3]","theta[1,4]"))
-bayesplot::mcmc_trace(fit_multi,pars = c("theta[2,1]","theta[2,2]","theta[2,3]","theta[2,4]"))
-bayesplot::mcmc_trace(fit_multi,pars = c("theta[3,1]","theta[3,2]","theta[3,3]","theta[3,4]"))
-bayesplot::mcmc_trace(fit_multi,pars = c("theta[4,1]","theta[4,2]","theta[4,3]","theta[4,4]"))
-## Calculate global turnover rate
-# transition_rate_tended <- subset(cactus_real, cactus_real$ant_t != "vacant" & cactus_real$ant_t != cactus_real$ant_t1)
-# tt_rate <- nrow(transition_rate_tended)/nrow(cactus_real)
-# transition_rate <- subset(cactus_real, cactus_real$ant_t != cactus_real$ant_t1)
-# t_rate <- nrow(transition_rate)/nrow(cactus_real)
-# return_rate <- subset(cactus_real, cactus_real$ant_t == cactus_real$ant_t1)
-# r_rate <- nrow(return_rate)/nrow(cactus_real)
+# ## Run the precensus plant survival Model with a negative binomial distribution ---- random effects: transect
+# multi_model <- stan_model("Data Analysis/STAN Models/multi_mixed.stan")
+# fit_multi<-sampling(multi_model, data = stan_data_multi,chains=3,
+#                         control = list(adapt_delta=0.99,stepsize=0.1),
+#                         iter=10000,cores=3,thin=3,
+#                         pars = c("beta"   #location coefficients
+#                         ),save_warmup=F)
+# # Save the RDS file which saves all parameters, draws, and other information
+# saveRDS(fit_multi, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
+# saveRDS(fit_multi,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_multi.rds")
+# 
+# bayesplot::mcmc_trace(fit_multi,pars = c("beta[1,1]","beta[1,2]","beta[1,3]","beta[1,4]"))
+# bayesplot::mcmc_trace(fit_multi,pars = c("beta[2,1]","beta[2,2]","beta[2,3]","beta[2,4]"))
+# bayesplot::mcmc_trace(fit_multi,pars = c("beta[3,1]","beta[3,2]","beta[3,3]","beta[3,4]"))
+# bayesplot::mcmc_trace(fit_multi,pars = c("beta[4,1]","beta[4,2]","beta[4,3]","beta[4,4]"))
+# bayesplot::mcmc_trace(fit_multi,pars = c("theta[1,1]","theta[1,2]","theta[1,3]","theta[1,4]"))
+# bayesplot::mcmc_trace(fit_multi,pars = c("theta[2,1]","theta[2,2]","theta[2,3]","theta[2,4]"))
+# bayesplot::mcmc_trace(fit_multi,pars = c("theta[3,1]","theta[3,2]","theta[3,3]","theta[3,4]"))
+# bayesplot::mcmc_trace(fit_multi,pars = c("theta[4,1]","theta[4,2]","theta[4,3]","theta[4,4]"))
+# ## Calculate global turnover rate
+# # transition_rate_tended <- subset(cactus_real, cactus_real$ant_t != "vacant" & cactus_real$ant_t != cactus_real$ant_t1)
+# # tt_rate <- nrow(transition_rate_tended)/nrow(cactus_real)
+# # transition_rate <- subset(cactus_real, cactus_real$ant_t != cactus_real$ant_t1)
+# # t_rate <- nrow(transition_rate)/nrow(cactus_real)
+# # return_rate <- subset(cactus_real, cactus_real$ant_t == cactus_real$ant_t1)
+# # r_rate <- nrow(return_rate)/nrow(cactus_real)
+# 
+# 
 
 
 
