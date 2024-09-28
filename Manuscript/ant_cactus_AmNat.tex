@@ -1,8 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{amsmath}
-\usepackage[sc]{mathpazo} %Like Palatino with extensive math support
+%\usepackage[sc]{mathpazo} %Like Palatino with extensive math support
 \usepackage{fullpage}
-%\usepackage[authoryear,sectionbib,sort]{natbib}
 \usepackage[authoryear]{natbib}
 \linespread{1.7}
 \usepackage[utf8]{inputenc}
@@ -15,6 +14,7 @@
 \usepackage{subfigure}
 \newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}} 
 \newcommand{\ali}[2]{{\color{blue}{#1}}\footnote{\textit{\color{blue}{#2}}}}  
+\usepackage{hyperref}
 
 
 \titleformat{\section}[block]{\Large\bfseries\filcenter}{\thesection}{1em}{}
@@ -74,15 +74,16 @@
 
 	\section*{Abstract}
 % 200 words max
-The diversity of partners in a multi-species mutualism causes varied demographic effects on the population of the focal mutualist which can be explained by several mechanisms: portfolio effect, complementarity, and sampling effect.
+ The diversity of partners in a multi-species mutualism causes varied demographic effects on the population of the focal mutualist which can be explained by several mechanisms: portfolio effect, complementarity, and sampling effect.
 \textit{Cylindropuntia imbracata} (tree cholla) produce extrafloral nectar and various ant partners provide defense from herbivores and seed predators. 
 We used plant demographic censuses to parameterize a series of Bayesian hierarchical generalized linear vital rate models to determine the impacts of different partners on the focal mutualists. 
-We constructed an Integral Projection Model in which we simulate different combinations of ant partners that don’t occur in the wild.
+We constructed an Integral Projection Model in which we simulate different combinations of ant partners that don’t occur in nature.
 The hierarchical models revealed that different ant partners had different impacts on the cholla vital rates. 
 Specifically, \textit{C. opuntiae} tended plants had advantages in both growth and survival when small, and large \textit{L. apiculatum} tended plants had floral viability advantages. 
-The IPM results revealed that scenario which included \textit{L. apiculatum} only resulted in the highest possible fitness for the tree cholla. 
+The IPM results revealed that despite these differences in vital rates, the presence of any ant partner is beneficial, the identity and number of partners do not matter.
 This suggests that there are no benefits of diversity in this system.
 This study highlights that partner diversity does not always increase the benefits a focal mutualist receives.
+
 
 \newpage{}
 \section*{Introduction}
@@ -185,9 +186,7 @@ We recorded the ant species present (or vacancy if no ants present).
 Occurrences of more than one ant species on one plant were rare (less than 5\% of observations), and for the purpose of this analysis we classified the plant as being occupied by the more abundant species. 
 Plots were searched for new recruits each year, and these were added to the census.
 These data allowed us to link each plant's demographic fate (survival, growth, and reproduction) to its state of ant visitation. 
-In total, the data set includes a total of 9,787 observations of 1141 unique individuals across 15 complete transition years (spanning May/June of year $t$ to May/June of year $t+1$). 
-\tom{}{You should cite the data package here. The published package only goes up to 2018, so we should talk about updating that package with you as lead author, which should be easy to do as long as the data are QAQC'd.}
-%These data were used to fit vital rate models (survival, growth, reproduction) as functions of plant size and ant occupancy state. 
+In total, the data set includes a total of 9,787 observations of 1141 unique individuals across 15 complete transition years (spanning May/June of year $t$ to May/June of year $t+1$) \citep{DataCholla}. 
 
 We used additional, smaller data sets from previously published studies to estimate seed and seed bank parameters. 
 Ohm et al. \citeyear{Ohm2014} provide data on the number of seeds per fruit for plants tended by \textit{L. apiculatum}, \textit{C. opuntiae}, or no ants (experimental exclusion), accounting for their effects on pollinator visitation. 
@@ -253,13 +252,7 @@ This function includes inter-annual variability through year-specific intercepts
 \subsection*{Statistical modeling and parameter estimation}
 We parameterized the IPM using a series of generalized linear mixed models in a hierarchical Bayesian framework. 
 Vital rate models included spatial and temporal random effects associated with plot and year variation, respectively (only year variation is used in the IPM), and included plant size (the natural logarithm of volume, $log(cm^3)$; $x,x'$), ant partner state ($a,a'$), or both as fixed-effect predictor variables. 
-%In addition to vital rate models describing plant demographic performance, we also fit a sub-model to predict transitions between ant states conditional on plant size and previous ant state. 
 As in the IPM, our statistical modeling assumed that demographic effects of ant occupancy are limited to survival, growth, and flowerbud viability. 
-
-%Vital rate models for survival, growth, probability of flowering,  take the form of the function:
-%$$ f(\mu) = \beta_0 + \beta_1 x + ... + u + w $$
-%\noindent where $u \sim N(0,\sigma_{yr }^{2})$ is the year random effect with year specific deviates of $\sigma_{yr}$ (which parameterizes the $\tau$ vector), and $w \sim N(0,\sigma_{plot}^{2})$ is the plot random effect with plot specific variance of $\sigma_{plot}$. 
-%Some models deviate from this general model, which will be specified below.
 
 \paragraph{Growth}
 We fit the growth sub-model ($G(x',x,a;\pmb{\tau^G_{a}})$) to data on size in year $t+1$ ($y^G$) using the skewed normal distribution to account for left-skewed size transitions (at some initial sizes, transitions below the expected future size were more common than transitions above it). 
@@ -304,9 +297,7 @@ We fit this model to ant partner data using a multinomial distribution with a lo
 We fit models using Stan run through version 4.0.2 of R \cite{Rcite,Rstancite}. 
 We used vague priors for all parameters. 
 For each model, we obtained three chains of 10,000 iterations, discarding the first 1,500 iterations. 
-%We did not thin the chains, thus all samples were retained following burn-in. 
-\tom{We visually assessed parameter convergence between and within chains (Figures \ref{fig:Surv_post} -- \ref{fig:Pre_Surv_post} b) and assessed overall model fit with posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data (Figures \ref{fig:Surv_post} -- \ref{fig:Pre_Surv_post} a).}{These figures need to be labeled so that it is clear that they are in the Appendix. Am Nat's template should allow you to do this automatically.}\ali{}{They are referencing the figures, do you mean another way? I am not quite sure what this means.}
-%All estimated parameters are available in Table \ref{tab:Params}.
+We visually assessed parameter convergence between and within chains (Appendix \ref{appendix:D}: Figures \ref{fig:Surv_post} -- \ref{fig:Pre_Surv_post} b) and assessed overall model fit with posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data (Appendix \ref{appendix:D}: Figures \ref{fig:Surv_post} -- \ref{fig:Pre_Surv_post} a).
 
 \subsection*{IPM Analysis}
 Analyzing the IPM required that we discretize the continuous IPM kernel into an approximating matrix. 
@@ -335,11 +326,7 @@ Our simulation experiments preserved this basic biology, avoiding tiny ant-occup
 The partner diversity treatment scenarios required additional assumptions about the mechanisms that give rise to observed occupancy patterns. 
 Based on evidence that EFN-bearing cacti are nearly always ant-occupied \citep{Miller2014}, we assume that ant partners competitively exclude one another from EFN-bearing cacti and that competition is zero-sum. 
 This means that, in scenarios that remove species from the partner community, remaining species gain access to plants that the removed species would have tended. 
-In Appendix XX, we present results under an alternative assumption, that ant visitation is limited by factors other than availability of cactus EFN (e.g., nesting sites or off-plant dietary resources), such that when a species is removed from the partner community, the plants it would have occupied remain vacant. 
-
-%\tom{We used this model to estimate probabilities which are counterfactual (such as the probability of being \textit{L. apiculatum} tended or vacant with no other options). 
-%To do this we assumed that the level of vacancy was constant across all states and that whatever ants were present in our simulation would tend the gaps which would otherwise be tended by another ant species. 
-%This assumes that competitive exclusion is the mechanism which determines the ants we see tending cacti, other potential approaches are outlined in Apendix XX.}{I would move this material to the model analysis section.}
+In Appendix \ref{appendix}, we present results under an alternative assumption, that ant visitation is limited by factors other than availability of cactus EFN (e.g., nesting sites or off-plant dietary resources), such that when a species is removed from the partner community, the plants it would have occupied remain vacant. 
 
 \subsubsection*{Temporal stochasticity experiments}
 Under the portfolio effect hypothesis, partner diversity may confer a fitness advantage when the benefits of alternative partners are not perfectly synchronized across temporal environmental variation, yielding an advantage of a diverse ``portfolio'' of partners when the environment fluctuates. 
@@ -348,8 +335,8 @@ We constructed two versions of the stochastic, multi-state IPMs that allowed us 
 The 'non-synchronous' (NS) version included ants effects that varied uniquely across time and the 'synchronous' (S) version included  ant effects that were forced to be the same across species. 
 First, we evaluated the model using empirical estimates for the $\pmb{\tau}_{a}$ vectors that describe ant-specific year deviates. 
 In this scenario, good years and bad years can differ between ant states, according to the empirical parameter estimates. 
-\tom{We also quantified from the fitted random effects how tightly inter-annual variation was correlated between ant states.}{Worth doing!} 
-\tom{Second, we re-fit the ant-dependent vital rates (survival, growth, flowerbud viability) without ant-specific year random effects, thus assuming that plants in all ant states fluctuated synchronously in response to temporal environmental variation. }{I think this is not what you are doing -- you are averaging them.}
+We also quantified from the fitted random effects how tightly inter-annual variation was correlated between ant states.
+Second, we averaged the ant-dependent vital rates (survival, growth, flowerbud viability) across ant-specific year random effects, thus ensuring that plants in all ant states fluctuated synchronously in response to temporal environmental variation. 
 We evaluated a second, ``synchronized'' version of the model that effectively turns off any portfolio effect, holding all else equal. 
 Both scenarios of temporal stochasticity, non-synchronized and synchronized, were run for all eight ant partner scenarios described above. 
 
@@ -372,19 +359,20 @@ We apply similar logic to other contrasts described above.
 
  
 \section*{Results}
-\tom{}{All throughout the results section, your assertions are not sufficiently supported with evidence. This will be an important thing to improve, and it should not be hard to do.}
 \subsection*{What are the demographic effects of association with alternative parnters and how do these effects fluctuate across years?}
-\tom{}{For growth, I suggest using one of my figure options, v1 or v2. Also, why do all of the vital rate and turnover figures have different x axis ranges? They should all show the entire size distribution.}
 Over the 20-year data set, we found that ant partners influenced demographic performance of cactus hosts, and different ant partners had contrasting demographic effects across host vital rates. 
-\tom{Plants tended by \textit{C. opuntiae} had a growth advantage, particularly for small plants, while plants in states of \textit{L. apiculatum}, Other ants, and vacancy had indistinguishable growth trajectories (Figure \ref{fig:Grow}).}{You cannot actually see this in the figure.}
+Plants tended by \textit{C. opuntiae} had a growth advantage, particularly for small plants, while plants in states of \textit{L. apiculatum}, Other ants, and vacancy had indistinguishable growth trajectories (Figure \ref{fig:Grow}).
 For all ant states, growth was left-skewed, with transitions to sizes below the mean were more common than sizes above the mean. 
-Similarly, ant visitation enhanced cactus survival, and ant partner identity had \tom{a significant impact}{What is the basis for this being ``significant''?} on survival for smaller plants (Figure \ref{fig:Surv}).
+Similarly, for plants which were large enough to have ant visitors (larger than $0.8$ $log(cm^3)$), visitation enhanced cactus survival (Figure \ref{fig:Surv}).
+Plants that were smaller than $-2$ $log(cm^3)$ (indicated by the dashed lines for ant estimates, Figure \ref{fig:Surv}) were estimated to experience survival boosts from vacancy.
+Due to the assumptions in our models based on real ant presence data, tended plants of the size where vacancy would offer a boost are never seen and therefore do not influence the fitness estimates of cacti. \ali{}{I'm not 100\% certain on how to discuss this. I know that this still shows that crem offer a survival advantage, but I see that it could look like vacancy offers survival advantages. }
+The smallest plants showed evidence that vacancy resulted in the highest survival rates, however these plants are never tended, meaning the models of ant-tended cacti survival before the solid lines are extrapolation.
 Mean survival rates ranged from 7.7\% to 99.9\%, with the smallest plants the most vulnerable to mortality. 
-\textit{C. opuntiae}-occupied plants had a survival advantage over other ant states, particularly at smaller sizes, consistent with the positive effects on growth. 
+\textit{C. opuntiae}-occupied plants had a survival advantage over other ant-tended plants, particularly at smaller sizes, consistent with the positive effects on growth. 
 At larger sizes, plants in any state of ant occupancy had a survival advantage over vacant plants. 
 
 \begin{figure}
-	\includegraphics[width = 0.95\linewidth]{Figures/grow_contour.png}
+	\includegraphics[width = 0.95\linewidth]{Figures/grow_contour_v2.png}
 	\caption{This figure shows the next predicted size of cholla based on previous size with each individual ant partner. The solid colored lines (seen in all panels) are the next mean predicted size of cholla. The points (seen in panels a-d) are the observed data which informs these estimates. The black countour lines (seen in a-d) appear at 5\% increments showing where 5\%, 10\%, etc. of the data is expected to fall. They grey dashed line (in panel e only) shows the line where the next predicted size is the same as the previous (aka there is no growth on this line and below this line is shrinkage). }
 	\label{fig:Grow}
 \end{figure}
@@ -395,10 +383,9 @@ At larger sizes, plants in any state of ant occupancy had a survival advantage o
 \label{fig:Surv}
 \end{figure}
 
-We found evidence that ant visitation leads to increased floral viability rates and that ant identity can influence the strength of viability benefits.
+We found evidence that ant visitation by \textit{L. apiculatum} ants leads to increased floral viability rates and that ant identity can influence the strength of viability benefits.
 We observed mean viability rates of flowers between 40\% and 92\% (Figure \ref{fig:viab}).
-Ant partners influence the mean viability rate of flowers, with \textit{L. apiculatum}-tended plants experiencing the highest mean viability rate (86\%, Figure \ref{fig:Viab}b), followed by vacant and Other tended plants (at 60-61\%, Figure \ref{fig:Viab}b,c), \tom{and \textit{C. opuntiae} tended plants had the lowest floral viability rate (57\%, Figure \ref{fig:Viab}d).}{This contradicts the first sentence of the paragraph. This figure legend needs to be updated.}
-\tom{Plants tended by \textit{L. apiculatum} had floral viability advantages, while plants in states of \textit{C. opuntiae}, Other ants, and vacancy had very similar floral viability rates. }{This sentence is restating the previous one.}
+Ant partners influence the mean viability rate of flowers, with \textit{L. apiculatum}-tended plants experiencing the highest mean viability rate (86\%), followed by vacant and Other tended plants (at 60-61\%), and \textit{C. opuntiae} tended plants had the lowest floral viability rate (57\%).
 
 
 \begin{figure}[H]
@@ -408,12 +395,14 @@ Ant partners influence the mean viability rate of flowers, with \textit{L. apicu
 \end{figure}
 
 We analyzed all other vital rates mentioned in the methods as well.
-The results of each of these as well as the posterior predictive checks are all included in the Apendix A (Figures \ref{app:AppA_Seeds_Per_Fruit} -- \ref{app:AppA_Pre_Census_Surv}).
+The results of each of these as well as the posterior predictive checks are all included in the Apendix \ref{appendix:A} : Figures \ref{app:AppA_Seeds_Per_Fruit} -- \ref{app:AppA_Pre_Census_Surv}.
 
-We analyzed the \tom{correlation coefficients}{You are not actually providing any correlation coefficients.} of all models which included ant state as a predictor and found that the annually varying effects of each ant on survival were the least correlated, and that the effects on growth were the most correlated. 
-\tom{Low correlation indicates synchronicity}{This is not correct.}, which is necessary for portfolio effect to occur because a central thesis of this effect is that partners must react differently to temporal environmental stochasticity.
-Across growth, survival, and viability models, the annually varying random effects of Other ants were the most asynchronous (the least correlated with the effects of other partners), while vacant random effects were the most synchronous. 
-This variety of synchronicity across ant states and vital rates indicates there is potential for portfolio effect as many of the ants effects revealed \tom{low synchronicity}{You have not actualy quantified what you mean by low synchronicity.}, particularly in the survival model. 
+We analyzed the correlation coefficients of all models which included ant state as a predictor and found that the annually varying effects of each ant on growth were the most correlated (correlation coefficients averaged 0.63), and that the effects on survival were the least correlated (correlation coefficients averaged 0.36). 
+High correlation indicates synchronicity, which is necessary for portfolio effect to occur because a central thesis of this effect is that partners must react differently to temporal environmental stochasticity.
+For the growth model, annually varying randomn effects of Other ants were the least synchronous (correlation coefficients ranging from 0.28 to 0.39) while the effects of vacancy were the most synchronous (correlation coefficients ranging from 0.39 to 0.81).
+For the viability model, annually varying random effects of \textit{L. apiculatum} ants were the least synchronous (correlation coefficients ranging from 0.06 to 0.44) while the effects of vacancy were the most synchronous (correlation coefficients ranging from 0.44 to 0.62).
+For the survival model, annually varying random effects of \textit{C. opuntiae} ants were the least synchronous (correlation coefficients ranging from 0 to 0.15) while the effects of vacancy were the most synchronous (correlation coefficients ranging from 0.13 to 2.6).
+This variety of synchronicity across ant states and vital rates indicates there is potential for portfolio effect as many of the ants effects revealed low synchronicity (low correlation of annual effects, indicating that ant identity impacts annual random effects), particularly in the survival model. 
 
 
 \begin{figure}[H]
@@ -424,7 +413,7 @@ This variety of synchronicity across ant states and vital rates indicates there 
 \ali{}{Honestly not sure if I should include an image for this one or just report some values? We should discuss. }
 
 \subsection*{What are the frequency and direction of partner turnover across the plant life cycle?}
-\tom{We found that 40\% of plants experienced an ant state transition on average}{I am not sure what exactly this is quantifying -- 40\% of individuals in the long-term data had at least one ant transition, is that right? I would have expected higher.}, with very distinct size-dependence and directional patterns (Figure \ref{fig:Ant_Transition}). 
+We found that 55\% of individual plants surveyed in the long-term data experienced at least one ant state transition on average, with very distinct size-dependence and directional patterns (Figure \ref{fig:Ant_Transition}). 
 Vacancy is the most likely ant state of small plants ($\leq 10 log(cm^3)$).
 Even when small plants are ant-tended at the start of the transition year, they are most likely to transition back to vacancy (Figure \ref{fig:Ant_Transition}b-d). 
 The probability of becoming ant-tended increases with size, though it is not equally likely to be tended by all partners. 
@@ -443,25 +432,29 @@ This suggests a competitive hierarchy whereby \textit{L. apiculatum} may abandon
 By integrating vital rate results and ant transition dynamics into the multi-state IPM we can evaluate the fitness implications of different scenarios of partner diversity and identity. 
 First, there was strong evidence that ant visitation had mutualistic fitness effects on plant partners. 
 The lowest mean fitness was $\lambda_{NS,Vacant}$, the fitness of the cholla with no partners (Figure \ref{fig:LambdaMeans}b).
-Across all 1+ partner scenarios, \tom{we are 100\% confident}{I know what you are saying here but it would be better to rephrase this in the language of the contrasts described in the methods.} that any scenario of ant visitation elevates fitness. 
-Furthermore, we find no benefits of patner diversity here, with the fitness of the cholla with 1, 2, and 3 partners roughly equivalent (Figure \tom{\ref{fig:LambdaMeans}).}{All multi-panel figures should be labeled with letters, and they should be referenced specifically. Here you are actually referencing the third panel, not the whole figure. I suggest re-ordering to make this panel first, since you describe it first. I also thought we decided to use the uncertainty version of this figure.}
+Across all 1+ partner scenarios, we found that the posterior $\lambda_{NS,Occupied}$ distributions were greater than $\lambda_{NS,Vacant}$ distributions 100\% of the time.
+This indicates that ant visitation elevates fitness no matter the identity or number of partners.
+Furthermore, we find no benefits of patner diversity here, with the fitness of the cholla with 1, 2, and 3 partners roughly equivalent (Figure \ref{fig:LambdaMeans} a).
+From the means alonet appears that there is a reduction in fitness when all ants are present compared to 1 or 2 partners.
+The contrasts of $\lambda_{NS}$ posterior distributions of 0 - 2 partner diversity scenarios to full diversity show that the overlap ranges from 58\% - 100\%, indicating high similarity between thr full partner diversity scenario and others.
+This is highlighted in Figure \ref{fig:LambdaMeans} panel b.
 
 \begin{figure}
-	\includegraphics[width=0.91\linewidth]{Figures/Lambdas_Comp_Full.png}
-	\caption{Panel a) shows the mean values of the estimated $\lambda_{NS}$ (filled in circles) and $\lambda_{S}$ (empty circles with an X) for each simulated combination of ant partners. The letters above the points correspond to what ant partners are present (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other). Panel b) shows the mean values of the estimated $\lambda_{NS}$ for }
+	\includegraphics[width=0.91\linewidth]{Figures/Lambdas_Comp_lines.png}
+	\caption{Panel a) shows the mean estimated $\lambda_{NS}$ and $\lambda_{S}$ for different numbers of partners (0-3) for the synchronous IPM (black circle) and the non-synchronous IPM (red diamond). Panels b-c) shows the mean estimated $\lambda_{NS}$ and $\lambda_{S}$ respectively, for each simulated combination of ant partner as the filled in circles. The lines show the posterior distribution spread of estimated $\lambda$ values. The letters in the legend correspond to what ant partners are present (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other). }
 	\label{fig:LambdaMeans}
 \end{figure}
 
-\tom{We found that there was little benefit of any specific partner over another.
-The identity and number of partners does not appear to significantly affect the fitness of the cacti. 
-This indicates that while each of these partners are beneficial, there does not appear to be a significant benefit of partner diversity within this system.}{You are not referencing any figures or providing any results in the text, so there is nothing backing up your assertions here. The methods does a nice job of describing the contrasts that are the focus of the analysis but you do not ever provide those results here. You never address the apparent reduction in fitness at the full partner scenario.} 
+We found that the difference in posterior distributions of any ant scenario ($\lambda_{NS,A} - \lambda_{NS,B}$, where A and B are arbitrary ant diversity scenarios that are not vacancy) were between 31\% and 83\% different.
+The posterior distributions of $\lambda$ for each diversity scenario are visualized in Figure \ref{fig:LambdaMeans} b.
+This high level of overlap between posterior distributions indicates that while each of these partners are beneficial, there does not appear to be a significant benefit of partner diversity within this system.
 
 The lack of diversity benefits are not driven by the high overall frequency of \textit{L. apiculatum}. 
 Using the simulations where all ants had equal frequencies across sizes (further explained and analyzed in Appendix C), we found the same fitness patterns as in the competitive exclusion model described above.
 Equal probability for transitioning into any ant state meant that the numbers of \textit{C. opuntiae} and Other ants were boosted significantly.
 Despite this, the fitness of scenarios including these less frequent ants were not increased meaningfully.
 
-We found no evidence of portfolio effect, meaning the presence of \tom{multiple partners did not buffer against the potentially negative effects of annual fluctuations}{The portfoilio effect is not about buffering negative effects of fluctuations.}.
+We found no evidence of portfolio effect.
 The effect of all ant partners can be measured as $\lambda_{All} - \lambda_{Vacant}$ (Figure \ref{fig:Portfolio}).
 We are are 98\% confident that when all ants are present the cholla experience higher fitness than when no ants are present according to both the synchronized (S) and non-synchronized (NS) model scenarios. 
 When subtracting these two resulting vectors from each other (($\lambda_{NS,All} - \lambda_{NS,Vacant}$) - ($\lambda_{S,All} - \lambda_{S,Vacant}$)), we found that there is no real difference between the two scenarios, meaning we have no evidence of portfolio effect.
@@ -478,19 +471,19 @@ When subtracting these two resulting vectors from each other (($\lambda_{NS,All}
 % mini abstract paragraph
 Mutualisms commonly involve multiple partners but the ecological consequences of partner diversity remain poorly understood. 
 Here we show that while alternative partners may be ecologically different, their fitness effects on a shared mutualist can be effectively equivalent and interchangeable.
-The results of our heirarchical models revealed that different ant partners had different effects on vital rates, with \textit{C. opuniae} tended plants \tom{experiencing advantages in growth}{I don't think this is true if you look at my v1 figure.} and survival when small, and \textit{L. apiculatum}-tended plants experiencing floral viability advantages.
+The results of our heirarchical models revealed that different ant partners had different effects on vital rates, with \textit{C. opuniae} tended plants \tom{experiencing slight advantages in growth}{I don't think this is true if you look at my v1 figure.} and survival when small, and \textit{L. apiculatum}-tended plants experiencing floral viability advantages.
 The results of our synchronous and non-synchronous stochastic IPM revealed that all diversity scenarios which included any partners resulted in the highest possible fitness for tree cholla, suggesting that while ant visitation is beneficial, partner identity and diversity are inconsequential in this system. 
 These results highlight that partners can differ meaningfully while still resulting in the same fitness benefits for a focal mutualist.
 
 % Connect to broader patterns in the lit
-\tom{Previous studies have reported complementarity \citep{Palmer2010,Rezende2007,Hooper2005,Cardinale2007,Afkhami2021} while we found that there are no benefits of diversity in our system. }{This senetence cites mutualism and non-mutualism studies. It is important that your discussion be focused on effects of partner diversity in mutualisms -- that is the frame of reference against which you are interpreting your results.}
+Previous studies have reported complementarity \citep{Palmer2010,Rezende2007,Afkhami2021} while we found that there are no benefits of diversity in our system.
 Vital rate results indicated that different ant partners affected different vital rates uniquely (Figures \ref{fig:Grow},\ref{fig:Surv},\ref{fig:Viab}).
 On their own, these results suggested a likely benefit of diversity through complementarity, such that each ant partner offered a unique form of herbivore protection across ontogeny and or across different life history processes. 
 However, our multi-state IPM results, which synthesize all life history processes and accouns for partner identity and turnover, revealed an overall positive effect of ant visitation but no apparent benefit of diversity, raising questions about how to resolve the tension between these two sets of results. 
 
 We speculate that our results are driven by the vital rate sensitivity structure of this population. 
 Like other long-lived, iteroparous species \citep{franco2004comparative}, tree cholla fitness is most sensitive to the growth and survival of established individuals \citep{Miller2009,elderd2016quantifying}, which are virtually guaranteed many years of reproductive opportunities once they reach a size that is protected from mortality. 
-Differences between alternative partners were most pronounced either in reproductive rates (Figure \ref{}), which contribute relatively weakly to fitness (because a long reproductive lifespan overrides individual reproductive bouts), or in survival at small sizes, where mortality risk was high (Figure \ref{}) and the probability of ant tending was low (Figure \ref{}). 
+Differences between alternative partners were most pronounced either in reproductive rates (Figure \ref{fig:Viab}), which contribute relatively weakly to fitness (because a long reproductive lifespan overrides individual reproductive bouts), or in survival at small sizes, where mortality risk was high (Figure \ref{fig:Surv}) and the probability of ant tending was low (Figure \ref{fig:Ant_Transition}). 
 At larger sizes with low mortality risk, ant-tended plants had a modest survival advantage over vacant plants regardless of ant identity, and that result dominates integrated measures of fitness because of the high sensitvity of established plant survival. 
 The very real demographic differences between partner species in other vital rates and at other sizes do not register nearly as strongly in the currency of fitness. 
 
@@ -508,89 +501,74 @@ Our work explcitly incorporated temporal environmental stochasticity, which rais
 Yet, we find no evidence of portfolio effect within our system. 
 When partners exhibit different reactions to varying environments, interacting with multiple partners can lead to more consistent benefits across time \citep{Batstone2018}.
 We did not directly measure the reactions of ant partners to temporal environmental stochasticity, rather we measure how the effects of each partner on cholla demography fluctuate through time, and whether those fluctuations are correlated.
-\tom{We found that each ant partner had different effects on different vital rates across time, indicating they exhibit different reactions to varying environments, leading us to believe that portfolio effect could be possible in this system. 
-We compared the fitness of cholla under simulations where the variation in benefits across time reflected what we found in nature to siulations where each ant was forced to react the same way to temporal variation (excluding the possibility of portfolio effect).
-We found the benefits were not stronger across time when the ants were allowed to vary naturally than when they were forced to react synchronously, indicating that portfolio effect does not explain the benefits of diversity in our system.}{This is restating methods and results. Make this more interpretive.}
-\tom{Other portfolio effect studies \citep{Lazaro2022,Tornos2023} found }{??}
-\tom{One study \cite{dallas2022temporal} found that while portfolio effect was easy to show in theoretical models, it is often very weak or nonexistent in empirical data across many systems. 
-This indicates that it may be very difficult to detect, disguised by different mechanisms, or uncommon in nature.}{I like this point, and this is a good example of a discussion paragraph zooming out with a final sentence that makes a larger point.}
+The vital rate results led us to believe that portfolio effect may be at play due to the differences in ant responses to annual variation.
+However, there is no stabilization of fitness across temporal heterogeneity and therefore no benefits of diversity due to the portfolio effect.
+Other portfolio effect studies \citep{Lazaro2022,Tornos2023} found that asynchrony was linked to weak evidence of portfolio effect.
+One study \cite{dallas2022temporal} found that while portfolio effect was easy to show in theoretical models, it is often very weak or nonexistent in empirical data across many systems. 
+This indicates that it may be very difficult to detect, disguised by different mechanisms, or uncommon in nature.
 
-
-%Turnover
-\ali{}{I could always reframe this to be We see little difference numerically based on ant partner identity, but ants have interesting turnover dynamics or something. Aka do I need to reshape this paragraph more?}
-\tom{}{I would cut this and the next paragraph (``what remains now'') and replace them with a summary of how the results are robust to different assumptions about whether or not turnover patterns are driven by competition, and what we know and don't know about the mechanisms of turnover. You have some of that here but it can come through clearer.}
-The processes which drive the actual turnover frequency and directions remain a mystery in this system.
+% These results are robust to different assumptions about turnover patterns & what we don't know about turnover
+Partner turnover is likely a significant driver behind the fitness we see within Cholla populations, however the processes which drive the actual turnover frequency and directions remain a mystery in this system.
 In the literature, it is clear that the frequency of partner turnover can have big effects on the fitness of the focal mutualist \cite{Fiala1994, Horvitz1986, Oliveira1999, Sachs2004}.
-In some systems high freqency of turnover is necessary for resiliency and leads to higher fitness benefits \cite{Trojelsgaard2015}, while in other systems loyalty is the most beneficial \cite{Batstone2018}.
-We found that some ants had higher frequency of turnover than others, specifically the other category appeared to have high frequency of turnover, rarely returning to the same plant, while \textit{C. opuntiae} and \textit{L. apiculatum} often returned.
 The direction of partner turnover is also important when the identity of partners impacts the quality of benefits recieved \cite{Fonseca2003, Alonso1998, Dejean2008, Noe1994}.
-In our study we found that there are distinct patterns to the direction of partner turnover. 
-Specifically, most plants are tended by \textit{L. apiculatum} ants at some point, because vacant plants, other tended plants, and \textit{L. apiculatum} tended plants are all most likely to be tended by \textit{L. apiculatum} ants.
-This indicates that while \textit{L. apiculatum} ants are loyal to their own plants and return multiple years in a row to the same ones, they are also strong colonizers. 
-
-% rephrase this to be more relevant
-What now remains is to determine the underlying processes that lead to the emergence of these characterized patterns. 
-Throughout the literature, it is reported that non-symbiotic ants and non-mutualist ants are highly attracted to monosaccharide heavy EFN \citep{Heil2004,Kautz2009} and that plants often produce monosaccharide EFN to avoid exploitation \citep{Heil2010}.
-It has been previously reported that when reproducing, the nectar of stem segments has a greater disaccharide vs monosaccharide ratio, while flowerbuds have a lower ratio \citep{Miller2008}. 
-This could potentially have a significant impact on the partners who tend a plant in a given season, though determining the impacts of nectar on directional turnover requires further study. 
-We conducted alternative simulations where the driving mechanism for ant occupation was not competitive exclusion, these results are included in Apendix C (Figures \ref{app:FreqLambdaMeans} - \ref{app:EqualLambdaMeans}).
-
-
+In our system we found that there are distinct patterns to the directions and frequency of partner turnover, but we still don't understand the mechanisms driving these turnovers.
+In the model presented in this paper we assumed that competitive exclusion was the driving mechanism behind the patterns we see.
+This assumption would indicate that ants are competing for each individual cacti, likely based on EFN quality and composition \citep{Heil2004,Heil2010}, and that the more common an ant is the better a competitor it is.
+In our simulations this means that when one ant is removed the ants which are left occupy the newly vacated cacti so that the proportion of vacant cacti never changes.
+We included this assumption because we believe it to be the most biologically reasonable based on the personal observations of multiple researchers.
+However, it is possible this assumption is incorrect, so we created two alternative simulations to determine how robust our results were to various assumptions about partner turnover drivers.
+The first alternative we tested is a model that assumes all ants have the same competitive ability rather than the differences in competitive ability we assume cause observed variety in ant frequency.
+In this hypothetical simulation all ants have equal probability of occupying any given cactus, but the level of vacancy across the population remains consistent with observed data.
+This simulation was designed to test if the overwhelming frequency of \textit{L. apiculatum} may be overriding any potential advantages of other partners.
+The results of this simulation (Appendix \ref{appendix:C}: Figure \ref{app:EqualLambdaMeans}) were effectively the same as the competitive exclusion model presented in the body of this paper (Figure: \ref{fig:LambdaMeans}).
+The second alternative we tested was a model that assumed rather than competition driving ant occupations, it was the population size of each ant species alone.
+In this hypothetical simulation when one ant species is removed from the model the cacti are left vacant.
+We believe this is an unlikely scenario as there appear to be vast populations of the ant species in the area. \ali{}{This is just personal observation so it might be best to remove this?}
+This simulation was designed to test if the fitness was more sensitive to changes in vacancy across the population than the frequency of any particular ant species.
+The results of this simulation revealed that when vacancy increased sampling effect is at play (Appendix \ref{appendix:C}: Figure \ref{app:FreqLambdaMeans}).
+This result highlights that the primary driver behind the results we presented are ant presence and that it is only in cases oh unrealistically high vacancy that there are benefits to partner diversity.
+Further information about both of these models can be found in Appendix C.
+Together, these results indicate that our assertions that the fitness of the cacti are more sensitive to changes in vacancy than partner identity are robust across multiple assumptions.
 
 
 % Value of Long-term data
 This paper shows the importance of long-term datasets in investigating species interactions and calls for further use of long-term data. 
 Previously studies have analyzed how partner identity and partner turnover impact focal mutualist fitness \cite{Fonseca2003, Dejean2008, Noe1994, Barrett2015, Bruna2014, Trojelsgaard2015}.
 Separate studies have analyzed how inter-annual variability impacts focal mutualists \cite{Alonso1998, Alarcon2008, Ollerton2006, Horvitz1990, Lazaro2022}.
-\tom{The long term data set we used gave us the unique ability to consider the combined effects of partner identity, partner turnover, and temporal stochasticity.}{This is a great message to emphasize.}
+The long term data set we used gave us the unique ability to consider the combined effects of partner identity, partner turnover, and temporal stochasticity.
 By piecing together complete life cycle information from long-term data, we gain a more nuanced understanding of the fitness consequences of specific demographic effects. 
 For example, our previous study suggested that \textit{C. opuntiae} has overall parasitic fitness effects because activity of this species within tree cholla flowers can deter pollinators and reduce seed set \citep{Ohm2014}. 
 Yet, the more complete analysis presented here, which accounts for reduced seed set alongside other demographic advantages, indicates that this species is clearly a mutualist and nearly as strong a mutualist as \textit{L. apiculatum}. 
 
-%First, we were able to look at many years of data to reveal the complex dynamics of partner turnover and identity, revealing that despite the overwhelming  frequency of \textit{L. apiculatum} they do not impact the fitness of the cholla more than any other ant observed.
-%Fewer years of data would not have been able to show the distinct patterns of \textit{L. apiculatum} taking over cacti that were previously tended by any other partners with as much clarity.
-%Second, our long-term data set allowed us to test the portfolio effect.
-%This data is required, because we must show that the partners react asynchronously to temporal environmental stochasticity for portfolio effect to even be possible.
-%This is a great example of how long-term data may offer more power to test underlying mechanisms in similar systems.
-%Finallly, previous studies by \cite{Miller2007} hypothesized that \textit{C. opuntiae} may be a parasite based on the effects on the cholla cacti.
-%Using more years of consecutive data in this system, we were able to show that \textit{C. opuntiae}, while the worst individual partner in terms of the overall cholla fitness (Figure \ref{fig:LambdaMeans}), increases the growth and survival rates of cacti prior to reproduction.
-%The length of our data set has allowed us to dive into individual vital rates as well as overall fitness with more clarity.
-
-
 % Herbivory
-Herbivory is an important driver of the fitness of cholla in this system, as herbivores directly impact the growth, survival, and reproductive efforts of the cacti.
+Herbivory is an important driver of the fitness of cholla in this system, as herbivores directly impact the growth, survival, and reproductive efforts of the cacti \citep{Miller2009}.
 We have not explicitly incorporated herbivory but rather assume that herbivory can be captured in the effects they have on growth, survival, and reproductive effort observations.
+Analysis of our observational herbivore data shows that vacant plants experience elevated levels of herbivory compared to tended ones (Appendix \ref{appendix:B}: Figure \ref{app:herb}).
 In the future, further studies on the direct impacts of herbivory would bolster the results reported here and expand our knowledge within this system.
-This is particularly true in light of our consideration of portfolio effect. 
-\tom{In the same way that different species of ants likely react to temporal environmental variation differently, the same can be said for herbivores \citep{Thibaut2012}.
-Herbivores have variations in their population reflective of the environment changing temporally, meaning there are "good" and "bad" years for herbivores just like for ant defenders \citep{Batstone2018}, so the strength of their negative effect varies. 
-The fluctuations in herbivore populations in conjunction with ant-specific defenses agains herbivores provide a solid foundation to study portfolio effect in this system. 
-We found no evidence of this mechanism (Figure \ref{fig:Portfolio}), but a more herbivore explicit model in the future may reveal more about driving mechanisms. 
-}{This confusing to me. Herbivores ARE the portfolio effect. We are not modeling ants becomes more or less abundant, we are modeling their demographic effects fluctuating, which could only be due to herbivores fluctuating.}
+
 
 % Limitations
 As with any study, there are limitations to consider when interpreting the results reported here.
-These results are based on observational data regarding ant effects on plant demography rather than experimental data, meaning we are able to determine correlations but not causation.
-We are able to report evidence that plants experience higher growth when associating with a particular partner, but we are not able to determine if the presence of the ant is the cause of the higher growth observed.
-It is possible, for example, that plants which attract \textit{L. apiculatum} through osition have a different pattern of resource allocation to growth and survival and this is what we are observing rather than a direct affect of \textit{L. apiculatum} on the plant.
-This is a typical limitation of observational studies, but does not reduce the power or importance of our results, just the interpretation.
-However, we believe that the ants likely have direct impacts on the plant demography based on other studies which find the presence of ants can lead to direct increases in survival \citep{Beattie1985}, reproductive efforts \citep{Ford2015}, growth \citep{Frederickson2005}, etc.
-\tom{In the future, it would be interesting to verify the causation of our results through experimental manipulations.}{Ali, we have done these! I think this paragraph needs to be re-writted to acknowledge that, because it gives us a lot more confidence in interpreting the observational trends.}
-One further expansion could include nectar analysis of these cacti in conjuntion with ant interactions to look not only at the ant parnter impacts on the plant demography, but also at the ability of plants to attract specific partners through nectar composition shifts. 
+These results highlighted in the paper are based on observational data regarding ant effects on plant demography rather than experimental data, meaning we are able to determine correlations but not causation.
+However, we have previously conducted experimental manupulations which revealed that ant presence has direct impacts on plant demography in our system \citep{Miller2007}.
+This combination of observational data backed up by experimental results gives us greater confidence in our causational interpretations than if we had only observational data.
+Specifically, we are confident in claiming that ant presence causes increased performance in cactus vital rates and the fitness signals we are detecting are directly related to ant partner presence.
+One further expansion could include nectar analysis in conjuntion with ant interactions to look not only at the ant parnter impacts on the plant demography, but also at the ability of plants to attract specific partners through nectar composition shifts. 
 
-\tom{Another limitation of our study is that we are simulating populations through an IPM to estimate fitness, meaning we have to extrapolate beyond observed interaction.
-In our study, small plants are rarely seen with partners, yet we report on the expected effects of each ant on the growth and survival of plants from the size of new recruits to the largest plants. 
-While we are confident in our model, there remains the small possibility of interactions which have never been observed occurring (such as a seedling tended by \textit{L. apiculatum}).
-This means that our fitness estimations are based on extrapolations of our observed data, and while we have done what we can to be confident in our model, it is possible that our assumptions that observed patterns would continue beyond observed interactions could be incorrect.
-Another example of this includes our single partner simulations.
-We have no data on what the fitness of cholla would look like if the only ant partner possible was \textit{C. opuntiae}, yet we offer an estimation based on the effects of this partner in a diverse system.
-The many years of data and 10467 unique plant-year observations included in our analysis allow us to have relatively high confidence in our outputs despite extrapolations.}{I am not convinced this paragraph is necessary. The topic of creating ``counterfactual'' scenarios could be incorporated into the paragraph I am suggesting above, intepreting the different scenarios of turnover.}
-
-\tom{}{I strongly suggest a conclusion paragraph that brings the reader back to the big picture, what we learn from this study in the broadest sense, and why it matters. Is this how mutualisms work generally? How commonly and under what conditions should we expect diversity to not matter, as it appears not to matter here?}
+% tie back paragraph.
+This study highlights that while partners within a mutualistic guild can be ecologically different, they may still be interchangable to a focal mutualist.
+The individual estimation of each vital rate and explicit inclusion of ant partners in this IPM allowed us to determine that partner diversity is not beneficial in this system and may highlight circumstances under which we would expect similar results in other systems.
+The individual vital rate estimation approach allowed us to determine that while different ant partners did impact each vital rate differently, the largest differences were estimated to occur at sizes when ants would not be present in real life or in vital rates that do not have a significant impact on the overall fitnes.
+Considering partner imapcts on vital rates across the entire life cycle of the plant allows more power in determining the importance of these differences.
+Based on our results we would expect to see that partner diversity does not matter when partner impacts occur during low sensitivity life stages.
 
 
 \section*{Acknowledgments}
-\tom{This should be drafted.}{}
+We are grateful to the Sevilleta community (LTER and US Fish and Wildlife Service) for providing a stimulating research environment and logistical support. 
+Jeremiah Dye identified ants and Massa Takahashi identified herbivores. 
+We acknowledge the many students and technicians who have helped collect annual census data for this project, including M. Donald, J. Fowler, T. Jordan-Millet, J. Moutouama, C. Oxley, K. Schraeder, B. Scherick, A. Sears, M. Tucker, and J. Xiong.
+Financial support for this work came from the Sevilleta LTER (NSF DEB-0217774)
+
 %%%%%%%%%%%%%%%%%%%%%
 % Statement of Authorship
 %%%%%%%%%%%%%%%%%%%%%
@@ -600,7 +578,7 @@ The many years of data and 10467 unique plant-year observations included in our 
 % contributions.
 
 \section*{Data and Code Availability}
-\tom{This should be drafted.}{}
+The data that support the findings of this study are openly available as a \href{https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-sev.323.1}{data package} on the Environmental Data Initiative website, package id: knb-lter-sev.323.1
 
 
 \renewcommand{\theequation}{A\arabic{equation}}
@@ -687,13 +665,14 @@ The many years of data and 10467 unique plant-year observations included in our 
 \section*{Figure legends}
 
 
-
-\section*{Appendix A: Additional Methods and Parameters}
-In addition to the models described in the body of the paper, we fit several other simpler models using data from previous studies.
+\appendix
+\label{appendix}
+\section*{Appendix A: Additional Methods and Parameters} \label{appendix:A}
+In addition to the models described in the body of the paper, we fit several other models using data from previous studies.
 These models are described below.
 
 \paragraph{Seeds Per Fruit}
-With data\cite{Miller2006}, we fit a model for the number of seeds produced by every fruit on a cholla ($\kappa(a')$) in year $t+1$ based on the ant partner $a'$ in year $t+1$.
+With data from \cite{Miller2006}, we fit a model for the number of seeds produced by every fruit on a cholla ($\kappa(a')$) in year $t+1$ based on the ant partner $a'$ in year $t+1$.
 We fit this model to seed data $y^{\kappa}$ using a Negative Binomial distribution and the log link function: 
 $$y^{\kappa} \sim  Negative Binomial(\hat{\kappa},\hat{\phi})$$
 %$$ \hat{\kappa } = \beta_{0}^{\kappa} \times a'$$
@@ -757,11 +736,31 @@ Our model estimated this very well, expecting a 16.3\% probability (Figure \ref{
 	\label{app:AppA_Pre_Census_Surv}
 \end{figure}
 
-\section*{Appendix B: Observed Herbivory Data}
-One type of data we took every year is herbivory data, which involved looking at the plant for evidence of recent herbivory (fresh bites) and noting the type and quantity of herbivores observed.
+\section*{Appendix B: Observed Herbivory Data} \label{appendix:B}
+Herbivory is an important driver in this population and shapes the range and demography of cholla.
+Herbivore presence has been shown to negatively impact growth and fecundity of cholla populations \citep{Miller2009}.
+Ant visitors are believed to offer defensive benefits to the plants they tend in this system, leading to the hypothesis that ant presence would be correlated with reduced herbivory.
+Herbivory data was collected during censuses any time herbivores were identified on a plant. 
+This involved noting the type and quantity of herbivores observed. 
+This data has been taken consistently since 2017, so the analysis below considers 6 years of data.
+We considered only plants which were reproducing, as they were likely to produce the highest quantity of EFN \citep{Miller2014}.
+The proportion of reproducing plants that experienced herbivory was calculated for each ant state separately.
+Analysis showed that ant presence is correlated with lower herbivore visitation.
+40\% of vacant cacti experienced herbivory.
+Plants tended by Other ants experienced similar, though lower, levels of herbivory on reproducing plants, with herbivores detected on 37.5\% of plants.
+Herbivores were detected on 25\% of plants tended by \textit{C. opuntiae} ants and on 11\% of plants tended by \textit{L. apiculatum} ants.
+These results indicate that ant presence is correlated with lower levels of herbivory and that partner identity has an impact on the level of herbivory.
+They also indicate that the partner correlated with the lowest levels of herbivory is \textit{L. apiculatum} ants.
+These findings are consistent with literature findings which show that \textit{L. apiculatum} ants are the most aggressive (therefore the most effective against herbivores), but differ from previous findings that \textit{C. opuntiae} may not offer defensive benefits \citep{Miller2007}.
 
 
-\section*{Appendix C: Alternative Ant Transition Simulations}
+\begin{figure}
+	\includegraphics[width=0.91\linewidth]{Figures/herb_all.png}
+	\caption{Shows the proportion of reproducing plants which are visited by herbivores. Each bar represents the subset of the cacti population in a different ant state.  }
+	\label{app:herb}
+\end{figure}
+
+\section*{Appendix C: Alternative Ant Transition Simulations}\label{appendix:C}
 In addition to the competitive exclusion model defined and analyzed in the body of the paper, we simulated results from several other potential models. 
 We chose to include competitive eclusion as our primary results in the paper because we believe it to be the most biologically realistic.
 However, in building and testing of alternative models we found that the method of ants occupying plants significantly impacts the fitness of the population. 
@@ -777,9 +776,8 @@ Only when \textit{L. apiculatum} ants are present do we see an increase in the f
 In this simulation, the more partners that are present the higher the fitness of the focal mutualist is, confirming that partner diversity would be beneficial through sampling effect if this transition model were correct.  (Figure \ref{fig:FreqLambdaMeans}b).
 
 \begin{figure}
-\includegraphics[width=0.61\linewidth]{Figures/Lambdas_freq.png}
-\includegraphics[width=0.39\linewidth]{Figures/freq_num_partners.png}
-\caption{Panel a) shows the mean values of the estimated $\lambda_{S}$ (filled in circles) for each simulated combination of ant partners. The letters above the points correspond to what ant partners are present (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other). Panel b) shows the mean values of the estimated $\lambda_{S}$ for }
+\includegraphics[width=0.91\linewidth]{Figures/Lambdas_Freq_lines.png}
+	\caption{Panel a) shows the mean estimated $\lambda_{NS}$ and $\lambda_{S}$ for different numbers of partners (0-3) for the synchronous IPM (black circle) and the non-synchronous IPM (red diamond). Panels b-c) shows the mean estimated $\lambda_{NS}$ and $\lambda_{S}$ respectively, for each simulated combination of ant partner as the filled in circles. The lines show the posterior distribution spread of estimated $\lambda$ values. The letters in the legend correspond to what ant partners are present (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other). }
 \label{app:FreqLambdaMeans}
 \end{figure}
 
@@ -788,18 +786,17 @@ The second alternative hypothesis we tested was what we called the equal likelih
 In this model we preserved the observed pattern of size-dependent vacancy/occupancy, but occupancy was manipulated to be equally likely for all partner identities. 
 This was designed to remove the effect overwhelming numbers of \textit{L. apiculatum} ants may have. 
 Despite very different proportions, we found very similar outcomes to the competitive exclusion model analyzed in the paper. 
-All ants are beneficial, but having more than one is not necessarily any better than having an individual species as a partner (Figure \ref{fig:EqualLambdaMeans}a).
-Partner presence is beneficial, but neither identity nor number of partners appears to be important (Figure \ref{fig:EqualLambdaMeans}b).
+All ants are beneficial, but having more than one is not necessarily any better than having an individual species as a partner (Figure \ref{fig:EqualLambdaMeans}b).
+Partner presence is beneficial, but neither identity nor number of partners appears to be important (Figure \ref{fig:EqualLambdaMeans}a).
 
 \begin{figure}
-\includegraphics[width=0.61\linewidth]{Figures/Lambdas_equal.png}
-\includegraphics[width=0.39\linewidth]{Figures/equal_num_partners.png}
-\caption{Panel a) shows the mean values of the estimated $\lambda_{S}$ (filled in circles) for each simulated combination of ant partners. The letters above the points correspond to what ant partners are present (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other). Panel b) shows the mean values of the estimated $\lambda_{S}$ for }
+\includegraphics[width=0.91\linewidth]{Figures/Lambdas_equal_lines.png}
+	\caption{Panel a) shows the mean estimated $\lambda_{NS}$ and $\lambda_{S}$ for different numbers of partners (0-3) for the synchronous IPM (black circle) and the non-synchronous IPM (red diamond). Panels b-c) shows the mean estimated $\lambda_{NS}$ and $\lambda_{S}$ respectively, for each simulated combination of ant partner as the filled in circles. The lines show the posterior distribution spread of estimated $\lambda$ values. The letters in the legend correspond to what ant partners are present (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other). }
 \label{app:EqualLambdaMeans}
 \end{figure}
 
 
-\section*{Appendix D: Posterior Checks and Model Validation}
+\section*{Appendix D: Posterior Checks and Model Validation}\label{appendix:D}
 For each model fitted, we conducted two tests to determing if the fit was acceptable to use in our IPM. 
 First, we checked the convergence of each parameter.
 Below we show the convergence of all $\beta$ terms listed in the Statistical Modeling subsection of Methods.
@@ -885,14 +882,15 @@ The mean probability of reproducing remains at about 0\% until the plant reaches
 %% Seeds Produced
 \paragraph{Seeds Per Flower Model}
 Each viable flower on a plant produces between 97 and 257 seeds.
-\tom{This number is affected by the ant partner present. 
-	\textit{C. opuntiae} tended plants produce a mean of 148 seeds per flower. 
-	\textit{L. apiculatum} tended plants produce a mean of 149 seeds per flower. }{These results are not consistent with Ohm and Miller, where Crem had lower seeds than Liom. I would check this. This section should also reference that paper because these are not new results.}
-Vacant plants produce a mean of 160 seeds per flower. 
-We are 73\% and 78\% confident that vacant plants produce more seeds per flower on average than plants tended by \textit{C. opuntiae} and \textit{L. apiculatum} ants respectively.
+This number is affected by the ant partner present, as shown in previous work \citep{Ohm2014}. 
+\textit{C. opuntiae} tended plants produce a mean of 115 seeds per flower. 
+\textit{L. apiculatum} tended plants produce a mean of 143 seeds per flower.
+Vacant plants produce a mean of 148 seeds per flower. 
+Comparison between posterior distributions revealed that \textit{C. opuntiae} tended plants produced fewer seeds per flower than \textit{L. apiculatum} tended plants and vacant plants 80\% and 87\% of the time.
+Vacant plants produced more seeds per flower than \textit{L. apiculatum} tended plants only 57\% of the time.
+We are confident that \textit{C. opuntiae} tended plants produce the fewest seeds per flowers.
 
-
-\tom{%% Precensus Survival\
+%% Precensus Survival\
 	\paragraph{Precensus Survival Model}
 	Pre-census seed survival rates fall between 0\% and 95\% with the mean pre-census seed survival at 18\%.
 	
@@ -904,8 +902,7 @@ We are 73\% and 78\% confident that vacant plants produce more seeds per flower 
 	
 	
 	%% Recruit size distribution
-	New recruits are expected to be between the sizes of 0.11 $cm^3$ and 0.38 $cm^3$ with a mean size of 0.20 $cm^3$.}{Move to an appendix. These results are not relevant for the questions at hand.}
-
+	New recruits are expected to be between the sizes of 0.11 $cm^3$ and 0.38 $cm^3$ with a mean size of 0.20 $cm^3$.
 
 
 
