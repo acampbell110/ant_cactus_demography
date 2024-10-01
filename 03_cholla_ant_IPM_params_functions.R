@@ -10,7 +10,7 @@
 ################################################################################
 ## Source the IPM vital rates code 
 #setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-#source("02_cholla_ant_IPM_vital_rates.R")
+# source("02_cholla_ant_IPM_vital_rates.R")
 ## Set conditions for the IPM 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 

@@ -241,7 +241,7 @@ For the above-ground part of the life cycle, the number of plants of size $x'$ a
 	\label{eqn:IPM2}
 \end{linenomath*}
 
-\noindent The first term in Eq. \tom{\ref{eqn:IPM2}}{We should label equations. I am not sure why the equation label is not working here and I did not try to figure it out. It is probably something with the linenomath formatting.} estimates the number of individuals recruiting from a one or two-year seed bank to a plant of size $x'$ and ant state $a'$ based on the recruit size distribution $\eta(x')$ and the probability of over-winter seedling survival ($\omega$) from germination (late summer) to the census (May).
+\noindent The first term in Eq. \tom{\ref{eqn:IPM2}}{We should label s. I am not sure why the equation label is not working here and I did not try to figure it out. It is probably something with the linenomath formatting.} estimates the number of individuals recruiting from a one or two-year seed bank to a plant of size $x'$ and ant state $a'$ based on the recruit size distribution $\eta(x')$ and the probability of over-winter seedling survival ($\omega$) from germination (late summer) to the census (May).
 This term is multiplied by $\rho_{0}(a')$, which gives the probability that a new recruit has ant state $a'$ ($\sum\rho_{0}(a')=1$). 
 The second term represents all possible transitions from size $x$ and ant $a$ to size $x'$ and ant $a'$, conditioned on survival. 
 Survival ($S(x,a;\pmb{\tau}^S_{a})$) and growth from size $x$ to $x'$ ($G(x',x,a;\pmb{\tau}^G_{a})$) are both dependent on initial size and ant state. 
@@ -384,12 +384,12 @@ At larger sizes, plants in any state of ant occupancy had a survival advantage o
 \end{figure}
 
 We found evidence that ant visitation by \textit{L. apiculatum} ants leads to increased floral viability rates and that ant identity can influence the strength of viability benefits.
-We observed mean viability rates of flowers between 40\% and 92\% (Figure \ref{fig:viab}).
+We observed mean viability rates of flowers between 40\% and 92\% (Figure \ref{fig:Viab}).
 Ant partners influence the mean viability rate of flowers, with \textit{L. apiculatum}-tended plants experiencing the highest mean viability rate (86\%), followed by vacant and Other tended plants (at 60-61\%), and \textit{C. opuntiae} tended plants had the lowest floral viability rate (57\%).
 
 
 \begin{figure}[H]
-	\includegraphics[width=0.95\linewidth]{Figures/viab.png}
+	\includegraphics[width=0.95\linewidth]{Figures/Viab_v2.png}
 	\caption{This figure shows the estimated distributions of floral viability rates compared to observed distributions of floral viability rates of cholla based on ant partner identity. The solid lines indicate the estimated viability distribution. The colored histograms represent the observed viability rates of plants with that partner. }
 	\label{fig:Viab}
 \end{figure}
@@ -406,7 +406,7 @@ This variety of synchronicity across ant states and vital rates indicates there 
 
 
 \begin{figure}[H]
-	\includegraphics[width=0.95\linewidth]{Figures/year_ant_timeseries.png}
+	\includegraphics[width=0.95\linewidth]{Figures/ant_RFX.png}
 	\caption{This figure shows the mean affect of each ant partner on a) the estimated next size, b) the estimated survival, and c) the floral viability of cacti across every year of our study. These values are estimated from the fitted random effects of ant and year in our models. Each point represents the mean of the random effect of the identified model, ant, and year (e.g. the lowest dot in panel b) represents the mean effect of vacancy on survival rates in year 2011).}
 	\label{fig:Annual_Ant}
 \end{figure}
@@ -436,7 +436,7 @@ Across all 1+ partner scenarios, we found that the posterior $\lambda_{NS,Occupi
 This indicates that ant visitation elevates fitness no matter the identity or number of partners.
 Furthermore, we find no benefits of patner diversity here, with the fitness of the cholla with 1, 2, and 3 partners roughly equivalent (Figure \ref{fig:LambdaMeans} a).
 From the means alonet appears that there is a reduction in fitness when all ants are present compared to 1 or 2 partners.
-The contrasts of $\lambda_{NS}$ posterior distributions of 0 - 2 partner diversity scenarios to full diversity show that the overlap ranges from 58\% - 100\%, indicating high similarity between thr full partner diversity scenario and others.
+The contrasts of $\lambda_{NS}$ posterior distributions of 0 - 2 partner diversity scenarios to $\lambda_{NS}$ posterior distribution of 3 partners show that the overlap ranges from 58\% - 100\%, indicating high similarity between thr full partner diversity scenario and others.
 This is highlighted in Figure \ref{fig:LambdaMeans} panel b.
 
 \begin{figure}
@@ -456,7 +456,7 @@ Despite this, the fitness of scenarios including these less frequent ants were n
 
 We found no evidence of portfolio effect.
 The effect of all ant partners can be measured as $\lambda_{All} - \lambda_{Vacant}$ (Figure \ref{fig:Portfolio}).
-We are are 98\% confident that when all ants are present the cholla experience higher fitness than when no ants are present according to both the synchronized (S) and non-synchronized (NS) model scenarios. 
+We are are 100\% confident that when all ants are present the cholla experience higher fitness than when no ants are present according to both the synchronized (S) and non-synchronized (NS) model scenarios. 
 When subtracting these two resulting vectors from each other (($\lambda_{NS,All} - \lambda_{NS,Vacant}$) - ($\lambda_{S,All} - \lambda_{S,Vacant}$)), we found that there is no real difference between the two scenarios, meaning we have no evidence of portfolio effect.
 
 \begin{figure}

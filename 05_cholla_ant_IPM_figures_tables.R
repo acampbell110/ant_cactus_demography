@@ -106,61 +106,46 @@ y_vac_subset_grow <- subset(y_subset, ant_t == "vacant")
 y_other_subset_grow <- subset(y_subset, ant_t == "other")
 ## Predicted sizes for each partner condition
 omega <- exp(mean(params$grow_sig0) + size_dummy*mean(params$grow_sig1))
+omega_other <- exp(mean(params$grow_sig0) + size_other*mean(params$grow_sig1))
+omega_crem <- exp(mean(params$grow_sig0) + size_crem*mean(params$grow_sig1))
+omega_liom <- exp(mean(params$grow_sig0) + size_liom*mean(params$grow_sig1))
+omega_vac <- exp(mean(params$grow_sig0) + size_vac*mean(params$grow_sig1))
 alpha <- exp(mean(params$grow_alp0) + size_dummy*mean(params$grow_alp1))
-# omega_crem <- exp(mean(params$grow_sig01) + size_dummy * mean(params$grow_sig11))
-# omega_liom <- exp(mean(params$grow_sig02) + size_dummy * mean(params$grow_sig12))
-# omega_other <- exp(mean(params$grow_sig03) + size_dummy * mean(params$grow_sig13))
-# omega_vac <- exp(mean(params$grow_sig04) + size_dummy * mean(params$grow_sig14))
-# alpha_crem <- mean(params$grow_alp01) + size_dummy * mean(params$grow_alp11)
-# alpha_liom <- mean(params$grow_alp02) + size_dummy * mean(params$grow_alp12)
-# alpha_other <- mean(params$grow_alp03) + size_dummy * mean(params$grow_alp13)
-# alpha_vac <- mean(params$grow_alp04) + size_dummy * mean(params$grow_alp14)
+alpha_other <- exp(mean(params$grow_alp0) + size_other*mean(params$grow_alp1))
+alpha_crem <- exp(mean(params$grow_alp0) + size_crem*mean(params$grow_alp1))
+alpha_liom <- exp(mean(params$grow_alp0) + size_liom*mean(params$grow_alp1))
+alpha_vac <- exp(mean(params$grow_alp0) + size_vac*mean(params$grow_alp1))
 # Other
+size_other <- seq(min(y_other_subset_grow$logsize_t1),max(y_other_subset_grow$logsize_t1), by = 0.1)
 y_other_mean_grow <- mean(params$grow_beta03) + (size_dummy) * mean(params$grow_beta13 ) + (size_dummy)^2 * mean(params$grow_beta23)
+y_other_mean_grow_sub <- mean(params$grow_beta03) + (size_other) * mean(params$grow_beta13 ) + (size_other)^2 * mean(params$grow_beta23)
 # Crem
+size_crem <- seq(min(y_crem_subset_grow$logsize_t1),max(y_crem_subset_grow$logsize_t1), by = 0.1)
 y_crem_mean_grow <- mean(params$grow_beta01) + (size_dummy) * mean(params$grow_beta11) + (size_dummy)^2 * mean(params$grow_beta21)
+y_crem_mean_grow_sub <- mean(params$grow_beta01) + (size_crem) * mean(params$grow_beta11) + (size_crem)^2 * mean(params$grow_beta21)
 # Liom
+size_liom <- seq(min(y_liom_subset_grow$logsize_t1),max(y_liom_subset_grow$logsize_t1), by = 0.1)
 y_liom_mean_grow <- mean(params$grow_beta02) + (size_dummy) * mean(params$grow_beta12) + (size_dummy)^2 * mean(params$grow_beta22)
+y_liom_mean_grow_sub <- mean(params$grow_beta02) + (size_liom) * mean(params$grow_beta12) + (size_liom)^2 * mean(params$grow_beta22)
 # Vac
+size_vac <- seq(min(y_vac_subset_grow$logsize_t1),max(y_vac_subset_grow$logsize_t1), by = 0.1)
 y_vac_mean_grow <-  mean(params$grow_beta04) + (size_dummy) * mean(params$grow_beta14) + (size_dummy)^2 * mean(params$grow_beta24)
+y_vac_mean_grow_sub <-  mean(params$grow_beta04) + (size_vac) * mean(params$grow_beta14) + (size_vac)^2 * mean(params$grow_beta24)
 
 other_mean <- y_other_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
+other_mean_sub <- y_other_mean_grow_sub + omega_other * (alpha_other/(sqrt(1 + alpha_other^2)) * (sqrt(2/pi)))
 crem_mean <- y_crem_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
+crem_mean_sub <- y_crem_mean_grow_sub + omega_crem * (alpha_crem/(sqrt(1 + alpha_crem^2)) * (sqrt(2/pi)))
+liom_mean_sub <- y_liom_mean_grow_sub + omega_liom * (alpha_liom/(sqrt(1 + alpha_liom^2)) * (sqrt(2/pi)))
 liom_mean <- y_liom_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
 vac_mean <- y_vac_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
+vac_mean_sub <- y_vac_mean_grow_sub + omega_vac * (alpha_vac/(sqrt(1 + alpha_vac^2)) * (sqrt(2/pi)))
 
 ## Create a contour plot which shows the full fit of the growth model rather than just the mean
 x <- seq(min(cactus$logsize_t, na.rm = T),max(cactus$logsize_t,na.rm = T), length = 25); # three columns
 y <- seq(min(cactus$logsize_t1, na.rm = T),max(cactus$logsize_t1,na.rm = T), length = 25); # five rows
-# Student T Kernels
-# other <- outer (
-#   y,     # First dimension:  the columns (y)
-#   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,3],0.5) + quantile(grow.params$beta1[,3],0.5)*x + quantile(grow.params$beta2[,3],0.5)*x^2,
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
-#                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
-# );
-# vacant <- outer (
-#   y,     # First dimension:  the columns (y)
-#   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,4],0.5) + quantile(grow.params$beta1[,4],0.5)*x + quantile(grow.params$beta2[,4],0.5)*x^2,
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
-#                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
-# );
-# liom <- outer (
-#   y,     # First dimension:  the columns (y)
-#   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,2],0.5) + quantile(grow.params$beta1[,2],0.5)*x + quantile(grow.params$beta2[,2],0.5)*x^2,
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
-#                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
-# );
-# crem <- outer (
-#   y,     # First dimension:  the columns (y)
-#   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dlst(y,mu=quantile(grow.params$beta0[,1],0.5) + quantile(grow.params$beta1[,1],0.5)*x + quantile(grow.params$beta2[,1],0.5)*x^2,
-#                          sigma = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
-#                          df = exp(quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
-# );
+
+
 ## Skew Kernels
 other <- outer (
   y,     # First dimension:  the columns (y)
@@ -190,21 +175,6 @@ crem <- outer (
                         omega = exp(mean(params$grow_sig0) + x * mean(params$grow_sig1)),
                         alpha = (mean(params$grow_alp0) + x * mean(params$grow_alp1)))
 );
-# ## Skew Kernels -- No Ant
-# y_grow <-  quantile(grow.params$beta0,0.5) + (size_dummy) * quantile(grow.params$beta1,0.5)# + (size_dummy)^2 * quantile(grow.params$beta2[,4],0.5)
-# grow <- outer (
-#   y,     # First dimension:  the columns (y)
-#   x,     # Second dimension: the rows    (x)
-#   function (x, y)   dsn(y,xi=quantile(grow.params$beta0,0.5) + quantile(grow.params$beta1,0.5)*x,
-#                         omega = exp(quantile(grow.params$d_0,0.5) + x * quantile(grow.params$d_size,0.5)),
-#                         alpha = (quantile(grow.params$a_0,0.5) + x * quantile(grow.params$a_size,0.5)))
-# );
-# png("Figures/grow_skew_no_ant.png")
-# contour(x,y,grow,nlevels = 15)
-# points(y_subset$logsize_t,y_subset$logsize_t1, col = alpha("green",0.5), pch = 16, cex = 0.5)
-# lines(size_dummy, y_grow, col = "green", lwd = 4)
-# lines(size_dummy,size_dummy, lty = 2, col = "grey")
-# dev.off()
 
 ##plot showing future size distribution conditional on initial size
 ##small size is the 5th percentile of tended plants
@@ -213,73 +183,73 @@ initsmall<-quantile(cactus$logsize_t[cactus$ant_t!="vacant"],probs=0.01,na.rm=T)
 initlarge<-quantile(cactus$logsize_t[cactus$ant_t!="vacant"],probs=0.99,na.rm=T)
 
 ## Plot the countour lines of the studetn t growth model with the mean fit of the model and the real data
-png("Manuscript/Figures/grow_contour_v1.png")
-par(mar=c(3,5,3,1),oma=c(2,2,0,0))
-layout(matrix(c(1,2,3,4,5,5),
-              ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
-# Crem
-contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15),
-        main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black")
-points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
-lines(size_dummy, crem_mean, col = cremcol, lwd = 2)
-# Liom
-contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-        main = "b)      Liom.                ", cex.main = 2, lwd = 1.5)
-points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
-lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
-# Other
-contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-        main = "c)       Other                ", cex.main = 2, lwd = 1.5)
-points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
-lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
-# Vacant
-contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-        main = "d)      Vacant                ", cex.main = 2, lwd = 1.5)
-points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
-lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
-# All together
-
-plot(size_dummy,dsn(x=size_dummy,
-                    xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initlarge + mean(params$grow_beta23)*initlarge^2,
-                    omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-                    alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3,
-     xlim=c(2,8),ylab="Probability of size next year",main= "e)                      All Ants                           ", cex.main = 2)
-lines(size_dummy,dsn(x=size_dummy,
-                     xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initlarge + mean(params$grow_beta24)*initlarge^2,
-                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
-lines(size_dummy,dsn(x=size_dummy,
-                     xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initlarge + mean(params$grow_beta22)*initlarge^2,
-                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
-lines(size_dummy,dsn(x=size_dummy,
-                     xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initlarge + mean(params$grow_beta21)*initlarge^2,
-                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
-abline(v=initlarge,lty=3)
-
-lines(size_dummy,dsn(x=size_dummy,
-                     xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initsmall + mean(params$grow_beta23)*initsmall^2,
-                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3)
-lines(size_dummy,dsn(x=size_dummy,
-                     xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initsmall + mean(params$grow_beta24)*initsmall^2,
-                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
-lines(size_dummy,dsn(x=size_dummy,
-                     xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initsmall + mean(params$grow_beta22)*initsmall^2,
-                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
-lines(size_dummy,dsn(x=size_dummy,
-                     xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initsmall + mean(params$grow_beta21)*initsmall^2,
-                     omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-                     alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
-abline(v=initsmall,lty=3)
-legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), lwd = 2)
-
-mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
-mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
-dev.off()
+# png("Manuscript/Figures/grow_contour_v1.png")
+# par(mar=c(3,5,3,1),oma=c(2,2,0,0))
+# layout(matrix(c(1,2,3,4,5,5),
+#               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
+# # Crem
+# contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15),
+#         main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black")
+# points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
+# lines(size_dummy, crem_mean, col = cremcol, lwd = 2)
+# # Liom
+# contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+#         main = "b)      Liom.                ", cex.main = 2, lwd = 1.5)
+# points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
+# lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
+# # Other
+# contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+#         main = "c)       Other                ", cex.main = 2, lwd = 1.5)
+# points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
+# lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
+# # Vacant
+# contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
+#         main = "d)      Vacant                ", cex.main = 2, lwd = 1.5)
+# points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
+# lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
+# # All together
+# 
+# plot(size_dummy,dsn(x=size_dummy,
+#                     xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initlarge + mean(params$grow_beta23)*initlarge^2,
+#                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+#                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3,
+#      xlim=c(2,8),ylab="Probability of size next year",main= "e)                      All Ants                           ", cex.main = 2)
+# lines(size_dummy,dsn(x=size_dummy,
+#                      xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initlarge + mean(params$grow_beta24)*initlarge^2,
+#                      omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+#                      alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
+# lines(size_dummy,dsn(x=size_dummy,
+#                      xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initlarge + mean(params$grow_beta22)*initlarge^2,
+#                      omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+#                      alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
+# lines(size_dummy,dsn(x=size_dummy,
+#                      xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initlarge + mean(params$grow_beta21)*initlarge^2,
+#                      omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
+#                      alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
+# abline(v=initlarge,lty=3)
+# 
+# lines(size_dummy,dsn(x=size_dummy,
+#                      xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initsmall + mean(params$grow_beta23)*initsmall^2,
+#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3)
+# lines(size_dummy,dsn(x=size_dummy,
+#                      xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initsmall + mean(params$grow_beta24)*initsmall^2,
+#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
+# lines(size_dummy,dsn(x=size_dummy,
+#                      xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initsmall + mean(params$grow_beta22)*initsmall^2,
+#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
+# lines(size_dummy,dsn(x=size_dummy,
+#                      xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initsmall + mean(params$grow_beta21)*initsmall^2,
+#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
+#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
+# abline(v=initsmall,lty=3)
+# legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), lwd = 2)
+# 
+# mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
+# mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
+# dev.off()
 
 png("Manuscript/Figures/grow_contour_v2.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
@@ -289,31 +259,37 @@ layout(matrix(c(1,2,3,4,5,5),
 contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15),
         main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black")
 points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
-lines(size_dummy, crem_mean, col = cremcol, lwd = 2)
+lines(size_dummy, crem_mean, col = cremcol, lwd = 4, lty = 2)
+lines(size_crem,crem_mean_sub, col = cremcol, lwd = 4)
 # Liom
 contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
         main = "b)      Liom.                ", cex.main = 2, lwd = 1.5)
 points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
-lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
+lines(size_dummy, liom_mean, col = liomcol, lwd = 4, lty = 2)
+lines(size_liom,liom_mean_sub, col = liomcol, lwd = 4)
 # Other
 contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15),
         main = "c)       Other                ", cex.main = 2, lwd = 1.5)
 points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
-lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
+lines(size_dummy, other_mean, col = othercol, lwd = 4, lty = 2)
+lines(size_other,other_mean_sub, col = othercol, lwd = 4)
 # Vacant
 contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
         main = "d)      Vacant                ", cex.main = 2, lwd = 1.5)
 points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
-lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
+lines(size_dummy, vac_mean, col = vaccol, lwd = 4, lty = 2)
+lines(size_vac,vac_mean_sub, col = vaccol, lwd = 4)
 # All together
 plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(-5,15), ylim = c(-4,15),
-     main = "e)                      All Ants                           ", cex.main = 2)
-lines(size_dummy, liom_mean, col = liomcol, lwd = 3)
-lines(size_dummy, other_mean, col = othercol, lwd = 3)
+     main = "e)                      All Ants                           ", cex.main = 2, lty = 2)
+lines(size_crem, crem_mean_sub, col = cremcol, lwd = 3)
+lines(size_dummy, liom_mean, col = liomcol, lwd = 3, lty = 2)
+lines(size_liom, liom_mean_sub, col = liomcol, lwd = 3)
+lines(size_dummy, other_mean, col = othercol, lwd = 3, lty = 2)
+lines(size_other, other_mean_sub, col = othercol, lwd = 3)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 3)
 lines(size_dummy, size_dummy, col = "grey", lty = 2)
 legend("topleft", legend = c("Crem.","Liom.","Other","Vacant"), col = c(cremcol,liomcol,othercol,vaccol), lwd = 2, cex=1)
-
 mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
 dev.off()
@@ -337,37 +313,6 @@ v_crem <- colMeans((viab_rfx1))
 v_liom <- colMeans((viab_rfx2))
 v_other <- colMeans((viab_rfx3))
 v_vac <- colMeans((viab_rfx4))
-
-pdf("Manuscript/Figures/year_ant_timeseries.pdf",width=10,height=4)
-par(mfrow=c(1,3),mar=c(4,2,2,1),oma=c(2,2,0,0))
-## Growth Ant EEffects
-plot(years_seq,g_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "a)                               ",
-     ylim = c(-2.5,2.5), xlab = " ",ylab = " ",cex.lab = 2)
-lines(years_seq, g_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, g_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, g_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-legend("topleft",legend = c("Liom.","Crem.","Other","Vacant"),fill = c(liomcol,cremcol,othercol,vaccol),cex=1.4)
-## Survival ant effects
-plot(years_seq,s_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "b)                                 ",
-     ylim = c(-2.5,2.5), xlab = "",ylab = " ",cex.lab = 1.5)
-lines(years_seq, s_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, s_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, s_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-## Viability Ant Effects
-plot(years_seq,v_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "c)                                ",
-     ylim = c(-2.5,2.5), xlab = " ",ylab = " ",cex.lab = 1.5)
-lines(years_seq, v_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, v_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, v_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-mtext("Year",side=1,line=0,outer=TRUE,cex=1.4)
-mtext("Year-specific deviation",side=2,line=0,outer=TRUE,cex=1.4,las=0)
-dev.off()
-
-## Calculate correlation coefficients
-
 
 
 ##### CREM FIGS 
@@ -524,6 +469,39 @@ corrplot(b, method = "shade", col.lim = c(0,1), addCoef.col = T)
 corrplot(c, method = "shade", col.lim = c(0,1), addCoef.col = T)
 mtext("   Growth          Survival          Viability",side=3,line=-14,outer=TRUE,cex=2)
 dev.off()
+
+png("Manuscript/Figures/year_ant_timeseries.png",width = 480, height = 280)
+par(mfrow=c(1,3),mar=c(4,2,2,1),oma=c(2,2,0,0))
+## Growth Ant EEffects
+plot(years_seq,g_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+     main = "a)                               ",
+     ylim = c(-3,5), xlab = " ",ylab = " ",cex.lab = 2)
+lines(years_seq, g_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, g_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, g_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+legend("bottomleft",legend = c("Liom.","Crem.","Other","Vacant"),fill = c(liomcol,cremcol,othercol,vaccol),cex=1.4)
+## Survival ant effects
+plot(years_seq,s_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+     main = "b)                                 ",
+     ylim = c(-3,5), xlab = "",ylab = " ",cex.lab = 1.5)
+lines(years_seq, s_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, s_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, s_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+## Viability Ant Effects
+plot(years_seq,v_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
+     main = "c)                                ",
+     ylim = c(-3,5), xlab = " ",ylab = " ",cex.lab = 1.5)
+lines(years_seq, v_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, v_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
+lines(years_seq, v_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
+mtext("Year",side=1,line=0,outer=TRUE,cex=1.4)
+mtext("Year-specific deviation",side=2,line=0,outer=TRUE,cex=1.4,las=0)
+dev.off()
+
+## Calculate correlation coefficients
+
+
+
 
 
 ################################################################################
@@ -784,7 +762,7 @@ box()
 dev.off()
 ## min buds is 1, max is 264
 
-png("Figures/Viab_v2.png")
+png("Manuscript/Figures/Viab_v2.png")
 plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4,xlim=c(1,4.25))
 points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
        cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
@@ -811,8 +789,9 @@ lines(rep(4.25,2),quantile(invlogit(viab_out$beta0[,4]),probs=c(0.025,.975)),
       lwd=3,col=vaccol)
 points(4.25,mean(invlogit(viab_out$beta0[,4])),col=vaccol,pch=15,cex=1.5)
 axis(1,at=1:4,labels=c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Other","Vacant"))
-mtext("Flowerbud viability", side = 2, line = 1, cex=1.7)
+mtext("Flowerbud viability", side = 2, line = 2.2, cex=1.7)
 box()
+axis(2, at = seq(0, 1, by = 0.1), las=2)
 dev.off()
 
 ################################################################################
@@ -995,7 +974,7 @@ y_high_surv = quantile(pre.seed.params$beta0,0.95)
 ## Plot the precensus survival estimated by the model with the precensus survival of real data
 png("Manuscript/Figures/seed_surv.png")
 plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "", ylab = "",main = "")
-abline(v = mean(precensus.dat$survive0405), lty = 2)
+#abline(v = mean(precensus.dat$survive0405), lty = 2)
 legend("topright",legend = c("Predicted Pre-census Survival","Real Pre-census Survival"), col = c("chartreuse4","black"), pch = 16)
 mtext("Pre-census Survival Probability",side=1,line=-1.5,outer=TRUE,cex=2)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
@@ -1531,33 +1510,68 @@ scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 ## Visualize Competitive Exclusion Model
 ################################################################################
 ## Make plot for poster & other things -- research statement
-# png("Manuscript/Figures/Lambdas_C_Simple.png")
-# plot(x  = c(1,3,3,3,5,5,5,7), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
-#      xlim = c(0,8), ylim = c(0.962,0.995),xaxt = "n",cex.lab = 2,
-#      xlab = "Number of Ant Partners", ylab = "Mean Fitness Estimate",
-#      main = "")
-# axis(side=1,at=c(1,3,5,7),labels=c("0","1","2","3"))
-# dev.off()
+png("Manuscript/Figures/Lambdas_C_Simple.png")
+par(mar = c(5,5,1,1))
+plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
+     xlim = c(0,31), ylim = c(0.93,1.015),xaxt = "n",cex.lab = 2,
+     xlab = "Number of Partners", ylab = "Estimated Lambda",
+     main = "Non-Synchronous")
+arrows(x0 = c(1,10,11,9,20,21,19,30), 
+       y0 = c(min(lams_comp_stoch[,1]),min(lams_comp_stoch[,2]),min(lams_comp_stoch[,3]),min(lams_comp_stoch[,4]),min(lams_comp_stoch[,5]),min(lams_comp_stoch[,6]),min(lams_comp_stoch[,7]),min(lams_comp_stoch[,8])),
+       x1 = c(1,10,11,9,20,21,19,30), 
+       y1 = c(max(lams_comp_stoch[,1]),max(lams_comp_stoch[,2]),max(lams_comp_stoch[,3]),max(lams_comp_stoch[,4]),max(lams_comp_stoch[,5]),max(lams_comp_stoch[,6]),max(lams_comp_stoch[,7]),max(lams_comp_stoch[,8])),
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
+points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols)
+axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+legend("bottomright", legend = scenario_abv, fill = cols)
+dev.off()
+
 png("Manuscript/Figures/Lambdas_Comp_lines.png")
 par(mar=c(5,5,1,1))
 layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
 # number of partners vs fitness
 no_part <- colMeans(lams_comp_stoch)[1]
+no_part_low <- min(lams_comp_stoch[,1])
+no_part_high <- max(lams_comp_stoch[,1])
 one_part <- mean(colMeans(lams_comp_stoch)[2:4])
+one_part_low <- min(lams_comp_stoch[,c(2:4)])
+one_part_high <- max(lams_comp_stoch[,c(2:4)])
 two_part <- mean(colMeans(lams_comp_stoch)[5:7])
+two_part_low <- min(lams_comp_stoch[,c(5:7)])
+two_part_high <- max(lams_comp_stoch[,c(5:7)])
 three_part <- colMeans(lams_comp_stoch)[8]
+three_part_low <- min(lams_comp_stoch[,8])
+three_part_high <- max(lams_comp_stoch[,8])
 no_part_sync <- colMeans(lams_comp_stoch_null)[1]
+no_part_low_sync <- min(lams_comp_stoch_null[,1])
+no_part_high_sync <- max(lams_comp_stoch_null[,1])
 one_part_sync <- mean(colMeans(lams_comp_stoch_null)[2:4])
+one_part_low_sync <- min(lams_comp_stoch_null[,c(2:4)])
+one_part_high_sync <- max(lams_comp_stoch_null[,c(2:4)])
 two_part_sync <- mean(colMeans(lams_comp_stoch_null)[5:7])
+two_part_low_sync <- min(lams_comp_stoch_null[,c(5:7)])
+two_part_high_sync <- max(lams_comp_stoch_null[,c(5:7)])
 three_part_sync <- colMeans(lams_comp_stoch_null)[8]
-plot(c(1,2,3,4),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.94, 1), xaxt = "n", cex.lab = 2, 
+three_part_low_sync <- min(lams_comp_stoch_null[,8])
+three_part_high_sync <- max(lams_comp_stoch_null[,8])
+plot(c(0.8,1.8,2.8,3.8),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
      xlab = "", ylab = "", main = "")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1,2,3,4),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
+points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
+arrows(x0 = c(0.8,1.8,2.8,3.8),
+       y0 = c(no_part_low,one_part_low,two_part_low,three_part_low),
+       x1 = c(0.8,1.8,2.8,3.8),
+       y1 = c(no_part_high,one_part_high,two_part_high,three_part_high),
+       angle = 90, code = 3, length = 0.05, col = "red", lwd = 5)
+arrows(x0 = c(1.2,2.2,3.2,4.2),
+       y0 = c(no_part_low_sync,one_part_low_sync,two_part_low_sync,three_part_low_sync),
+       x1 = c(1.2,2.2,3.2,4.2),
+       y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
+       angle = 90, code = 3, length = 0.05, col = "black", lwd = 5)
 legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
-mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
+mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
 plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
@@ -1656,20 +1670,46 @@ layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
 # number of partners vs fitness
 no_part <- colMeans(lams_equal_stoch)[1]
+no_part_low <- min(lams_equal_stoch[,1])
+no_part_high <- max(lams_equal_stoch[,1])
 one_part <- mean(colMeans(lams_equal_stoch)[2:4])
+one_part_low <- min(lams_equal_stoch[,c(2:4)])
+one_part_high <- max(lams_equal_stoch[,c(2:4)])
 two_part <- mean(colMeans(lams_equal_stoch)[5:7])
+two_part_low <- min(lams_equal_stoch[,c(5:7)])
+two_part_high <- max(lams_equal_stoch[,c(5:7)])
 three_part <- colMeans(lams_equal_stoch)[8]
+three_part_low <- min(lams_equal_stoch[,8])
+three_part_high <- max(lams_equal_stoch[,8])
 no_part_sync <- colMeans(lams_equal_stoch_null)[1]
+no_part_low_sync <- min(lams_equal_stoch_null[,1])
+no_part_high_sync <- max(lams_equal_stoch_null[,1])
 one_part_sync <- mean(colMeans(lams_equal_stoch_null)[2:4])
+one_part_low_sync <- min(lams_equal_stoch_null[,c(2:4)])
+one_part_high_sync <- max(lams_equal_stoch_null[,c(2:4)])
 two_part_sync <- mean(colMeans(lams_equal_stoch_null)[5:7])
+two_part_low_sync <- min(lams_equal_stoch_null[,c(5:7)])
+two_part_high_sync <- max(lams_equal_stoch_null[,c(5:7)])
 three_part_sync <- colMeans(lams_equal_stoch_null)[8]
-plot(c(1,2,3,4),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.94, 1), xaxt = "n", cex.lab = 2, 
-     xlab = " ", ylab = " ", main = "")
+three_part_low_sync <- min(lams_equal_stoch_null[,8])
+three_part_high_sync <- max(lams_equal_stoch_null[,8])
+plot(c(0.8,1.8,2.8,3.8),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.9, 1.03), xaxt = "n", cex.lab = 2, 
+     xlab = "", ylab = "", main = "")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1,2,3,4),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
+points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
+arrows(x0 = c(0.8,1.8,2.8,3.8),
+       y0 = c(no_part_low,one_part_low,two_part_low,three_part_low),
+       x1 = c(0.8,1.8,2.8,3.8),
+       y1 = c(no_part_high,one_part_high,two_part_high,three_part_high),
+       angle = 90, code = 3, length = 0.05, col = "red", lwd = 5)
+arrows(x0 = c(1.2,2.2,3.2,4.2),
+       y0 = c(no_part_low_sync,one_part_low_sync,two_part_low_sync,three_part_low_sync),
+       x1 = c(1.2,2.2,3.2,4.2),
+       y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
+       angle = 90, code = 3, length = 0.05, col = "black", lwd = 5)
 legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
-mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
+mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
 plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
@@ -1682,7 +1722,6 @@ arrows(x0 = c(1,10,11,9,20,21,19,30),
        angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
 points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
-mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- synchronous
 plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
@@ -1696,7 +1735,6 @@ arrows(x0 = c(1,10,11,9,20,21,19,30),
 points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
-mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = 1.75)
 dev.off()
 
 ## Plot the distributions of the stochastic lambdas equal likelihood
@@ -1768,20 +1806,46 @@ layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
 # number of partners vs fitness
 no_part <- colMeans(lams_freq_stoch)[1]
+no_part_low <- min(lams_freq_stoch[,1])
+no_part_high <- max(lams_freq_stoch[,1])
 one_part <- mean(colMeans(lams_freq_stoch)[2:4])
+one_part_low <- min(lams_freq_stoch[,c(2:4)])
+one_part_high <- max(lams_freq_stoch[,c(2:4)])
 two_part <- mean(colMeans(lams_freq_stoch)[5:7])
+two_part_low <- min(lams_freq_stoch[,c(5:7)])
+two_part_high <- max(lams_freq_stoch[,c(5:7)])
 three_part <- colMeans(lams_freq_stoch)[8]
+three_part_low <- min(lams_freq_stoch[,8])
+three_part_high <- max(lams_freq_stoch[,8])
 no_part_sync <- colMeans(lams_freq_stoch_null)[1]
+no_part_low_sync <- min(lams_freq_stoch_null[,1])
+no_part_high_sync <- max(lams_freq_stoch_null[,1])
 one_part_sync <- mean(colMeans(lams_freq_stoch_null)[2:4])
+one_part_low_sync <- min(lams_freq_stoch_null[,c(2:4)])
+one_part_high_sync <- max(lams_freq_stoch_null[,c(2:4)])
 two_part_sync <- mean(colMeans(lams_freq_stoch_null)[5:7])
+two_part_low_sync <- min(lams_freq_stoch_null[,c(5:7)])
+two_part_high_sync <- max(lams_freq_stoch_null[,c(5:7)])
 three_part_sync <- colMeans(lams_freq_stoch_null)[8]
-plot(c(1,2,3,4),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.94, 1), xaxt = "n", cex.lab = 2, 
-     xlab = " ", ylab = " ", main = "")
+three_part_low_sync <- min(lams_freq_stoch_null[,8])
+three_part_high_sync <- max(lams_freq_stoch_null[,8])
+plot(c(0.8,1.8,2.8,3.8),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.9, 1.03), xaxt = "n", cex.lab = 2, 
+     xlab = "", ylab = "", main = "")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1,2,3,4),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
+points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
+arrows(x0 = c(0.8,1.8,2.8,3.8),
+       y0 = c(no_part_low,one_part_low,two_part_low,three_part_low),
+       x1 = c(0.8,1.8,2.8,3.8),
+       y1 = c(no_part_high,one_part_high,two_part_high,three_part_high),
+       angle = 90, code = 3, length = 0.05, col = "red", lwd = 5)
+arrows(x0 = c(1.2,2.2,3.2,4.2),
+       y0 = c(no_part_low_sync,one_part_low_sync,two_part_low_sync,three_part_low_sync),
+       x1 = c(1.2,2.2,3.2,4.2),
+       y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
+       angle = 90, code = 3, length = 0.05, col = "black", lwd = 5)
 legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
-mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
+mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
 plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
@@ -1794,7 +1858,6 @@ arrows(x0 = c(1,10,11,9,20,21,19,30),
        angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
 points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
-mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- synchronous
 plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
@@ -1808,7 +1871,6 @@ arrows(x0 = c(1,10,11,9,20,21,19,30),
 points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
-mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = 1.75)
 dev.off()
 ## Plot the distributions of the stochastic lambdas frequency based
 png("Manuscript/Figures/freq_conv_NS.png")
@@ -1978,10 +2040,11 @@ proportions
 ## compare posterior distributions of each ant partner to all
 c_l <- lams_comp_stoch$cremvac - lams_comp_stoch$all
 o_l <- lams_comp_stoch$othervac - lams_comp_stoch$all
+l_l <- lams_comp_stoch$none - lams_comp_stoch$liomvac
 co_l <- lams_comp_stoch$othercremvac - lams_comp_stoch$all
 cl_l <- lams_comp_stoch$liomcremvac - lams_comp_stoch$all
 lo_l <- lams_comp_stoch$liomvacother - lams_comp_stoch$all
-a_l <- lams_comp_stoch$vacant - lams_comp_stoch$all
+a_l <- lams_comp_stoch$none - lams_comp_stoch$all
 proportions <- vector()
 proportions[1] <- length(subset(c_l,c_l>-0))/100
 proportions[2] <- length(subset(o_l,o_l>-0))/100
@@ -1990,6 +2053,32 @@ proportions[4] <- length(subset(cl_l,cl_l>-0))/100
 proportions[5] <- length(subset(lo_l,lo_l>-0))/100
 proportions[6] <- length(subset(a_l,a_l>-0))/100
 proportions
+
+par(mar=c(1,1,1,1))
+layout(matrix(c(1,2,3,4,5,6,7),
+              ncol = 1, nrow = 7), heights = c(1,1,1,1,1,1,1))
+## Vacant is smaller than all
+plot(density(a_l), col = acol, xlim = c(-0.025,0.04))
+abline(v = 0, col = acol, lty = 2)
+## crem is the same as all
+plot(density(c_l), col = lccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lccol, lty = 2)
+## Other is not different than all
+plot(density(o_l), col = locol, xlim = c(-0.025,0.04))
+abline(v = 0, col = locol, lty = 2)
+## Crem and Other is not different than all
+plot(density(co_l), col = cocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = cocol, lty = 2)
+## Crem and Liom is higher than all
+plot(density(cl_l), col = ccol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ccol, lty = 2)
+## liom and other is higher than all
+plot(density(lo_l), col = lcol, xlim = c(-0.025,0.04))
+abline(v = 0, col = lcol, lty = 2)
+## Liom is higher than all
+plot(density(o_vac), col = ocol, xlim = c(-0.025,0.04))
+abline(v = 0, col = ocol, lty = 2)
+
 
 
 ################################################################################

@@ -38,7 +38,7 @@ library(ggpubr)
 library(reshape)
 library(reshape2)
 library(stats)
-knitr::oknitr::oknitr::opts_chunk$set(echo = TRUE)
+# knitr::oknitr::oknitr::opts_chunk$set(echo = TRUE)
 # check the workign directory and make sure it is set to the right location
 #getwd()
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
