@@ -100,10 +100,14 @@ dev.off()
 
 ## Format the original data
 y_subset <- growth_data[,c("logsize_t1","ant_t", "logsize_t")]
-y_crem_subset_grow <- subset(y_subset, ant_t == "crem")
-y_liom_subset_grow <- subset(y_subset, ant_t == "liom")
-y_vac_subset_grow <- subset(y_subset, ant_t == "vacant")
-y_other_subset_grow <- subset(y_subset, ant_t == "other")
+y_crem_subset_surv <- subset(survival_data, ant_t == "crem")
+y_liom_subset_surv <- subset(survival_data, ant_t == "liom")
+y_vac_subset_surv <- subset(survival_data, ant_t == "vacant")
+y_other_subset_surv <- subset(survival_data, ant_t == "other")
+size_crem = seq(min((y_crem_subset_surv$logsize_t), na.rm = TRUE), max ((y_crem_subset_surv$logsize_t), na.rm = TRUE), by = 0.1)
+size_other = seq(min((y_other_subset_surv$logsize_t), na.rm = TRUE), max ((y_other_subset_surv$logsize_t), na.rm = TRUE), by = 0.1)
+size_liom = seq(min((y_liom_subset_surv$logsize_t), na.rm = TRUE), max ((y_liom_subset_surv$logsize_t), na.rm = TRUE), by = 0.1)
+size_vac = seq(min((y_vac_subset_surv$logsize_t), na.rm = TRUE), max ((y_vac_subset_surv$logsize_t), na.rm = TRUE), by = 0.1)
 ## Predicted sizes for each partner condition
 omega <- exp(mean(params$grow_sig0) + size_dummy*mean(params$grow_sig1))
 omega_other <- exp(mean(params$grow_sig0) + size_other*mean(params$grow_sig1))
@@ -116,19 +120,15 @@ alpha_crem <- exp(mean(params$grow_alp0) + size_crem*mean(params$grow_alp1))
 alpha_liom <- exp(mean(params$grow_alp0) + size_liom*mean(params$grow_alp1))
 alpha_vac <- exp(mean(params$grow_alp0) + size_vac*mean(params$grow_alp1))
 # Other
-size_other <- seq(min(y_other_subset_grow$logsize_t1),max(y_other_subset_grow$logsize_t1), by = 0.1)
 y_other_mean_grow <- mean(params$grow_beta03) + (size_dummy) * mean(params$grow_beta13 ) + (size_dummy)^2 * mean(params$grow_beta23)
 y_other_mean_grow_sub <- mean(params$grow_beta03) + (size_other) * mean(params$grow_beta13 ) + (size_other)^2 * mean(params$grow_beta23)
 # Crem
-size_crem <- seq(min(y_crem_subset_grow$logsize_t1),max(y_crem_subset_grow$logsize_t1), by = 0.1)
 y_crem_mean_grow <- mean(params$grow_beta01) + (size_dummy) * mean(params$grow_beta11) + (size_dummy)^2 * mean(params$grow_beta21)
 y_crem_mean_grow_sub <- mean(params$grow_beta01) + (size_crem) * mean(params$grow_beta11) + (size_crem)^2 * mean(params$grow_beta21)
 # Liom
-size_liom <- seq(min(y_liom_subset_grow$logsize_t1),max(y_liom_subset_grow$logsize_t1), by = 0.1)
 y_liom_mean_grow <- mean(params$grow_beta02) + (size_dummy) * mean(params$grow_beta12) + (size_dummy)^2 * mean(params$grow_beta22)
 y_liom_mean_grow_sub <- mean(params$grow_beta02) + (size_liom) * mean(params$grow_beta12) + (size_liom)^2 * mean(params$grow_beta22)
 # Vac
-size_vac <- seq(min(y_vac_subset_grow$logsize_t1),max(y_vac_subset_grow$logsize_t1), by = 0.1)
 y_vac_mean_grow <-  mean(params$grow_beta04) + (size_dummy) * mean(params$grow_beta14) + (size_dummy)^2 * mean(params$grow_beta24)
 y_vac_mean_grow_sub <-  mean(params$grow_beta04) + (size_vac) * mean(params$grow_beta14) + (size_vac)^2 * mean(params$grow_beta24)
 
@@ -391,12 +391,11 @@ a[4,1] <- cvg$estimate
 a[4,2] <- lvg$estimate
 a[4,3] <- ovg$estimate
 a[4,4] <- vvg$estimate
-colnames(a) <- c("Crem.","Liom.","Other","Vacant")
-rownames(a) <- c("Crem.","Liom.","Other","Vacant")
+colnames(a) <- c("C","L","O","V")
+rownames(a) <- c("C","L","O","V")
 png("Manuscript/Figures/corr_GRFX.png")
-corrplot(a, method = "shade", col.lim = c(0,1), addCoef.col = T)
+corrplot(a, method = "shade", col.lim = c(-1,1), type = "upper",diag = F,pch.cex = 3, tl.cex = 3, tl.col = "black",tl.srt = 360,tl.offset = 0.5, addCoef.col = NULL,cl.length = 3,cl.cex = 3,cl.offset  = 4)
 dev.off()
-
 
 # create matrix 1 = crem, 2 = liom, 3 = other, 4 = vac
 b <- matrix(NA, nrow = 4, ncol = 4)
@@ -420,10 +419,10 @@ b[4,1] <- cvs$estimate
 b[4,2] <- lvs$estimate
 b[4,3] <- ovs$estimate
 b[4,4] <- vvs$estimate
-colnames(b) <- c("Crem.","Liom.","Other","Vacant")
-rownames(b) <- c("Crem.","Liom.","Other","Vacant")
+colnames(b) <- c("C","L","O","V")
+rownames(b) <- c("C","L","O","V")
 png("Manuscript/Figures/corr_SRFX.png")
-corrplot(b, method = "shade", col.lim = c(-1,1), addCoef.col = T)
+corrplot(b, method = "shade", col.lim = c(-1,1), type = "upper",diag = F,pch.cex = 3, tl.cex = 3, tl.col = "black",tl.srt = 360,tl.offset = 0.5, addCoef.col = NULL,cl.length = 3,cl.cex = 3,cl.offset  = 4)
 dev.off()
 
 # create matrix 1 = crem, 2 = liom, 3 = other, 4 = vac
@@ -448,10 +447,10 @@ c[4,1] <- cvv$estimate
 c[4,2] <- lvv$estimate
 c[4,3] <- ovv$estimate
 c[4,4] <- vvv$estimate
-colnames(c) <- c("Crem.","Liom.","Other","Vacant")
-rownames(c) <- c("Crem.","Liom.","Other","Vacant")
+colnames(c) <- c("C","L","O","V")
+rownames(c) <- c("C","L","O","V")
 png("Manuscript/Figures/corr_VRFX.png")
-corrplot(c, method = "shade", col.lim = c(0,1), addCoef.col = T)
+corrplot(c, method = "shade", col.lim = c(-1,1), type = "upper",diag = F,pch.cex = 3, tl.cex = 3, tl.col = "black",tl.srt = 360,tl.offset = 0.5, addCoef.col = NULL,cl.length = 3,cl.cex = 3,cl.offset  = 4)
 dev.off()
 
 mean(a)
@@ -464,9 +463,9 @@ colMeans(c)
 png("Manuscript/Figures/corr_RFX.png")
 par(mar=c(0,1,0,10),oma=c(0,2,0,2))
 layout(matrix(c(1,2,3),ncol = 3, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9))
-corrplot(a, method = "shade", col.lim = c(0,1), addCoef.col = T)
-corrplot(b, method = "shade", col.lim = c(0,1), addCoef.col = T)
-corrplot(c, method = "shade", col.lim = c(0,1), addCoef.col = T)
+corrplot(a, method = "shade", col.lim = c(-1,1), addCoef.col = T)
+corrplot(b, method = "shade", col.lim = c(-1,1), addCoef.col = T)
+corrplot(c, method = "shade", col.lim = c(-1,1), addCoef.col = T)
 mtext("   Growth          Survival          Viability",side=3,line=-14,outer=TRUE,cex=2)
 dev.off()
 
@@ -805,6 +804,10 @@ lines(density(exp(seed.params$beta0[,1])),lwd=3,col=cremcol)
 legend("topright",legend = c("Vacant","Crem.","Liom."), fill = c(vaccol, cremcol, liomcol))
 dev.off()
 
+quantile(exp(seed.params$beta0[,3]),probs=c(0.025,.975))
+quantile(exp(seed.params$beta0[,2]),probs=c(0.025,.975))
+quantile(exp(seed.params$beta0[,1]),probs=c(0.025,.975))
+
 ## Calculate mean # seeds produced
 vac_seed <- mean(exp(seed.params$beta0[,3]))
 crem_seed <- mean(exp(seed.params$beta0[,1]))
@@ -1009,6 +1012,16 @@ mtext("Year in Seedbank",side=1,line=-1.5,outer=TRUE,cex=2)
 mtext("Probability of Germinating",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
+png("Manuscript/Figures/germination.png")
+plot(density(invlogit(params$germ1_beta0)), col = "blue", lwd = 3,
+     xlab = "",ylab = "",main = "",
+     xlim = c(0.002,0.009),ylim = c(0,800))
+lines(density(invlogit(params$germ2_beta0)), lwd = 3, col = "chartreuse4")
+mtext("Probability of Germinating",side=1,line=-1.5,outer=TRUE,cex=2)
+mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
+legend("topright",legend = c("Year 1","Year 2"),fill = c("blue","chartreuse4"))
+dev.off()
+
 
 ################################################################################
 ## Recruitment Size Distribution Model Visuals
@@ -1027,6 +1040,12 @@ boxplot(rec.params$beta0, col = "chartreuse4", ylab = "", main = "", xlab = "")
 mtext("Log(Volume)",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
+png("Manuscript/Figures/rec_size.png")
+plot(density(rec.params$beta0), col = "chartreuse4",lwd = 3,
+     ylab = "",xlab = "",main = "")
+mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
+mtext("Log(Volume) of Recruits",side=1,line=-2,outer=TRUE,cex=2,las=0)
+dev.off()
 
 ################################################################################
 ## Ant Partner Transitions Model Visuals
@@ -1526,7 +1545,7 @@ axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
 dev.off()
 
-png("Manuscript/Figures/Lambdas_Comp_lines.png")
+png("Manuscript/Figures/Lambdas_Comp_lines.png", height = 340, width = 880)
 par(mar=c(5,5,1,1))
 layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
@@ -1555,50 +1574,50 @@ two_part_high_sync <- max(lams_comp_stoch_null[,c(5:7)])
 three_part_sync <- colMeans(lams_comp_stoch_null)[8]
 three_part_low_sync <- min(lams_comp_stoch_null[,8])
 three_part_high_sync <- max(lams_comp_stoch_null[,8])
-plot(c(0.8,1.8,2.8,3.8),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
      xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
-     xlab = "", ylab = "", main = "")
+     xlab = "", ylab = "", main = "", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
-arrows(x0 = c(0.8,1.8,2.8,3.8),
+points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
+arrows(x0 = c(0.9,1.9,2.9,3.9),
        y0 = c(no_part_low,one_part_low,two_part_low,three_part_low),
-       x1 = c(0.8,1.8,2.8,3.8),
+       x1 = c(0.9,1.9,2.9,3.9),
        y1 = c(no_part_high,one_part_high,two_part_high,three_part_high),
-       angle = 90, code = 3, length = 0.05, col = "red", lwd = 5)
+       angle = 90, code = 3, length = 0.05, col = "red", lwd = 3)
 arrows(x0 = c(1.2,2.2,3.2,4.2),
        y0 = c(no_part_low_sync,one_part_low_sync,two_part_low_sync,three_part_low_sync),
        x1 = c(1.2,2.2,3.2,4.2),
        y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
-       angle = 90, code = 3, length = 0.05, col = "black", lwd = 5)
+       angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
 legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
 mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
-plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
      main = "Non-Synchronous")
-arrows(x0 = c(1,10,11,9,20,21,19,30), 
+arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_comp_stoch[,1]),min(lams_comp_stoch[,2]),min(lams_comp_stoch[,3]),min(lams_comp_stoch[,4]),min(lams_comp_stoch[,5]),min(lams_comp_stoch[,6]),min(lams_comp_stoch[,7]),min(lams_comp_stoch[,8])),
-       x1 = c(1,10,11,9,20,21,19,30), 
+       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y1 = c(max(lams_comp_stoch[,1]),max(lams_comp_stoch[,2]),max(lams_comp_stoch[,3]),max(lams_comp_stoch[,4]),max(lams_comp_stoch[,5]),max(lams_comp_stoch[,6]),max(lams_comp_stoch[,7]),max(lams_comp_stoch[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
-points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols)
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 #mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- synchronous
-plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols,
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Non-Synchronous")
-arrows(x0 = c(1,10,11,9,20,21,19,30), 
+     main = "Synchronous")
+arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_comp_stoch_null[,1]),min(lams_comp_stoch_null[,2]),min(lams_comp_stoch_null[,3]),min(lams_comp_stoch_null[,4]),min(lams_comp_stoch_null[,5]),min(lams_comp_stoch_null[,6]),min(lams_comp_stoch_null[,7]),min(lams_comp_stoch_null[,8])),
-       x1 = c(1,10,11,9,20,21,19,30), 
+       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y1 = c(max(lams_comp_stoch_null[,1]),max(lams_comp_stoch_null[,2]),max(lams_comp_stoch_null[,3]),max(lams_comp_stoch_null[,4]),max(lams_comp_stoch_null[,5]),max(lams_comp_stoch_null[,6]),max(lams_comp_stoch_null[,7]),max(lams_comp_stoch_null[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
-points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols)
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
-mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = 1.75)
+mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = -50)
 dev.off()
 
 ## Plot the distributions of the stochastic lambdas competitive exclusion
@@ -1664,7 +1683,8 @@ dev.off()
 ################################################################################
 ## Visualize Equal Likelihood Model
 ################################################################################
-png("Manuscript/Figures/Lambdas_Equal_lines.png")
+
+png("Manuscript/Figures/Lambdas_Equal_lines.png", height = 340, width = 880)
 par(mar=c(5,5,1,1))
 layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
@@ -1693,48 +1713,50 @@ two_part_high_sync <- max(lams_equal_stoch_null[,c(5:7)])
 three_part_sync <- colMeans(lams_equal_stoch_null)[8]
 three_part_low_sync <- min(lams_equal_stoch_null[,8])
 three_part_high_sync <- max(lams_equal_stoch_null[,8])
-plot(c(0.8,1.8,2.8,3.8),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.9, 1.03), xaxt = "n", cex.lab = 2, 
-     xlab = "", ylab = "", main = "")
+plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
+     xlab = "", ylab = "", main = "", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
-arrows(x0 = c(0.8,1.8,2.8,3.8),
+points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
+arrows(x0 = c(0.9,1.9,2.9,3.9),
        y0 = c(no_part_low,one_part_low,two_part_low,three_part_low),
-       x1 = c(0.8,1.8,2.8,3.8),
+       x1 = c(0.9,1.9,2.9,3.9),
        y1 = c(no_part_high,one_part_high,two_part_high,three_part_high),
-       angle = 90, code = 3, length = 0.05, col = "red", lwd = 5)
+       angle = 90, code = 3, length = 0.05, col = "red", lwd = 3)
 arrows(x0 = c(1.2,2.2,3.2,4.2),
        y0 = c(no_part_low_sync,one_part_low_sync,two_part_low_sync,three_part_low_sync),
        x1 = c(1.2,2.2,3.2,4.2),
        y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
-       angle = 90, code = 3, length = 0.05, col = "black", lwd = 5)
+       angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
 legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
 mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
-plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols,
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
      main = "Non-Synchronous")
-arrows(x0 = c(1,10,11,9,20,21,19,30), 
+arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_equal_stoch[,1]),min(lams_equal_stoch[,2]),min(lams_equal_stoch[,3]),min(lams_equal_stoch[,4]),min(lams_equal_stoch[,5]),min(lams_equal_stoch[,6]),min(lams_equal_stoch[,7]),min(lams_equal_stoch[,8])),
-       x1 = c(1,10,11,9,20,21,19,30), 
+       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y1 = c(max(lams_equal_stoch[,1]),max(lams_equal_stoch[,2]),max(lams_equal_stoch[,3]),max(lams_equal_stoch[,4]),max(lams_equal_stoch[,5]),max(lams_equal_stoch[,6]),max(lams_equal_stoch[,7]),max(lams_equal_stoch[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
-points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols)
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+#mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- synchronous
-plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols,
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Non-Synchronous")
-arrows(x0 = c(1,10,11,9,20,21,19,30), 
+     main = "Synchronous")
+arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_equal_stoch_null[,1]),min(lams_equal_stoch_null[,2]),min(lams_equal_stoch_null[,3]),min(lams_equal_stoch_null[,4]),min(lams_equal_stoch_null[,5]),min(lams_equal_stoch_null[,6]),min(lams_equal_stoch_null[,7]),min(lams_equal_stoch_null[,8])),
-       x1 = c(1,10,11,9,20,21,19,30), 
+       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y1 = c(max(lams_equal_stoch_null[,1]),max(lams_equal_stoch_null[,2]),max(lams_equal_stoch_null[,3]),max(lams_equal_stoch_null[,4]),max(lams_equal_stoch_null[,5]),max(lams_equal_stoch_null[,6]),max(lams_equal_stoch_null[,7]),max(lams_equal_stoch_null[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
-points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols)
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
+mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = -50)
 dev.off()
 
 ## Plot the distributions of the stochastic lambdas equal likelihood
@@ -1800,7 +1822,7 @@ dev.off()
 ################################################################################
 ## Visualize Frequency Based Model
 ################################################################################
-png("Manuscript/Figures/Lambdas_Freq_lines.png")
+png("Manuscript/Figures/Lambdas_Freq_lines.png", height = 340, width = 880)
 par(mar=c(5,5,1,1))
 layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
@@ -1829,49 +1851,53 @@ two_part_high_sync <- max(lams_freq_stoch_null[,c(5:7)])
 three_part_sync <- colMeans(lams_freq_stoch_null)[8]
 three_part_low_sync <- min(lams_freq_stoch_null[,8])
 three_part_high_sync <- max(lams_freq_stoch_null[,8])
-plot(c(0.8,1.8,2.8,3.8),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.9, 1.03), xaxt = "n", cex.lab = 2, 
-     xlab = "", ylab = "", main = "")
+plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
+     xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
+     xlab = "", ylab = "", main = "", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "red")
-arrows(x0 = c(0.8,1.8,2.8,3.8),
+points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
+arrows(x0 = c(0.9,1.9,2.9,3.9),
        y0 = c(no_part_low,one_part_low,two_part_low,three_part_low),
-       x1 = c(0.8,1.8,2.8,3.8),
+       x1 = c(0.9,1.9,2.9,3.9),
        y1 = c(no_part_high,one_part_high,two_part_high,three_part_high),
-       angle = 90, code = 3, length = 0.05, col = "red", lwd = 5)
+       angle = 90, code = 3, length = 0.05, col = "red", lwd = 3)
 arrows(x0 = c(1.2,2.2,3.2,4.2),
        y0 = c(no_part_low_sync,one_part_low_sync,two_part_low_sync,three_part_low_sync),
        x1 = c(1.2,2.2,3.2,4.2),
        y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
-       angle = 90, code = 3, length = 0.05, col = "black", lwd = 5)
+       angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
 legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
 mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
-plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols,
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
      main = "Non-Synchronous")
-arrows(x0 = c(1,10,11,9,20,21,19,30), 
+arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_freq_stoch[,1]),min(lams_freq_stoch[,2]),min(lams_freq_stoch[,3]),min(lams_freq_stoch[,4]),min(lams_freq_stoch[,5]),min(lams_freq_stoch[,6]),min(lams_freq_stoch[,7]),min(lams_freq_stoch[,8])),
-       x1 = c(1,10,11,9,20,21,19,30), 
+       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y1 = c(max(lams_freq_stoch[,1]),max(lams_freq_stoch[,2]),max(lams_freq_stoch[,3]),max(lams_freq_stoch[,4]),max(lams_freq_stoch[,5]),max(lams_freq_stoch[,6]),max(lams_freq_stoch[,7]),max(lams_freq_stoch[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
-points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols)
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+#mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- synchronous
-plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols,
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Non-Synchronous")
-arrows(x0 = c(1,10,11,9,20,21,19,30), 
+     main = "Synchronous")
+arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_freq_stoch_null[,1]),min(lams_freq_stoch_null[,2]),min(lams_freq_stoch_null[,3]),min(lams_freq_stoch_null[,4]),min(lams_freq_stoch_null[,5]),min(lams_freq_stoch_null[,6]),min(lams_freq_stoch_null[,7]),min(lams_freq_stoch_null[,8])),
-       x1 = c(1,10,11,9,20,21,19,30), 
+       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y1 = c(max(lams_freq_stoch_null[,1]),max(lams_freq_stoch_null[,2]),max(lams_freq_stoch_null[,3]),max(lams_freq_stoch_null[,4]),max(lams_freq_stoch_null[,5]),max(lams_freq_stoch_null[,6]),max(lams_freq_stoch_null[,7]),max(lams_freq_stoch_null[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
-points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols)
+       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
+mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = -50)
 dev.off()
+
+
 ## Plot the distributions of the stochastic lambdas frequency based
 png("Manuscript/Figures/freq_conv_NS.png")
 par(mar=c(4,4,1,1))
@@ -2022,6 +2048,15 @@ plot(density(o_vac), col = ocol, xlim = c(-0.025,0.04))
 abline(v = 0, col = ocol, lty = 2)
 
 ## compare posterior distributions of each ant partner to liom (the highest mean)
+mean(lams_comp_stoch$none)
+mean(lams_comp_stoch$liomvac)
+mean(lams_comp_stoch$cremvac)
+mean(lams_comp_stoch$othervac)
+mean(lams_comp_stoch$liomcremvac)
+mean(lams_comp_stoch$liomvacother)
+mean(lams_comp_stoch$othercremvac)
+mean(lams_comp_stoch$all)
+
 c_l <- lams_comp_stoch$cremvac - lams_comp_stoch$liomvac
 o_l <- lams_comp_stoch$othervac - lams_comp_stoch$liomvac
 co_l <- lams_comp_stoch$othercremvac - lams_comp_stoch$liomvac
@@ -2029,18 +2064,27 @@ cl_l <- lams_comp_stoch$liomcremvac - lams_comp_stoch$liomvac
 lo_l <- lams_comp_stoch$liomvacother - lams_comp_stoch$liomvac
 a_l <- lams_comp_stoch$all - lams_comp_stoch$liomvac
 proportions <- vector()
-proportions[1] <- length(subset(c_l,c_l>-0))/100
-proportions[2] <- length(subset(o_l,o_l>-0))/100
-proportions[3] <- length(subset(co_l,co_l>-0))/100
-proportions[4] <- length(subset(cl_l,cl_l>-0))/100
-proportions[5] <- length(subset(lo_l,lo_l>-0))/100
-proportions[6] <- length(subset(a_l,a_l>-0))/100
+proportions[1] <- length(subset(c_l,c_l>0))/100
+proportions[2] <- length(subset(o_l,o_l>0))/100
+proportions[3] <- length(subset(co_l,co_l>0))/100
+proportions[4] <- length(subset(cl_l,cl_l>0))/100
+proportions[5] <- length(subset(lo_l,lo_l>0))/100
+proportions[6] <- length(subset(a_l,a_l>0))/100
+proportions
+mean(proportions[c(3,4,5)])
+
+c_l <- lams_comp_stoch$liomvacother - lams_comp_stoch$all
+o_l <- lams_comp_stoch$liomcremvac - lams_comp_stoch$othercremvac
+
+proportions <- vector()
+proportions[1] <- length(subset(c_l,c_l>0))/100
+proportions[2] <- length(subset(o_l,o_l>0))/100
 proportions
 
 ## compare posterior distributions of each ant partner to all
 c_l <- lams_comp_stoch$cremvac - lams_comp_stoch$all
 o_l <- lams_comp_stoch$othervac - lams_comp_stoch$all
-l_l <- lams_comp_stoch$none - lams_comp_stoch$liomvac
+l_l <- lams_comp_stoch$liomvac - lams_comp_stoch$all
 co_l <- lams_comp_stoch$othercremvac - lams_comp_stoch$all
 cl_l <- lams_comp_stoch$liomcremvac - lams_comp_stoch$all
 lo_l <- lams_comp_stoch$liomvacother - lams_comp_stoch$all
@@ -2051,8 +2095,12 @@ proportions[2] <- length(subset(o_l,o_l>-0))/100
 proportions[3] <- length(subset(co_l,co_l>-0))/100
 proportions[4] <- length(subset(cl_l,cl_l>-0))/100
 proportions[5] <- length(subset(lo_l,lo_l>-0))/100
-proportions[6] <- length(subset(a_l,a_l>-0))/100
+proportions[6] <- length(subset(l_l,l_l>-0))/100
 proportions
+# Contrast 1 partner to 3
+mean(proportions[c(1,2,6)])
+# contrast 2 partner to 3
+mean(proportions[c(3,4,5)])
 
 par(mar=c(1,1,1,1))
 layout(matrix(c(1,2,3,4,5,6,7),
