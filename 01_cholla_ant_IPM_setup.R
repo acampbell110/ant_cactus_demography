@@ -18,6 +18,7 @@ library(sgt)
 library(qgam)
 library(brms)
 library(loo)
+library(simcausal)
 # ipm analysis
 library(popbio)
 # visual model checks
