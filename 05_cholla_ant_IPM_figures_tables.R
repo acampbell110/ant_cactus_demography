@@ -3,6 +3,7 @@
 ################################################################################
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 source( "/Users/alicampbell/Documents/GitHub/ant_cactus_demography/03_cholla_ant_IPM_params_functions.R")
+bayesplot::color_scheme_set(scheme = "pink")
 
 ## Color Codes
 ## Retro bright
@@ -23,7 +24,7 @@ cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
 str(cactus)
 ##### Size variable used in most visualizations
 size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
-
+scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
 ################################################################################
 ################################################################################
 ####
@@ -42,7 +43,7 @@ bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0",
                                            "a_0",
                                            "a_size",
                                            "beta0[1]","beta0[2]","beta0[3]","beta0[4]",
-                                           "beta1[1]","beta1[2]","beta1[3]","beta1[4]"))
+                                           "beta1[1]","beta1[2]","beta1[3]","beta1[4]"))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 # # Check the different quantile fits of the model to make sure not only the mean but also other quantiles fit well with the real data
 # # real data moments
@@ -58,7 +59,7 @@ dev.off()
 # obs_sd<-Q.sd(q.fit[3,],q.fit[5,])
 # obs_skew<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
 # obs_kurt<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
-# # simulate data 
+# # simulate data
 # n_draws=25
 # grow_sim<-matrix(NA,n_draws,stan_data_grow_stud$N)
 # sim_mean<-sim_sd<-sim_skew<-sim_kurt<-matrix(NA,n_draws,stan_data_grow_stud$N)
@@ -79,11 +80,11 @@ dev.off()
 #   q.fit[5,]<-predict(qgam(y~s(vol),qu=0.75,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
 #   q.fit[6,]<-predict(qgam(y~s(vol),qu=0.90,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
 #   q.fit[7,]<-predict(qgam(y~s(vol),qu=0.95,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   sim_mean[i,]<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,]) 
-#   sim_sd[i,]<-Q.sd(q.fit[3,],q.fit[5,])  
+#   sim_mean[i,]<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,])
+#   sim_sd[i,]<-Q.sd(q.fit[3,],q.fit[5,])
 #   sim_skew[i,]<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
 #   sim_kurt[i,]<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
-#   print(i/n_draws)  
+#   print(i/n_draws)
 # }
 # plot(stan_data_grow_stud$vol,grow_sim[1,],pch=".",col="red")
 # points(stan_data_grow_stud$vol,stan_data_grow_stud$y,pch=".",col="black")
@@ -520,12 +521,12 @@ for(i in 1:n_draws){
 # Overlay Plots
 png(file = "Manuscript/Figures/surv_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y,surv_sim,group = ant)
+bayesplot::ppc_dens_overlay_grouped(y,surv_sim,group = ant)+labs(title = "b)")
 dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/surv_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_surv, pars=c("beta0","beta1")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 ## Format the original data
@@ -635,12 +636,12 @@ for(i in 1:n_draws){
 ## Plot the posterior distributions
 png("Manuscript/Figures/flow_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay(y, flow_sim)
+bayesplot::ppc_dens_overlay(y, flow_sim)+labs(title = "b)")
 dev.off()
 ## Convergence Plots
 png(file = "Manuscript/Figures/flow_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_flow, pars=c("beta0", "beta1","phi")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_flow, pars=c("beta0", "beta1","phi")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 
@@ -688,12 +689,12 @@ for(i in 1:n_draws){
 # Plot the posterior distributions
 png("Manuscript/Figures/viab_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y, viab_sim, group = ant)
+bayesplot::ppc_dens_overlay_grouped(y, viab_sim, group = ant)+labs(title = "b)")
 dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/viab_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_viab, pars=c("beta0")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 
@@ -854,12 +855,12 @@ for(i in 1:n_draws){
 # Plot the posterior distributions
 png("Manuscript/Figures/repro_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay(y, repro_sim)
+bayesplot::ppc_dens_overlay(y, repro_sim)+labs(title = "b)")
 dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/repro_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_repro, pars=c("beta0","beta1")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_repro, pars=c("beta0","beta1")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 
@@ -901,12 +902,12 @@ for(i in 1:n_draws){
 # Overlay Plots
 png(file = "Manuscript/Figures/seed_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay_grouped(y,seed_sim,group = ant)
+bayesplot::ppc_dens_overlay_grouped(y,seed_sim,group = ant)+labs(title = "b)")
 dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/seed_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_seed, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_seed, pars=c("beta0")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 
@@ -939,12 +940,12 @@ for(i in 1:n_draws){
 # Plot the posterior distributions
 png("Manuscript/Figures/fruit_post.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::ppc_dens_overlay(y, fruit_sim)
+bayesplot::ppc_dens_overlay(y, fruit_sim)+labs( title = "b)")
 dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/fruit_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_fruit, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_fruit, pars=c("beta0")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 ## Format the original data for figures
@@ -966,7 +967,7 @@ dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/seed_surv_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_seed_surv, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_seed_surv, pars=c("beta0")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 
@@ -992,14 +993,17 @@ dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/germ1_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_germ1, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_germ, pars=c("beta0[1]")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 png(file = "Manuscript/Figures/germ2_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_germ2, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_germ, pars=c("beta0[2]")))+labs(x = "iterations", y = "estimated value", title = "b)")
 dev.off()
-
-
+y <- germ.dat$seedlings
+## Overlay Plots
+png(file = "germ1_post.png")
+bayesplot::ppc_dens_overlay(y, invlogit(params$germ1_beta0))+labs(title = "b)")
+dev.off()
 ## Format the original data
 y_germ1 <- stan_data_germ$y_germ[stan_data_germ$year==1]/stan_data_germ$trials[stan_data_germ$year==1]
 y_germ2 <- stan_data_germ$y_germ[stan_data_germ$year==2]/stan_data_germ$trials[stan_data_germ$year==2]
@@ -1030,7 +1034,7 @@ dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/rec_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_rec, pars=c("beta0")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_rec, pars=c("beta0")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 
@@ -1054,7 +1058,7 @@ dev.off()
 # Convergence Plots
 png(file = "Manuscript/Figures/multi_conv.png")
 bayesplot::color_scheme_set(scheme = "pink")
-bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("beta")))
+bayesplot::mcmc_trace(As.mcmc.list(fit_multi, pars=c("beta")))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
 
 ## Format the original data 
@@ -1211,7 +1215,7 @@ pred_vac<-cbind(
   exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))/Denominator_vac)
 sum(pred_vac[1,])
 ## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
-png("Manuscript/Figures/transition.png")
+png("Manuscript/Figures/transition.png", width = 550, height = 550)
 par(mar=c(2,2,1,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4),
               ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
@@ -1576,7 +1580,7 @@ three_part_low_sync <- min(lams_comp_stoch_null[,8])
 three_part_high_sync <- max(lams_comp_stoch_null[,8])
 plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
      xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
-     xlab = "", ylab = "", main = "", col = "red")
+     xlab = "", ylab = "", main = "a)                                  ", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
 points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
 arrows(x0 = c(0.9,1.9,2.9,3.9),
@@ -1595,7 +1599,7 @@ mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Non-Synchronous")
+     main = "b) Non-Synchronous")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_comp_stoch[,1]),min(lams_comp_stoch[,2]),min(lams_comp_stoch[,3]),min(lams_comp_stoch[,4]),min(lams_comp_stoch[,5]),min(lams_comp_stoch[,6]),min(lams_comp_stoch[,7]),min(lams_comp_stoch[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1608,7 +1612,7 @@ axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Synchronous")
+     main = "c) Synchronous         ")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_comp_stoch_null[,1]),min(lams_comp_stoch_null[,2]),min(lams_comp_stoch_null[,3]),min(lams_comp_stoch_null[,4]),min(lams_comp_stoch_null[,5]),min(lams_comp_stoch_null[,6]),min(lams_comp_stoch_null[,7]),min(lams_comp_stoch_null[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1715,7 +1719,7 @@ three_part_low_sync <- min(lams_equal_stoch_null[,8])
 three_part_high_sync <- max(lams_equal_stoch_null[,8])
 plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
      xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
-     xlab = "", ylab = "", main = "", col = "red")
+     xlab = "", ylab = "", main = "a)                                  ", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
 points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
 arrows(x0 = c(0.9,1.9,2.9,3.9),
@@ -1734,7 +1738,7 @@ mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Non-Synchronous")
+     main = "b) Non-Synchronous")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_equal_stoch[,1]),min(lams_equal_stoch[,2]),min(lams_equal_stoch[,3]),min(lams_equal_stoch[,4]),min(lams_equal_stoch[,5]),min(lams_equal_stoch[,6]),min(lams_equal_stoch[,7]),min(lams_equal_stoch[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1747,7 +1751,7 @@ axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Synchronous")
+     main = "c) Synchronous        ")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_equal_stoch_null[,1]),min(lams_equal_stoch_null[,2]),min(lams_equal_stoch_null[,3]),min(lams_equal_stoch_null[,4]),min(lams_equal_stoch_null[,5]),min(lams_equal_stoch_null[,6]),min(lams_equal_stoch_null[,7]),min(lams_equal_stoch_null[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1853,7 +1857,7 @@ three_part_low_sync <- min(lams_freq_stoch_null[,8])
 three_part_high_sync <- max(lams_freq_stoch_null[,8])
 plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
      xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
-     xlab = "", ylab = "", main = "", col = "red")
+     xlab = "", ylab = "", main = "a)                                  ", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
 points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
 arrows(x0 = c(0.9,1.9,2.9,3.9),
@@ -1872,7 +1876,7 @@ mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Non-Synchronous")
+     main = "b) Non-Synchronous")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_freq_stoch[,1]),min(lams_freq_stoch[,2]),min(lams_freq_stoch[,3]),min(lams_freq_stoch[,4]),min(lams_freq_stoch[,5]),min(lams_freq_stoch[,6]),min(lams_freq_stoch[,7]),min(lams_freq_stoch[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1885,7 +1889,7 @@ axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "Synchronous")
+     main = "c) Synchronous        ")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_freq_stoch_null[,1]),min(lams_freq_stoch_null[,2]),min(lams_freq_stoch_null[,3]),min(lams_freq_stoch_null[,4]),min(lams_freq_stoch_null[,5]),min(lams_freq_stoch_null[,6]),min(lams_freq_stoch_null[,7]),min(lams_freq_stoch_null[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -2088,7 +2092,6 @@ l_l <- lams_comp_stoch$liomvac - lams_comp_stoch$all
 co_l <- lams_comp_stoch$othercremvac - lams_comp_stoch$all
 cl_l <- lams_comp_stoch$liomcremvac - lams_comp_stoch$all
 lo_l <- lams_comp_stoch$liomvacother - lams_comp_stoch$all
-a_l <- lams_comp_stoch$none - lams_comp_stoch$all
 proportions <- vector()
 proportions[1] <- length(subset(c_l,c_l>-0))/100
 proportions[2] <- length(subset(o_l,o_l>-0))/100
@@ -2126,6 +2129,31 @@ abline(v = 0, col = lcol, lty = 2)
 ## Liom is higher than all
 plot(density(o_vac), col = ocol, xlim = c(-0.025,0.04))
 abline(v = 0, col = ocol, lty = 2)
+
+## 2 partner scenario to 3 partner scenario
+c_cl <- lams_comp_stoch$cremvac - lams_comp_stoch$liomcremvac
+o_cl <- lams_comp_stoch$othervac - lams_comp_stoch$liomcremvac
+l_cl <- lams_comp_stoch$liomvac - lams_comp_stoch$liomcremvac
+c_lo <- lams_comp_stoch$cremvac - lams_comp_stoch$liomvacother
+o_lo <- lams_comp_stoch$liomvac - lams_comp_stoch$liomvacother
+l_lo <- lams_comp_stoch$othervac - lams_comp_stoch$liomvacother
+c_co <- lams_comp_stoch$cremvac - lams_comp_stoch$othercremvac
+o_co <- lams_comp_stoch$liomvac - lams_comp_stoch$othercremvac
+l_co <- lams_comp_stoch$othervac - lams_comp_stoch$othercremvac
+proportions <- vector()
+proportions[1] <- length(subset(c_cl,c_cl>-0))/100
+proportions[2] <- length(subset(o_cl,o_cl>-0))/100
+proportions[3] <- length(subset(l_cl,l_cl>-0))/100
+proportions[4] <- length(subset(c_lo,c_lo>-0))/100
+proportions[5] <- length(subset(l_lo,l_lo>-0))/100
+proportions[6] <- length(subset(o_lo,o_lo>-0))/100
+proportions[7] <- length(subset(c_co,c_co>-0))/100
+proportions[8] <- length(subset(o_co,o_co>-0))/100
+proportions[9] <- length(subset(l_co,l_co>-0))/100
+
+proportions
+# Contrast 1 partner to 3
+mean(proportions[c(1,2,6)])
 
 
 
