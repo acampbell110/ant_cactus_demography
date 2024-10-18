@@ -1511,22 +1511,22 @@ dev.off()
 ################################################################################
 ## Read in lambda estimates
 ## Competitive Exclusion
-lams_comp_stoch <- read.csv("lambda_comp.csv")
+lams_comp_stoch <- read.csv("Data Analysis/Model Outputs/lambda_comp.csv")
 lams_comp_stoch <- lams_comp_stoch[,-c(1)]
 ## Competitive Exclusion Null Stochastic
-lams_comp_stoch_null <- read.csv("lambda_sync_comp.csv")
+lams_comp_stoch_null <- read.csv("Data Analysis/Model Outputs/lambda_sync_comp.csv")
 lams_comp_stoch_null <- lams_comp_stoch_null[,-c(1)]
 ## Frequency Based
-lams_freq_stoch <- read.csv("lambda_freq.csv")
+lams_freq_stoch <- read.csv("Data Analysis/Model Outputs/lambda_freq.csv")
 lams_freq_stoch <- lams_freq_stoch[,-c(1)]
 ## Frequency Based Null
-lams_freq_stoch_null <- read.csv("lambda_sync_freq.csv")
+lams_freq_stoch_null <- read.csv("Data Analysis/Model Outputs/lambda_sync_freq.csv")
 lams_freq_stoch_null <- lams_freq_stoch_null[,-c(1)]
 ## Equal Probability
-lams_equal_stoch <- read.csv("lambda_equal.csv")
+lams_equal_stoch <- read.csv("Data Analysis/Model Outputs/lambda_equal.csv")
 lams_equal_stoch <- lams_equal_stoch[,-c(1)]
 ## Equal Probability Null Stochastic
-lams_equal_stoch_null <- read.csv("lambda_sync_equal.csv")
+lams_equal_stoch_null <- read.csv("Data Analysis/Model Outputs/lambda_sync_equal.csv")
 lams_equal_stoch_null <- lams_equal_stoch_null[,-c(1)]
 scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 ################################################################################

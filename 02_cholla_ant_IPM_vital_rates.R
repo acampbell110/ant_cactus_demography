@@ -8,7 +8,7 @@
 ## Read the data in
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 source("01_cholla_ant_IPM_setup.R")
-cactus <- read.csv("Data Analysis/cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("Data Analysis/Data/cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
 ################################################################################
 ## Growth Model Selection with WAIC
 ################################################################################
@@ -327,7 +327,7 @@ stan_data_repro <- list(N = nrow(reproductive_data),                            
 #### Seeds Model -- # Seeds per fruit/flower 
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-seed_uncleaned <- read.csv("Data Analysis/JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
+seed_uncleaned <- read.csv("Data Analysis/Data/JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
 ## drop pollinator exclusion
 seed <- subset(seed_uncleaned, treatment == "PAAA" | treatment == "PAAE" | treatment == "PA")
 ## create ant state
@@ -362,7 +362,7 @@ stan_data_seed <- list(N = nrow(seed_data),                            ## number
 ## Seedling Survival Pre Census Model -- Proportion of seedlings that survive from germination to Census
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-precensus.dat.orig<-read.csv("Data Analysis/PrecensusSurvival.csv") 
+precensus.dat.orig<-read.csv("Data Analysis/Data/PrecensusSurvival.csv") 
 precensus.dat <- precensus.dat.orig[ , c("Transect","Seed","Log.size","survive0405")]
 precensus.dat <- na.omit(precensus.dat)
 # # You lose no data here, but it is still a small dataset.
@@ -390,7 +390,7 @@ stan_data_seed_surv <- list(N = nrow(precensus.dat),                            
 ################################################################################
 ## Germination Model -- Probability of germinating by the next time step (yr 1&2) 
 ################################################################################
-germ.dat_orig<-read.csv("Data Analysis/Germination.csv") 
+germ.dat_orig<-read.csv("Data Analysis/Data/Germination.csv") 
 germ.dat_orig$input04<-germ.dat_orig$Input
 germ.dat_orig$input05<-germ.dat_orig$Input-germ.dat_orig$Seedlings04
 germ.dat04<-germ.dat_orig[,c("input04","Seedlings04")];names(germ.dat04)<-c("seeds","seedlings")
@@ -423,7 +423,7 @@ stan_data_germ <- list(N = nrow(germ.dat),
 ## Fruit Survival Model -- Proportion of flowers which survive to produce fruits
 ################################################################################
 ## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
-fruit_data_orig <- read.csv("Data Analysis/FruitSurvival.csv", header = TRUE,stringsAsFactors=T)
+fruit_data_orig <- read.csv("Data Analysis/Data/FruitSurvival.csv", header = TRUE,stringsAsFactors=T)
 fruit_data <- na.omit(fruit_data_orig)
 ## Create stan data subset
 stan_data_fruit <- list(N = nrow(fruit_data),                                   ## number of observations

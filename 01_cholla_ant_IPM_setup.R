@@ -63,7 +63,7 @@ Q.kurtosis<-function(q.05,q.25,q.75,q.95){
 }
 
 ## import the data -- Cacti (main) 
-cactus <- read.csv("Data Analysis/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("Data Analysis/Data/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
 # str(cactus) ##<- problem: antcount is a factor
 
 ## re-assign the seedling plots ("HT1B1" etc) to transects 1-3
