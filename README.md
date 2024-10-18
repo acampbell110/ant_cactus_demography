@@ -36,4 +36,18 @@ The folder Data contains all original data files needed to parameterize the mode
 **PrecensusSurvival** *(.csv)* -- Spreadsheet containing data on seedlings which survive from germination to the annual May census.
 **seed_counts** *(.csv)* -- Spreadsheet containing data on the number of seeds produced by a flower.
 
+## Scripts
+
+**01_cholla_ant_IPM_setup** *(.R)* -- Loads in all needed packages and data and cleans up the data so it is ready to be run through our models.
+**02_cholla_ant_IPM_vital_rates** *(.R)* -- Loads in the "cleaned" data, subset it properly, runs the data through the stan models, and exports the outputs as *(.RDS)* files.
+**03_cholla_ant_IPM_params_functions** *(.R)* -- Loads all model fits, loads the IPM functions, and loads any values which needed to run the IPM.
+**04_cholla_ant_IPM_analysis** *(.R)* -- Runs the IPM under all conditions and saves the outputs as *(.csv)* files.
+**05_cholla_ant_IPM_figures_tables** *(.R)* -- Create all visuals of model outputs for publications and related talks.
+
+## Others
+
+**STAN Models** *(folder)* -- This folder contains all vital rate models written in STAN code to be run through the second script.
+**Model Outputs** *(folder)* -- This folder contains all IPM model outputs (estimates of lambda).
+**Manuscript** *(folder)* -- This folder contains the *(.tex, .pdf, .bib, etc.)* files needed to compile the manuscript in LATEX. It also contains a sub folder called **Figures** which contains all figures created by the fifth script. 
+
 
