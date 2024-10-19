@@ -433,13 +433,13 @@ for(i in 1:length(sims)){ # each model simulation (comp, equal, freq)
 lambda_list
 lambda_sync_list
 # Pull out the non-synchronous values
-write.csv(lambda_list[[1]],"lambda_comp.csv")
-write.csv(lambda_list[[2]],"lambda_equal.csv")
-write.csv(lambda_list[[3]],"lambda_freq.csv")
+write.csv(lambda_list[[1]],"Model Outputs/lambda_comp.csv")
+write.csv(lambda_list[[2]],"Model Outputs/lambda_equal.csv")
+write.csv(lambda_list[[3]],"Model Outputs/lambda_freq.csv")
 # pull out synchronous values
-write.csv(lambda_sync_list[[1]],"lambda_sync_comp.csv")
-write.csv(lambda_sync_list[[2]],"lambda_sync_equal.csv")
-write.csv(lambda_sync_list[[3]],"lambda_sync_freq.csv")
+write.csv(lambda_sync_list[[1]],"Model Outputs/lambda_sync_comp.csv")
+write.csv(lambda_sync_list[[2]],"Model Outputs/lambda_sync_equal.csv")
+write.csv(lambda_sync_list[[3]],"Model Outputs/lambda_sync_freq.csv")
 
 ################################################################################
 #### Check the stable stage distribution of sizes
