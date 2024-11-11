@@ -8,7 +8,7 @@
 ## Read the data in
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 source("01_cholla_ant_IPM_setup.R")
-cactus <- read.csv("Data Analysis/Data/cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
+cactus <- read.csv("Data/cholla_demography_20042023_cleaned.csv", header = TRUE,stringsAsFactors=T)
 ################################################################################
 ## Growth Model Selection with WAIC
 ################################################################################
@@ -335,8 +335,8 @@ seed$ant_state <- NA
 seed$ant_state[seed$ant.access=="n"]<-"Vacant"
 seed$ant_state[seed$ant.access=="y" & seed$species=="c"]<-"Crem"
 seed$ant_state[seed$ant.access=="y" & seed$species=="l"]<-"Liom"
-seed_data <- seed %>% select(plant,ant_state,seed_count) %>% drop_na()
-
+seed_data <- seed[,c("plant","ant_state","seed_count")]
+seed_data <- drop_na(seed_data)
 ## Create Stan Data
 stan_data_seed <- list(N = nrow(seed_data),                            ## number of observations
                        N_plants = length(unique(seed_data$plant)),
@@ -453,7 +453,9 @@ stan_data_fruit <- list(N = nrow(fruit_data),                                   
 # these tag IDs are the only ones that start with H
 seed_add<-cactus %>% filter(substr(TagID,1,1)=="H") %>% drop_na()
 #2. the main census, where new plants get called recruits or not by observers
-recruits<-cactus %>% filter(Recruit==1) %>% select(logsize_t1) %>% drop_na()
+recruits <- cactus[,c("Recruit","logsize_t1")]
+recruits <- subset(recruits,recruits$Recruit == 1)
+recruits <- drop_na(recruits)
 seedling.dat <- c(recruits$logsize_t1,seed_add$logsize_t)
 
 ## Create Stan Data
