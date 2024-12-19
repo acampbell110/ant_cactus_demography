@@ -146,7 +146,7 @@ We then used a stochastic, multi-state integral projection model (IPM) that comb
 \subsection*{Study System}
   
 This study was conducted at the Sevilleta Long-term Ecological Research site (SEV-LTER), located within the Sevilleta National Wildlife Refuge in central New Mexico, USA.
-Out study area in the Los Pi$\tilde{n}$os mountains \tom{()}{Give lat-long} is characterized by steep, rocky slopes, and perennial vegetation including grasses (\textit{Bouteloua eriopoda} and \textit{B. gracilis}), yuccas, cacti, and junipers. 
+Out study area in the Los Pi$\tilde{n}$os mountains ($34^\circ20'5.3''$N, $106^\circ37'53.2''$W) is characterized by steep, rocky slopes, and perennial vegetation including grasses (\textit{Bouteloua eriopoda} and \textit{B. gracilis}), yuccas, cacti, and junipers. 
 Tree cholla cacti are common in such high Chihuahuan desert habitats \citep{Benson1982}. 
 These arborescent plants produce cylindrical segments with large spines. 
 In the growing season (May to August in New Mexico), they initiate new vegetative segments and flowerbuds at the ends of existing segments. 
@@ -185,7 +185,7 @@ Occurrences of more than one ant species on one plant were rare (less than 5\% o
 Plots were searched for new recruits each year, and these were added to the census.
 These data allowed us to link each plant's demographic fate (survival, growth, and reproduction) to its state of ant visitation. 
 In total, the data set includes a total of 9,787 observations of 1,141 individuals across 15 complete transition years (spanning May/June of year $t$ to May/June of year $t+1$) \citep{DataCholla}. 
-In addition to missing the year 2020, there are gaps in the time series where we switched plots or plants (and thus broke up transition years growth/survival and partner turnover) or where we did not distinguish between viable and aborted flower buds \tom{(Table \ref{})}{Missing table reference. There is no table in the supplement, but there is an empty heading for ``Table''}. 
+In addition to missing the year 2020, there are gaps in the time series where we switched plots or plants (and thus broke up transition years growth/survival and partner turnover) or where we did not distinguish between viable and aborted flower buds.
 
 To complete the tree cholla life cycle, we used additional, smaller data sets from previously published studies to estimate seed and seed bank parameters. 
 Ohm et al. \citeyear{Ohm2014} provide data on the number of seeds per fruit for plants tended by \textit{L. apiculatum}, \textit{C. opuntiae}, or no ants (experimental exclusion), accounting for their effects on pollinator visitation. 
@@ -231,7 +231,7 @@ For the above-ground part of the life cycle, the number of plants of size $x'$ a
 	\begin{gather}
 		\label{eqn:IPM2}
 n(x',a')_{t+1} = (\gamma_1 B^1_{t} + \gamma_2 B^2_{t} ) \eta(x') \omega \rho_{0}(a')  + 
-\sum_{a=1}^{A} \int_L^U S(x,a;\pmb{\tau^S_{a}}) G(x',x,a;\pmb{\tau^G_{a}}) \rho(x,a,a';\pmb{\tau^{\epsilon}}) n(x,a)_t dx 
+\sum_{a=1}^{A} \int_L^U S(x,a;\pmb{\tau^S_{a}}) G(x',x,a;\pmb{\tau^G_{a}}) \rho(x,a,a') n(x,a)_t dx 
 	\end{gather}
 \end{linenomath*}
 \noindent The first term in Eq. (\ref{eqn:IPM2}) estimates the number of individuals recruiting from a one or two-year seed bank to a plant of size $x'$ and ant state $a'$ based on the recruit size distribution $\eta(x')$ and the probability of over-winter seedling survival ($\omega$) from germination (late summer) to the census (May).
@@ -239,8 +239,7 @@ This term is multiplied by $\rho_{0}(a')$, which gives the probability that a ne
 The second term represents all possible transitions from size $x$ and ant $a$ to size $x'$ and ant $a'$, conditioned on survival. 
 Survival ($S(x,a;\pmb{\tau}^S_{a})$) and growth from size $x$ to $x'$ ($G(x',x,a;\pmb{\tau}^G_{a})$) are both dependent on initial size and ant state. 
 As above, these functions include inter-annual variability through year-specific deviates that can vary by ant state ($\pmb{\tau}_{a}$). 
-Finally, ant transition function $\rho(a',a,x;\pmb{\tau}^{\rho})$ gives the probability that an individual transitions from ant state $a$ to $a'$ in the next census, conditional on initial size $x$. 
-\tom{This function includes inter-annual variability through year-specific intercepts which are consistent across initial ant states ($\pmb{\tau}^\rho$).}{Confirming that this model includes random year effects?}
+Finally, ant transition function $\rho(a',a,x)$ gives the probability that an individual transitions from ant state $a$ to $a'$ in the next census, conditional on initial size $x$. 
 
 \subsection*{Statistical modeling and parameter estimation}
 We parameterized the IPM using a series of generalized linear mixed models in a hierarchical Bayesian framework. 
@@ -276,7 +275,7 @@ The flowerbud function $F(x;\pmb{\tau}^{F})$ estimates the total flowers produce
 We fit this model to flowerbud count data (sum of viable and aborted buds) using a zero-truncated negative binomial distribution with a log link and normally distributed year and plot random effects.
 
 The flowerbud viability sub-model ($V(a;\pmb{\tau}^{V}_{a})$) estimates the probability that flowerbuds produced in year $t$ remain viable, with fixed effects of ant partner $a$ in year $t$.
-We fit this model to floral viability data using a \tom{binomial}{For the inevitable revision, I would like to try beta-binomial.} distribution where trials and successes are given by the total number of flowerbuds and the number that are viable, respectively.
+We fit this model to floral viability data using a binomial distribution where trials and successes are given by the total number of flowerbuds and the number that are viable, respectively.
 This model used a logit link function and included random effects for plot and year following the same structure as the survival model, with ant-specific year random effects. 
 
 Estimates for the number of seeds per fruit were obtained from a field experiment which excluded ants from flowering plants \citep{Ohm2014}.
@@ -291,7 +290,7 @@ We fit this model to ant partner data using a multinomial distribution with a lo
 We fit all models using Stan run through version 4.0.2 of R \citep{Rcite,Rstancite}. 
 We used vague priors for all parameters. 
 For each model, we obtained three chains of 10,000 iterations, discarding the first 1,500 iterations. 
-\tom{We visually assessed parameter convergence between and within chains (Figures S\ref{fig:Surv_post} -- \ref{fig:Pre_Surv_post}b) and assessed overall model fit with posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data (Figures S\ref{fig:Surv_post} -- \ref{fig:Pre_Surv_post}a).}{Not sure these are all necessary in the supplement - also I think these are not labeled correctly here (the a and b).}
+We visually assessed parameter convergence between and within chains and assessed overall model fit with posterior predictive checks to examine how well the fitted model can generate simulated data similar to the real data.
 
 \subsection*{IPM Analysis}
 Analyzing the IPM required that we discretize the continuous IPM kernel into an approximating matrix. 
@@ -303,7 +302,7 @@ For stochastic analyses, we estimated the approximating matrix corresponding to 
 To estimate population mean fitness in a stochastic environment ($\lambda_{S}$) we simulated population dynamics for 500 years by randomly sampling among the 15 annual transition matrices, discarding the first 100 years of the simulation to minimize the influence of initial conditions. 
 Sampling observed transition matrices (rather than independently sampling regression coefficients) produces demographic time series that realistically capture inter-annual variation by preserving correlations between vital rates \citep{metcalf2015statistical}.
 We tallied the total population size at each time step as  $N_{t} = B^1_{t} + B^2_{t} + \sum_{a=1}^{A}\int n(x,a)_{t}dx$ and calculated the stochastic growth rate as 
-$$log(\lambda_S) = E[log(\frac{N_{t+1}}{N_{t}})]$$ \tom{\citep{Mark2009}}{Mark is Mark Rees' first name. This bibtex entry needs to be updated.}.
+$$log(\lambda_S) = E[log(\frac{N_{t+1}}{N_{t}})]$$ \citep{Rees2009}
 We propagated uncertainty from the vital rate models using 100 draws from the joint posterior distribution of model parameters, resulting in a posterior distribution of $\lambda_{S}$ and the derived quantities described next.
 
 \subsubsection*{Partner diversity simulation experiments}
@@ -362,7 +361,7 @@ For the smallest sizes that were likely to be ant-tended (minimum observed size 
 At the largest sizes, growth trajectories of ant-tended and vacant plants were nearly indistinguishable. 
 For all ant states, growth was left-skewed, with transitions to sizes below the mean were more frequent than sizes above the mean. 
 
-\tom{Similarly, for plants which were large enough to have ant visitors, visitation enhanced cactus survival (Figure \ref{fig:Surv}). }{Stay consistent with use of dashed vs solid lines.}
+Similarly, for plants which were large enough to have ant visitors, visitation enhanced cactus survival (Figure \ref{fig:Surv}). 
 Mean survival rates ranged from 7.7\% to 99.9\%, with the smallest plants the most vulnerable to mortality. 
 \textit{C. opuntiae}-occupied plants had a survival advantage over other ant-tended plants, particularly at smaller sizes, consistent with positive effects on growth. 
 At larger sizes, plants in any state of ant occupancy had a survival advantage over vacant plants. 
@@ -370,7 +369,7 @@ Plants smaller than $-2$ $log(cm^3)$ were predicted to experience negative effec
 Plants in this size range were never observed to be ant-tended and, because the IPM preserves the size-dependence of vacancy, benefits of vacancy at small sizes are never realized in the IPM. 
 
 
-\begin{figure}
+\begin{figure}[H]
 	\includegraphics[width = 0.75\linewidth]{Figures/grow_contour_v2.png}
 	\caption{The next predicted size of tree cholla based on previous size in relation to ant partner (a, \textit{C. opuntiae}; b, \textit{L. apiculatum}; c, Other; d, Vacant, e, all states combined). Points show observed size transitions, colored lines are the mean next size, and contours show probability density of the skewed normal growth model.  
 	Dashed lines indicate extrapolation while solid lines indicate the range of observed data.}
@@ -384,9 +383,9 @@ Plants in this size range were never observed to be ant-tended and, because the 
 \end{figure}
 
 Ant visitation was associated with increased floral viability and ant identity determined the strength of viability benefits.
-\tom{Mean viability rates spanned 40--92\% (Figure \ref{fig:Viab}).}{I am not sure where this range comes from. The group means look like they span about 55--88.}
+Mean viability rates spanned 55--81\% (Figure \ref{fig:Viab}).
 \textit{L. apiculatum}-tended plants had the highest mean viability rate (86.1\% [95\% credible interval: 77.6--92.4\%]), while there were similar viability rates for vacant (60.0\% [44.3--75.0\%]), Other-tended (60.6\% [43.7--75.5\%]), and \textit{C. opuntiae}-tended plants (57.1\% [40.6--72\%]). 
-Furthermore, \textit{C. opuntiae}-tended plants had fewer seeds per fruit (115.0[79.5--165.5] seeds) than vacant (147.2[114.1--189.9] seeds) or \textit{L. apiculatum}-tended plants (142.4[100.7--200.2] seeds) (Figure S\ref{app:AppA_Seeds_Per_Fruit}), likely due to pollinator interference \citep{Ohm2014}.
+Furthermore, \textit{C. opuntiae}-tended plants had fewer seeds per fruit (115.0[79.5--165.5] seeds) than vacant (147.2[114.1--189.9] seeds) or \textit{L. apiculatum}-tended plants (142.4[100.7--200.2] seeds), likely due to pollinator interference \citep{Ohm2014}.
 
 
 \begin{figure}[H]
@@ -403,7 +402,7 @@ Across vital rates, random effects for cactus growth were the most strongly corr
 Certain partner pair / vital rate combinations were effectively independent in their yearly fluctuations (such as survival of \textit{C. opuntiae} and Other-tended plants) while others were almost completely synchronous (such as growth of Vacant and \textit{L. apiculatum}-tended plants). 
 
 \begin{figure}[H]
-	\includegraphics[width=0.95\linewidth]{Figures/ant_RFX.png}
+	\includegraphics[width=0.75\linewidth]{Figures/ant_RFX.png}
 	\caption{Year-specific random effects from statistical models for growth (a), survival (b), and floral viability (c) in relation to ant partner status. Inset panels show correlation coefficients (Pearson's \textit{r}) for each pair of time series. All random effects have mean zero such that positive values indicate better-than-average years and negative values indicate worse-than-average years. Values are missing where there were no data available for that year.}
 	\label{fig:Annual_Ant}
 \end{figure}
@@ -411,11 +410,11 @@ Certain partner pair / vital rate combinations were effectively independent in t
 \subsection*{What are the frequency and direction of partner turnover across the plant life cycle?}
 A majority (55\%) of plants surveyed in the long-term data experienced at least one ant state transition, with distinct size-dependent and directional patterns (Figure \ref{fig:Ant_Transition}). 
 Vacancy was the most likely ant state of small plants ($\leq 10 log(cm^3)$).
-Even when small plants were ant-tended at the start of the transition year, they were most likely to transition back to vacancy (Figure \ref{fig:Ant_Transition}b-d). 
+Even when small plants were ant-tended at the start of the transition year, they were most likely to transition back to vacancy (Figure \ref{fig:Ant_Transition} b-d). 
 The probability of becoming ant-tended increased with size, though it was not equally likely to be tended by any partner.  
 For large plants that were initially vacant or tended by \textit{L. apiculatum} or Other ants, \textit{L. apiculatum} was the most likely next partner, suggesting that this species is able to colonize plants that were previously vacant or occupied by Other ants, and effectively retain plants that it previously occupied.  
 \textit{C. opuntiae} were also able to retain plants they previously occupied, but not as well as \textit{L. apiculatum}: for plants that began the transition year with \textit{C. opuntiae}, the probability that those plants remain occupied by \textit{C. opuntiae} at the end of the transition year is only slightly greater than the probability of take-over by \textit{L. apiculatum}, while take-over in the other direction was extremely rare. 
-It is also notable that transitions away from the initial state of \textit{L. apiculatum} were almost always transitions to vacancy (Figure \ref{fig:Ant_Transition}d), while transitions away from the initial states of \textit{C. opuntiae} and Other  were often transitions to other ants. 
+It is also notable that transitions away from the initial state of \textit{L. apiculatum} were almost always transitions to vacancy (Figure \ref{fig:Ant_Transition} d), while transitions away from the initial states of \textit{C. opuntiae} and Other  were often transitions to other ants. 
 This suggests a competitive hierarchy whereby \textit{L. apiculatum} may abandon low-value plants with little nectar production but is almost never displaced from high-value plants. 
 
 \begin{figure}[H]
@@ -427,7 +426,7 @@ This suggests a competitive hierarchy whereby \textit{L. apiculatum} may abandon
 \subsection*{What is the net effect of partner diversity on plant fitness, and what mechanism(s) explain(s) this effect?}
 By integrating vital rates, temporal fluctuations, and ant transition dynamics into the stochastic, multi-state IPM we can evaluate the fitness implications of different scenarios of partner identity and diversity (Figure \ref{fig:LambdaMeans}). 
 First, there was strong evidence that ant visitation had mutualistic fitness effects on plant partners. 
-The lowest mean stochastic fitness was $\lambda^{0}_{S}$, the fitness of the cholla with no partners (Figure \ref{fig:LambdaMeans}A).
+The lowest mean stochastic fitness was $\lambda^{0}_{S}$, the fitness of the cholla with no partners (Figure \ref{fig:LambdaMeans} a).
 Across all 1+ partner scenarios, we found that the $\lambda^{1+}_{S}$ posterior distributions were greater than $\lambda^{0}_{S}$ with nearly 100\% certainty.
 This indicates that ant visitation elevates fitness no matter the number of partners.
 Furthermore, we found no benefit of partner diversity, with the fitness associated with one, two, or three partners roughly equivalent (Figure \ref{fig:LambdaMeans} a).
@@ -438,12 +437,12 @@ Patterns of $\lambda_{S}$ in relation to partner richness were generally consist
 
 \begin{figure}
 	\includegraphics[width=0.91\linewidth]{Figures/Lambdas_Comp_lines.png}
-	\caption{Tree cholla stochastic growth rate ($\lambda_{S}$) corresponding to number (A) or number and identity (B-C) of ant partners for synchronous and non-synchronous inter-annual fluctuations. Points and intervals show mean and 95\% credible intervals from the posterior distributions of $\lambda_{S}$. In B-C, letters in the legend correspond to ant partners as follows (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other).}
+	\caption{Tree cholla stochastic growth rate ($\lambda_{S}$) corresponding to number (a) or number and identity (b-c) of ant partners for synchronous and non-synchronous inter-annual fluctuations. Points and intervals show mean and 95\% credible intervals from the posterior distributions of $\lambda_{S}$. In b-c letters in the legend correspond to ant partners as follows (V = Vacant, C = \textit{C. opuntiae}, L = \textit{L. apiculatum}, O = other).}
 	\label{fig:LambdaMeans}
 \end{figure}
 
-Partner identity and composition were not strongly consequential for plant fitness (Figure \ref{fig:LambdaMeans}b-c). 
-Among the one-partner scenarios, there was no strong evidence for any single best partner species (Figure \ref{fig:LambdaMeans}b). 
+Partner identity and composition were not strongly consequential for plant fitness (Figure \ref{fig:LambdaMeans} b-c). 
+Among the one-partner scenarios, there was no strong evidence for any single best partner species (Figure \ref{fig:LambdaMeans} b). 
 While a hypothetical \textit{L. apiculatum}-only population had the highest mean fitness, it was not significantly higher than \textit{C. opuntiae}-  ($Pr(\Delta\lambda^{L-C}_{S}=0.7)$) or Other- ($Pr(\Delta\lambda^{L-O}_{S}=0.69)$) only populations. 
 Furthermore, the fitness of \textit{L. apiculatum}-only was consistent with all 2-partner scenarios ($Pr(\Delta\lambda_{S})$ ranged from 0.37 to 0.83).
 However, as above, there was evidence for an opportunity cost of diversity wherein fitness of the three-partner scenario was lower than any of the 2-partner scenarios ($Pr(\Delta\lambda_{S})>0.95$). 
@@ -489,7 +488,7 @@ When partners exhibit different reactions to varying environments, interacting w
 Our work explicitly incorporated temporal environmental stochasticity, yet we find no evidence for the portfolio effect as a mechanism of diversity benefits. 
 In ant-plant defensive mutualisms, any portfolio effect would emerge from fluctuations in the community of herbivores, and ant-specific responses to each herbivore species. 
 Instead, we found that inter-annual fluctuations in vital rates were largely synchronized across plants in different ant states, suggesting other drivers of inter-annual variation that are shared across the population -- notably, weather -- override any fluctuations in herbivore composition and ant-herbivore interactions. 
-Dallas et al. \citeyear{dallas2022temporal} found that while the portfolio effect was easy to show in theoretical models, it is often \tom{very weak or nonexistent in empirical data across many systems. }{Does this mean it is actually weak/nonexistent, or just difficult to detect? (I don't know the paper.)}
+Dallas et al. \citeyear{dallas2022temporal} found that while the portfolio effect was easy to show in theoretical models, it is often very difficult to detect in empirical data across many systems. 
 This indicates that it may be difficult to detect, disguised by different mechanisms, or uncommon in nature. 
 
 % Value of Long-term data
@@ -533,7 +532,7 @@ J. Moutouama, A. Bradley, B. Scherick, A. Gough, J. Martin, and V. Rudolf provid
 % contributions.
 
 \section*{Data and Code Availability}
-The data that support the findings of this study are openly available as a \href{https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-sev.323.1}{data package} on the Environmental Data Initiative website, package id: \tom{knb-lter-sev.323.1}{UPdate this so that it's a normal author-year citation. And update the data package!}
+The data that support the findings of this study are openly available as a \href{https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-sev.323.1}{data package} \citep{DataCholla} on the Environmental Data Initiative website, package id: knb-lter-sev.323.1
 
 
 \renewcommand{\theequation}{A\arabic{equation}}
@@ -562,13 +561,6 @@ The data that support the findings of this study are openly available as a \href
 
 \newpage{}
 
-\section*{Tables}
-\renewcommand{\thetable}{\arabic{table}}
-\setcounter{table}{0}
-
-\renewcommand{\thetable}{\arabic{table}}
-\setcounter{table}{0}
-
 
 \appendix
 \label{appendix}
@@ -580,71 +572,50 @@ These models are described below.
 With data from \cite{Miller2006}, we fit a model for the number of seeds produced by every fruit on a cholla ($\kappa(a')$) in year $t+1$ based on the ant partner $a'$ in year $t+1$.
 We fit this model to seed data $y^{\kappa}$ using a Negative Binomial distribution and the log link function: 
 $$y^{\kappa} \sim  Negative Binomial(\hat{\kappa},\hat{\phi})$$
-%$$ \hat{\kappa } = \beta_{0}^{\kappa} \times a'$$
 $$\hat{\phi} = \beta_{0}^{\phi}$$
 The data used for this model did not include data on ants in the ``other" category, so we used the data from vacant plants to parameterize seeds per flower for plants with ``other" ants in the IPM.
 
-We found that vacant plants produced the most mean seeds (147.2 per fruit), followed by \textit{L. apiculatum} tended plants (142.4 per fruit), and finally, \textit{C. opuntiae} tended plants (115.0 per fruit) (Figure \ref{app:AppA_Seeds_Per_Fruit}).
+We found that vacant plants produced the most mean seeds (147.2 per fruit), followed by \textit{L. apiculatum} tended plants (142.4 per fruit), and finally, \textit{C. opuntiae} tended plants (115.0 per fruit).
 
-\begin{figure}
-	\includegraphics[width=0.91\linewidth]{Figures/Seeds_Per_Fruit.png}
-	\caption{The estimated posterior distribution of seeds per fruit on plants tended by \textit{C. opuntiae} (purple), \textit{L. apiculatum} (Teal), and Vacant plants (Yellow). }
-	\label{app:AppA_Seeds_Per_Fruit}
-\end{figure}
 
 \paragraph{Recruit Size Distribution}
-%The recruit size model ($n(x',a')$) estimates the size distribution of all recruits } from a given year $t+1$, with no fixed or random effects. 
 We fit this model to recruit size data $y^{\eta}$ using a Normal distribution with the identity link function: 
 $$y^{\eta} ~\sim N(\hat{\eta},\hat{\sigma})$$
-%$$\hat{\eta} = \beta_{0}^{\eta}$$
 where $\hat{\sigma}$ is estimated with a non-informative prior. 
 
-We found that the mean size of recruits is $log(-2.097) m^3$ with an interquartile range from $log(-2.173) m^3$ to $log(-1.712) m^3$ (Figure \ref{app:AppA_Recruit_Dist}).
+We found that the mean size of recruits is $log(-2.097) m^3$ with an interquartile range from $log(-2.173) m^3$ to $log(-1.712) m^3$.
 
-\begin{figure}
-	\includegraphics[width=0.91\linewidth]{Figures/rec_size.png}
-	\caption{The estimated posterior distribution of recruit sizes as the $log(volume)$ of cholla. }
-	\label{app:AppA_Recruit_Dist}
-\end{figure}
+
 
 \paragraph{Germination}
 With germination data \cite{Miller2007}, we fit two models for the probability of germinating from the first year seedbank ($\gamma_1$) or the second year seedbank ($\gamma_2$) in year $t+1$, with no fixed or random effects.
 These models were fit to germination data $y^{\gamma_1}, y^{\gamma_2}$  using the binomial distribution with logit link functions:
 $$y^{\gamma_1} \sim Binomial(\hat{\gamma_1})$$
 $$y^{\gamma_2} \sim Binomial(\hat{\gamma_2})$$
-%$$logit(\hat{\gamma_1}) = \beta_{0}^{\gamma_1}$$
-%$$logit(\hat{\gamma_2}) = \beta_{0}^{\gamma_2}$$
 
 We found that the mean germination rates for seeds in the seedbank for one year  is 0\%, with an interquartile range of 0\% and 1\%.
-We found that the mean germination rates for seeds in the seedbank for a second year is 0\%, with an interquartile range of 0\% to 0.4\% (Figure \ref{app:AppA_Germ}).
+We found that the mean germination rates for seeds in the seedbank for a second year is 0\%, with an interquartile range of 0\% to 0.4\%.
 Seeds are more likely to germinate in their first year in the seedbank, but most seeds will never germinate. 
-
-\begin{figure}
-	\includegraphics[width=0.91\linewidth]{Figures/germination.png}
-	\caption{The estimated posterior distributions for germination probability of seeds in the first year seedbank (blue) and seeds in the second year seedbank (green).}
-	\label{app:AppA_Germ}
-\end{figure}
 
 \paragraph{Pre-Census Survival}
 With recruit census data \cite{Miller2006}, we fit a model for the probability of a seedling (which germinates in early Fall) surviving to when we census in May ($\delta$) of year $t+1$ (accounting for missed mortality events), with fixed effects of the previous size $x$ and random effects of the transect $m$.
 We fit this model to pre-census survival data $y^{\delta}$ using a Bernoulli distribution with a logit link function: 
 $$y^{\delta} ~ Bern(\hat{\delta})$$
-%$$logit(\hat{\delta}) = \beta_{0}^{\delta} + m$$
 where $m \sim N(0, \sigma_{transect}^2)$ is the random effect of transect where the recruited individual was analyzed for survival.
 
 We found that plants have a 16.2\% probability of surviving from germination to the next census.
-Our model estimated this very well, expecting a 16.3\% probability (Figure \ref{app:AppA_Pre_Census_Surv}).
+Our model estimated this very well, expecting a 16.3\% probability.
 
-\begin{figure}
-	\includegraphics[width=0.91\linewidth]{Figures/seed_surv.png}
-	\caption{The distribution of the probability of plants which germinated between censuses surviving to the next census to be counted. The green line shows the estimated posterior distribution of pre-census survival.}
-	\label{app:AppA_Pre_Census_Surv}
-\end{figure}
 
 \paragraph{Portfolio Effect}
-\begin{figure}
+We compared the effects of partner diversity (estimated as $\lambda_S^4 - \lambda_S^0$) for the synchronized and non-synchronized models.
+We determined that non-synchronous effects of ant partners are greater than synchronous effects of ant partners only 50\% of the time.
+This means there is no evidence of portfolio effect in this system.
+
+
+\begin{figure}[H]
 	\includegraphics[width=\linewidth]{Figures/portfolio_effect.png}
-	\caption{The distribution of $\lambda_{NS,All}-\lambda_{NS,Vacant}$ in pink and $\lambda_{S,All}-\lambda_{S,Vacant}$ in green. The vertical dashed line shows where the effect of partners on the fitness of the cholla is 0 (to the left the partners have a negative effect, to the right the partners are beneficial).}
+	\caption{The distributions of $\lambda_{S}^4-\lambda_{S}^0$ for the non-synchronous and synchronous models are shown in pink and green respectively. The vertical dashed line shows where the effect of partners on the fitness of the cholla is 0 (to the left the partners have a negative effect, to the right the partners are beneficial).}
 	\label{fig:Portfolio}
 \end{figure}
 
@@ -652,6 +623,12 @@ Our model estimated this very well, expecting a 16.3\% probability (Figure \ref{
 Herbivory is an important driver in this population and shapes the range and demography of cholla.
 Herbivore presence has been shown to negatively impact growth and fecundity of cholla populations \citep{Miller2009}.
 Ant visitors are believed to offer defensive benefits to the plants they tend in this system, leading to the hypothesis that ant presence would be correlated with reduced herbivory.
+Therefore, herbivore protection is the likely driver behind the increased survival, growth, and reproductive rates of tended plants. 
+Fluctuations in herbivore communities across time would also lead to potentially important fluctuations in ant visitor responses and therefore cholla demographic responses.
+
+Here we conduct  an analyses of herbivory levels on plants with different ant visitors and contrast them to herbivory levels on plants with no visitors.
+Evidence that herbivory is decreased for tended plants further strengthens the results presented in this paper that ant presence is beneficial on a demographic level for cholla.
+
 Herbivory data was collected during censuses any time herbivores were identified on a plant. 
 This involved noting the type and quantity of herbivores observed. 
 This data has been taken consistently since 2017, so the analysis below considers 6 years of data.
@@ -666,8 +643,8 @@ They also indicate that the partner correlated with the lowest levels of herbivo
 These findings are consistent with literature findings which show that \textit{L. apiculatum} ants are the most aggressive (therefore the most effective against herbivores), but differ from previous findings that \textit{C. opuntiae} may not offer defensive benefits \citep{Miller2007}.
 
 
-\begin{figure}
-	\includegraphics[width=0.91\linewidth]{Figures/herb_all.png}
+\begin{figure}[H]
+	\includegraphics[width=0.7\linewidth]{Figures/herb_all.png}
 	\caption{The proportion of reproducing plants which are visited by herbivores. Each bar represents the subset of the cacti population in a different ant state.  }
 	\label{app:herb}
 \end{figure}
@@ -712,77 +689,10 @@ Partner presence is beneficial, but neither identity nor number of partners appe
 
 \section*{Appendix D: Posterior Checks and Model Validation}\label{appendix:D}
 For each model fitted, we conducted two tests to determine if the fit was acceptable to use in our IPM. 
-First, we checked the convergence of each parameter.
-Below we show the convergence of all $\beta$ terms listed in the Statistical Modeling subsection of Methods.
+First, we checked the convergence of each parameter and determined they were acceptable.
 Second, we checked the posterior fit, comparing the estimated values of each model to the $y$ values of the actual data.
-We show these posterior checks below, split by ant partner where relevant.
 Each model was run with 10,000 total iterations per chain, 5,000 warmups, and thinning set to 2, leaving us with a total of 2,500 iterations post warmup.
-%% Growth Figure
-%% Survival Figure
-\begin{figure}
-\includegraphics[width = 0.45\linewidth]{Figures/surv_conv.png}
-\includegraphics[width=0.45\linewidth]{Figures/surv_post.png}
-\caption{The a) posterior convergence of the parameters estimated by the survival model and the b) posterior distribution of survival estimates (pink lines) for each ant species (1 = \textit{C. opuntiae}, 2 = \textit{L. apiculatum}, 3 = other, 4 = vacant) compared to the mean survival distribution (black line) of the real data.}
-\label{fig:Surv_post}
-\end{figure}
-%% Reproduction Figure
-\begin{figure}
-\includegraphics[width = 0.45\linewidth]{Figures/repro_conv.png}
-\includegraphics[width=0.45\linewidth]{Figures/repro_post.png}
-\caption{The a) posterior convergence of the parameters estimated by the reproduction model and the b) posterior distribution of reproductive status estimates (pink lines) for each ant species (1 = \textit{C. opuntiae}, 2 = \textit{L. apiculatum}, 3 = other, 4 = vacant) compared to the mean reproductive status distribution (black line) of the real data.}
-\label{fig:Repro_post}
-\end{figure}
-%% Flowering Figure
-\begin{figure}
-\includegraphics[width = 0.45\linewidth]{Figures/flow_conv.png}
-\includegraphics[width=0.45\linewidth]{Figures/flow_post.png}
-\caption{The a) posterior convergence of the parameters estimated by the number of flowers model and the b) posterior distribution of the number of flowers estimated (pink lines) compared to the mean distribution of observed flowers (black line).}
-\label{fig:Flow_post}
-\end{figure}
-%% Viability Figure
-\begin{figure}
-\includegraphics[width = 0.45\linewidth]{Figures/viab_conv.png}
-\includegraphics[width=0.45\linewidth]{Figures/viab_post.png}
-\caption{The a) posterior convergence of the parameters estimated by the viability model and the b) posterior distributions of floral viability estimates (pink lines) for each ant species (1 = \textit{C. opuntiae}, 2 = \textit{L. apiculatum}, 3 = other, 4 = vacant) compared to the mean floral viability distribution (black line) of the real data.}
-\label{fig:Viab_post}
-\end{figure}
-%% Seeds Per Fruit
-\begin{figure}
-\includegraphics[width = 0.45\linewidth]{Figures/seed_conv.png}
-\includegraphics[width=0.45\linewidth]{Figures/seed_post.png}
-\caption{The a) posterior convergence of the parameters estimated by the seeds per fruit model and the b) posterior distributions of seeds per fruit estimates (pink lines) for each ant species (1 = \textit{C. opuntiae}, 2 = \textit{L. apiculatum}, 3 = vacant) compared to the mean seeds per fruit distribution (black line) of the real data.}
-\label{fig:seed_post}
-\end{figure}
-%% Fruit survival 
-% \begin{figure}
-%% 	\includegraphics[width = 0.45\linewidth]{Figures/                .png}
-%% 	\includegraphics[width=0.45\linewidth]{Figures/               .png}
-% 	\caption{The a) posterior convergence of the parameters estimated by the fruit survival model and the b) posterior distributions of fruit survival estimates (pink lines) compared to the mean fruit survival distribution (black line) of the real data.}
-% 	\label{fig:fruit_surv_post}
-% \end{figure}
-% %% Ant Transitions
-% \begin{figure}
-%% 	\includegraphics[width = 0.45\linewidth]{Figures/             .png}
-%% 	\includegraphics[width=0.45\linewidth]{Figures/               .png}
-% 	\caption{The a) posterior convergence of the parameters estimated by the ant transitions model and the b) posterior distributions of next ant partners estimates (pink lines) for each previous ant species (1 = \textit{C. opuntiae}, 2 = \textit{L. apiculatum}, 3 = other, 4 = vacant) compared to the mean next ant partner distribution (black line) of the real data.}
-% 	\label{fig:Transitions_post}
-% %% Germination
-\begin{figure}
-	\includegraphics[width = 0.45\linewidth]{Figures/germ1_conv.png}
-	\includegraphics[width=0.45\linewidth]{Figures/germ2_conv.png}\\
-	\includegraphics[width=0.45\linewidth]{Figures/germ1_post.png} 	\includegraphics[width=0.45\linewidth]{Figures/germ2_post.png}
-	\caption{The a-b) posterior convergence of the parameters estimated by the germination from year one seedbank and germination from year two seedbank models respectively. The c-d) posterior distributions of floral viability estimates (pink lines) compared to the mean germination distribution (black line) of the real data for first year germinants and second year germinants respectively.}
-	\label{fig:Germ_post}
-\end{figure}
 
-%% Pre-Census Survival
-\begin{figure}
-	\includegraphics[width = 0.45\linewidth]{Figures/seed_surv_conv.png}
-	\includegraphics[width=0.45\linewidth]{Figures/seed_surv_post.png}
-	\caption{The a) posterior convergence of the parameters estimated by the pre-census survival model and the b) posterior distribution of the pre-census survival estimated (pink lines) compared to the mean distribution of observed pre-census survival (black line).}
-	\label{fig:Pre_Surv_post}
-\end{figure}
-%%
 
 \subsection*{Statistical Models -- Results}
 Below are the results reported of all statistical models not described in the main body of the text. 

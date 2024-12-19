@@ -32,7 +32,7 @@ years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
 ## Choose your pathway to pull from 
 #Ali
-# mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+ mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
 mcmc_dir <- "/Users/alicampbell/Library/CloudStorage/GoogleDrive-amc49@rice.edu/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
 #Tom
 # mcmc_dir <- "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"

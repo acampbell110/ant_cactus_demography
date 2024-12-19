@@ -589,19 +589,23 @@ png("Manuscript/Figures/survival_plot.png")
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
 # Crem
-plot(x = size_crem, y = invlogit(quantile(surv.params$beta0[,1],.5) + size_crem * quantile(surv.params$beta1[,1],.5)),lty = 2, type = "l", col = cremcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, main = "a)                        ")
+plot(x = size_crem, y = invlogit(quantile(surv.params$beta0[,1],.5) + size_crem * quantile(surv.params$beta1[,1],.5)),lty = 1, type = "l", col = cremcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, main = "a)                        ")
+lines(x = size_dummy, y = invlogit(quantile(surv.params$beta0[,1],.5) + size_dummy * quantile(surv.params$beta1[,1],.5)), col = cremcol, lwd = 4, lty = 2)
 points(surv_plot_crem$mean_size,surv_plot_crem$surv,pch=16,cex=surv_plot_crem$N_mod,col= alpha(cremcol, 0.4))
 polygon(c(size_dummy,rev(size_dummy)),c(invlogit(percentiles("crem",0.95)), rev(invlogit(percentiles("crem",0.05)))), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Liom
-plot(x = size_liom, y = invlogit(quantile(surv.params$beta0[,2],.5) + size_liom * quantile(surv.params$beta1[,2],.5)),lty = 2, type = "l", col = liomcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, main = "b)                        ")
+plot(x = size_liom, y = invlogit(quantile(surv.params$beta0[,2],.5) + size_liom * quantile(surv.params$beta1[,2],.5)),lty = 1, type = "l", col = liomcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, main = "b)                        ")
+lines(x = size_dummy, y = invlogit(quantile(surv.params$beta0[,2],.5) + size_dummy * quantile(surv.params$beta1[,2],.5)), col = liomcol, lwd = 4, lty = 2)
 points(surv_plot_liom$mean_size,surv_plot_liom$surv,pch=16,cex=surv_plot_liom$N_mod,col= alpha(liomcol, 0.4))
 polygon(c(size_dummy,rev(size_dummy)),c(invlogit(percentiles("liom",0.95)), rev(invlogit(percentiles("liom",0.05)))), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Other
-plot(x = size_other, y = invlogit(quantile(surv.params$beta0[,3],.5) + size_other * quantile(surv.params$beta1[,3],.5)), type = "l", col = othercol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, lty = 2,main = "c)                        ")
+plot(x = size_other, y = invlogit(quantile(surv.params$beta0[,3],.5) + size_other * quantile(surv.params$beta1[,3],.5)), type = "l", col = othercol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, lty = 1,main = "c)                        ")
+lines(x = size_dummy, y = invlogit(quantile(surv.params$beta0[,3],.5) + size_dummy * quantile(surv.params$beta1[,3],.5)), col = othercol, lwd = 4, lty = 2)
 points(surv_plot_other$mean_size,surv_plot_other$surv,pch=16,cex=surv_plot_other$N_mod,col= alpha(othercol, 0.4))
 polygon(c(size_dummy,rev(size_dummy)),c(invlogit(percentiles("other",0.95)), rev(invlogit(percentiles("other",0.05)))), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # Vacant
-plot(x = size_vac, y = invlogit(quantile(surv.params$beta0[,4],.5) + size_vac * quantile(surv.params$beta1[,4],.5)),lty = 2, type = "l", col = vaccol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, main = "d)                        ")
+plot(x = size_vac, y = invlogit(quantile(surv.params$beta0[,4],.5) + size_vac * quantile(surv.params$beta1[,4],.5)),lty = 1, type = "l", col = vaccol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, main = "d)                        ")
+lines(x = size_dummy, y = invlogit(quantile(surv.params$beta0[,4],.5) + size_dummy * quantile(surv.params$beta1[,4],.5)), col = vaccol, lwd = 4, lty = 2)
 points(surv_plot_vac$mean_size,surv_plot_vac$surv,pch=16,cex=surv_plot_vac$N_mod,col= alpha(vaccol, 0.4))
 polygon(c(size_dummy,rev(size_dummy)),c(invlogit(percentiles("vacant",0.95)), rev(invlogit(percentiles("vacant",0.05)))), col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 # All together
@@ -651,6 +655,8 @@ percentiles <- function(percent){
   y_flow <- quantile(flow.params$beta0,percent) + size_dummy * quantile(flow.params$beta1,percent)
   return(y_flow)
 }
+
+
 ## Bin the data
 flow_plot <- flower_data %>% 
   mutate(size_bin = cut_interval((logsize_t),10)) %>%
@@ -727,6 +733,13 @@ lines(density(invlogit(viab.params$beta0[,4])), lwd = 3, col = vaccol)
 mtext("Proportion of Flowerbuds Viable",side=1,line=-1.5,outer=TRUE,cex=2)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
+
+## Calcualte mean viability estimates
+mean(crem_subset$viab)
+mean(liom_subset$viab)
+mean(other_subset$viab)
+mean(vac_subset$viab)
+
 
 viab_out<-rstan::extract(readRDS(paste0(mcmc_dir,"fit_viab.rds")))
 alpha_val<-0.15
@@ -1401,6 +1414,7 @@ herbivory[is.na(herbivory)] <- 0
 #herbivory <- na.omit(herbivory)
 ## Create a variable that is a 1 or 0 based on herbivore presence
 herbivory$herb_YN <- 0
+herbivory$herb_count <- 1
 # Set the variable = 1 if there is evidence of herbivore presence
 for(i in 1:nrow(herbivory)){
   if(herbivory$NP_adult[i] > 0 | herbivory$NP_juv[i] > 0 | herbivory$CV[i] > 0 | herbivory$WVL[i] > 0 | herbivory$MA[i] > 0){herbivory$herb_YN[i] <- 1}
@@ -1412,7 +1426,7 @@ herbivory %>%
   group_by(Year_t1) %>%
   summarise(h = sum(herb_YN))
 # use 2014 and on 
-herbivory <- subset(herbivory,herbivory$Year_t1 == 2014)
+herbivory <- subset(herbivory,herbivory$Year_t1 >= 2014)
 
 
 ## Subset by ant
@@ -1440,8 +1454,48 @@ mtext("Herbivore Prevalence",side=2,line=-1.5,outer=TRUE,cex=1.5,las=0)
 dev.off()
 
 
+## Make a figure which takes only plants where herbivory is observed and show
+crem_herb <- subset(crem_herb, crem_herb$herb_YN == 1)
+liom_herb <- subset(liom_herb, liom_herb$herb_YN == 1)
+other_herb <- subset(other_herb, liom_herb$herb_YN == 1)
+vac_herb <- subset(vac_herb, liom_herb$herb_YN == 1)
 
+png("Manuscript/Figures/Herb_Count.png")
+barplot( height = c(nrow(crem_herb), nrow(liom_herb), nrow(other_herb), nrow(vac_herb)), names.arg = c(expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Other","Vacant"), col = c(cremcol,liomcol,othercol,vaccol))
+mtext("Ant Partner",side=1,line=-1.5,outer=TRUE,cex=1.5)
+mtext("Herbivore Occurrance",side=2,line=-1.5,outer=TRUE,cex=1.5,las=0)
+dev.off()
 
+  
+ant_herb_freq <- herbivory %>% 
+  group_by(Year_t1, ant_t1) %>%
+  summarise(h = sum(herb_YN),
+            tot = sum(herb_count))
+
+crem_yr <- ant_herb_freq$Year_t1[ant_herb_freq$ant_t1 == "crem"]
+crem_freq <- ant_herb_freq$h[ant_herb_freq$ant_t1 == "crem"]
+crem_total <- ant_herb_freq$tot[ant_herb_freq$ant_t1 == "crem"]
+liom_yr <- ant_herb_freq$Year_t1[ant_herb_freq$ant_t1 == "liom"]
+liom_freq <- ant_herb_freq$h[ant_herb_freq$ant_t1 == "liom"]
+liom_total <- ant_herb_freq$tot[ant_herb_freq$ant_t1 == "liom"]
+other_yr <- ant_herb_freq$Year_t1[ant_herb_freq$ant_t1 == "other"]
+other_freq <- ant_herb_freq$h[ant_herb_freq$ant_t1 == "other"]
+other_total <- ant_herb_freq$tot[ant_herb_freq$ant_t1 == "other"]
+vac_yr <- ant_herb_freq$Year_t1[ant_herb_freq$ant_t1 == "vacant"]
+vac_freq <- ant_herb_freq$h[ant_herb_freq$ant_t1 == "vacant"]
+vac_total <- ant_herb_freq$tot[ant_herb_freq$ant_t1 == "vacant"]
+
+png("Manuscript/Figures/herb_time_series.png")
+plot(crem_yr, crem_freq/crem_total, type = "b",pch = 20, cex = 3,col = cremcol, ylim =c(0,1),
+     xlab = "", ylab = "")
+lines(liom_yr, liom_freq/liom_total, type = "b",pch = 20, cex = 3,col = liomcol)
+lines(other_yr, other_freq/other_total, type = "b",pch = 20, cex = 3,col = othercol)
+lines(vac_yr, vac_freq/vac_total, type = "b",pch = 20, cex = 3,col = vaccol)
+legend("topright", legend = c(expression(italic("L. apiculatum")),expression(italic("C. opuntiae")),"Other","Vacant"), fill = c(liomcol,cremcol,othercol,vaccol),
+       cex = 1.5)
+mtext("Year",side=1,line=-1.5,outer=TRUE,cex=1.5)
+mtext("Frequency of Herbivory by Ant Species",side=2,line=-1.5,outer=TRUE,cex=1.5,las=0)
+dev.off()
 ################################################################################
 ## Hypotheses 
 ################################################################################
@@ -1498,6 +1552,7 @@ dev.off()
 
 
 ################################################################################
+
 ################################################################################
 ####
 #### IPM RESULTS
@@ -1965,6 +2020,8 @@ dev.off()
 ## Visualize Portfolio Effect
 ################################################################################
 colnames(lams_comp_stoch_null) <- scenario
+colnames(lams_comp_stoch) <- scenario
+
 all_vac_stoch_null <- lams_comp_stoch$all - lams_comp_stoch_null$none
 all_vac_stoch <- lams_comp_stoch$all - lams_comp_stoch$none
 # Plot the boost offered by the real ant scenario based on stochastic and deterministic lambda estimates

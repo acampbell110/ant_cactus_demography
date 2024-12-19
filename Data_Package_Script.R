@@ -1,47 +1,10 @@
-################################################################################ 
-################################################################################
-## The purpose of this script is to load all required packages, load the data 
-## and fix any errors (such as excel taking numbers as dates or mistyping ant 
-## species names etc.), write a "clean" data file which has all errors 
-## fixed and can be called directly and run through all other r scripts, and 
-## finally load in any other data files.
-################################################################################
-################################################################################
-## Load All Necessary Packages Here
-# stan models
-library(rstan)
-options(mc.cores = parallel::detectCores())
-rstan_options(auto_write = TRUE)
-# distributions
-library(sn)
-library(sgt)
-library(qgam)
-library(brms)
-library(loo)
-library(simcausal)
-# ipm analysis
-library(popbio)
-# visual model checks
-library(moments)
-library("posterior")
-library(gridExtra)
-library(grid)
-library(MASS)
-library(patchwork)
-library(tidyverse)
-# data management
-library(dplyr)
-library(magrittr)
-# graphics
-library(RColorBrewer)
-library(corrplot)
-library(ggpubr)
-library(reshape)
-library(reshape2)
-library(stats)
-# knitr::oknitr::oknitr::opts_chunk$set(echo = TRUE)
-# check the workign directory and make sure it is set to the right location
-#getwd()
+#############################################################
+## The purpose of this script is to accompany a data package.
+## This script will go through the process of cleaning errors 
+## in the data entry. d
+#############################################################
+
+# Set the working directory 
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 
@@ -50,19 +13,8 @@ setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 volume <- function(h, w, p){
   (1/3)*pi*h*(((w + p)/2)/2)^2
 }
-# inverse logit function
-invlogit <- function(x){exp(x)/(1+exp(x))}
-# quantile-based moments for analyzing growth function
-Q.mean<-function(q.25,q.50,q.75){(q.25+q.50+q.75)/3}
-Q.sd<-function(q.25,q.75){(q.75-q.25)/1.35}
-Q.skewness<-function(q.10,q.50,q.90){(q.10 + q.90 - 2*q.50)/(q.90 - q.10)}
-Q.kurtosis<-function(q.05,q.25,q.75,q.95){
-  qN = qnorm(c(0.05,0.25,0.75,0.95))
-  KG = (qN[4]-qN[1])/(qN[3]-qN[2])
-  return(((q.95-q.05)/(q.75-q.25))/KG - 1)
-}
 
-## import the data -- Cacti (main) 
+## import the data -- Cacti
 cactus <- read.csv("Data/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
 # str(cactus) ##<- problem: antcount is a factor
 
@@ -78,34 +30,35 @@ cactus$Plot[cactus$Plot=="HT4B1" | cactus$Plot=="HT4B2"]<-"T4"
 cactus$logsize_t <- log(volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t))
 cactus$logsize_t1 <- log(volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1))
 
-## Get the frequencies of ant species
-Antsp_t_levels <- levels(cactus$Antsp_t)
-# liom
-a <- subset(cactus, cactus$Antsp_t == "Liom" | cactus$Antsp_t == "LIOM" | cactus$Antsp_t == "liom" | cactus$Antsp_t == "L" | cactus$Antsp_t == "LIOM " |  cactus$Antsp_t == "liom ")
-nrow(a)
-# crem
-b <- subset(cactus, cactus$Antsp_t == "CREN" | cactus$Antsp_t == "LCREM" | cactus$Antsp_t == "crem" | cactus$Antsp_t == "Crem" | cactus$Antsp_t == "C" | cactus$Antsp_t == "CREM" | cactus$Antsp_t == "VCREM")
-nrow(b)
-# camp
-c <- subset(cactus, cactus$Antsp_t == "camp" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "large black shiny" | cactus$Antsp_t == "LARGE BLACK SHINY" | cactus$Antsp_t == "drpoff" | cactus$Antsp_t == "dropoff")
-nrow(c)
-# honeypot
-d <- subset(cactus, cactus$Antsp_t ==  "HNEYPOT" | cactus$Antsp_t ==  "honeypot" | cactus$Antsp_t == "HONEYPOT")
-nrow(d)
-# phen
-e <- subset(cactus, cactus$Antsp_t == "phen" | cactus$Antsp_t == "PHEN" | cactus$Antsp_t == "aph" | cactus$Antsp_t == "unk (Aphaeno?)")
-nrow(e)
-# tetra
-h <- subset(cactus, cactus$Antsp_t == "tetra")
-nrow(h)
-# brachy
-j <- subset(cactus, cactus$Antsp_t == "brachy")
-nrow(j)
-# unknown
-k <- subset(cactus, cactus$Antsp_t == "unk" | cactus$Antsp_t == "lg unk" | cactus$Antsp_t == "UNK" | cactus$Antsp_t == "unk " | cactus$Antsp_t == "other" | cactus$Antsp_t == "SMALL RED-BROWN SPINDLY" | cactus$Antsp_t == "black shiny red thorax" | cactus$Antsp_t == "RED HEAD BLK BUTT" | cactus$Antsp_t == "shiny black red thorax" | cactus$Antsp_t == "shiny black, red thorax") 
-nrow(k)
-l <- subset(cactus,cactus$Antsp_t == "LFOR" | cactus$Antsp_t == "for" | cactus$Antsp_t == "FOR")
-nrow(l)
+# ## Get the frequencies of ant species
+# Antsp_t_levels <- levels(cactus$Antsp_t)
+# # liom
+# a <- subset(cactus, cactus$Antsp_t == "Liom" | cactus$Antsp_t == "LIOM" | cactus$Antsp_t == "liom" | cactus$Antsp_t == "L" | cactus$Antsp_t == "LIOM " |  cactus$Antsp_t == "liom ")
+# nrow(a)
+# # crem
+# b <- subset(cactus, cactus$Antsp_t == "CREN" | cactus$Antsp_t == "LCREM" | cactus$Antsp_t == "crem" | cactus$Antsp_t == "Crem" | cactus$Antsp_t == "C" | cactus$Antsp_t == "CREM" | cactus$Antsp_t == "VCREM")
+# nrow(b)
+# # camp
+# c <- subset(cactus, cactus$Antsp_t == "camp" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "large black shiny" | cactus$Antsp_t == "LARGE BLACK SHINY" | cactus$Antsp_t == "drpoff" | cactus$Antsp_t == "dropoff")
+# nrow(c)
+# # honeypot
+# d <- subset(cactus, cactus$Antsp_t ==  "HNEYPOT" | cactus$Antsp_t ==  "honeypot" | cactus$Antsp_t == "HONEYPOT")
+# nrow(d)
+# # phen
+# e <- subset(cactus, cactus$Antsp_t == "phen" | cactus$Antsp_t == "PHEN" | cactus$Antsp_t == "aph" | cactus$Antsp_t == "unk (Aphaeno?)")
+# nrow(e)
+# # tetra
+# h <- subset(cactus, cactus$Antsp_t == "tetra")
+# nrow(h)
+# # brachy
+# j <- subset(cactus, cactus$Antsp_t == "brachy")
+# nrow(j)
+
+# # unknown
+# k <- subset(cactus, cactus$Antsp_t == "unk" | cactus$Antsp_t == "lg unk" | cactus$Antsp_t == "UNK" | cactus$Antsp_t == "unk " | cactus$Antsp_t == "other" | cactus$Antsp_t == "SMALL RED-BROWN SPINDLY" | cactus$Antsp_t == "black shiny red thorax" | cactus$Antsp_t == "RED HEAD BLK BUTT" | cactus$Antsp_t == "shiny black red thorax" | cactus$Antsp_t == "shiny black, red thorax") 
+# nrow(k)
+# l <- subset(cactus,cactus$Antsp_t == "LFOR" | cactus$Antsp_t == "for" | cactus$Antsp_t == "FOR")
+# nrow(l)
 
 ## Cactus 2023 data cleaning ---- Ant Species
 # Change ant counts to numeric (some random entries are different types of strings)
@@ -119,13 +72,27 @@ cactus$Antsp_t[cactus$Antcount_t==0] <- "vacant"
 # here are the ordered levels of the current variable
 Antsp_t_levels <- levels(cactus$Antsp_t)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
-ant_t_levels <- rep("other",times=length(Antsp_t_levels))
+ant_t_levels <- rep("unknown",times=length(Antsp_t_levels))
 # crem levels - elements
 ant_t_levels[c(5,8,9,10,11,22,45)] <- "crem"
 # liom levels - elements
 ant_t_levels[c(19,25,26,27,28,29)] <- "liom"
 # vacant - elements
 ant_t_levels[c(1,42,43,44)] <- "vacant"
+# Camp
+ant_t_levels[c(6,7,20,21,12,13)] <- "camp"
+# Honeypot
+ant_t_levels[c(17,16,18)] <- "honeypot"
+# Phenogaster
+ant_t_levels[c(31,32,2,41)] <- "phen"
+# Tetra
+ant_t_levels[c(37)] <- "tetra"
+# Brachy
+ant_t_levels[c(4)] <- "brachy"
+# forelius
+ant_t_levels[c(23,15,14)] <- "for"
+
+# Examine the levels
 # create new variable merging levels as above
 cactus$ant_t <- factor(cactus$Antsp_t,levels=Antsp_t_levels,labels=ant_t_levels)
 # there are still some other problems with this data: first, there are no ant data from 2007:
@@ -147,13 +114,26 @@ cactus$ant_t[cactus$Antsp_t==""]<-NA
 # repeat for t1 -- these indices are different
 Antsp_t1_levels <- levels(cactus$Antsp_t1)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
-ant_t1_levels <- rep("other",times=length(Antsp_t1_levels))
+ant_t1_levels <- rep("unknown",times=length(Antsp_t1_levels))
 # crem levels
 ant_t1_levels[c(8,9,10,11,12,23,45)] <- "crem"
 # liom levels
 ant_t1_levels[c(26,27,28,29,30)] <- "liom"
 # vacant
 ant_t1_levels[c(1,43,44)] <- "vacant"
+# Camp
+ant_t1_levels[c(6,7,21,22,13,14)] <- "camp"
+# Honepot
+ant_t1_levels[c(18,19,20)] <- "honeypot"
+# Phen
+ant_t1_levels[c(32,33,3,42)] <- "phen"
+# Tetra
+ant_t1_levels[c(38)] <- "tetra"
+# Brachy
+ant_t1_levels[c(5)] <- "brachy"
+# forelius
+ant_t1_levels[c(15,16,17,2,24)] <- "for"
+
 # create new variable merging levels as above
 cactus$ant_t1 <- factor(cactus$Antsp_t1,levels=Antsp_t1_levels,labels=ant_t1_levels)
 # check the spread of these ants
@@ -264,7 +244,7 @@ cactus_2019temp[,c("logsize_t1","Survival_t1","ant_t1",
 cactus_2020temp_notnew<-cactus[cactus$Year_t1==2021 & cactus$Newplant==0,]
 cactus_2020temp_notnew$Year_t<-2020
 cactus_2020temp_notnew[,c("Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t",
-                   "logsize_t","ant_t","Antcount_t")]<-NA
+                          "logsize_t","ant_t","Antcount_t")]<-NA
 #note that 2021 survival is still here but we don't know whether mortality occurred in 2019 or 2020 transition year
 cactus_2020temp_new<-cactus[cactus$Year_t1==2021 & cactus$Newplant==1,]
 cactus_2020temp_new$Year_t<-2020
@@ -277,58 +257,5 @@ cactus_final <- rbind(cactus[cactus$Year_t!=2019,],cactus_2019temp,cactus_2020te
 # Export cactus to a csv
 write.csv(cactus_final, "Data/cholla_demography_20042023_cleaned.csv")
 
-
-
-## Further analyses ----
-# How many plants do we survey annually (on average)
-yr <- vector()
-for(i in 1:length(unique(cactus$Year_t))){
-  yr[i] <- nrow(subset(cactus, cactus$Year_t == 2003+i))
-}
-yr
-mean(yr[1:17])
-
-
-## Get numbers on years of data nd number of individual plants
-# create a combined variable of plot and ID and check for unique combos
-cactus$plot_ID <- paste(cactus$Plot, cactus$TagID)
-length(unique(cactus$plot_ID))
-# get the number of years
-length(unique(cactus$Year_t1))
-# get the number of complete transition years
-cactus %>% filter(Year_t1 == Year_t +1) %>% group_by(Year_t1) %>% summarise(n())
-## get total number of transition-year observations, excluding the last, incomplete transition
-cactus %>% filter(Year_t!=2023) %>% summarise(n())
-
-
-
-## Get the proportions of each species
-# how many ant observations are there
-cac <- subset(cactus, cactus$ant_t != "vacant")
-nrow(cac)
-liom_prop <- nrow(a)/nrow(cac)
-crem_prop <- nrow(b)/nrow(cac)
-camp_prop <- nrow(c)/nrow(cac)
-honey_prop <- nrow(d)/nrow(cac)
-phen_prop <- nrow(e)/nrow(cac)
-tetra_prop <- nrow(h)/nrow(cac)
-brach_prop <- nrow(j)/nrow(cac)
-unk_prop <- nrow(k)/nrow(cac)
-for_prop <- nrow(l)/nrow(cac)
-other_prop <- sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
-
-## calculate the proportion of plants which have experienced at least one ant transition in their lives
-total <- nrow(cactus)
-partial <- nrow(subset(cactus, cactus$ant_t != cactus$ant_t1))
-partial/total
-cactus$antsum <- NA
-for(i in 1:nrow(cactus)){
-  ifelse(cactus$ant_t1[i] == "vacant",cactus$antsum[i] <- 0, cactus$antsum[i] <- 1)
-}
-  cactus %>% 
-  group_by(Plot) %>%
-  group_by(TagID) %>%
-    summarise(ants <- sum(antsum,na.rm=T)) -> sum_data
-nrow(subset(sum_data, sum_data$`ants <- sum(antsum, na.rm = T)`>1))/nrow(sum_data)
 
 
