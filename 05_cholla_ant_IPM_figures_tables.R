@@ -1426,7 +1426,7 @@ herbivory %>%
   group_by(Year_t1) %>%
   summarise(h = sum(herb_YN))
 # use 2014 and on 
-herbivory <- subset(herbivory,herbivory$Year_t1 >= 2014)
+herbivory <- subset(herbivory,herbivory$Year_t1 == 2014)
 
 
 ## Subset by ant
