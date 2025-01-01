@@ -331,4 +331,13 @@ for(i in 1:nrow(cactus)){
     summarise(ants <- sum(antsum,na.rm=T)) -> sum_data
 nrow(subset(sum_data, sum_data$`ants <- sum(antsum, na.rm = T)`>1))/nrow(sum_data)
 
-
+# Count the number of plants per plot per year
+plant_counts <- cactus %>%
+  group_by(Plot, Year_t1) %>%
+  summarise(PlantCount = n(), .groups = "drop")
+summary_stats <- plant_counts %>%
+  group_by(Plot) %>%
+  summarise(
+    MeanPlantCount = mean(PlantCount),
+    SDPlantCount = sd(PlantCount)
+  )

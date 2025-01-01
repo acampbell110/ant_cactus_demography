@@ -635,7 +635,7 @@ flow_sim <- matrix(NA, n_draws,stan_data_flow_trunc$N)
 for(i in 1:n_draws){
   for(n in 1:stan_data_flow_trunc$N){
     flow_sim[i,n] <- sample(x=1:n_draws,size=1,replace=T,
-                            prob=dnbinom(1:n_draws, mu = exp(flow.params$beta0[i] + flow.params$beta1[i]*stan_data_surv$vol[n]), size=flow.params$phi[i]) / (1 - dnbinom(0, mu = exp(flow.params$beta0[i] + flow.params$beta1[i]*stan_data_surv$vol[n]), size=flow.params$phi[i])))
+                            prob=dnbinom(1:n_draws, mu = exp(flow.params$beta0[i] + flow.params$beta1[i]*stan_data_flow_trunc$vol[n]), size=flow.params$phi[i]) / (1 - dnbinom(0, mu = exp(flow.params$beta0[i] + flow.params$beta1[i]*stan_data_flow_trunc$vol[n]), size=flow.params$phi[i])))
   }
 }
 ## Plot the posterior distributions
