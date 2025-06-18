@@ -1,0 +1,255 @@
+% ======================================================= %
+% Document: TEMPLATE FOR RESPONSES TO REVIEWERS
+% Author: Andrea Ballatore
+% Date: Jan 7, 2013
+% Source: https://raw.githubusercontent.com/ucd-spatial/Datasets/master/tex_response_to_reviewers_template/responses_to_reviewers.tex
+% Modified by Eduard Szöcs, 10.03.2015
+% ======================================================= %
+\documentclass[12pt]{article}
+
+% packages
+\usepackage{xr-hyper}
+\usepackage{hyperref}
+\externaldocument[ms-]{ant_cactus_SUBMISSION2}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{color}
+\definecolor{mygray}{gray}{0.6}
+\usepackage[utf8]{inputenc}
+\usepackage[onehalfspacing]{setspace}
+\usepackage[
+	round,	%(defaultage in the main file and \input ) for round parentheses;
+	colon,	% (default) to separate multiple citations with colons;
+	authoryear,% (default) for author-year citations;
+	sort,		% orders multiple citations into the sequence in which they
+]{natbib}
+\usepackage[%disable
+	]{todonotes}
+
+\usepackage{anysize}
+\marginsize{2.5cm}{2.5cm}{1.5cm}{2.5cm}
+
+% macros
+% add a counter
+\newcounter{cN}
+\setcounter{cN}{0}
+
+\newcommand{\comment}[1]{
+	\vspace{2em}
+	\refstepcounter{cN} % incrment counter
+	\noindent \hangindent=0em \textbf{\textcolor{Maroon}{\uline{Comment \thecN}:~}}\emph{``#1''}
+	}
+
+\newcommand{\response}[1]{
+	\\[0.25em]
+	\hangindent=2.3em \textbf{\textcolor{NavyBlue}{\uline{Response}:~}}#1
+	}
+
+\newcommand{\revise}[1]{{\color{Mahogany}{#1}}}
+
+\usepackage[normalem]{ulem}
+\definecolor{darkred}{rgb}{1,.6,.6}
+\DeclareRobustCommand\problemline{\bgroup\markoverwith{\textcolor{darkred}{\rule[-0.9ex]{4pt}{3pt}}}\ULon}
+\DeclareRobustCommand{\problem}[1]{\problemline{#1}} % soul
+\setcounter{secnumdepth}{-1}
+
+\begin{document}
+% ======================================================= %
+\title{Manuscript 62524 --- Response to reviewers}
+
+\maketitle
+% ======================================================= %
+\noindent To the editorial board,
+
+Thank you for the opportunity to submit a revision of our manuscript for your consideration. Our major changes include the following:
+\begin{enumerate}
+	\item We have added a new analysis that explores under what conditions portfolio effect could be shown. 
+	We found *************
+	\item We updated the introduction to be more accessible for readers and to better set up the rest of the manuscript.
+\end{enumerate}
+
+We describe these and other changes in greater detail below, where we reproduce comments from the associate editor and reviewers and provide our point-by-point responses. 
+All of our changes are denoted in the manuscript with \revise{Mahogany font}.
+We think the review process has greatly strengthened our manuscript such that it is now suitable for publication.
+We hope you agree. 
+
+\vspace{2em}
+\hfill On behalf of myself and T. Miller,
+
+\hfill Ali Campbell
+\newpage
+
+% ======================================================= %
+
+\section{Response to Dr. Megan E. Frederickson}
+\vspace{-2em}
+
+\comment{Both reviewers mentioned that the introduction does not quite set up the methods and results of the paper, and I agree, and I want to quickly expand on their comments. 
+The introduction is mainly concerned with setting up the question of whether partner diversity in a mutualism can benefit a focal species (via sampling, complementarity, or portfolio effects). 
+I agree that this is an interesting question, but I thought that the introduction undersells the results, because the demographic data and IPM offer more than an answer to this one question. 
+I think the authors could ‘sell’ their demographic dataset more (just a single intro sentence says “the long-term data needed to quantify fluctuations in ant-plant interactions are rarely available” at Line 101). 
+I also thought they could explain in the introduction why even the quantification of the effects of single ant partners across the tree cholla lifecycle, and how ant species turn over on plants, are unique and valuable contributions to the field.}
+\response{We have edited the introduction to better reflect the importance of long term data (see lines ~\ref{ms-res:long-term-data}, ~\ref{ms-res:long-term-data3} and ~\ref{ms-res:long-term-data2}). 
+We have also expanded on why the quantification of single ant partners is unique and how this is a valuable contribution to the field (line ~\ref{ms-res:L111})
+}
+
+\comment{Like the reviewers, especially Reviewer \#1, I could also have used a little more detail on some of the data collection methods. Reviewer \#1 notes that little information is provided on how seed production was estimated, and I agree. For my part, I could also have used a little more detail on how floral viability was measured. The methods say “we distinguished between flowerbuds that were viable versus aborted” but I wasn’t clear how.}
+\response{We distinguished between viable and aborted flowerbuds through visual assessment. We have gone through the methods data collection section and added detail to our data collection descriptions which we hope will help readers better understand.}
+
+\comment{I also encourage the authors to pay close attention to responding to several important points raised by Reviewer \#2, especially with regards to 1) what evidence for the portfolio effect would look like in a mutualism in which partners participate sequentially, and 2) providing the reader with a little more ‘hand holding’ when it comes to the rather complex model. Like the reviewer, I cannot claim that I would spot an error in the model if there were one, and it may be helpful to build up to the full Integral Projection Model in more stages, as Reviewer \#2 very helpfully suggests. }
+\response{We agree with the assessments of Reviewer 2 and Dr. Frederickson. We have edited the introduction to better set up readers for understanding the portfolio effect and what would constitute positive results of this mechanism.}
+
+\comment{Line 184: Clarify whether the searches of these plots were exhaustive. Have you captured all plants within each plot in the dataset?}
+\response{We have clarified this (line ~\ref{ms-res:exhaustive}).}
+
+\comment{Lines 329 and 364: I realize that this is commonplace in some parts of the literature, but I would prefer not to call different simulation scenarios “experiments”}
+\response{We have changed the language throughout to "simulations" rather than "experiments".}
+
+\comment{Fig. 1: Is the gray dashed line in panel e) the 1:1 line that would indicate no growth? It is not labelled in the legend or the caption.}
+\response{The grey dashed line does indicate no growth. We have updated the caption to indicate this.}
+
+\comment{Figure 4: I wondered if taking the ant legend and inset correlation coefficients out of the plots and making them separate panels in a multi-panel figure, would increase the readability of this figure. It is very hard to see what is going on with the random effects across years because of the overlapping colours and the large y-axis scale, which creates space for the inset panels and legend, but squishes the coloured dots and lines together.}
+\response{**** Honestly not sure, I would like to discuss with you Tom.}
+
+\comment{There is very little mention of some of the supplemental results in the main text (e.g., the herbivory analysis). Please make sure all supplemental results are clearly described in the Results section of the main text.}
+\response{**** Again, I would like to discuss where you think would be most appropriate}
+
+\section{Response to Reviewer 1}
+\vspace{-2em}
+
+\comment{The study "Demographic consequences of partner diversity and turnover in a multi-species ant-plant mutualism" uses a long-term dataset to look at the demography of a plant with mutualistic ants that provide defense to the plant. 
+The estimated parameters and used a stochastic, multi-state IPM to look at the effects of ant mutualists on plant fitness. 
+Most significantly, the authors found all ant species increased fitness (finite rate of growth), irrespective of their identity or turnover over the life of the plant. 
+Overall, I found the study to be high-quality and novel, and the main finding is somewhat perplexing and would be of interest of the journal's readership. 
+Admittedly, I found the framing of the introduction to not quite set up the study strongly and I was worried about the precision of the modeling, but the data and their implications are compelling and interesting. 
+The level of precision of the modeling that concerned me was philosophical rather than practical. 
+Specifically, I spent a few days thinking about this study with respect to Levins' (1966) strategies of model building in population biology. 
+I originally thought that this population model was one that focused on *precision* and either generality or realism, but upon reflection I see this as one that sacrifices precision for generality and realism because the results and interpretation are largely focused on the qualitative outcome of the model, which are the useful and meaningful results. 
+I think that it was really just the first paragraph of the introduction that was a sticking point for me given that mutualism "deterioration" and context dependency didn't seem to be important for the study.}
+\response{We appreciate the positive response to our results and the concept of our manuscript. We have refined the introduction in response to your  }
+
+\comment{Methodologically, the long-term data are incredible. 
+What the authors were able to measure—especially for such a long period of time—greatly increase the strength of the study. 
+Because of these methods for instance, the authors were able to observe many plant-switching events, and I was really surprised by just how often tending/occupancy switches on plants. 
+How the data were collected on seeds was not clear to me, however. 
+On L. 191 the paragraph describes using other study's data on seed production, but this wasn't related to this study's data collection, which is pretty important. 
+I hope that data on seed production was measured on the same plants from which other demographic variables were measured. 
+If not, was seed production just estimated based on flower viability?  
+If that's the case, I think it would be important to state that; especially because an idea behind the multi-mutualist framework is that sometimes mutualist guilds can be antagonistic (e.g., defense guild decreasing pollination). 
+The statistical modeling and IPM were explained clearly.}
+\response{We have expanded on the source of our seed data to clear up any confusions as to their origins and the methods of obtainment (line~\ref{ms-res:data_origins}). }
+
+\comment{I think the results of this study are compelling. 
+Much thought (including older thought like seed-dispersal effectiveness (Schupp 1993)) on mutualism presumes interspecific variation within a guild. 
+This is even true from what I know of the ant-plant-tending literature, where we observe differences in quality of protection among species. 
+Ostensibly, this could be due to the typical short-term studies. 
+Given the longevity and quality of data showing no differences among ant defenders, I think this could be an important contribution.}
+\response{We are pleased you see the value and novelty of our results.}
+
+\comment{L. 22: I feel like this paragraph doesn't add much and that if you nix everything after the first sentence and open with what's in paragraph 2, that would be more suitable for this study. 
+It also frees some room to discuss generalized/diffuse mutualisms further.}
+\response{Thank you for the helpful suggestion. 
+We have streamlined the introduction paragraph by removing extraneous details after the first sentence and opened the section with the content previously in paragraph 2. 
+This revision improves the focus of the introduction on the core aspects of our study. 
+Additionally, we have expanded the discussion on generalized/diffuse mutualisms as you recommended, providing clearer context for the ecological significance of our work (line~\ref{ms-res:L22}).}
+
+\comment{L. 29: I think that Chamberlain et al. didn't find that the interaction strength of mutualism wasn't more context dependent that competition. 
+But overall, I interpreted their findings to be that other interactions are context dependent: not just mutualisms. 
+Sometimes mutualism showed more CD than the others, but it's constantly discussed in mutualism, but not in the another two antagonistic interactions.}
+\response{I removed this sentence based on their recommendations so I am not sure what I should say here... *********}
+
+\comment{L. 53: Not certain I understand within a guild how benefits can vary by type.}
+\response{We have revised the manuscript to explicitly explain that different partner species within the same guild can provide distinct benefits, not just differences in the magnitude of similar benefits (line~\ref{ms-res:L53}).}
+
+\comment{L. 111-2: First time writing scientific names, please write out the full genus.}
+\response{We have corrected this. (line~\ref{ms-res:L111})}
+
+\comment{L 420-422: If the small-plant data are extrapolated, then I would not include that in the results.}
+\response{Not sure how to respond to this given the need to include expected small plant reactions in the model despite slim probabilities of occurrence. ********}
+
+\comment{L. 429: Is there a figure equivalent to figs. 1 and 2 that show seed production/set?}
+\response{Yes, we have this figure in Appendix D (Figure ~\ref{ms-app:seeds}).}
+
+\comment{Fig. 5, caption: ". . . based on [plant] size".}
+\response{We have revised the caption of Figure 5 to clarify what is meant by "based on plant size" and to explicitly describe the relationship being visualized (Figure~\ref{ms-fig:Ant_Transition}).}
+
+\section{Response to Reviewer 2}
+\vspace{-2em}
+
+\comment{I feel that the major research questions are poorly framed in the abstract and introduction. 
+The problem is that the reader really needs to be primed to deal with the portfolio effect in sequential mutualisms with asynchronous environmental effects on mutualists. 
+I was deep into the methods, which is quite dense, before I felt like I could understand the core research question.}
+\response{We have expanded the Introduction and Abstract to more explicitly detail portfolio effects and sequential partner interactions.
+These revisions better prime the reader to understand the core research question and the rationale behind our modeling approach, which integrates partner turnover and environmental stochasticity. We believe this strengthens the manuscript’s conceptual clarity and relevance.}
+
+\comment{I would like to know what evidence for the portfolio effect would look like, so that I can carry that through the methods and see that this is what you are measuring, and into the results, so I can compare it to what you actually found.}
+\response{We have revised the Introduction to include a more detailed conceptual explanation of how the portfolio effect can operate in mutualisms with sequential partner turnover. 
+Specifically, we now define the portfolio effect as occurring when inter-annual variation in partner identity stabilizes plant fitness across years, due to asynchronous responses of different ant partners to environmental variability (line~\ref{ms-res:portfolio_theory}).}
+
+\comment{Further, following up on this, I'd like to see better discussion of what went wrong. 
+Under what conditions, different from the ones in this study system, would portfolio effects have emerged? 
+For example, I bet portfolios would be more important if asynchronous climate fluctuations were sufficient to convert a large fraction of trees from ant-bearing to vacant. 
+Or, additionally, if the escape size of trees, where mortality drops off, were larger, such that both reproduction during bad years and survival advantages of ants were more important.  
+Or, if an environmental condition that results in lower seed production promoted the spread of an ant that prevents seed loss (complementarity in sequence).
+Can I see a positive control, so that I can (1) put the negative result into context, and not overgeneralize the result and (2) feel confident that the model could represent portfolio effects, so that their absence is meaningful.}
+\response{*** Simulations \& updated discussions}
+
+\comment{Abstract: What is the big research question? 
+Which "demographic impacts of different ant partners" are of most interest w/r this question. 
+What is meant by the "dynamics of turnover from one exclusive partner association to another?" Is there a simpler way of saying this?}
+\response{We have revised the abstract to foreground the overarching question—how partner turnover influences host demography and fitness—and to clarify the specific demographic outcomes of interest. 
+We also simplified the language around partner turnover.
+We believe this revised version more clearly communicates the goals, approach, and key findings of the study.}
+
+\comment{Overall comment: You have a complicated model. 
+What training does the reader need to best make sense of it. 
+I would argue: (1) portfolio effects as a mechanism of diversity-function relationships in mutualism as compared to (2) sampling effects (more species = more chance of having best mutualist) and associated (3) "missed opportunity costs", or suboptimal outcome from diversity compared to exclusive association with best mutualist. 
+Make sure that the introduction of portfolio effects anticipates your hypothesis that they should be manifest only in the asynchronous ant model. 
+This stuff is spread throughout more general material that I would cut or at least substantially reduce, so that the reader is ready for the methods.}
+\response{**** Not sure if I have done this effectively.... But I edited mostly the paragraphs introducing the background and the mechanisms.
+We have revised the Introduction to present the mechanisms more clearly, namely we tied the definition of the mechanism more closely to the mathematical definitions we use in the methods to show evidence of each mechanism (lines ~\ref{ms-res:mechanims_math} - ~\ref{ms-res:portfolio_asynchronous}), emphasizing that portfolio effects specifically depend on asynchronous partner responses to environmental variation (line~\ref{ms-res:portfolio_asynchronous}).
+This framing provides clearer conceptual grounding for the models and we hope it better prepares readers for the methods that follow.}
+
+\comment{A bit jarring out the gate. The first sentence states: everyone in mutualism benefits (full stop). The second sentence is : except when they don't.}
+\response{We have revised the first sentence (line ~ \ref{ms-res:R2_1}) to reflect that in mutualisms everyone receives a net benefit rather than just saying everyone benefits. We believe the language of net benefit allows for the further elaboration than the magnitude of benefits vary based on several conditions (aka. except when they don't).}
+
+\comment{27: Compared to which interactions ("such as…")? I think this intro material obstructs you from rolling out the background we really need.}
+\response{We have revised the first paragraph to reduce unnecessary and/or uninformative information to speed the reader into what is needed to understand the rest of the paper (line ~\ref{ms-res:L27}).}
+
+\comment{39: "remain open questions within relevance in applied settings." 
+What does this mean? 
+What applied settings? 
+How relevant?}
+\response{We believe the questions we pose have relevance in regards to studying mutualisms under environmental variability, where different partners may confer benefits unevenly across space or time.
+We have revised the introduction to better reflect these applied settings and further contextualize this study (line ~\ref{ms-res:L39}). }
+
+\comment{45. Wordy sentences. Do we need both "hierarchy of fitness effects" and "a consistent ranking…".}
+\response{We have edited to reflect this suggestion on line ~\ref{ms-res:L45}.}
+
+\comment{63: Your paragraph doesn't deliver on its opening. 
+Right out of this opening sentence I want to know: What is the effect of partner diversity when partners are present sequentially? 
+How is this different from when partners are present simultaneously?}
+\response{We have revised this paragraph to better answer your questions and deliver on its opening. 
+We explain that in sequential associations, partner conflict is significantly reduced and associations are more stable -- leading to overall increased benefits for the focal mutualist (line ~\ref{ms-res:L63}).}
+
+\comment{Some kind of brief lay-summary would go well here. 
+Some kind of model overview that avoids too much jargon, ties into the introduction, and gives the reader who will not slog through all the simulation model details a way to engage in the model findings. 
+I know the complex bits have to be there and that mature, quantitative readers exist, but this reviewer cleaves more to a lower common denominator}
+\response{**** Not really sure where to put this or if I should instead modify existing text???}
+
+\comment{Before you get into details, make sure I understand:
+(1)     Plants die, or else survive, grow, flower, fruit, and add seeds to the recruitment bank, where new plants come from.
+(2)     Growth, survival, fruiting and flowering are a product of plant size, whereas
+(3)     Both size and ant species identity influence growth and survival, with ant species exclusively determining flower viability and number of seeds per fruit
+(4)     Environments fluctuate stochastically in ways that affect plant vital rates, both directly by influencing flowering, growth, and survival, and indirectly by influencing colonization of vacant plants and/or the displacement of a resident ant species by a different ant species
+(5)     These environmental fluctuations can either affect all ant species in the same way (the synchronous model:  what's good for one ant species is good for all ant species) or in different ways (the asynchronous model: what's good for one ant species may be bad for another).
+(6)     An expectation from the portfolio effect is that in an asynchronous model, there ought to be a benefit to having a diversity of ant species. When one species does poorly, the other can "step-up" and fill in.
+(7)     This model's outputs are used to see if this portfolio effect emerges. }
+\response{Your understanding of our model and analysis is accurate.}
+
+
+% ======================================================= %
+\end{document}
+% ======================================================= %

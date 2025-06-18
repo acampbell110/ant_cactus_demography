@@ -338,6 +338,6 @@ plant_counts <- cactus %>%
 summary_stats <- plant_counts %>%
   group_by(Plot) %>%
   summarise(
-    MeanPlantCount = mean(PlantCount),
-    SDPlantCount = sd(PlantCount)
+    mean = mean(PlantCount),
+    sd = sd(PlantCount)
   )
