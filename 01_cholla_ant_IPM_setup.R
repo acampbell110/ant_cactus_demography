@@ -79,32 +79,32 @@ cactus$logsize_t <- log(volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t))
 cactus$logsize_t1 <- log(volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1))
 
 ## Get the frequencies of ant species
-Antsp_t_levels <- levels(cactus$Antsp_t)
+Ant_sp_t_levels <- levels(cactus$Ant_sp_t)
 # liom
-a <- subset(cactus, cactus$Antsp_t == "Liom" | cactus$Antsp_t == "LIOM" | cactus$Antsp_t == "liom" | cactus$Antsp_t == "L" | cactus$Antsp_t == "LIOM " |  cactus$Antsp_t == "liom ")
+a <- subset(cactus, cactus$Ant_sp_t == "Liom" | cactus$Ant_sp_t == "LIOM" | cactus$Ant_sp_t == "liom" | cactus$Ant_sp_t == "L" | cactus$Ant_sp_t == "LIOM " |  cactus$Ant_sp_t == "liom ")
 nrow(a)
 # crem
-b <- subset(cactus, cactus$Antsp_t == "CREN" | cactus$Antsp_t == "LCREM" | cactus$Antsp_t == "crem" | cactus$Antsp_t == "Crem" | cactus$Antsp_t == "C" | cactus$Antsp_t == "CREM" | cactus$Antsp_t == "VCREM")
+b <- subset(cactus, cactus$Ant_sp_t == "CREN" | cactus$Ant_sp_t == "LCREM" | cactus$Ant_sp_t == "crem" | cactus$Ant_sp_t == "Crem" | cactus$Ant_sp_t == "C" | cactus$Ant_sp_t == "CREM" | cactus$Ant_sp_t == "VCREM")
 nrow(b)
 # camp
-c <- subset(cactus, cactus$Antsp_t == "camp" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "CAMP" | cactus$Antsp_t == "large black shiny" | cactus$Antsp_t == "LARGE BLACK SHINY" | cactus$Antsp_t == "drpoff" | cactus$Antsp_t == "dropoff")
+c <- subset(cactus, cactus$Ant_sp_t == "camp" | cactus$Ant_sp_t == "CAMP" | cactus$Ant_sp_t == "CAMP" | cactus$Ant_sp_t == "large black shiny" | cactus$Ant_sp_t == "LARGE BLACK SHINY" | cactus$Ant_sp_t == "drpoff" | cactus$Ant_sp_t == "dropoff")
 nrow(c)
 # honeypot
-d <- subset(cactus, cactus$Antsp_t ==  "HNEYPOT" | cactus$Antsp_t ==  "honeypot" | cactus$Antsp_t == "HONEYPOT")
+d <- subset(cactus, cactus$Ant_sp_t ==  "HNEYPOT" | cactus$Ant_sp_t ==  "honeypot" | cactus$Ant_sp_t == "HONEYPOT")
 nrow(d)
 # phen
-e <- subset(cactus, cactus$Antsp_t == "phen" | cactus$Antsp_t == "PHEN" | cactus$Antsp_t == "aph" | cactus$Antsp_t == "unk (Aphaeno?)")
+e <- subset(cactus, cactus$Ant_sp_t == "phen" | cactus$Ant_sp_t == "PHEN" | cactus$Ant_sp_t == "aph" | cactus$Ant_sp_t == "unk (Aphaeno?)")
 nrow(e)
 # tetra
-h <- subset(cactus, cactus$Antsp_t == "tetra")
+h <- subset(cactus, cactus$Ant_sp_t == "tetra")
 nrow(h)
 # brachy
-j <- subset(cactus, cactus$Antsp_t == "brachy")
+j <- subset(cactus, cactus$Ant_sp_t == "brachy")
 nrow(j)
 # unknown
-k <- subset(cactus, cactus$Antsp_t == "unk" | cactus$Antsp_t == "lg unk" | cactus$Antsp_t == "UNK" | cactus$Antsp_t == "unk " | cactus$Antsp_t == "other" | cactus$Antsp_t == "SMALL RED-BROWN SPINDLY" | cactus$Antsp_t == "black shiny red thorax" | cactus$Antsp_t == "RED HEAD BLK BUTT" | cactus$Antsp_t == "shiny black red thorax" | cactus$Antsp_t == "shiny black, red thorax") 
+k <- subset(cactus, cactus$Ant_sp_t == "unk" | cactus$Ant_sp_t == "lg unk" | cactus$Ant_sp_t == "UNK" | cactus$Ant_sp_t == "unk " | cactus$Ant_sp_t == "other" | cactus$Ant_sp_t == "SMALL RED-BROWN SPINDLY" | cactus$Ant_sp_t == "black shiny red thorax" | cactus$Ant_sp_t == "RED HEAD BLK BUTT" | cactus$Ant_sp_t == "shiny black red thorax" | cactus$Ant_sp_t == "shiny black, red thorax") 
 nrow(k)
-l <- subset(cactus,cactus$Antsp_t == "LFOR" | cactus$Antsp_t == "for" | cactus$Antsp_t == "FOR")
+l <- subset(cactus,cactus$Ant_sp_t == "LFOR" | cactus$Ant_sp_t == "for" | cactus$Ant_sp_t == "FOR")
 nrow(l)
 
 ## Cactus 2023 data cleaning ---- Ant Species
@@ -114,12 +114,12 @@ cactus$Antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
 #summary(as.factor(cactus$Antcount_t))
 #summary(as.factor(cactus$Antcount_t1))
 # assign ant counts of zero as vacant
-cactus$Antsp_t[cactus$Antcount_t==0] <- "vacant"
-#summary(cactus$Antsp_t)
+cactus$Ant_sp_t[cactus$Antcount_t==0] <- "vacant"
+#summary(cactus$Ant_sp_t)
 # here are the ordered levels of the current variable
-Antsp_t_levels <- levels(cactus$Antsp_t)
+Ant_sp_t_levels <- levels(cactus$Ant_sp_t)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
-ant_t_levels <- rep("other",times=length(Antsp_t_levels))
+ant_t_levels <- rep("other",times=length(Ant_sp_t_levels))
 # crem levels - elements
 ant_t_levels[c(5,8,9,10,11,22,45)] <- "crem"
 # liom levels - elements
@@ -127,7 +127,7 @@ ant_t_levels[c(19,25,26,27,28,29)] <- "liom"
 # vacant - elements
 ant_t_levels[c(1,42,43,44)] <- "vacant"
 # create new variable merging levels as above
-cactus$ant_t <- factor(cactus$Antsp_t,levels=Antsp_t_levels,labels=ant_t_levels)
+cactus$ant_t <- factor(cactus$Ant_sp_t,levels=Ant_sp_t_levels,labels=ant_t_levels)
 # there are still some other problems with this data: first, there are no ant data from 2007:
 #cactus$Antcount_t[cactus$Year_t==2007]
 #so give these observations NA for ant status: should be 118 values of NA now
@@ -139,15 +139,15 @@ cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==7] <- NA
 cactus$ant_t[cactus$Year_t==2010 & cactus$Plot==8] <- NA
 # for now here is my workaround: year t ==2018, height_t ==NA, height_t1 !=NA
 cactus$ant_t[cactus$Year_t==2018 & is.na(cactus$Height_t) & !is.na(cactus$Height_t1)] <- NA
-# finally there are these plants with Antsp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
-cactus$ant_t[cactus$Antsp_t==""]<-NA
+# finally there are these plants with Ant_sp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
+cactus$ant_t[cactus$Ant_sp_t==""]<-NA
 # Check the distribution of the ant species
 #summary(cactus$ant_t)
 # 4440 vac, 614 other, 659 813, 3422 liom, 1316 NA
 # repeat for t1 -- these indices are different
-Antsp_t1_levels <- levels(cactus$Antsp_t1)
+Ant_sp_t1_levels <- levels(cactus$Ant_sp_t1)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
-ant_t1_levels <- rep("other",times=length(Antsp_t1_levels))
+ant_t1_levels <- rep("other",times=length(Ant_sp_t1_levels))
 # crem levels
 ant_t1_levels[c(8,9,10,11,12,23,45)] <- "crem"
 # liom levels
@@ -155,7 +155,7 @@ ant_t1_levels[c(26,27,28,29,30)] <- "liom"
 # vacant
 ant_t1_levels[c(1,43,44)] <- "vacant"
 # create new variable merging levels as above
-cactus$ant_t1 <- factor(cactus$Antsp_t1,levels=Antsp_t1_levels,labels=ant_t1_levels)
+cactus$ant_t1 <- factor(cactus$Ant_sp_t1,levels=Ant_sp_t1_levels,labels=ant_t1_levels)
 # check the spread of these ants
 #summary(cactus$ant_t1) ## there are too many "vacants" -- same deal as above
 # vac 6097, other 373, crem 777, liom 3358, NA 0
@@ -166,10 +166,10 @@ cactus$ant_t1[is.na(cactus$Height_t1)] <- NA
 # check to see how many others this leaves -- still a lot
 #summary(cactus$ant_t1)
 # vac 4445, other 373, crem 777, liom 3357, NA 1653
-# there are some Antsp_t1=="" that show up as "other"
-#cactus %>% filter(Antsp_t1=="" & ant_t1=="other")
-# finally there are these plants with Antsp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
-cactus$ant_t[cactus$Antsp_t==""]<-NA
+# there are some Ant_sp_t1=="" that show up as "other"
+#cactus %>% filter(Ant_sp_t1=="" & ant_t1=="other")
+# finally there are these plants with Ant_sp_t=="" for all kinds of reasons but bottom line is that we don't have ant status
+cactus$ant_t[cactus$Ant_sp_t==""]<-NA
 # Relevel so that vacancy is the reference level
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
@@ -236,10 +236,10 @@ hist(cactus$Height_t1[cactus$Recruit==1])
 colnames(cactus) <- c("Plot" ,            "TagID"     ,       "Transplant"   ,    "Year_t" ,         
                       "Height_t"     ,    "Width_t"     ,     "Perp_t"      ,     "NS_t"   ,         
                       "Goodbuds_t"    ,   "TotFlowerbuds_t" , "ABFlowerbuds_t" ,  "Antcount_t" ,     
-                      "Antsp_t"     ,     "Year_t1"        ,  "Recruit"    ,      "Newplant"  ,      
+                      "Ant_sp_t"     ,     "Year_t1"        ,  "Recruit"    ,      "Newplant"  ,      
                       "Survival_t1"   ,   "Height_t1"    ,    "Width_t1"    ,     "Perp_t1"  ,       
                       "NS_t1"      ,      "Goodbuds_t1"    ,  "TotFlowerbuds_t1", "ABFlowerbuds_t1" ,
-                      "Antcount_t1"    ,  "Antsp_t1"    ,     "NP_adult"      ,   "NP_juv"    ,      
+                      "Antcount_t1"    ,  "Ant_sp_t1"    ,     "NP_adult"      ,   "NP_juv"    ,      
                       "CV"      ,         "WVL"         ,     "Damage"        ,   "MA"    ,          
                       "comments"    ,     "logsize_t"   ,     "logsize_t1"   ,    "ant_t"       ,    
                       "ant_t1"  ,         "flower_YN" )     
