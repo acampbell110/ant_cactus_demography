@@ -1,4 +1,4 @@
-Plot,TagID,Transplant,Year_t,Height_t,Width_t,Perp_t,NS_t,Goodbuds_t,TotFlowerbuds_t,ABFlowerbuds_t,Antcount_t,Antsp_t,Year_t1,Recruit,Newplant,Survival_t1,Height_t1,Width_t1,Perp_t1,NS_t1,Goodbuds_t1,TotFlowerbuds_t1,ABFlowerbuds_t1,Antcount_t1,Antsp_t1,NP_adult,NP_juv,CV,WVL,Damage,MA,comments
+Plot,TagID,Transplant,Year_t,Height_t,Width_t,Perp_t,NS_t,Goodbuds_t,TotFlowerbuds_t,ABFlowerbuds_t,Antcount_t,Ant_sp_t,Year_t1,Recruit,Newplant,Survival_t1,Height_t1,Width_t1,Perp_t1,NS_t1,Goodbuds_t1,TotFlowerbuds_t1,ABFlowerbuds_t1,Antcount_t1,Ant_sp_t1,NP_adult,NP_juv,CV,WVL,Damage,MA,comments
 T1,AD10,0,2004,89,72,72,10,1,1,0,0,,2005,0,0,1,102,63,36,13,3,3,0,0,,,,,,,,
 T1,AD11,0,2004,78,42,42,5,1,1,0,3,L,2005,0,0,1,93,34,29,3,3,3,0,27,crem,,,,,,,
 T1,AD14,0,2004,99,126,126,14,9,9,0,45,L,2005,0,0,1,100,117,45,12,12,13,1,36,liom,,,,,,,
