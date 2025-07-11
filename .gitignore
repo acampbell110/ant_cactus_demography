@@ -67,3 +67,7 @@ Manuscript/Manuscript_Am_Nat.pdf
 2021 vital rate params/surv.mu.csv
 Data Analysis/.DS_Store
 Data Analysis/STAN Models/grow_skew.rds
+.DS_Store
+Manuscript/ant_cactus_SUBMISSION2.aux
+Manuscript/ant_cactus_SUBMISSION2.log
+Manuscript/ant_cactus_SUBMISSION2.synctex.gz
