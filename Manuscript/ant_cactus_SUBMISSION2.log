@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.5.5)  11 JUL 2025 13:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.5.5)  14 JUL 2025 11:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -416,98 +416,103 @@ LaTeX Warning: No \author given.
 [1
 
 {C:/Users/tm9/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2] [3]
+Overfull \hbox (6.35469pt too wide) in paragraph at lines 126--127
+[]\OT1/cmr/m/n/10.95 For ex-clu-sive, se-quen-tial as-so-ci-a-tions, the tim-in
+g, fre-quency, and di-rec-tion-al-ity of part-ner turnover
+ []
+
 [4] [5] [6] [7] [8] [9]
 LaTeX Font Info:    Trying to load font information for OML+cmr on input line 2
-15.
+26.
 
 (C:\Users\tm9\AppData\Local\Programs\MiKTeX\tex/latex/base\omlcmr.fd
 File: omlcmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 215.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 226.
  [10]
 [11] [12] [13] [14] [15] [16] [17] [18]
-<Figures/grow_contour_v2.png, id=412, 481.8pt x 481.8pt>
+<Figures/grow_contour_v2.png, id=409, 481.8pt x 481.8pt>
 File: Figures/grow_contour_v2.png Graphic file (type png)
 <use Figures/grow_contour_v2.png>
-Package pdftex.def Info: Figures/grow_contour_v2.png  used on input line 388.
+Package pdftex.def Info: Figures/grow_contour_v2.png  used on input line 399.
 (pdftex.def)             Requested size: 352.31625pt x 352.32861pt.
  [19]
-<Figures/survival_plot.png, id=421, 481.8pt x 481.8pt>
+<Figures/survival_plot.png, id=418, 481.8pt x 481.8pt>
 File: Figures/survival_plot.png Graphic file (type png)
 <use Figures/survival_plot.png>
-Package pdftex.def Info: Figures/survival_plot.png  used on input line 396.
+Package pdftex.def Info: Figures/survival_plot.png  used on input line 407.
 (pdftex.def)             Requested size: 352.31625pt x 352.32861pt.
  [20 <./Figures/grow_contour_v2.png>] [21 <./Figures/survival_plot.png>]
-<Figures/Viab_v2.png, id=440, 481.8pt x 481.8pt>
+<Figures/Viab_v2.png, id=437, 481.8pt x 481.8pt>
 File: Figures/Viab_v2.png Graphic file (type png)
 <use Figures/Viab_v2.png>
-Package pdftex.def Info: Figures/Viab_v2.png  used on input line 408.
+Package pdftex.def Info: Figures/Viab_v2.png  used on input line 419.
 (pdftex.def)             Requested size: 446.26582pt x 446.27556pt.
  [22 <./Figures/Viab_v2.png>]
-<Figures/ant_RFX.png, id=449, 1071.00125pt x 600.2425pt>
+<Figures/ant_RFX.png, id=446, 1071.00125pt x 600.2425pt>
 File: Figures/ant_RFX.png Graphic file (type png)
 <use Figures/ant_RFX.png>
-Package pdftex.def Info: Figures/ant_RFX.png  used on input line 421.
+Package pdftex.def Info: Figures/ant_RFX.png  used on input line 432.
 (pdftex.def)             Requested size: 352.31625pt x 197.45782pt.
  [23 <./Figures/ant_RFX.png>]
-<Figures/transition.png, id=460, 552.0625pt x 552.0625pt>
+<Figures/transition.png, id=457, 552.0625pt x 552.0625pt>
 File: Figures/transition.png Graphic file (type png)
 <use Figures/transition.png>
-Package pdftex.def Info: Figures/transition.png  used on input line 437.
+Package pdftex.def Info: Figures/transition.png  used on input line 448.
 (pdftex.def)             Requested size: 446.26582pt x 446.28368pt.
  [24] [25 <./Figures/transition.png>]
-<Figures/Lambdas_Comp_lines.png, id=474, 883.3pt x 341.275pt>
+<Figures/Lambdas_Comp_lines.png, id=471, 883.3pt x 341.275pt>
 File: Figures/Lambdas_Comp_lines.png Graphic file (type png)
 <use Figures/Lambdas_Comp_lines.png>
-Package pdftex.def Info: Figures/Lambdas_Comp_lines.png  used on input line 455
+Package pdftex.def Info: Figures/Lambdas_Comp_lines.png  used on input line 466
 .
 (pdftex.def)             Requested size: 427.47878pt x 165.16406pt.
  [26] [27 <./Figures/Lambdas_Comp_lines.png>] [28] [29] [30] (ant_cactus_SUBMIS
 SION2.bbl [31] [32]
 [33] [34] [35] [36] [37] [38] [39]) [40] [41]
-<Figures/portfolio_effect.png, id=657, 481.8pt x 481.8pt>
+<Figures/portfolio_effect.png, id=659, 481.8pt x 481.8pt>
 File: Figures/portfolio_effect.png Graphic file (type png)
 <use Figures/portfolio_effect.png>
-Package pdftex.def Info: Figures/portfolio_effect.png  used on input line 637.
+Package pdftex.def Info: Figures/portfolio_effect.png  used on input line 648.
 (pdftex.def)             Requested size: 469.75502pt x 469.77148pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.638 ... the right the partners are beneficial).}
+l.649 ... the right the partners are beneficial).}
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.638 ... the right the partners are beneficial).}
+l.649 ... the right the partners are beneficial).}
                                                    [42] [43 <./Figures/portfoli
 o_effect.png>] [44]
-<Figures/herb_all.png, id=680, 481.8pt x 481.8pt>
+<Figures/herb_all.png, id=682, 481.8pt x 481.8pt>
 File: Figures/herb_all.png Graphic file (type png)
 <use Figures/herb_all.png>
-Package pdftex.def Info: Figures/herb_all.png  used on input line 668.
+Package pdftex.def Info: Figures/herb_all.png  used on input line 679.
 (pdftex.def)             Requested size: 328.82707pt x 328.83269pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.669 ...i population in a different ant state.  }
+l.680 ...i population in a different ant state.  }
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.669 ...i population in a different ant state.  }
+l.680 ...i population in a different ant state.  }
                                                    [45 <./Figures/herb_all.png>
 ]
-<Figures/Lambdas_Freq_lines.png, id=688, 883.3pt x 341.275pt>
+<Figures/Lambdas_Freq_lines.png, id=690, 883.3pt x 341.275pt>
 File: Figures/Lambdas_Freq_lines.png Graphic file (type png)
 <use Figures/Lambdas_Freq_lines.png>
-Package pdftex.def Info: Figures/Lambdas_Freq_lines.png  used on input line 693
+Package pdftex.def Info: Figures/Lambdas_Freq_lines.png  used on input line 704
 .
 (pdftex.def)             Requested size: 427.47878pt x 165.16406pt.
 
@@ -515,75 +520,75 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.694 ... L = \textit{L. apiculatum}, O = other).}
+l.705 ... L = \textit{L. apiculatum}, O = other).}
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.694 ... L = \textit{L. apiculatum}, O = other).}
+l.705 ... L = \textit{L. apiculatum}, O = other).}
                                                    [46 <./Figures/Lambdas_Freq_
 lines.png>]
-<Figures/Lambdas_equal_lines.png, id=697, 883.3pt x 341.275pt>
+<Figures/Lambdas_equal_lines.png, id=699, 883.3pt x 341.275pt>
 File: Figures/Lambdas_equal_lines.png Graphic file (type png)
 <use Figures/Lambdas_equal_lines.png>
-Package pdftex.def Info: Figures/Lambdas_equal_lines.png  used on input line 70
-9.
+Package pdftex.def Info: Figures/Lambdas_equal_lines.png  used on input line 72
+0.
 (pdftex.def)             Requested size: 427.47878pt x 165.16406pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.710 ... L = \textit{L. apiculatum}, O = other).}
+l.721 ... L = \textit{L. apiculatum}, O = other).}
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.710 ... L = \textit{L. apiculatum}, O = other).}
+l.721 ... L = \textit{L. apiculatum}, O = other).}
                                                   
-<Figures/repro_panel.png, id=698, 481.8pt x 481.8pt>
+<Figures/repro_panel.png, id=700, 481.8pt x 481.8pt>
 File: Figures/repro_panel.png Graphic file (type png)
 <use Figures/repro_panel.png>
-Package pdftex.def Info: Figures/repro_panel.png  used on input line 724.
+Package pdftex.def Info: Figures/repro_panel.png  used on input line 735.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.725 ... the black points show the actual data. }
+l.736 ... the black points show the actual data. }
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.725 ... the black points show the actual data. }
+l.736 ... the black points show the actual data. }
                                                   
-<Figures/flow.png, id=699, 481.8pt x 481.8pt>
+<Figures/flow.png, id=701, 481.8pt x 481.8pt>
 File: Figures/flow.png Graphic file (type png)
 <use Figures/flow.png>
-Package pdftex.def Info: Figures/flow.png  used on input line 733.
+Package pdftex.def Info: Figures/flow.png  used on input line 744.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.734 ... the green points show the binned data. }
+l.745 ... the green points show the binned data. }
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.734 ... the green points show the binned data. }
+l.745 ... the green points show the binned data. }
                                                    [47 <./Figures/Lambdas_equal
 _lines.png>] [48 <./Figures/repro_panel.png>] [49 <./Figures/flow.png>]
-<Figures/Seeds_Per_Fruit.png, id=720, 481.8pt x 481.8pt>
+<Figures/Seeds_Per_Fruit.png, id=722, 481.8pt x 481.8pt>
 File: Figures/Seeds_Per_Fruit.png Graphic file (type png)
 <use Figures/Seeds_Per_Fruit.png>
-Package pdftex.def Info: Figures/Seeds_Per_Fruit.png  used on input line 753.
+Package pdftex.def Info: Figures/Seeds_Per_Fruit.png  used on input line 764.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 [50] [51 <./Figures/Seeds_Per_Fruit.png>] (ant_cactus_SUBMISSION2.aux)
@@ -597,9 +602,9 @@ Package rerunfilecheck Info: File `ant_cactus_SUBMISSION2.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  11328 strings out of 474486
- 177289 string characters out of 5744700
+ 177261 string characters out of 5744700
  1939542 words of memory out of 5000000
- 33301 multiletter control sequences out of 15000+600000
+ 33297 multiletter control sequences out of 15000+600000
  566572 words of font info for 65 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  63i,12n,67p,820b,724s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -620,9 +625,9 @@ Users/tm9/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.p
 fb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
 mti12.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmti9.pfb>
-Output written on ant_cactus_SUBMISSION2.pdf (51 pages, 1437797 bytes).
+Output written on ant_cactus_SUBMISSION2.pdf (51 pages, 1446432 bytes).
 PDF statistics:
- 839 PDF objects out of 1000 (max. 8388607)
- 169 named destinations out of 1000 (max. 500000)
+ 841 PDF objects out of 1000 (max. 8388607)
+ 173 named destinations out of 1000 (max. 500000)
  66 words of extra memory for PDF output out of 10000 (max. 10000000)
 

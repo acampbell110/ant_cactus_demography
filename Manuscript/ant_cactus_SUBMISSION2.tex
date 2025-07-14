@@ -15,7 +15,7 @@
 \usepackage{subfigure}
 \newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}} 
 \newcommand{\ali}[2]{{\color{blue}{#1}}\footnote{\textit{\color{blue}{#2}}}}  
-\newcommand{\revise}[1]{{\color{olive}{#1}}}
+\newcommand{\revise}[1]{{\color{blue}{#1}}}
 \usepackage{hyperref}
 
 
@@ -85,40 +85,45 @@ We used a 20-year dataset on plant vital rates and partner identity to quantify 
 We then constructed a stochastic, multi-state Integral Projection Model (IPM) to investigate how different patterns of partner richness, composition, and sequential turnover affect population fitness under fluctuating environmental conditions.
 We found that, while ant partners had different impacts on plant vital rates (\textit{C. opuntiae}-tended plants had advantages in growth and survival when small, and \textit{L. apiculatum}-tended plants had floral viability advantages), plant fitness was similarly elevated by ant visitation for any level of partner identity and richness, because effects on the highest-sensitivity vital rates were consistent across partner species. 
 Furthermore, there was no evidence that benefits of partner diversity manifest in the context of fluctuating environments (i.e., the portfolio effect). 
-In contrast to much of the previous literature, this study highlights that demographic benefits of mutualism can be surprisingly robust to diversity and turnover of partners.
+In contrast to much of the previous literature, this study highlights that demographic benefits of mutualism can be surprisingly robust to diversity and turnover of partner species.
 
 \newpage{}
 \section*{Introduction} \label{res:introduction}
 %% introduce multispecies mutualisms and sequential mutualisms with definitions
-Mutualisms, species interactions where all participants receive net benefits, are key components of ecological communities and can enhance the fitness and population growth rates of the partners involved.  \linelabel{res:27}
-While traditionally framed as pairwise (+/+) interactions, mutualisms are often embedded within multispecies networks in which a focal species interacts with multiple partners over space or time \citep{Bascompte2009, Palmer2010}.
-In such systems, partner diversity can arise either from simultaneous interactions or sequential ones, where individual hosts experience turnover in partner identity over time \citep{Djieto-Lordon2005, Ness2006}. \linelabel{res:L22}
+\revise{Mutualisms, species interactions where all participants receive net benefits, are key components of ecological communities and can enhance the fitness and population growth rates of the partners involved.  \linelabel{res:27}
+While traditionally framed as pairwise (+/+) interactions, mutualisms are often embedded within multispecies communities in which a focal species interacts with multiple partner species.
+Growing evidence suggests that pairwise interactions may be poor predictors of the net effects of multi-species mutualism \citep{Afkhami2014,Palmer2010,Bascompte2009,Dattilo2014}. 
 A focal mutualist may interact with multiple guilds of partner types (e.g., plants that interact with pollinators, seed dispersers, soil microbes, and ant defenders) or with multiple partner species within the same guild (e.g., plants visited by multiple pollinator species). 
-Understanding how this kind of sequential partner diversity affects host fitness is a pressing question in mutualism ecology—especially under environmental variability, where different partners may confer benefits unevenly across space or time  \citep{rogers2014, Thibaut2012, Frederickson2005, Palmer2010}. \linelabel{res:L39}
+Within a mutualist guild, partner species often differ in the amount or type of goods or services they provide, making partner identity an important source of contingency in mutualism \citep{Stanton2003}. 
+Partner diversity can arise either from simultaneous interactions or sequential ones, where individual hosts experience turnover in partner identity over time \citep{Djieto-Lordon2005, Ness2006}. \linelabel{res:L22}
+Understanding how partner diversity and turnover affect the overall fitness benefits of mutualism is an open question -— especially in the context of environmental variability, where different partners may confer benefits unevenly across space or time  \citep{rogers2014, Thibaut2012, Frederickson2005, Palmer2010}. \linelabel{res:L39}}
 
 %% Look at mechanisms which show how diversity impacts demography
-In this study, we evaluate several mechanisms through which partner diversity might influence mutualistic function, drawing from broader biodiversity–ecosystem function theory \citep{Barrett2015,Ushio2020,Winfree2020}.
-First, sampling effect occurs in systems with a distinct hierarchy of fitness effects (a consistent ranking of best to worst mutualists), when diversity increases the likelihood of including a high-quality partner \citep{Frederickson2013,Batstone2018}. \linelabel{res:mechanims_math} \linelabel{res:L45}
-There is no benefit of diversity here \emph{per se}, rather, missed opportunity costs arise in systems with sequential partner associations where less beneficial partners may preclude colonization by better mutualists \citep{Miller2007}.
-Second, complementarity occurs in systems where partners differ functionally, when diversity increases the net benefits received by focal mutualist beyond what a single partner species could offer \citep{Batstone2018}.
+There are multiple mechanisms by which partner diversity can influence the net benefits accrued by a focal mutualist, mirroring the mechanisms by which, at a larger scale of organization, biodiversity can influence ecosystem function \citep{Barrett2015,Ushio2020,Winfree2020}.
+First, when there is a consistent ranking of best to worst mutualists, a more diverse sample of the partner community may be more likely to include the best partner \citep{Frederickson2013}.
+This can lead to an apparent benefit of diversity driven by a sampling effect \citep{Batstone2018}.  
+However, if partner associations are mutually exclusive (a focal mutualist may engage with only one partner at a time), then partner diversity may impose opportunity costs, leading to negative effects of a diverse mutualist assemblage relative to exclusive association with the single best partner \citep{Miller2007}. 
+\revise{Second, even within a mutualist guild, the benefits conferred by alternative partner species can vary by method, efficiency, or timing \citep{Stachowicz2005,Bronstein2006,Stanton2003}. \linelabel{res:L53}\tom{}{There are two different Stachowicz references for the same paper -- be sure to clean this up.}
+This can lead to a positive effect of partner diversity through complementarity, whereby diversity increases the net benefits received by focal mutualist beyond what a single partner species could offer \citep{Batstone2018}.
 Positive diversity effects through complementarity need not be additive: interference or synergies between partners can make their combined effect different than expected from the sum of complementary functions \citep{Afkhami2014}. 
-Even within a single mutualist guild, the benefits conferred by alternative partner species can vary by method, efficiency, or timing of benefit conferral \citep{Stachowicz2005,Bronstein2006,Stanton2003}. \linelabel{res:L53}
-Third, portfolio effects stabilize host fitness across variable environments when different mutualists respond asynchronously to environmental fluctuations \citep{Batstone2018, Loreau1999, Lazaro2022,Ollerton2006,Alarcon2008}. \linelabel{res:portfolio_asynchronous} 
-In this context, the portfolio effect implies that inter-annual variation in partner identity—especially if driven by environmental conditions—could stabilize overall plant fitness across years.
-For example, if a high quality defensive partner is more likely to occur during dry years and a moderately defensive partner dominates in wet years, the shifting presence of these species could buffer the focal plant from herbivore damage under variable conditions. \linelabel{res:portfolio_theory}
-Critically, portfolio effects require asynchronous environmental responses among partners, such that declines in one partner's benefits are offset by others, stabilizing the focal mutualist's fitness over time \citep{Loreau1999, Tilman1994, Hautier2014}.
-This concept is well developed in biodiversity–ecosystem functioning literature, but has rarely been applied to mutualisms in which partner diversity is realized through turnover rather than coexistence.
-While portfolio effects have been well studied in plant and animal communities, their role in mutualisms—particularly where partner diversity is sequential (turnover) rather than simultaneous—is less explored \citep{Ushio2020}.
+Third, partner species can have species-specific responses to environmental variation, either spatially \citep{Ollerton2006} or temporally \citep{Alarcon2008}. 
+Multiple partners can therefore act as a 'portfolio' that stabilizes fitness benefits across spatial or temporal heterogeneity, leading to positive effects of partner diversity through the portfolio effect \citep{Batstone2018,Lazaro2022,Horvitz1990}. 
+In the context of temporally fluctuating environments, the portfolio effect implies that inter-annual variation in partner identity could stabilize overall plant fitness across years. \linelabel{res:portfolio_asynchronous}
+Critically, portfolio effects require asynchronous fluctuations among partners, such that declines in one partner's benefits are offset by others, stabilizing the focal mutualist's fitness over time \citep{Loreau1999, Tilman1994, Hautier2014}.
+%This concept is well developed in biodiversity–ecosystem functioning literature, but has rarely been applied to mutualisms in which partner diversity is realized through turnover rather than coexistence.
+While portfolio effects have been well studied in plant and animal communities, their role in mutualisms —- particularly where partner diversity is sequential rather than simultaneous —- is less explored \citep{Ushio2020}.}
 
 %% Partner turnover
-Partner diversity can affect a focal mutualist differently depending on whether partners are present simultaneously or sequentially (i.e., via partner turnover) \citep{Djieto-Lordon2005, Ness2006, Bruna2014, Barrett2015, Ushio2020, Dattilo2014}. 
-In simultaneous associations, partner interactions frequently lead to competition and interference \citep{Kiers2003,Batstone2018, Tgaard2015, Wulff2008}, reducing the net benefits received by the focal mutualist. \linelabel{res:L63}
-Sequential associations have been shown to reduce these competitive partner-partner interactions, thereby boosting the focal mutualists benefits \citep{Wolfin2023,Stachowicz2005_2} and leading to more stable interactions \cite{Johnson2019}.
-Turnover can happen at different timescales, from minutes to years \citep{Oliveira1999,Horvitz1986}. 
-The timing, frequency, and directionality of partner turnover can influence the net fitness benefits to the host, particularly if turnover allows accumulation of complementary benefits or buffers environmental variability via portfolio effects \citep{Sachs2004,Fiala1994, Ushio2020}. 
-If partner identity changes systematically across ontogeny, such as through succession of partners aligned with host life stages, this may further affect fitness outcomes \citep{Fonseca2003,Noe1994,Dejean2008}.
+%Partner diversity can affect a focal mutualist differently depending on whether partners are present simultaneously or sequentially (i.e., via partner turnover) \citep{Djieto-Lordon2005, Ness2006, Bruna2014, Barrett2015, Ushio2020, Dattilo2014}. 
+%In simultaneous associations, interference between partners may reduce the net benefits received by a focal mutualist \citep{Kiers2003,Batstone2018, Tgaard2015, Wulff2008}. \linelabel{res:L63}
+%Exclusive, sequential associations can reduce antagonistic partner-partner interactions \citep{Wolfin2023,Stachowicz2005_2} and enhance mutualism stability \cite{Johnson2019}. 
+
+%%What if we skip the contrast of simultaneous vs sequential, since it is really the sequential ideas that set up our study?
+\revise{For exclusive, sequential associations, the timing, frequency, and directionality of partner turnover can influence the net fitness benefits to a focal mutualist, particularly if turnover allows accumulation of complementary benefits or buffers environmental variability via portfolio effects \citep{Sachs2004,Fiala1994, Ushio2020}. \linelabel{res:L63}
+\tom{Turnover can happen at different timescales, from minutes to years \citep{Oliveira1999,Horvitz1986}.}{any more recent examples we could cite here?} 
+If partner identity changes systematically across ontogeny, such as through succession of partners aligned with host life stages, this may further affect fitness outcomes associated with partner diversity \citep{Fonseca2003,Noe1994,Dejean2008}.
 For example, plant susceptibility to enemies can change across life stages \citep{Boege2005,Barton2010}, so the benefits of a diverse guild of defensive mutualists are greatest when more defensive partner species align with more vulnerable life stages \citep{Djieto-Lordon2005,Dejean2008}.
-Thus, the duration and order of interactions may be just as important as the identities of the interacting partners.
+Thus, the duration and order of interactions may be just as important as the identities of the interacting partners.}
 
 %% Defensive ant-plant mutualisms
 Defensive ant-plant mutualisms -- where plants provide food and/or housing to ants that in turn defend them from enemies -- are widespread interactions that offer valuable model systems for the ecology and evolution of mutualism \citep{Bronstein1998, Bronstein2006}. 
@@ -128,8 +133,17 @@ Defensive ant-plant mutualisms are commonly multi-species, where a guild of ant 
 Ant partners can vary in their ability to deter herbivores \citep{Bruna2014} and visitation by low quality ant partners can prevent visitation by higher quality partners, causing a reduction in fitness through missed opportunity costs \citep{Fraser2001, Frederickson2005}.
 Susceptibility to herbivory can also vary significantly throughout the life stages of the plant \citep{Boege2005}, suggesting that the order and timing of successive partners is important to the fitness impacts of the combined partner guild \citep{Barton2010, Boege2005, Fonseca2003}.
 Finally, herbivore identity and pressure can vary inter-annually \citep{Wetzel2023}, much like mutualist identity and presence, meaning the threat plants face can vary just as much as the protection they receive due to temporal stochasticity. 
-Previous studies have investigated how ant partner diversity affects plant fitness \citep{Palmer2010,Fiala1994,Gaume1998,Dattilo2014,Ludka2015}, however little is known about the combined effects of partner identity, directional partner turnover and temporal stochasticity, particularly because the long-term data needed to quantify fluctuations in ant-plant interactions are rarely available. 
-Specifically, sequential associations require much longer-term data in order to analyze, due to an accumulation of partners across time rather than the ability to capture multiple at once. \linelabel{res:long-term-data}
+\revise{Previous studies have investigated how ant partner diversity affects plant fitness \citep{Palmer2010,Fiala1994,Gaume1998,Dattilo2014,Ludka2015}, however little is known about the combined effects of partner identity, directional partner turnover and temporal stochasticity, particularly because long-term demographic studies on ant-plant interactions are \tom{exceedingly rare}{Any other examples we can cite here? How long was the Palmer Acacia study?}. 
+
+Long-term demographic data are essential to understanding the fitness consequences of multi-species mutualisms for several reasons. \linelabel{res:long-term-data}
+First, the fitness consequences of sequential partnering play out over long time scales due to the accumulation of partners across time rather than the effects of multiple partners at once. 
+While turnover of mutualist partners is known to occur \citep{Ness2006, Djieto-Lordon2005,Fonseca2003}, long-term data documenting patterns and consequences of partner switching are uncommon, especially in field settings \citep{Palmer2010}. 
+Second, certain effects of partner diversity are fluctuation-dependent (i.e., portfolio effect) and would only be detectable in the context of temporally stochastic environments in which alternative partners may fluctuate asynchronously. 
+Quantifying contributions from the portfolio effect therefore requires long-term data on partner (a)synchrony across inter-annual fluctuations. 
+Finally, alternative partners may have different demographic effects (e.g., one that enhances survival and another that enhances reproduction) that contribute differently to overall fitness of a focal mutualist.  
+\tom{Most studies evaluate short-term fitness proxies like seed set or herbivory at a single life stage \citep{Palmer2010, Bruna2014, Trager2010}, while few trace demographic effects across multiple stages.}{I like this sentence but it is unclear whether you are using the citations as examples of studies that only consider single life stages, or the opposite. This would be good to clarify, since you don't want to mis-cite people.}
+Integrating long-term data from across the life cycle within a stochastic demographic modeling framework therefore provides a powerful opportunity to diagnose the fitness consequences of partner diversity and turnover.  
+}
 	
 %% What this study set out to do
 This study examined the consequences of partner diversity in a food-for-protection mutualism between the tree cholla cactus (\textit{Cylindropuntia imbricata}), a long-lived EFN-bearing plant, and multiple species of ant partners.
@@ -137,14 +151,11 @@ Tree cholla are tended by two common ant partners and several additional rarer s
 These ant species locally co-occur, but individual plants are typically tended by only one species that patrols the plant around-the-clock and maintains control of the plant's nectar resources, usually for an entire growing season \citep{Ohm2014, Donald2022}. 
 Switches between partner species, or between vacancy and ant occupancy, commonly occur from one growing season to the next \citep{Miller2007}. 
 Prior experiments suggested a hierarchy of mutualist quality, with \textit{Liometopum apiculatum} providing strong anti-herbivore defense and \textit{Crematogaster opuntiae} having net negative effects because herbivore deterrence is outweighed by deterrence of pollinators \citep{Miller2007,Ohm2014}.  \linelabel{res:L111}
-Even the basic quantification of how different ant species affect host demography across the plant life cycle is rarely possible, particularly in long-lived perennials. 
-Most studies evaluate short-term fitness proxies like seed set or herbivory at a single life stage \citep{Palmer2010, Bruna2014, Trager2010}, while few trace demographic effects across multiple stages.
-Similarly, while turnover of mutualist partners is known to occur \citep{Ness2006, Djieto-Lordon2005}, long-term data documenting patterns and consequences of partner switching are uncommon, especially in field systems. \linelabel{res:long-term-data3}
-Thus, this study provides unique empirical insight into how mutualist quality and temporal partner dynamics shape host population trajectories.
+However, previous studies in this system focused on single life stages (adult plants) or vital rates (seed production), did not integrate the demographic effects of ant defense across the life cycle, and did not incorporate temporal stochasticity -- gaps we aimed to fill in the present study. 
 
 %% Models and questions
-Here we used a unique long-term data set that allows us to explore mutualistic associations with multiple partner species, longitudinal dynamics of partner turnover and demographic effects of alternative partners that vary across plant size structure and across nearly 20 years of inter-annual fluctuations. 
-The long-term nature of this observational dataset gives us the power to investigate whether, and through which mechanism(s), partner diversity affects the fitness benefits of ant visitation. \linelabel{res:long-term-data2}
+Here we used a unique long-term data set that allows us to explore mutualistic associations with multiple partner species, longitudinal dynamics of partner turnover, and demographic effects of alternative partners that vary across plant size structure and across nearly 20 years of inter-annual fluctuations. 
+The long-term nature of this observational dataset gives us the power to investigate whether and through which mechanism(s) partner diversity affects the fitness benefits of ant visitation. \linelabel{res:long-term-data2}
 Specifically, we asked:
 	\begin{enumerate}	
 		\item{What are the vital rate effects of association with alternative partners and how do these effects fluctuate across years?}
@@ -152,8 +163,8 @@ Specifically, we asked:
 		\item{What is the net effect of partner diversity on plant fitness, and what mechanism(s) explain(s) this effect?}
 	\end{enumerate}
 To answer these questions we used a hierarchical Bayesian statistical approach to estimate demographic vital rates for hosts in different states of ant occupancy and to quantify state-dependent partner turnover from the long-term data. 
-We then used a stochastic, multi-state integral projection model (IPM) which combines diverse effects on vital rates and pathways of partner turnover to quantify effects of partner diversity on plant fitness. 
-
+\revise{We then built a stochastic, multi-state integral projection model (IPM) which combines diverse effects on vital rates and pathways of partner turnover. 
+Finally, we used the model to conduct simulation `experiments' that quantify plant fitness under different scenarios of partner richness, composition, and synchrony. }
 
 \section*{Methods}
 \subsection*{Study System}
