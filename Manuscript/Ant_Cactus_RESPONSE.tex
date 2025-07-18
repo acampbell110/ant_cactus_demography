@@ -47,8 +47,8 @@
 	\hangindent=2.3em \textbf{\textcolor{NavyBlue}{\uline{Response}:~}}#1
 	}
 
-\newcommand{\revise}[1]{{\color{Mahogany}{#1}}}
-
+\newcommand{\revise}[1]{{\color{blue}{#1}}}
+\newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}} 
 \usepackage[normalem]{ulem}
 \definecolor{darkred}{rgb}{1,.6,.6}
 \DeclareRobustCommand\problemline{\bgroup\markoverwith{\textcolor{darkred}{\rule[-0.9ex]{4pt}{3pt}}}\ULon}
@@ -65,13 +65,13 @@
 
 Thank you for the opportunity to submit a revision of our manuscript for your consideration. Our major changes include the following:
 \begin{enumerate}
-	\item We have added a new analysis that explores under what conditions portfolio effect could be shown. 
-	We found *************
-	\item We updated the introduction to be more accessible for readers and to better set up the rest of the manuscript.
+	\item In response to Reviewer 2, we have added a new analysis that explores under what conditions portfolio effect could generate benefits of partner diversity. We found that contributions from the portfolio effect are constrained by strong positive correlations in the demographic effects of alternative partners. Scenarios in which partner fluctuations were uncorrelated or, especially, negatively correlated generated results consistent with the portfolio effect hypothesis.
+	\item In response to both reviewers and the handling editor, we have heavily revised the introduction to be more accessible for readers and to better set up the rest of the manuscript.
+	\item We have re-drawn Figure XX to make it more easily interpretable, as suggested by the handling editor.
 \end{enumerate}
 
 We describe these and other changes in greater detail below, where we reproduce comments from the associate editor and reviewers and provide our point-by-point responses. 
-All of our changes are denoted in the manuscript with \revise{Mahogany font}.
+All of our changes are denoted in the manuscript with \revise{blue font}.
 We think the review process has greatly strengthened our manuscript such that it is now suitable for publication.
 We hope you agree. 
 
@@ -106,7 +106,7 @@ We have also expanded on why the quantification of the complete demographic effe
 	We agree that methods for estimating seed production were a little under-developed in our previous submission because we relied too heavily on citations of our prior work. 
 	We now describe these methods more thoroughly (lines \ref{}). 
 	We distinguished between viable and aborted flowerbuds through visual assessment, also clarified in our revision (line \ref{}). 
-	We have gone through the data collection methods section and added greater detail throughout, which we hope will make our work more understandable and reproducible.}
+	We have gone through the data collection methods section and added greater detail throughout (lines \ref{}), which we hope will make our work more understandable and reproducible.}
 
 \comment{I also encourage the authors to pay close attention to responding to several important points raised by Reviewer \#2, especially with regards to 1) what evidence for the portfolio effect would look like in a mutualism in which partners participate sequentially, and 2) providing the reader with a little more ‘hand holding’ when it comes to the rather complex model. Like the reviewer, I cannot claim that I would spot an error in the model if there were one, and it may be helpful to build up to the full Integral Projection Model in more stages, as Reviewer \#2 very helpfully suggests. }
 \response{We agree about the importance of Reviewer 2's comments, to which we respond in greater detail below. 
@@ -118,7 +118,7 @@ We have also expanded on why the quantification of the complete demographic effe
 \response{We follow a consistent search protocol, so while it's possible we miss some recruits we think this source of observation error is small and roughly consistent across years.  We have clarified this (line ~\ref{ms-res:exhaustive}).}
 
 \comment{Lines 329 and 364: I realize that this is commonplace in some parts of the literature, but I would prefer not to call different simulation scenarios “experiments”}
-\response{We have changed the language throughout to "simulations" rather than "experiments".}
+\response{We have changed the language throughout to "simulations" or "scenarios" rather than "experiments".}
 
 \comment{Fig. 1: Is the gray dashed line in panel e) the 1:1 line that would indicate no growth? It is not labelled in the legend or the caption.}
 \response{Good catch. Yes, the gray dashed line indicates no change in size. We have updated the caption to indicate this.}
@@ -159,9 +159,9 @@ The statistical modeling and IPM were explained clearly.}
 	As described above, we now provide more detailed information about methods for estimating seed production.
 	Because these data required time-consuming fruit dissections, we were not able to collect seed production data as part of the long-term study. 
 	Instead, these data come from plants in different ant states during a single year. 
-	We have expanded on the source of our seed data to make all of this clearer (line~\ref{ms-res:data_origins}). 
+	We have expanded on the source of our seed and seed bank data to make all of this clearer (line~\ref{ms-res:data_origins1}). 
 	The seed data do support the idea of defense decreasing pollination, and this is accounted for in our modeling framework. 
-	Because we lack long-term data on seed production, we must assume that this cost of defense is temporally static; we now state this assumption explicitly (line \ref{}).}
+	Because we lack long-term data on seed production, we must assume that this cost of defense is temporally static; we now state this assumption explicitly (line \ref{ms-res:data_origins1}, \ref{ms-res:data_origins2}).}
 
 \comment{I think the results of this study are compelling. 
 Much thought (including older thought like seed-dispersal effectiveness (Schupp 1993)) on mutualism presumes interspecific variation within a guild. 
@@ -175,12 +175,12 @@ It also frees some room to discuss generalized/diffuse mutualisms further.}
 \response{Thank you for the helpful suggestion. 
 We have streamlined the introduction paragraph by removing extraneous details after the first sentence and opened the section with the content previously in paragraph 2. 
 This revision improves the focus of the introduction on the core aspects of our study. 
-Additionally, we have expanded the discussion on generalized/diffuse mutualisms, as recommended, providing clearer context for the ecological significance of our work (line~\ref{ms-res:L22}).}
+Additionally, \tom{we have expanded the discussion on generalized/diffuse mutualisms}, as recommended, providing clearer context for the ecological significance of our work (line~\ref{ms-res:L22}).}{I don't really see any discussion of generalized/diffuse mutualisms.}
 
 \comment{L. 29: I think that Chamberlain et al. didn't find that the interaction strength of mutualism wasn't more context dependent that competition. 
 But overall, I interpreted their findings to be that other interactions are context dependent: not just mutualisms. 
 Sometimes mutualism showed more CD than the others, but it's constantly discussed in mutualism, but not in the another two antagonistic interactions.}
-\response{I removed this sentence based on their recommendations so I am not sure what I should say here... ********* Tom: I will check the manuscript text, but probably simplest to change the way this paper gets cited so that we are not asserting that mutualism is more context-dependent.}
+\response{This is a great point. Because we have heavily revised the introduction this concern is no longer relevant.}
 
 \comment{L. 53: Not certain I understand within a guild how benefits can vary by type.}
 \response{We intended that partners within a guild can have qualitatively different effects on a shared mutualist (e.g., increasing growth vs. seed set) rather than simply different degrees of the same effect (increasing growth a little or a lot). We have revised this sentence so that our meaning is clearer (line~\ref{ms-res:L53}).}
@@ -190,11 +190,11 @@ Sometimes mutualism showed more CD than the others, but it's constantly discusse
 
 \comment{L 420-422: If the small-plant data are extrapolated, then I would not include that in the results.}
 \response{The simplest response we can offer here is that the small plant data are \emph{effectively} not extrapolated, so the expected performance of tiny ant-tended plants has little bearing on our results. 
-	The more complete, technical response is that some amount of extrapolation is an inevitable feature of the Integral Projection Model framework. 
+	The more complete, technical response is that some amount of extrapolation is an inevitable feature of the Integral Projection Model framework, and that is why we show the extrapolated vital rate functions in the figure. 
 	Because the state space is defined by size and ant status, we must tell the model what to expect in all combinations of those states. 
 	However, because state transitions are guided by empirical data, the model ``knows'' which state combinations are likely and unlikely. 
-	Tiny, ant-tended plants do exist in the model as a possible state combination, because they must -- but these are at such low frequency (as informed by the data) that the model is effectively insensitive to what we assume about their demographic performance.
-	We have tried to better communicate this nuance in our presentation of the model (line \ref{}).}
+	Tiny, ant-tended plants do exist in the model as a possible state combination, because they must -- but these occur at such low frequency (as informed by the data) that the model is effectively insensitive to what we assume about their demographic performance.
+	We have tried to better communicate this nuance in our presentation of the model (line \ref{ms-res:extrap}).}
 
 \comment{L. 429: Is there a figure equivalent to figs. 1 and 2 that show seed production/set?}
 \response{Yes, we have this figure in Appendix D (Figure ~\ref{ms-app:seeds}). 
@@ -227,8 +227,9 @@ I was deep into the methods, which is quite dense, before I felt like I could un
 \comment{I would like to know what evidence for the portfolio effect would look like, so that I can carry that through the methods and see that this is what you are measuring, and into the results, so I can compare it to what you actually found.}
 \response{Great suggestion. 
 	We have revised the Introduction to include a more detailed conceptual explanation of how the portfolio effect can operate in mutualisms with sequential partner turnover. 
-	Specifically, we now define the portfolio effect as occurring when inter-annual variation in partner identity stabilizes plant fitness across years, due to asynchronous responses of different ant partners to environmental variability (line~\ref{ms-res:portfolio_theory})[TOM: let's work on this, it's a little clunky.].
-	As requested, we now provide criteria for what evidence would be required to conclude that the portfolio effect contributes to benefits of partner diversity (line \ref{}). }
+	Specifically, we now define the portfolio effect as occurring when inter-annual variation in partner identity stabilizes plant fitness across years, due to asynchronous responses of different ant partners to environmental variability (line~\ref{ms-res:portfolio_theory}).
+	As requested, we now provide criteria for what evidence would be required to conclude that the portfolio effect contributes to benefits of partner diversity (line \ref{}).
+	\tom{}{I think there is more work to do to address this comment.}}
 
 \comment{Further, following up on this, I'd like to see better discussion of what went wrong. 
 Under what conditions, different from the ones in this study system, would portfolio effects have emerged? 
@@ -237,17 +238,21 @@ Or, additionally, if the escape size of trees, where mortality drops off, were l
 Or, if an environmental condition that results in lower seed production promoted the spread of an ant that prevents seed loss (complementarity in sequence).
 Can I see a positive control, so that I can (1) put the negative result into context, and not overgeneralize the result and (2) feel confident that the model could represent portfolio effects, so that their absence is meaningful.}
 \response{Thank you for this intriguing suggestion, which got us thinking about our results in a way we hadn't before. 
-In response to this suggestion, we have added several new analyses that provide a ``positive control'', demonstrating the conditions under which our model reveals a portfolio effect.
-[more details]}
+In response to this suggestion, we have added new analyses that provide a ``positive control'', demonstrating the conditions under which our model reveals a portfolio effect.
+Specifically, we conducted new simulations in which we re-arranged ant-specific fluctuations to make them less positively correlated than we observe in the long-term data (line~\ref{ms-res:portfolio_methods} and new Appendix D).
+As predicted by theory, we detected significant benefits of diversity via the portfolio effect when partner fluctuations were uncorrelated or negatively correlated (line~\ref{ms-res:portfolio_results}, new Figures). 
+These additions enrich our understand of the model results and provide the ``positive control'' that the reviewer is looking for.}
 
 \comment{Abstract: What is the big research question? 
 Which "demographic impacts of different ant partners" are of most interest w/r this question. 
 What is meant by the "dynamics of turnover from one exclusive partner association to another?" Is there a simpler way of saying this?}
 \response{Thank you for pushing us to make the Abstract more direct and effective. 
 	Abstracts tend to come together late in the manuscript preparation process, but this is a healthy reminder that they require as much effort and attention as all the rest. 
-	We have re-written the abstract to clarify the overarching question—how partner turnover influences host demography and fitness[TOM: is this actually the question??? let's work on this]—and to clarify the specific demographic outcomes of interest. 
+	We have re-written the abstract to clarify the overarching question—how partner turnover influences host demography and fitness—and to clarify the specific demographic outcomes of interest. 
 We also simplified the language around partner turnover.
-We believe this revised version more clearly communicates the goals, approach, and key findings of the study.}
+We believe this revised version more clearly communicates the goals, approach, and key findings of the study.
+\tom{}{See the new abstract because I edited heavily. You may want to adjust this response accordingly.}
+}
 
 \comment{Overall comment: You have a complicated model. 
 What training does the reader need to best make sense of it. 
@@ -259,7 +264,7 @@ We have revised the Introduction to present the mechanisms more clearly, namely 
 This framing provides clearer conceptual grounding for the models and we hope it better prepares readers for the methods that follow.}
 
 \comment{A bit jarring out the gate. The first sentence states: everyone in mutualism benefits (full stop). The second sentence is : except when they don't.}
-\response{We have revised the first sentence (line ~ \ref{ms-res:R2_1}) to reflect that in mutualisms everyone receives a net benefit rather than just saying everyone benefits. We believe the language of net benefit allows for the further elaboration than the magnitude of benefits vary based on several conditions (aka. except when they don't)[TOM: I think we can make this revision and response smoother].}
+\response{We have revised the first sentence (line ~ \ref{ms-res:R2_1}) to reflect that in mutualisms everyone receives a net benefit rather than just saying everyone benefits.}
 
 \comment{27: Compared to which interactions ("such as…")? I think this intro material obstructs you from rolling out the background we really need.}
 \response{We have revised the first paragraph to reduce unnecessary and/or uninformative information to speed the reader into what is needed to understand the rest of the paper (line ~\ref{ms-res:L27}).}
@@ -268,8 +273,7 @@ This framing provides clearer conceptual grounding for the models and we hope it
 What does this mean? 
 What applied settings? 
 How relevant?}
-\response{We have edited this sentence to be more specific about ``applied settings'' we referenced previously. 
-For example, prior work has examine how diversity of pollinator assemblages affects productivity of crop plants (see line \ref{}). }
+\response{In this sentence we were referencing a study of how diversity of pollinator assemblages affects productivity of crop plants (Rogers et al. 2014). However, rather than go into the details of that study, we have simplified the text and no longer mention ``applied settings'' (though we continue to cite Rogers et al.)  (line ~\ref{ms-res:L39}).}
 
 \comment{45. Wordy sentences. Do we need both "hierarchy of fitness effects" and "a consistent ranking…".}
 \response{We have edited to reflect this suggestion (line ~\ref{ms-res:L45}).}
@@ -277,13 +281,13 @@ For example, prior work has examine how diversity of pollinator assemblages affe
 \comment{63: Your paragraph doesn't deliver on its opening. 
 Right out of this opening sentence I want to know: What is the effect of partner diversity when partners are present sequentially? 
 How is this different from when partners are present simultaneously?}
-\response{We have revised this paragraph to better answer your questions and deliver on its opening. 
-We explain that in sequential associations, partner conflict is significantly reduced and associations are more stable [TOM: not sure I agree] -- leading to overall increased benefits for the focal mutualist (line ~\ref{ms-res:L63}).}
+\response{We have heavily revised this paragraph to better answer your questions and deliver on its opening (line ~\ref{ms-res:L63}). 
+Because our study examined a sequentially-partnered mutualism, we have sharpened the Introduction to focus on this scenario, rather than explore the contrast between simultaneous and sequential partnering.}
 
 \comment{Some kind of brief lay-summary would go well here. 
 Some kind of model overview that avoids too much jargon, ties into the introduction, and gives the reader who will not slog through all the simulation model details a way to engage in the model findings. 
 I know the complex bits have to be there and that mature, quantitative readers exist, but this reviewer cleaves more to a lower common denominator}
-\response{We appreciate this comment and we have taken inspiration from the reviewer's next comment to add the lay summary suggested here.}
+\response{We appreciate this comment and we have taken inspiration from the reviewer's next comment to add the lay summary suggested here (line \ref{ms-res:model_story}).}
 
 \comment{Before you get into details, make sure I understand:
 (1)     Plants die, or else survive, grow, flower, fruit, and add seeds to the recruitment bank, where new plants come from.
@@ -293,8 +297,8 @@ I know the complex bits have to be there and that mature, quantitative readers e
 (5)     These environmental fluctuations can either affect all ant species in the same way (the synchronous model:  what's good for one ant species is good for all ant species) or in different ways (the asynchronous model: what's good for one ant species may be bad for another).
 (6)     An expectation from the portfolio effect is that in an asynchronous model, there ought to be a benefit to having a diversity of ant species. When one species does poorly, the other can "step-up" and fill in.
 (7)     This model's outputs are used to see if this portfolio effect emerges. }
-\response{Your understanding of our model and analysis is accurate. 
-	In fact, this is such a good overview that it inspired a new section we added (lines \ref{}) to introduce the model, so that readers can first understand the ``story'' of the model before seeing any equations.}
+\response{The reviewer's understanding of our model and analysis is accurate. 
+	In fact, this is such a good overview that it inspired a new section we added (lines \ref{ms-res:model_story}) to introduce the model, so that readers can first understand the ``story'' of the model before seeing any equations.}
 
 
 % ======================================================= %
