@@ -235,21 +235,11 @@ Horvitz, C.~C. and Schemske, D.~W. (1990).
   herb.
 \newblock {\em Ecology}, 71:1085--1097.
 
-\bibitem[Johnson and Bronstein, 2019]{Johnson2019}
-Johnson, C.~N. and Bronstein, J.~L. (2019).
-\newblock Coexistence and competitive exclusion in mutualism.
-\newblock {\em Ecology Letters}, 22(7):1295--1303.
-
 \bibitem[Keller et~al., 2018]{Keller2018}
 Keller, K.~R., Carabajal, S., Navarro, F., and Lau, J.~A. (2018).
 \newblock Effects of multiple mutualists on plants and their associated
   arthropod communities.
 \newblock {\em Oecologia}, 186:185--194.
-
-\bibitem[Kiers et~al., 2003]{Kiers2003}
-Kiers, E.~T., Rousseau, R.~A., West, S.~A., and Denlson, R.~F. (2003).
-\newblock Host sanctions and the legume-rhizobium mutualism.
-\newblock {\em Nature}, 425(6953):78--81.
 
 \bibitem[Larimer et~al., 2014]{Larimer2014}
 Larimer, A.~L., Clay, K., and Bever, J.~D. (2014).
@@ -300,6 +290,12 @@ Metcalf, C. J.~E., Ellner, S.~P., Childs, D.~Z., Salguero-G{\'o}mez, R., Merow,
 Miller, T. (2020).
 \newblock Long-term study of tree cholla demography in the {L}os
   {P}i$\tilde{n}$os mountains, {S}evilleta {N}ational {W}ildlife {R}efuge.
+
+\bibitem[Miller and Ellner, 2025]{miller2025my}
+Miller, T.~E. and Ellner, S.~P. (2025).
+\newblock My, how you've grown: A practical guide to modeling size transitions
+  for integral projection model (ipm) applications.
+\newblock {\em Ecology}, 106(5):e70088.
 
 \bibitem[Miller et~al., 2009]{Miller2009}
 Miller, T.~E., Louda, S.~M., Rose, K.~A., and Eckberg, J.~O. (2009).
@@ -401,19 +397,11 @@ Sachs, J.~L., Mueller, U.~G., Wilcox, T.~P., and Bull, J.~J. (2004).
 \newblock The evolution of cooperation.
 \newblock {\em Quarterly Review of Biology}, 79(2):135--160.
 
-\bibitem[Stachowicz and Whitlatch, 2005a]{Stachowicz2005}
-Stachowicz, J.~J. and Whitlatch, R.~B. (2005a).
+\bibitem[Stachowicz and Whitlatch, 2005]{Stachowicz2005}
+Stachowicz, J.~J. and Whitlatch, R.~B. (2005).
 \newblock Multiple mutualists provide complementary benefits to their seaweed
   host.
 \newblock {\em Ecology}, 86(9):2418–2427.
-
-\bibitem[Stachowicz and Whitlatch, 2005b]{Stachowicz2005_2}
-Stachowicz, J.~J. and Whitlatch, R.~B. (2005b).
-\newblock Multiple mutualists provide complementary benefits to their seaweed
-  host.
-\newblock {\em Ecology}, 86:2418--2427.
-\newblock Sequential mutualist diversity may generally be more beneficial than
-  simultaneous diversity.
 
 \bibitem[{Stan Development Team}, 2023]{Rstancite}
 {Stan Development Team} (2023).
@@ -449,13 +437,6 @@ Trager, M.~D., Bhotika, S., Hostetler, J.~A., Andrade, G.~V., Rodriguez-Cabal,
   meta-analysis.
 \newblock {\em PLoS ONE}, 5(12):e14308.
 
-\bibitem[Tr{\o}jelsgaard et~al., 2015]{Tgaard2015}
-Tr{\o}jelsgaard, K., Jordano, P., Carstensen, D.~W., and Olesen, J.~M. (2015).
-\newblock Geographical variation in mutualistic networks: Similarity, turnover
-  and partner fidelity.
-\newblock {\em Proceedings of the Royal Society B: Biological Sciences},
-  282(1813):1--9.
-
 \bibitem[Trojelsgaard et~al., 2015]{Trojelsgaard2015}
 Trojelsgaard, K., Jordano, P., Carstensen, D.~W., and Olesen, J.~M. (2015).
 \newblock Geographical variation in mutualistic networks: Similarity, turnover
@@ -487,18 +468,6 @@ Winfree, R. (2020).
 \newblock In Dobson, A., Holt, R.~D., and Tilman, D., editors, {\em Unsolved
   Problems in Ecology}, pages 302--318. Princeton University Press, Princeton,
   NJ.
-
-\bibitem[Wolfin et~al., 2023]{Wolfin2023}
-Wolfin, J., Theobald, E.~J., Thompson, A.~R., and Bronstein, J.~L. (2023).
-\newblock Sequential but not simultaneous mutualist diversity increases partner
-  benefits.
-\newblock {\em Ecology Letters}, 26(1):179--190.
-
-\bibitem[Wulff, 2008]{Wulff2008}
-Wulff, J.~L. (2008).
-\newblock Life‐history differences among coral reef sponges promote mutualism
-  or exploitation of mutualism by influencing partner fidelity feedback.
-\newblock {\em The American Naturalist}, 171(5):553--700.
 
 \bibitem[Yang et~al., 2024]{Yang2024}
 Yang, N., Røder, H.~L., Wicaksono, W.~A., Wassermann, B., Russel, J., Li, X.,
