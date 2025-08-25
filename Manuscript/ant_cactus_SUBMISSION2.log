@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  25 AUG 2025 13:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  25 AUG 2025 13:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -596,37 +596,23 @@ Package pdftex.def Info: Figures/Seeds_Per_Fruit.png  used on input line 784.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 [52] [53 <./Figures/Seeds_Per_Fruit.png>]
-
-LaTeX Warning: File `Figures/cor0_Portfolio_Effect.png' not found on input line
- 829.
-
-
-! Package pdftex.def Error: File `Figures/cor0_Portfolio_Effect.png' not found:
- using draft setting.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.829 ...width]{Figures/cor0_Portfolio_Effect.png}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-[54] [55] (./ant_cactus_SUBMISSION2.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
+<Figures/cor0_Portfolio_Effect.png, id=773, 481.8pt x 481.8pt>
+File: Figures/cor0_Portfolio_Effect.png Graphic file (type png)
+<use Figures/cor0_Portfolio_Effect.png>
+Package pdftex.def Info: Figures/cor0_Portfolio_Effect.png  used on input line 
+829.
+(pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
+ [54] [55 <./Figures/cor0_Portfolio_Effect.png>] (./ant_cactus_SUBMISSION2.aux)
 Package rerunfilecheck Info: File `ant_cactus_SUBMISSION2.out' has not changed.
 
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 11441 strings out of 476025
- 179122 string characters out of 5790017
+ 11402 strings out of 476025
+ 177958 string characters out of 5790017
  1864388 words of memory out of 5000000
- 31531 multiletter control sequences out of 15000+600000
- 520958 words of font info for 62 fonts, out of 8000000 for 9000
+ 31506 multiletter control sequences out of 15000+600000
+ 520790 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,12n,76p,818b,709s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
@@ -643,12 +629,11 @@ e/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive
 /2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2
 023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/20
 23/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/202
-3/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2023/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on ant_cactus_SUBMISSION2.pdf (55 pages, 1372826 bytes).
+3/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb>
+Output written on ant_cactus_SUBMISSION2.pdf (55 pages, 1374135 bytes).
 PDF statistics:
- 893 PDF objects out of 1000 (max. 8388607)
- 769 compressed objects within 8 object streams
+ 890 PDF objects out of 1000 (max. 8388607)
+ 766 compressed objects within 8 object streams
  183 named destinations out of 1000 (max. 500000)
- 66 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 71 words of extra memory for PDF output out of 10000 (max. 10000000)
 
