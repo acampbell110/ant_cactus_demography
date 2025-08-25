@@ -32,7 +32,8 @@ years <- unique(cactus$Year_t)
 ## -------- read in MCMC output ---------------------- ##
 ## Choose your pathway to pull from 
 #Ali
- mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+# mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
+mcmc_dir <- "/Users/alicampbell/Library/CloudStorage/GoogleDrive-amc49@rice.edu/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
 mcmc_dir <- "/Users/alicampbell/Library/CloudStorage/GoogleDrive-amc49@rice.edu/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
 #Tom
 # mcmc_dir <- "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
@@ -269,8 +270,10 @@ surv_rfx <- (surv_rfx1+surv_rfx2+surv_rfx3+surv_rfx4)/4
 
 # ## viability random effects
 viab_rfx1 <- cbind(viab.params$w[draws,1,1],viab.params$w[draws,1,2],viab.params$w[draws,1,3],
-                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2007-2012
-                   viab.params$w[draws,1,4],viab.params$w[draws,1,5],viab.params$w[draws,1,6],viab.params$w[draws,1,7],
+                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),
+                   rep(NA,N_draws),rep(NA,N_draws),rep(NA,N_draws),#2007-2012
+                   viab.params$w[draws,1,4],viab.params$w[draws,1,5],viab.params$w[draws,1,6],
+                   viab.params$w[draws,1,7],
                    viab.params$w[draws,1,8],viab.params$w[draws,1,9],viab.params$w[draws,1,10],
                    rep(NA,N_draws),#2020
                    viab.params$w[draws,1,11],viab.params$w[draws,1,12],viab.params$w[draws,1,13])

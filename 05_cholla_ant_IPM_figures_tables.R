@@ -461,14 +461,80 @@ colMeans(a)
 colMeans(b)
 colMeans(c)
 
-png("Manuscript/Figures/corr_RFX.png")
-par(mar=c(0,1,0,10),oma=c(0,2,0,2))
-layout(matrix(c(1,2,3),ncol = 3, byrow = TRUE), heights = c(1), widths = c(3.9,3.9,3.9))
-corrplot(a, method = "shade", col.lim = c(-1,1), addCoef.col = T)
-corrplot(b, method = "shade", col.lim = c(-1,1), addCoef.col = T)
-corrplot(c, method = "shade", col.lim = c(-1,1), addCoef.col = T)
-mtext("   Growth          Survival          Viability",side=3,line=-14,outer=TRUE,cex=2)
+
+
+
+
+
+
+png("Manuscript/Figures/corr_RFX.png", width=1800, height=1200, res=200)
+
+layout(matrix(c(1,2,3,4,5,6,7,8), nrow=2, byrow=TRUE), widths=c(1,1,1,1))
+par(mar=c(1,3,4,1.5), oma=c(1,5,5,0))
+
+############## Corrplots
+corrplot(a, method="shade", col.lim=c(-1,1), type="upper", diag=FALSE,
+         pch.cex=3, tl.cex=3, tl.col="black", tl.srt=360, tl.offset=0.5,
+         addCoef.col=NULL, cl.pos="n")
+mtext("a)", side=3, adj=0, line=1, cex=1.8)
+
+corrplot(b, method="shade", col.lim=c(-1,1), type="upper", diag=FALSE,
+         pch.cex=3, tl.cex=3, tl.col="black", tl.srt=360, tl.offset=0.5,
+         addCoef.col=NULL, cl.pos="n")
+mtext("b)", side=3, adj=0, line=1, cex=1.8)
+
+corrplot(c, method="shade", col.lim=c(-1,1), type="upper", diag=FALSE,
+         pch.cex=3, tl.cex=3, tl.col="black", tl.srt=360, tl.offset=0.5,
+         addCoef.col=NULL, cl.pos="n")
+mtext("c)", side=3, adj=0, line=1, cex=1.8)
+
+par(mar=c(2,2,2,8))  # margins for legend
+x <- seq(0, 1, length = 2)
+y <- breaks
+z <- matrix(breaks[-length(breaks)], nrow = 1)
+image(x, y, z, col=my_colors, xaxt="n", yaxt="n", xlab="", ylab="")
+axis(4, at=seq(-1,1,by=0.5), labels=seq(-1,1,by=0.5), cex.axis=2, las=1)
+mtext("   Growth          Survival           Viability                  ", side=3, line=1, outer=TRUE, cex=2)
+
+############### Timeseries
+par(mar=c(3,3,1,.5))
+plot(years_seq, g_liom, col=liomcol, cex.main=2, type="b", lwd=4, pch=16, cex=2,
+     xlab=" ", ylab=" ", cex.lab=2,
+     ylim = c(-0.42,0.42))
+lines(years_seq, g_crem, type="b", col=cremcol, lwd=4, pch=16, cex=2)
+lines(years_seq, g_vac, type="b", col=vaccol, lwd=4, pch=16, cex=2)
+lines(years_seq, g_other, type="b", col=othercol, lwd=4, pch=16, cex=2)
+mtext("d)", side=3, adj=-0.25, line=01, cex=1.8, padj = 0.15)
+
+par(mar=c(3,3,1,.5))
+plot(years_seq, s_liom, col=liomcol, cex.main=2, type="b", lwd=4, pch=16, cex=2,
+     xlab="", ylab=" ", cex.lab=1.5,
+     ylim = c(-1.1,1.1))
+lines(years_seq, s_crem, type="b", col=cremcol, lwd=4, pch=16, cex=2)
+lines(years_seq, s_other, type="b", col=othercol, lwd=4, pch=16, cex=2)
+lines(years_seq, s_vac, type="b", col=vaccol, lwd=4, pch=16, cex=2)
+mtext("e)", side=3, adj=-0.2, line=1, cex=1.8, padj = 0.2)
+
+par(mar=c(3,3,1,.5))
+plot(years_seq, v_liom, col=liomcol, cex.main=2, type="b", lwd=4, pch=16, cex=2,
+     xlab=" ", ylab=" ", cex.lab=1.5,
+     ylim = c(-2.3,1.52))
+lines(years_seq, v_crem, type="b", col=cremcol, lwd=4, pch=16, cex=2)
+lines(years_seq, v_other, type="b", col=othercol, lwd=4, pch=16, cex=2)
+lines(years_seq, v_vac, type="b", col=vaccol, lwd=4, pch=16, cex=2)
+mtext("f)", side=3, adj=-0.15, line=1, cex=1.8, padj = 0.125)
+
+mtext("Year", side=1, line=0, outer=TRUE, cex=1.4)
+mtext("Year-specific\n Ant Effects", side=2, line=0, outer=TRUE, cex=1.4, las=0, adj=.1)
+
+par(mar=c(.5,.5,1,.5))
+plot.new()
+legend(x=0, y=.85, legend=c(expression(italic("C. opuntiae")),
+                            expression(italic("L. apiculatum")), "Other", "Vacant"),
+       fill=c(cremcol, liomcol, othercol, vaccol), cex=1.4)
+
 dev.off()
+
 
 png("Manuscript/Figures/year_ant_timeseries.png",width = 480, height = 280)
 par(mfrow=c(1,3),mar=c(4,2,2,1),oma=c(2,2,0,0))
