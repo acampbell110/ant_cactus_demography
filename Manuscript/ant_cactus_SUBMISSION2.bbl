@@ -26,6 +26,12 @@ Agrawal, A.~A. and Rutter, M.~T. (1998).
   responses.
 \newblock {\em Oikos}, 83(2):227--236.
 
+\bibitem[Aizen et~al., 2014]{Aizen2014}
+Aizen, M.~A. et~al. (2014).
+\newblock When mutualism goes bad: density-dependent impacts of mutualism
+  breakdown in pollination systems.
+\newblock {\em New Phytologist}.
+
 \bibitem[Alarcón et~al., 2008]{Alarcon2008}
 Alarcón, R., Waser, N.~M., and Ollerton, J. (2008).
 \newblock Year-to-year variation in the topology of a plant-pollinator
@@ -291,12 +297,6 @@ Miller, T. (2020).
 \newblock Long-term study of tree cholla demography in the {L}os
   {P}i$\tilde{n}$os mountains, {S}evilleta {N}ational {W}ildlife {R}efuge.
 
-\bibitem[Miller and Ellner, 2025]{miller2025my}
-Miller, T.~E. and Ellner, S.~P. (2025).
-\newblock My, how you've grown: A practical guide to modeling size transitions
-  for integral projection model (ipm) applications.
-\newblock {\em Ecology}, 106(5):e70088.
-
 \bibitem[Miller et~al., 2009]{Miller2009}
 Miller, T.~E., Louda, S.~M., Rose, K.~A., and Eckberg, J.~O. (2009).
 \newblock Impacts of insect herbivory on cactus population dynamics:
@@ -320,6 +320,18 @@ Miller, T. E.~X., Tyre, A.~J., and Louda, S.~M. (2006).
 \newblock Plant reproductive allocation predicts herbivore dynamics across
   spatial and temporal scales.
 \newblock {\em The American Naturalist}, 168(5):608--616.
+
+\bibitem[Moraes and Vasconcelos, 2009]{Moraes2009}
+Moraes, S.~C. and Vasconcelos, H.~L. (2009).
+\newblock Long-term persistence of a neotropical ant-plant population in the
+  absence of obligate plant-ants.
+\newblock {\em Ecology}, 90(8):2375--2383.
+
+\bibitem[Nakazawa, 2020]{Nakazawa2020}
+Nakazawa, T. (2020).
+\newblock Ontogenetic shifts in mutualistic interactions: stage‐structured
+  models of host–symbiont dynamics.
+\newblock {\em Oikos}, 129(6):857--869.
 
 \bibitem[Ness et~al., 2006]{Ness2006}
 Ness, J.~H., Morris, W.~F., and Bronstein, J.~L. (2006).
@@ -367,6 +379,12 @@ Palmer, T.~M., Doak, D.~F., Stanton, M.~L., Bronstein, J.~L., Kiers, T.~E.,
   fitness in a multispecies mutualism.
 \newblock {\em Proceedings of the National Academy of Sciences},
   107(40):17234–17239.
+
+\bibitem[Prior et~al., 2015]{Prior2015}
+Prior, K.~M. et~al. (2015).
+\newblock Mutualism between co-introduced species facilitates invasion and
+  success in novel communities.
+\newblock {\em Biological Invasions}.
 
 \bibitem[{R Core Team}, 2023]{Rcite}
 {R Core Team} (2023).
@@ -448,6 +466,12 @@ Trojelsgaard, K., Jordano, P., Carstensen, D.~W., and Olesen, J.~M. (2015).
 Ushio, M. (2020).
 \newblock Interaction capacity as a potential driver of community diversity.
 \newblock {\em Proceedings of the Royal Society B}, 289(1969):20212690.
+
+\bibitem[Ventre-Lespiaucq et~al., 2021]{VentreLespiaucq2021}
+Ventre-Lespiaucq, A., Jacquemyn, H., Ramirez, S., and Bidartondo, M.~I. (2021).
+\newblock Temporal dynamics of orchid–mycorrhizal interactions: turnover and
+  persistence of fungal symbionts across life stages.
+\newblock {\em New Phytologist}, 230(2):697--708.
 
 \bibitem[Wetzel et~al., 2023]{Wetzel2023}
 Wetzel, W.~C., Inouye, B.~D., Hahn, P.~G., Whitehead, S.~R., and Underwood, N.

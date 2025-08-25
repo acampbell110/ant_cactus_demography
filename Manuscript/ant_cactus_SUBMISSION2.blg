@@ -3,141 +3,46 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: ant_cactus_SUBMISSION2.aux
 The style file: apalike.bst
 Database file #1: References.bib
-Repeated entry---line 432 of file References.bib
- : @article{Barton2010
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 450 of file References.bib
- : @article{Batstone2018
- :                      ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 466 of file References.bib
- : @book{Benson1982
- :                 ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 473 of file References.bib
- : @article{Boege2005
- :                   ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 491 of file References.bib
- : @article{Bronstein1998
- :                       ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 500 of file References.bib
- : @article{Bronstein2006
- :                       ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 588 of file References.bib
- : @article{Donald2022
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 597 of file References.bib
- : @article{elderd2016quantifying
- :                               ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 606 of file References.bib
- : @book{ellnerbook
- :                 ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 647 of file References.bib
- : @article{Franco2004
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 674 of file References.bib
- : @article{Frederickson2013
- :                          ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 838 of file References.bib
- : @book{Mann1969
- :               ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 855 of file References.bib
- : @article{metcalf2015statistical
- :                                ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 864 of file References.bib
- : @article{Miller2006
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 873 of file References.bib
- : @article{Miller2007
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 882 of file References.bib
- : @article{Miller2009
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 891 of file References.bib
- : @article{Miller2014
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 900 of file References.bib
- : @article{Ness2006
- :                  ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 935 of file References.bib
- : @article{Ohm2014
- :                 ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 944 of file References.bib
- : @article{Oliveira1999
- :                      ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 972 of file References.bib
- : @article{Palmer2010
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 1008 of file References.bib
- : @article{rogers2014
- :                    ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 1050 of file References.bib
- : @article{Stachowicz2005
- :                        ,
-I'm skipping whatever remains of this entry
-Repeated entry---line 1068 of file References.bib
- : @article{Stanton2003
- :                     ,
-I'm skipping whatever remains of this entry
-You've used 78 entries,
+Warning--I didn't find a database entry for "miller2025my"
+You've used 82 entries,
             1935 wiz_defined-function locations,
-            994 strings with 19046 characters,
-and the built_in function-call counts, 33216 in all, are:
-= -- 3282
-> -- 1393
-< -- 40
-+ -- 484
-- -- 468
-* -- 3027
-:= -- 5753
-add.period$ -- 238
-call.type$ -- 78
-change.case$ -- 615
-chr.to.int$ -- 78
-cite$ -- 78
-duplicate$ -- 1121
-empty$ -- 2319
-format.name$ -- 582
-if$ -- 6410
+            1015 strings with 19730 characters,
+and the built_in function-call counts, 34691 in all, are:
+= -- 3432
+> -- 1449
+< -- 43
++ -- 502
+- -- 486
+* -- 3149
+:= -- 6015
+add.period$ -- 250
+call.type$ -- 82
+change.case$ -- 642
+chr.to.int$ -- 82
+cite$ -- 82
+duplicate$ -- 1175
+empty$ -- 2422
+format.name$ -- 606
+if$ -- 6694
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 78
-newline$ -- 393
-num.names$ -- 240
-pop$ -- 455
+missing$ -- 82
+newline$ -- 413
+num.names$ -- 252
+pop$ -- 475
 preamble$ -- 1
-purify$ -- 620
+purify$ -- 647
 quote$ -- 0
-skip$ -- 845
+skip$ -- 890
 stack$ -- 0
-substring$ -- 2740
-swap$ -- 105
+substring$ -- 2851
+swap$ -- 109
 text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 460
+type$ -- 484
 warning$ -- 0
-while$ -- 287
+while$ -- 300
 width$ -- 0
-write$ -- 1022
-(There were 24 error messages)
+write$ -- 1072
+(There was 1 warning)
