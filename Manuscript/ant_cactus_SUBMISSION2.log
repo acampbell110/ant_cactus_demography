@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.5.5)  28 AUG 2025 15:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.5.5)  28 AUG 2025 16:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -533,70 +533,70 @@ lines.png>]
 File: Figures/Lambdas_equal_lines.png Graphic file (type png)
 <use Figures/Lambdas_equal_lines.png>
 Package pdftex.def Info: Figures/Lambdas_equal_lines.png  used on input line 74
-6.
+4.
 (pdftex.def)             Requested size: 427.47878pt x 165.16406pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.747 ... L = \textit{L. apiculatum}, O = other).}
+l.745 ... L = \textit{L. apiculatum}, O = other).}
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.747 ... L = \textit{L. apiculatum}, O = other).}
+l.745 ... L = \textit{L. apiculatum}, O = other).}
                                                   
 <Figures/repro_panel.png, id=724, 481.8pt x 481.8pt>
 File: Figures/repro_panel.png Graphic file (type png)
 <use Figures/repro_panel.png>
-Package pdftex.def Info: Figures/repro_panel.png  used on input line 761.
+Package pdftex.def Info: Figures/repro_panel.png  used on input line 759.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.762 ... the black points show the actual data. }
+l.760 ... the black points show the actual data. }
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.762 ... the black points show the actual data. }
+l.760 ... the black points show the actual data. }
                                                   
 <Figures/flow.png, id=725, 481.8pt x 481.8pt>
 File: Figures/flow.png Graphic file (type png)
 <use Figures/flow.png>
-Package pdftex.def Info: Figures/flow.png  used on input line 770.
+Package pdftex.def Info: Figures/flow.png  used on input line 766.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.771 ... the green points show the binned data. }
+l.767 ... the green points show the binned data. }
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.771 ... the green points show the binned data. }
+l.767 ... the green points show the binned data. }
                                                    [50 <./Figures/Lambdas_equal
 _lines.png>] [51 <./Figures/repro_panel.png>] [52 <./Figures/flow.png>]
 <Figures/Seeds_Per_Fruit.png, id=745, 481.8pt x 481.8pt>
 File: Figures/Seeds_Per_Fruit.png Graphic file (type png)
 <use Figures/Seeds_Per_Fruit.png>
-Package pdftex.def Info: Figures/Seeds_Per_Fruit.png  used on input line 790.
+Package pdftex.def Info: Figures/Seeds_Per_Fruit.png  used on input line 785.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 [53] [54 <./Figures/Seeds_Per_Fruit.png>]
-<Figures/cor0_Portfolio_Effect.png, id=764, 481.8pt x 481.8pt>
+<Figures/cor0_Portfolio_Effect.png, id=766, 481.8pt x 481.8pt>
 File: Figures/cor0_Portfolio_Effect.png Graphic file (type png)
 <use Figures/cor0_Portfolio_Effect.png>
 Package pdftex.def Info: Figures/cor0_Portfolio_Effect.png  used on input line 
-834.
+829.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
  [55] [56 <./Figures/cor0_Portfolio_Effect.png>] (ant_cactus_SUBMISSION2.aux)
  ***********
@@ -608,8 +608,8 @@ Package rerunfilecheck Info: File `ant_cactus_SUBMISSION2.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 11355 strings out of 474486
- 177814 string characters out of 5744700
+ 11356 strings out of 474486
+ 177825 string characters out of 5744700
  1939542 words of memory out of 5000000
  33316 multiletter control sequences out of 15000+600000
  566572 words of font info for 65 fonts, out of 8000000 for 9000
@@ -632,9 +632,9 @@ Users/tm9/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.p
 fb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
 mti12.pfb><C:/Users/tm9/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmti9.pfb>
-Output written on ant_cactus_SUBMISSION2.pdf (56 pages, 1476537 bytes).
+Output written on ant_cactus_SUBMISSION2.pdf (56 pages, 1477347 bytes).
 PDF statistics:
- 880 PDF objects out of 1000 (max. 8388607)
- 181 named destinations out of 1000 (max. 500000)
+ 882 PDF objects out of 1000 (max. 8388607)
+ 182 named destinations out of 1000 (max. 500000)
  71 words of extra memory for PDF output out of 10000 (max. 10000000)
 
