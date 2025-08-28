@@ -1,48 +1,48 @@
-This is BibTeX, Version 0.99d (TeX Live 2023)
+This is BibTeX, Version 0.99d
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: ant_cactus_SUBMISSION2.aux
+Reallocating 'name_of_file' (item size: 1) to 8 items.
 The style file: apalike.bst
+Reallocating 'name_of_file' (item size: 1) to 15 items.
 Database file #1: References.bib
-Warning--I didn't find a database entry for "miller2025my"
-You've used 82 entries,
+You've used 81 entries,
             1935 wiz_defined-function locations,
-            1015 strings with 19730 characters,
-and the built_in function-call counts, 34691 in all, are:
-= -- 3432
-> -- 1449
-< -- 43
-+ -- 502
-- -- 486
-* -- 3149
-:= -- 6015
-add.period$ -- 250
-call.type$ -- 82
-change.case$ -- 642
-chr.to.int$ -- 82
-cite$ -- 82
-duplicate$ -- 1175
-empty$ -- 2422
-format.name$ -- 606
-if$ -- 6694
+            1011 strings with 19605 characters,
+and the built_in function-call counts, 34461 in all, are:
+= -- 3409
+> -- 1436
+< -- 42
++ -- 498
+- -- 482
+* -- 3142
+:= -- 5965
+add.period$ -- 247
+call.type$ -- 81
+change.case$ -- 637
+chr.to.int$ -- 81
+cite$ -- 81
+duplicate$ -- 1163
+empty$ -- 2411
+format.name$ -- 601
+if$ -- 6651
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 82
-newline$ -- 413
-num.names$ -- 252
-pop$ -- 475
+missing$ -- 81
+newline$ -- 408
+num.names$ -- 249
+pop$ -- 469
 preamble$ -- 1
-purify$ -- 647
+purify$ -- 642
 quote$ -- 0
-skip$ -- 890
+skip$ -- 877
 stack$ -- 0
-substring$ -- 2851
-swap$ -- 109
+substring$ -- 2857
+swap$ -- 108
 text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 484
+type$ -- 478
 warning$ -- 0
-while$ -- 300
+while$ -- 299
 width$ -- 0
-write$ -- 1072
-(There was 1 warning)
+write$ -- 1061
