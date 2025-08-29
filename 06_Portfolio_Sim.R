@@ -969,44 +969,67 @@ dev.off()
 
 
 ######### FULL VISUALS ##############
+####### Real Correlation
+lams_stoch <- read.csv("Model Outputs/lambda_comp.csv")
+lams_stoch <- lams_stoch[,-c(1)]
+## Competitive Exclusion Null Stochastic
+lams_stoch_sync <- read.csv("Model Outputs/lambda_sync_comp.csv")
+lams_stoch_sync <- lams_stoch_sync[,-c(1)]
+
+####### 0 Correlation
 ## Competitive Exclusion
 lams_comp_stoch <- read.csv("Model Outputs/cor0_lambda_comp.csv")
 lams_comp_stoch <- lams_comp_stoch[,-c(1)]
 ## Competitive Exclusion Null Stochastic
 lams_comp_stoch_sync <- read.csv("Model Outputs/cor0_lambda_sync_comp.csv")
 lams_comp_stoch_sync <- lams_comp_stoch_sync[,-c(1)]
-
+####### Negative Correlation
 ## Competitive Exclusion
-lams_comp_stoch_1 <- read.csv("Model Outputs/lambda_comp.csv")
+lams_comp_stoch_1 <- read.csv("Model Outputs/cor_neg_lambda_comp.csv")
 lams_comp_stoch_1 <- lams_comp_stoch_1[,-c(1)]
 lams_comp_stoch_1 <- colMeans(lams_comp_stoch_1)
 lams_comp_stoch_1 <- as.data.frame(t(lams_comp_stoch_1))
 ## Competitive Exclusion Null Stochastic
-lams_comp_stoch_sync_1 <- read.csv("Model Outputs/lambda_sync_comp.csv")
+lams_comp_stoch_sync_1 <- read.csv("Model Outputs/cor_neg_lambda_sync_comp.csv")
 lams_comp_stoch_sync_1 <- lams_comp_stoch_sync_1[,-c(1)]
 lams_comp_stoch_sync_1 <- colMeans(lams_comp_stoch_sync_1)
 lams_comp_stoch_sync_1 <- as.data.frame(t(lams_comp_stoch_sync_1))
-
+x1 <- c(1,2)
 a <- lams_comp_stoch_sync[1,8] - lams_comp_stoch_sync[1,1]
 b <- lams_comp_stoch[1,8] - lams_comp_stoch[1,1]
 c <- lams_comp_stoch_sync_1[1,8] - lams_comp_stoch_sync_1[1,1]
 d <- lams_comp_stoch_1[1,8] - lams_comp_stoch_1[1,1]
+e <- mean(lams_stoch[,8]) - mean((lams_stoch[,1]))
+f <- mean(lams_stoch_sync[,8]) - mean((lams_stoch_sync[,1]))
 
-png("Manuscript/Figures/cor0_Portfolio_Effect.png")
-par(mar=c(5,5,1,1))
-layout(matrix(c(1,2),
-              ncol = 2, nrow = 1), heights = c(1,1))
-plot(x1, c(a,b), col = c("hotpink","chartreuse4"),
-     pch = 16, cex = 2,
-     xlim = c(0.5,2.5),ylim = c(0,.13),
-     ylab = "Effect of Partner Diversity",
-     xlab = "No Ant Correlation")
-legend("right",legend = c("Non-Synchronous","Synchronous"), fill = c("chartreuse4","hotpink"))
-plot(x1, c(d,c), col = c("hotpink","chartreuse4"),
-     pch = 16, cex = 2,
-     xlim = c(0.5,2.5),ylim = c(0,.13),
-     ylab = "Effect of Partner Diversity",
-     xlab = "Negative Ant Correlation")
+
+
+png("Manuscript/Figures/cor0_Portfolio_Effect.png", width=1800, height=800, res=200)
+
+par(mfrow=c(1,3), mar=c(5,3,2,1), oma=c(0,4,0,0))
+
+# Panel a
+plot(x1, c(e,f), col=c("hotpink","chartreuse4"), pch=16, cex=2,
+     xaxt="n", xlim=c(0.5,2.5), ylim=c(0,.2), ylab="", xlab="",
+     main="Realistic Ant Correlation", cex.main=1.8)
+mtext("Effect of Partner Diversity", side=2, cex=1.5, line=3)
+mtext("a)", side=3, line=0.5, at=0.5, cex=1.6, adj=2)  # panel label
+legend("topright", legend=c("Non-Synchronous","Synchronous"),
+       fill=c("chartreuse4","hotpink"), cex=1.5)
+
+# Panel b
+plot(x1, c(a,b), col=c("hotpink","chartreuse4"), pch=16, cex=2,
+     xaxt="n", xlim=c(0.5,2.5), ylim=c(0,.2), ylab="", xlab="",
+     main="No Ant Correlation", cex.main=1.8)
+mtext("Synchronicity Scenario", side=1, cex=1.5, line=3)
+mtext("b)", side=3, line=0.5, at=0.5, cex=1.6, adj=1)  # panel label
+
+# Panel c
+plot(x1, c(c,d), col=c("hotpink","chartreuse4"), pch=16, cex=2,
+     xaxt="n", xlim=c(0.5,2.5), ylim=c(0,.2), ylab="", xlab="",
+     main="Negative Ant Correlation", cex.main=1.8)
+mtext("c)", side=3, line=0.5, at=0.5, cex=1.6, adj=2)  # panel label
+
 dev.off()
 
 

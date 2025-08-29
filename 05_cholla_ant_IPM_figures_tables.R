@@ -879,7 +879,7 @@ dev.off()
 ################################################################################
 png("Manuscript/Figures/Seeds_Per_Fruit.png")
 plot(density(exp(seed.params$beta0[,3])),lwd=3,col=vaccol,
-     xlab="Mean seeds per fruit",main=" ",xlim=c(50,250))
+     xlab="Seeds Per Fruit",main=" ",xlim=c(50,250))
 lines(density(exp(seed.params$beta0[,2])),lwd=3,col=liomcol)
 lines(density(exp(seed.params$beta0[,1])),lwd=3,col=cremcol)
 legend("topright",legend = c("Vacant",expression(italic("C. opuntiae")),expression(italic("L. apiculatum"))), fill = c(vaccol, cremcol, liomcol))
@@ -1516,7 +1516,7 @@ vac_prop <- sum(vac_herb$herb_YN, na.rm = T)/nrow(vac_herb)
 png("Manuscript/Figures/herb_all.png")
 barplot(height = c(crem_prop,liom_prop,other_prop,vac_prop), names.arg = c(expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Other","Vacant"), col = c(cremcol,liomcol,othercol,vaccol))
 mtext("Ant Partner",side=1,line=-1.5,outer=TRUE,cex=1.5)
-mtext("Herbivore Prevalence",side=2,line=-1.5,outer=TRUE,cex=1.5,las=0)
+mtext("Herbivore Presence",side=2,line=-1.5,outer=TRUE,cex=1.5,las=0)
 dev.off()
 
 
