@@ -879,7 +879,7 @@ dev.off()
 ################################################################################
 png("Manuscript/Figures/Seeds_Per_Fruit.png")
 plot(density(exp(seed.params$beta0[,3])),lwd=3,col=vaccol,
-     xlab="Seeds Per Fruit",main=" ",xlim=c(50,250))
+     xlab="Seeds Per ruit",main=" ",xlim=c(50,250))
 lines(density(exp(seed.params$beta0[,2])),lwd=3,col=liomcol)
 lines(density(exp(seed.params$beta0[,1])),lwd=3,col=cremcol)
 legend("topright",legend = c("Vacant",expression(italic("C. opuntiae")),expression(italic("L. apiculatum"))), fill = c(vaccol, cremcol, liomcol))
@@ -1492,7 +1492,7 @@ herbivory %>%
   group_by(Year_t1) %>%
   summarise(h = sum(herb_YN))
 # use 2014 and on 
-herbivory <- subset(herbivory,herbivory$Year_t1 == 2014)
+herbivory <- subset(herbivory,herbivory$Year_t1 >= 2014)
 
 
 ## Subset by ant
@@ -1808,11 +1808,6 @@ dev.off()
 ################################################################################
 ## Visualize Equal Likelihood Model
 ################################################################################
-
-png("Manuscript/Figures/Lambdas_Equal_lines.png", height = 340, width = 880)
-par(mar=c(5,5,1,1))
-layout(matrix(c(1,2,3),
-              ncol = 3, nrow = 1), heights = c(1,1,1))
 # number of partners vs fitness
 no_part <- colMeans(lams_equal_stoch)[1]
 no_part_low <- min(lams_equal_stoch[,1])
@@ -1838,50 +1833,68 @@ two_part_high_sync <- max(lams_equal_stoch_null[,c(5:7)])
 three_part_sync <- colMeans(lams_equal_stoch_null)[8]
 three_part_low_sync <- min(lams_equal_stoch_null[,8])
 three_part_high_sync <- max(lams_equal_stoch_null[,8])
-plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
-     xlab = "", ylab = "", main = "a)                                  ", col = "red")
+
+
+png("Manuscript/Figures/Lambdas_Equal_lines.png", height = 800, width = 1600, res = 200)
+
+par(mar = c(5, 5, 4, 1), oma = c(0, 3, 0, 0))  
+layout(matrix(c(1,2,3), ncol = 3, nrow = 1), heights = c(1, 1, 1))
+
+# Panel a
+plot(c(0.9,1.9,2.9,3.9), c(no_part, one_part, two_part, three_part),
+     pch = 16, cex = 3, xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n",
+     cex.lab = 2, xlab = "", ylab = "", col = "red")
+mtext("a) ", side = 3, line = 2, cex = 1.5, adj = -.4)
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
+points(c(1.2,2.2,3.2,4.2), c(no_part_sync, one_part_sync, two_part_sync, three_part_sync),
+       pch = 18, cex = 3, col = "black")
 arrows(x0 = c(0.9,1.9,2.9,3.9),
-       y0 = c(no_part_low,one_part_low,two_part_low,three_part_low),
+       y0 = c(no_part_low, one_part_low, two_part_low, three_part_low),
        x1 = c(0.9,1.9,2.9,3.9),
-       y1 = c(no_part_high,one_part_high,two_part_high,three_part_high),
+       y1 = c(no_part_high, one_part_high, two_part_high, three_part_high),
        angle = 90, code = 3, length = 0.05, col = "red", lwd = 3)
 arrows(x0 = c(1.2,2.2,3.2,4.2),
-       y0 = c(no_part_low_sync,one_part_low_sync,two_part_low_sync,three_part_low_sync),
+       y0 = c(no_part_low_sync, one_part_low_sync, two_part_low_sync, three_part_low_sync),
        x1 = c(1.2,2.2,3.2,4.2),
-       y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
+       y1 = c(no_part_high_sync, one_part_high_sync, two_part_high_sync, three_part_high_sync),
        angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
-legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
-mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
-# diversity scenarios vs fitness -- non-synchronous
-plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols,
-     xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
-     xlab = " ", ylab = " ",
-     main = "b) Non-Synchronous")
+legend("bottomright", legend = c("synchronous","non-synchronous"), fill = c("black","red"))
+mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 4)
+
+# Panel b
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch),
+     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
+     cex.lab = 2, xlab = "", ylab = "")
+mtext("b) Non-Synchronous", side = 3, line = 2, cex = 1.5, adj = .5)
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y0 = c(min(lams_equal_stoch[,1]),min(lams_equal_stoch[,2]),min(lams_equal_stoch[,3]),min(lams_equal_stoch[,4]),min(lams_equal_stoch[,5]),min(lams_equal_stoch[,6]),min(lams_equal_stoch[,7]),min(lams_equal_stoch[,8])),
+       y0 = c(min(lams_equal_stoch[,1]), min(lams_equal_stoch[,2]), min(lams_equal_stoch[,3]), min(lams_equal_stoch[,4]),
+              min(lams_equal_stoch[,5]), min(lams_equal_stoch[,6]), min(lams_equal_stoch[,7]), min(lams_equal_stoch[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y1 = c(max(lams_equal_stoch[,1]),max(lams_equal_stoch[,2]),max(lams_equal_stoch[,3]),max(lams_equal_stoch[,4]),max(lams_equal_stoch[,5]),max(lams_equal_stoch[,6]),max(lams_equal_stoch[,7]),max(lams_equal_stoch[,8])),
+       y1 = c(max(lams_equal_stoch[,1]), max(lams_equal_stoch[,2]), max(lams_equal_stoch[,3]), max(lams_equal_stoch[,4]),
+              max(lams_equal_stoch[,5]), max(lams_equal_stoch[,6]), max(lams_equal_stoch[,7]), max(lams_equal_stoch[,8])),
        angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
-points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch), pch = 19, cex = 3,col = cols)
-axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
-#mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
-# diversity scenarios vs fitness -- synchronous
-plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols,
-     xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
-     xlab = " ", ylab = " ",
-     main = "c) Synchronous        ")
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch),
+       pch = 19, cex = 3, col = cols)
+axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
+mtext("Number of Partners", side = 1, cex = 2.2, line = 3.5)
+
+# Panel c
+plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null),
+     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
+     cex.lab = 2, xlab = "", ylab = "")
+mtext("c) Synchronous", side = 3, line = 2, cex = 1.5, adj = 0)
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y0 = c(min(lams_equal_stoch_null[,1]),min(lams_equal_stoch_null[,2]),min(lams_equal_stoch_null[,3]),min(lams_equal_stoch_null[,4]),min(lams_equal_stoch_null[,5]),min(lams_equal_stoch_null[,6]),min(lams_equal_stoch_null[,7]),min(lams_equal_stoch_null[,8])),
+       y0 = c(min(lams_equal_stoch_null[,1]), min(lams_equal_stoch_null[,2]), min(lams_equal_stoch_null[,3]), min(lams_equal_stoch_null[,4]),
+              min(lams_equal_stoch_null[,5]), min(lams_equal_stoch_null[,6]), min(lams_equal_stoch_null[,7]), min(lams_equal_stoch_null[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y1 = c(max(lams_equal_stoch_null[,1]),max(lams_equal_stoch_null[,2]),max(lams_equal_stoch_null[,3]),max(lams_equal_stoch_null[,4]),max(lams_equal_stoch_null[,5]),max(lams_equal_stoch_null[,6]),max(lams_equal_stoch_null[,7]),max(lams_equal_stoch_null[,8])),
+       y1 = c(max(lams_equal_stoch_null[,1]), max(lams_equal_stoch_null[,2]), max(lams_equal_stoch_null[,3]), max(lams_equal_stoch_null[,4]),
+              max(lams_equal_stoch_null[,5]), max(lams_equal_stoch_null[,6]), max(lams_equal_stoch_null[,7]), max(lams_equal_stoch_null[,8])),
        angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
-points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null), pch = 19, cex = 3,col = cols)
-axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null),
+       pch = 19, cex = 3, col = cols)
+axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
-mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = -50)
+
 dev.off()
 
 ## Plot the distributions of the stochastic lambdas equal likelihood
