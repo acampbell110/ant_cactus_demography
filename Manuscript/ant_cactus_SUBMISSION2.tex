@@ -206,7 +206,7 @@ Size measurements were used to calculate plant volume ($cm^3$) based on the volu
 We measured reproduction by counting flowerbuds, and in most years we distinguished between flowerbuds that were viable versus aborted (aborted flowerbuds are distinguishable by dry and withered true leaves and petals).  \linelabel{res:viable}
 We recorded the ant species presence and identity (or vacancy if no ants present).
 Occurrences of more than one ant species on one plant were rare (less than 5\% of observations), and for the purpose of this analysis we classified the plant as being occupied by the more abundant species. 
-We also quantified the abundances and identities of any cactus herbivores observed, and recorded the occurrence of herbivore damage (described further in Appendix B). 
+We also quantified the abundances and identities of any cactus herbivores observed, and recorded the occurrence of herbivore damage (described further in Appendix \ref{appendix:B}). 
 \linelabel{res:exhaustive} Each year, the field team searched exhaustively for new recruits by walking slowly in a standard formation across the plot area, and these were added to the census (cactus seedlings are small ($<2 cm$ in height) and cryptic so it is likely that some are missed even with a standardized search protocol). 
 These data allowed us to link each plant's demographic fate (survival, growth, and reproduction) to its state of ant visitation. 
 In total, the data set includes a total of 9,787 observations of 1,141 individuals across 15 complete transition years (spanning May/June of year $t$ to May/June of year $t+1$) \citep{DataCholla}. 
@@ -320,7 +320,7 @@ This model used a logit link function and included random effects for plot and y
 Estimates for the number of seeds per fruit were obtained from a field experiment which excluded ants from flowering plants \citep{Ohm2014}.
 This experiment only included \textit{L. apiculatum} and \textit{C. opuntiae} -tended plants.
 We therefore assumed that plants tended by Other ants had the same number of seeds per fruit as vacant plants (our results showed very little sensitivity to this assumption). 
-Additional reproductive parameters for probability of entry to the seed bank, germination rates, and recruit size were estimated following methods described in Appendix A. 
+Additional reproductive parameters for probability of entry to the seed bank, germination rates, and recruit size were estimated following methods described in Appendix \ref{appendix:A}. 
 \revise{\linelabel{res:data_origins2}All of these parameters are assumed to be temporally constant.}
 
 \paragraph{Ant Transitions}
@@ -363,7 +363,7 @@ Our simulations preserved this basic biology, avoiding tiny ant-occupied plants 
 The partner diversity scenarios required additional assumptions about the mechanisms that give rise to observed occupancy patterns. 
 Based on evidence that EFN-bearing cacti are nearly always ant-occupied \citep{Miller2014}, we assume that ant partners competitively exclude one another from EFN-bearing cacti and that competition for plant partners is zero-sum. 
 This means that, in scenarios that remove species from the partner community, remaining species gain access to plants that the removed species would have tended. 
-In Appendix C, we present results under an alternative assumption, that ant visitation is limited by factors other than availability of cactus EFN (e.g., nesting sites or off-plant dietary resources), such that when a species is removed from the partner community, the plants it would have occupied remain vacant. 
+In Appendix \ref{appendix:C}, we present results under an alternative assumption, that ant visitation is limited by factors other than availability of cactus EFN (e.g., nesting sites or off-plant dietary resources), such that when a species is removed from the partner community, the plants it would have occupied remain vacant. 
 
 \subsubsection*{Partner synchrony scenarios}
 Under the portfolio effect hypothesis, partner diversity may confer a fitness advantage when the benefits of alternative partners are not perfectly synchronized across temporal environmental variation, yielding an advantage of a diverse ``portfolio'' of partners when the environment fluctuates. 
@@ -375,7 +375,7 @@ The ``synchronous'' version included temporal fluctuations that were forced to b
 To synchronize ant states, we averaged the ant-specific year random effects, thus ensuring that plants in all ant states fluctuated synchronously in response to temporal environmental variation. 
 This second, synchronous version of the model effectively turns off any portfolio effect, holding all else equal. 
 Both scenarios of temporal stochasticity, non-synchronized and synchronized, were run for all eight ant partner scenarios described above. 
-\revise{\linelabel{res:portfolio_methods}In Appendix D, we explore additional scenarios that vary the correlation of ant-specific fluctuations, to determine if contributions from the portfolio effect are constrained by high correlations seen in the long-term data (Results).}
+\revise{\linelabel{res:portfolio_methods}In Appendix \ref{appendix:D}, we explore additional scenarios that vary the correlation of ant-specific fluctuations, to determine if contributions from the portfolio effect are constrained by high correlations seen in the long-term data (Results).}
 %We indicate stochastic fitness under the synchronized scenario with $\lambda^{C(s)}_{S}$, for example. 
 
 \subsubsection*{Statistical inference on fitness consequences of partner identity and diversity}
@@ -430,7 +430,6 @@ Ant visitation was associated with increased floral viability and ant identity d
 Mean viability rates spanned 55--81\% (Figure \ref{fig:Viab}).
 \textit{L. apiculatum}-tended plants had the highest mean viability rate (86.1\% [95\% credible interval: 77.6--92.4\%]), while there were similar viability rates for vacant (60.0\% [44.3--75.0\%]), Other-tended (60.6\% [43.7--75.5\%]), and \textit{C. opuntiae}-tended plants (57.1\% [40.6--72\%]). 
 \revise{Furthermore, \textit{C. opuntiae}-tended plants had lower mean seeds per fruit (115.0[79.5--165.5] seeds) than vacant (147.2[114.1--189.9] seeds) or \textit{L. apiculatum}-tended plants (142.4[100.7--200.2] seeds), likely due to pollinator interference \citep{Ohm2014}. \linelabel{res:viability}}
-\ali{}{I am not sure where in the appendix you want this to be referenced? --TOM: I don't know what you are asking. There is a figure of the posterior distribution for the means. YOu should reference the figure.}
 
 
 \begin{figure}[H]
@@ -498,14 +497,11 @@ Furthermore, the fitness of \textit{L. apiculatum}-only was consistent with all 
 However, as above, there was evidence for an opportunity cost of diversity wherein fitness of the three-partner scenario was lower than any of the 2-partner scenarios ($Pr(\Delta\lambda_{S}>0)>0.95$). 
 The lack of diversity benefits are not driven by the high overall frequency of \textit{L. apiculatum}. 
 
-\revise{Using simulations in which all ant species were artificually forced to be equally frequent (further explained in Appendix C), we found the same fitness patterns as described above. \linelabel{res:appendixc}}
-%Equal probability for transitioning into any ant state meant that the numbers of \textit{C. opuntiae} and Other ants were boosted significantly.
-%Despite this, the fitness of scenarios including these less frequent ants were not increased meaningfully.
-
+\revise{Using simulations in which all ant species were artificually forced to be equally frequent (further explained in Appendix \ref{appendix:C}), we found the same fitness patterns as described above. \linelabel{res:appendixc}}
 We found no evidence that the portfolio effect generated positive effects of partner diversity, as effects of partner richness and composition were highly consistent between the baseline, non-synchronous model and the model version that synchronized all ant states (Figure \ref{fig:LambdaMeans}).
 The effect of all ant partners can be measured as $\lambda^{3}_{S} - \lambda^{0}_{S}$.
 We have high confidence that this contrast is positive and equally so for the synchronous and non-synchronous scenarios (Figure S\ref{fig:Portfolio}), indicating that the full suite of partners is similarly beneficial with and without the portfolio effect operating. 
-\revise{\linelabel{res:portfolio_results}In Appendix D, we show that contributions from the portfolio effect were constrained by positively correlated fluctuations between ant states (Figure \ref{fig:Annual_Ant}). 
+\revise{\linelabel{res:portfolio_results}In Appendix \ref{appendix:D}, we show that contributions from the portfolio effect were constrained by positively correlated fluctuations between ant states (Figure \ref{fig:Annual_Ant}). 
 In scenarios in which partner fluctuations were uncorrelated or, especially, negatively correlated, the non-synchronous model exhibited a stronger benefit of diversity than the synchronous model (Figure \ref{app:portfolio}), as expected under the portfolio effect hypothesis.}
 
 \section*{Discussion}
@@ -541,7 +537,7 @@ When partners exhibit different reactions to varying environments, interacting w
 Our work explicitly incorporated temporal environmental stochasticity, yet we find no evidence for the portfolio effect as a mechanism of diversity benefits. 
 In ant-plant defensive mutualisms, any portfolio effect would emerge from fluctuations in the community of herbivores, and ant-specific responses to each herbivore species. 
 Instead, we found that inter-annual fluctuations in vital rates were generally positively correlated across plants in different ant states, suggesting other drivers of inter-annual variation that are shared across the population (notably, weather) override any fluctuations in herbivore composition and ant-herbivore interactions. 
-\revise{To further explore the potential for portfolio effects, we conducted simulations in which inter-annual fluctuations in ant effects were manipulated to be independent or negatively correlated; we found evidence of the portfolio effect in both scenarios, but especially when ant effects were negatively correlated (Appendix E).
+\revise{To further explore the potential for portfolio effects, we conducted simulations in which inter-annual fluctuations in ant effects were manipulated to be independent or negatively correlated; we found evidence of the portfolio effect in both scenarios, but especially when ant effects were negatively correlated (Appendix \ref{appendix:D}).
 These results indicate that while the portfolio effect can emerge under hypothetical conditions of anti-synchronous partner responses, shared drivers of inter-annual variability in our study system dampen this potential benefit of partner diversity. }
 Dallas et al. \citeyear{dallas2022temporal} found that while the portfolio effect was easy to show in theoretical models, it is infrequently detected in empirical data across many systems. 
 This indicates that the portfolio effect may be difficult to detect, disguised by other mechanisms, or uncommon in nature. 
@@ -591,7 +587,7 @@ We also thank two reviewers for taking the time to provide thoughtful comments a
 % contributions.
 
 \section*{Data and Code Availability}
-\tom{This section will be filled out once double blind reviews are complete. }{Be sure to update this with the new data package.}
+This section will be filled out once double blind reviews are complete. 
 %Most of the data that support the findings of this study (through 2019) are openly available as a \href{https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-sev.323.1}{data package} \citep{DataCholla} on the Environmental Data Initiative website, package id: knb-lter-sev.323.1.
 %An updated data package, including recent years, is presently under review and we expect will be available in early 2025. 
 %For now, all of our data and code are available in our public github repo: \url{https://github.com/acampbell110/ant_cactus_demography}.
@@ -633,7 +629,7 @@ In addition to the models described in the body of the paper, we fit several oth
 These models are described below.
 
 \paragraph{Seeds Per Fruit}
-With data from \cite{Ohm2014}, we fit a model for the number of seeds produced by every fruit on a cholla ($\kappa(a')$) in year $t+1$ based on the ant partner $a'$ in year $t+1$.
+With data from \cite{Miller2007}, we fit a model for the number of seeds produced by every fruit on a cholla ($\kappa(a')$) in year $t+1$ based on the ant partner $a'$ in year $t+1$.
 We fit this model to seed data $y^{\kappa}$ using a Negative Binomial distribution and the log link function: 
 $$y^{\kappa} \sim  Negative Binomial(\hat{\kappa},\hat{\phi})$$
 $$\hat{\phi} = \beta_{0}^{\phi}$$
@@ -661,7 +657,7 @@ We found that the mean size of recruits is $log(-2.097) m^3$ with an interquarti
 
 
 \paragraph{Germination}
-With germination data \cite{Miller2007}, we fit two models for the probability of germinating from the first year seedbank ($\gamma_1$) or the second year seedbank ($\gamma_2$) in year $t+1$, with no fixed or random effects.
+With germination data \cite{Miller2009}, we fit two models for the probability of germinating from the first year seedbank ($\gamma_1$) or the second year seedbank ($\gamma_2$) in year $t+1$, with no fixed or random effects.
 These models were fit to germination data $y^{\gamma_1}, y^{\gamma_2}$  using the binomial distribution with logit link functions:
 $$y^{\gamma_1} \sim Binomial(\hat{\gamma_1})$$
 $$y^{\gamma_2} \sim Binomial(\hat{\gamma_2})$$
@@ -681,9 +677,9 @@ Our model estimated this very well, expecting a 16.3\% probability.
 
 %% Reproduction Model
 \paragraph{Probability of Flowering}
-We fit a model for the probability of flowering ($F$) in year $t+1$ based on the size ($x$) in year $t+1$ with random effects of year $\tau_a$ using a Bernoulli distribution with a logit link function: 
-$$y^{F}~ Bern(\hat{F})$$
-$$\hat{F_i} = \beta^0 x_i + \tau_{a[i]}$$
+We fit a model for the probability of flowering ($P$) in year $t+1$ based on the size ($x$) in year $t+1$ with random effects of year $\tau_a$ using a Bernoulli distribution with a logit link function: 
+$$y^{P}~ Bern(\hat{P})$$
+$$\hat{P_i} = \beta^0 x_i + \tau_{a[i]}$$
 
 \begin{figure}
 	\includegraphics[width=0.91\linewidth]{Figures/repro_panel.png}
@@ -700,6 +696,11 @@ $$\hat{F_i} = \beta^0 x_i + \tau_{a[i]}$$
 
 The probability of a plant reproducing in a given year is highly size dependent. 
 The mean probability of reproducing remains at about 0\% until the plant reaches a medium size, after which the mean probability of reproducing increases steadily before reaching about 100\% at large sizes (Figure \ref{app:repro}). 
+
+\paragraph{Number of Flowers Produced}
+We fit a model for the flowers produced ($F$) in year $t+1$ based on the size ($x$) in year $t+1$ with random effects of year $\tau_a$ using a zero truncated negative binomial distribution: 
+$$y^{F}~ Bern(\hat{F})$$
+$$\hat{F_i} = \beta^0  x_i + \tau_{a[i]}$$
 
 The number of flowers produced by a reproducing plant is also highly size dependent. 
 The mean number of flowers produced are 0 until the plant reaches a medium size, after which the mean number of flowers produced increases to about 45 at the largest sizes (Figure \ref{app:flow}).

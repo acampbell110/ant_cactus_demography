@@ -174,26 +174,26 @@ stan_data_surv <- list(N = nrow(survival_data),                                 
                        plot = as.integer(as.factor(survival_data$Plot)),           ## predictor plots
                        year = as.integer(as.factor(survival_data$Year_t))          ## predictor years
 ) 
-# ## Run the survival model with a bernoulli distribution ---- fixed effects: previous size and ant state; random effects: plot and year
-# surv_model <- stan_model("STAN Models/surv_code.stan")
-# fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
-#                    control = list(adapt_delta=0.99,stepsize=0.1),
-#                    iter=10000,cores=3,thin=2,
-#                    pars = c("beta0","beta1","u","w"),   #location coefficients)
-#                    save_warmup=F)
-# # ##Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_surv.rds")
-# saveRDS(fit_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
-# saveRDS(fit_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
-# surv_model_null <- stan_model("Data Analysis/STAN Models/surv_code_null.stan")
-# fit_surv_null<-sampling(surv_model_null, data = stan_data_surv,chains=3,
-#                    control = list(adapt_delta=0.99,stepsize=0.1),
-#                    iter=10000,cores=3,thin=2,
-#                    pars = c("beta0","beta1","u","w"),   #location coefficients)
-#                    save_warmup=F)
+## Run the survival model with a bernoulli distribution ---- fixed effects: previous size and ant state; random effects: plot and year
+surv_model <- stan_model("STAN Models/surv_code.stan")
+fit_surv<-sampling(surv_model, data = stan_data_surv,chains=3,
+                   control = list(adapt_delta=0.99,stepsize=0.1),
+                   iter=1000,cores=3,thin=2,
+                   pars = c("beta0","beta1","u","w"),   #location coefficients)
+                   save_warmup=F)
 # ##Save the RDS file which saves all parameters, draws, and other information
-# saveRDS(fit_surv_null, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv_null.rds")
-# saveRDS(fit_surv_null,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv_null.rds")
+saveRDS(fit_surv, "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/fit_surv.rds")
+saveRDS(fit_surv, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
+saveRDS(fit_surv,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv.rds")
+surv_model_null <- stan_model("Data Analysis/STAN Models/surv_code_null.stan")
+fit_surv_null<-sampling(surv_model_null, data = stan_data_surv,chains=3,
+                   control = list(adapt_delta=0.99,stepsize=0.1),
+                   iter=10000,cores=3,thin=2,
+                   pars = c("beta0","beta1","u","w"),   #location coefficients)
+                   save_warmup=F)
+##Save the RDS file which saves all parameters, draws, and other information
+saveRDS(fit_surv_null, "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv_null.rds")
+saveRDS(fit_surv_null,"/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/fit_surv_null.rds")
 
 
 ################################################################################
