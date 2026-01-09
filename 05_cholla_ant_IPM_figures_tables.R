@@ -1,8 +1,6 @@
 ################################################################################
 ##  This file creates all visuals for the manuscript
 ################################################################################
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-source( "/Users/alicampbell/Documents/GitHub/ant_cactus_demography/03_cholla_ant_IPM_params_functions.R")
 bayesplot::color_scheme_set(scheme = "pink")
 
 ## Color Codes
@@ -45,58 +43,6 @@ bayesplot::mcmc_trace(fit_grow_skew,pars=c("d_0",
                                            "beta0[1]","beta0[2]","beta0[3]","beta0[4]",
                                            "beta1[1]","beta1[2]","beta1[3]","beta1[4]"))+labs(x = "iterations", y = "estimated value", title = "a)")
 dev.off()
-# # Check the different quantile fits of the model to make sure not only the mean but also other quantiles fit well with the real data
-# # real data moments
-# q.fit<-matrix(NA,7,length(stan_data_grow_stud$vol))
-# q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[2,]<-predict(qgam(y~s(vol),qu=0.10,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[3,]<-predict(qgam(y~s(vol),qu=0.25,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[4,]<-predict(qgam(y~s(vol),qu=0.5,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[5,]<-predict(qgam(y~s(vol),qu=0.75,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[6,]<-predict(qgam(y~s(vol),qu=0.90,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# q.fit[7,]<-predict(qgam(y~s(vol),qu=0.95,data=data.frame(y=stan_data_grow_stud$y,vol=stan_data_grow_stud$vol)))
-# obs_mean<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,])
-# obs_sd<-Q.sd(q.fit[3,],q.fit[5,])
-# obs_skew<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
-# obs_kurt<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
-# # simulate data
-# n_draws=25
-# grow_sim<-matrix(NA,n_draws,stan_data_grow_stud$N)
-# sim_mean<-sim_sd<-sim_skew<-sim_kurt<-matrix(NA,n_draws,stan_data_grow_stud$N)
-# for(i in 1:n_draws){
-#   for(n in 1:stan_data_grow_stud$N){
-#     grow_sim[i,n]<-rlst(n=1,mu=grow_out$beta0[i,stan_data_grow_stud$ant[n]]+
-#                                grow_out$beta1[i,stan_data_grow_stud$ant[n]]*stan_data_grow_stud$vol[n]+
-#                                grow_out$beta2[i,stan_data_grow_stud$ant[n]]*stan_data_grow_stud$vol2[n]+
-#                                grow_out$u[i,stan_data_grow_stud$plot[n]],#+
-#                                #grow_out$w[i,stan_data_grow_stud$ant[n],stan_data_grow_stud$year[n]],
-#                            sigma=exp(grow_out$d_0[i]+grow_out$d_size[i]*stan_data_grow_stud$vol[n]),
-#                            df=grow_out$a_0[i]+grow_out$a_size[i]*stan_data_grow_stud$vol[n])
-#   }
-#   q.fit[1,]<-predict(qgam(y~s(vol),qu=0.05,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[2,]<-predict(qgam(y~s(vol),qu=0.10,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[3,]<-predict(qgam(y~s(vol),qu=0.25,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[4,]<-predict(qgam(y~s(vol),qu=0.5,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[5,]<-predict(qgam(y~s(vol),qu=0.75,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[6,]<-predict(qgam(y~s(vol),qu=0.90,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   q.fit[7,]<-predict(qgam(y~s(vol),qu=0.95,data=data.frame(y=grow_sim[i,],vol=stan_data_grow_stud$vol)))
-#   sim_mean[i,]<-Q.mean(q.fit[3,],q.fit[4,],q.fit[5,])
-#   sim_sd[i,]<-Q.sd(q.fit[3,],q.fit[5,])
-#   sim_skew[i,]<-Q.skewness(q.fit[2,],q.fit[4,],q.fit[6,])
-#   sim_kurt[i,]<-Q.kurtosis(q.fit[1,],q.fit[3,],q.fit[5,],q.fit[7,])
-#   print(i/n_draws)
-# }
-# plot(stan_data_grow_stud$vol,grow_sim[1,],pch=".",col="red")
-# points(stan_data_grow_stud$vol,stan_data_grow_stud$y,pch=".",col="black")
-# bayesplot::ppc_dens_overlay(stan_data_grow_stud$y, grow_sim)
-# matplot(stan_data_grow_stud$vol,t(sim_mean),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_mean)
-# matplot(stan_data_grow_stud$vol,t(sim_sd),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_sd)
-# matplot(stan_data_grow_stud$vol,t(sim_skew),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_skew)
-# matplot(stan_data_grow_stud$vol,t(sim_kurt),pch=".",col="gray")
-# points(stan_data_grow_stud$vol,obs_kurt)
 
 
 ## Format the original data
@@ -183,76 +129,14 @@ initsmall<-quantile(cactus$logsize_t[cactus$ant_t!="vacant"],probs=0.01,na.rm=T)
 ##large size is the 95th percentile of tended plants
 initlarge<-quantile(cactus$logsize_t[cactus$ant_t!="vacant"],probs=0.99,na.rm=T)
 
-## Plot the countour lines of the studetn t growth model with the mean fit of the model and the real data
-# png("Manuscript/Figures/grow_contour_v1.png")
-# par(mar=c(3,5,3,1),oma=c(2,2,0,0))
-# layout(matrix(c(1,2,3,4,5,5),
-#               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
-# # Crem
-# contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15),
-#         main = "a)       Crem.               ", cex.main = 2,lwd=1.5,col="black")
-# points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
-# lines(size_dummy, crem_mean, col = cremcol, lwd = 2)
-# # Liom
-# contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-#         main = "b)      Liom.                ", cex.main = 2, lwd = 1.5)
-# points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
-# lines(size_dummy, liom_mean, col = liomcol, lwd = 2)
-# # Other
-# contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-#         main = "c)       Other                ", cex.main = 2, lwd = 1.5)
-# points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
-# lines(size_dummy,other_mean, type = "l", col = othercol,lwd = 2)
-# # Vacant
-# contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-#         main = "d)      Vacant                ", cex.main = 2, lwd = 1.5)
-# points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
-# lines(size_dummy, vac_mean, col = vaccol, lwd = 2)
-# # All together
-# 
-# plot(size_dummy,dsn(x=size_dummy,
-#                     xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initlarge + mean(params$grow_beta23)*initlarge^2,
-#                     omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-#                     alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3,
-#      xlim=c(2,8),ylab="Probability of size next year",main= "e)                      All Ants                           ", cex.main = 2)
-# lines(size_dummy,dsn(x=size_dummy,
-#                      xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initlarge + mean(params$grow_beta24)*initlarge^2,
-#                      omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-#                      alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
-# lines(size_dummy,dsn(x=size_dummy,
-#                      xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initlarge + mean(params$grow_beta22)*initlarge^2,
-#                      omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-#                      alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
-# lines(size_dummy,dsn(x=size_dummy,
-#                      xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initlarge + mean(params$grow_beta21)*initlarge^2,
-#                      omega = exp(mean(params$grow_sig0) + initlarge * mean(params$grow_sig1)),
-#                      alpha = (mean(params$grow_alp0) + initlarge * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
-# abline(v=initlarge,lty=3)
-# 
-# lines(size_dummy,dsn(x=size_dummy,
-#                      xi=mean(params$grow_beta03) + mean(params$grow_beta13)*initsmall + mean(params$grow_beta23)*initsmall^2,
-#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(othercol,0.75),lwd=3)
-# lines(size_dummy,dsn(x=size_dummy,
-#                      xi=mean(params$grow_beta04) + mean(params$grow_beta14)*initsmall + mean(params$grow_beta24)*initsmall^2,
-#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(vaccol,0.75),lwd=3)
-# lines(size_dummy,dsn(x=size_dummy,
-#                      xi=mean(params$grow_beta02) + mean(params$grow_beta12)*initsmall + mean(params$grow_beta22)*initsmall^2,
-#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(liomcol,0.75),lwd=3)
-# lines(size_dummy,dsn(x=size_dummy,
-#                      xi=mean(params$grow_beta01) + mean(params$grow_beta11)*initsmall + mean(params$grow_beta21)*initsmall^2,
-#                      omega = exp(mean(params$grow_sig0) + initsmall * mean(params$grow_sig1)),
-#                      alpha = (mean(params$grow_alp0) + initsmall * mean(params$grow_alp1))),type="l",col=alpha(cremcol,0.75),lwd=3)
-# abline(v=initsmall,lty=3)
-# legend("topleft", legend = c("Other","Crem.","Liom.","Vacant"), col = c(othercol,cremcol,liomcol,vaccol), lwd = 2)
-# 
-# mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
-# mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
-# dev.off()
 
-png("Manuscript/Figures/grow_contour_v2.png")
+
+png("Manuscript/Figures/grow_contour_v2.png",
+  width = 7.5,     # inches (2-column figure)
+  height = 6.5,    # inches
+  units = "in",
+  res = 600
+)
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
@@ -465,30 +349,30 @@ colMeans(c)
 png("Manuscript/Figures/corr_RFX.png", width=1800, height=1200, res=200)
 
 # define breaks and color ramp for correlation legend
-breaks <- seq(-1, 1, length.out = 101)  
+breaks <- seq(-1, 1, length.out = 101)
 my_colors <- colorRampPalette(c("blue", "white", "red"))(length(breaks)-1)
 
 layout(matrix(c(1,2,3,4,5,6,7,8), nrow=2, byrow=TRUE), widths=c(1,1,1,1))
 par(mar=c(1,3,4,1.5), oma=c(1,5,5,0))
 
 ############## Corrplots
-corrplot(a, method="shade", col.lim=c(-1,1), type="upper", diag=FALSE,
-         pch.cex=3, tl.cex=3, tl.col="black", tl.srt=360, tl.offset=0.5,
+corrplot(a, method="shade", col=my_colors, type="upper", diag=FALSE,
+         pch.cex=3, tl.cex=1.5, tl.col="black", tl.srt=360, tl.offset=0.5,
          addCoef.col=NULL, cl.pos="n")
-mtext("a)", side=3, adj=0, line=1, cex=1.8)
+mtext("a)", side=3, adj=0, line=0.5, cex=1.5)
 
-corrplot(b, method="shade", col.lim=c(-1,1), type="upper", diag=FALSE,
-         pch.cex=3, tl.cex=3, tl.col="black", tl.srt=360, tl.offset=0.5,
+corrplot(b, method="shade", col=my_colors, type="upper", diag=FALSE,
+         pch.cex=3, tl.cex=1.5, tl.col="black", tl.srt=360, tl.offset=0.5,
          addCoef.col=NULL, cl.pos="n")
-mtext("b)", side=3, adj=0, line=1, cex=1.8)
+mtext("b)", side=3, adj=0, line=0.5, cex=1.5)
 
-corrplot(c, method="shade", col.lim=c(-1,1), type="upper", diag=FALSE,
-         pch.cex=3, tl.cex=3, tl.col="black", tl.srt=360, tl.offset=0.5,
+corrplot(c, method="shade", col=my_colors, type="upper", diag=FALSE,
+         pch.cex=3, tl.cex=1.5, tl.col="black", tl.srt=360, tl.offset=0.5,
          addCoef.col=NULL, cl.pos="n")
-mtext("c)", side=3, adj=0, line=1, cex=1.8)
+mtext("c)", side=3, adj=0, line=0.5, cex=1.5)
 
 # color ramp legend
-par(mar=c(2,2,2,8))  
+par(mar=c(2,2,2,8))
 x <- seq(0, 1, length = 2)
 y <- breaks
 z <- matrix(breaks[-length(breaks)], nrow = 1)
@@ -497,7 +381,7 @@ image(x, y, z, col=my_colors, xaxt="n", yaxt="n", xlab="", ylab="")
 axis(4, at=seq(-1,1,by=0.5), labels=seq(-1,1,by=0.5), cex.axis=2, las=1)
 mtext("Correlation \nCoefficient", side=3, line=1.2, cex=1.5)
 
-mtext("   Growth          Survival           Viability                  ", 
+mtext("   Growth          Survival           Viability                  ",
       side=3, line=1, outer=TRUE, cex=2)
 
 ############### Timeseries
@@ -542,38 +426,19 @@ dev.off()
 
 
 
-png("Manuscript/Figures/year_ant_timeseries.png",width = 480, height = 280)
-par(mfrow=c(1,3),mar=c(4,2,2,1),oma=c(2,2,0,0))
-## Growth Ant EEffects
-plot(years_seq,g_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "a)                               ",
-     ylim = c(-3,5), xlab = " ",ylab = " ",cex.lab = 2)
-lines(years_seq, g_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, g_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, g_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-legend("bottomleft",legend = c(expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Other","Vacant"), fill = c(cremcol,liomcol,othercol,vaccol),cex=1.4)
-## Survival ant effects
-plot(years_seq,s_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "b)                                 ",
-     ylim = c(-3,5), xlab = "",ylab = " ",cex.lab = 1.5)
-lines(years_seq, s_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, s_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, s_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-## Viability Ant Effects
-plot(years_seq,v_liom,col = liomcol, cex.main = 2,type = "b",lwd = 4, pch = 16,cex = 2,
-     main = "c)                                ",
-     ylim = c(-3,5), xlab = " ",ylab = " ",cex.lab = 1.5)
-lines(years_seq, v_crem, type = "b", col = cremcol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, v_other, type = "b", col = othercol, lwd = 4, pch = 16, cex = 2)
-lines(years_seq, v_vac, type = "b", col = vaccol, lwd = 4, pch = 16, cex = 2)
-mtext("Year",side=1,line=0,outer=TRUE,cex=1.4)
-mtext("Year-specific deviation",side=2,line=0,outer=TRUE,cex=1.4,las=0)
-dev.off()
-
 ## Calculate correlation coefficients
+g_vars <- c(Crem = var(g_crem, na.rm = T), Liom = var(g_liom, na.rm = T), Other = var(g_other, na.rm = T), Vacant = var(g_vac, na.rm = T))
+s_vars <- c(Crem = var(s_crem, na.rm = T), Liom = var(s_liom, na.rm = T), Other = var(s_other, na.rm = T), Vacant = var(s_vac, na.rm = T))
+v_vars <- c(Crem = var(v_crem, na.rm = T), Liom = var(v_liom, na.rm = T), Other = var(v_other, na.rm = T), Vacant = var(v_vac, na.rm = T))
 
+# minimum variance partner = Other
+print(which.min(g_vars))
+print(which.min(s_vars))
+print(which.min(v_vars))
 
-
+print(which.max(g_vars))
+print(which.max(s_vars))
+print(which.max(v_vars))
 
 
 ################################################################################
@@ -657,7 +522,12 @@ surv_plot_vac <- y_vac_subset_surv %>%
             N = length(logsize_t))
 surv_plot_vac$N_mod <- log(surv_plot_vac$N)
 ## Plot the survival rates of cacti across size with different ant partners
-png("Manuscript/Figures/survival_plot.png")
+png("Manuscript/Figures/surv_post.png",
+  width = 7,
+  height = 4,
+  units = "in",
+  res = 600
+)
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
 # Crem
@@ -738,7 +608,12 @@ flow_plot <- flower_data %>%
             N = length(logsize_t),
             N_mod = log(N))
 ## Plot the mean estimate of how many flowers are produced based on the size of the plant alongside the real data and teh estimation errors
-png("Manuscript/Figures/flow.png")
+png("Manuscript/Figures/flow_post.png",
+  width = 7,
+  height = 4,
+  units = "in",
+  res = 600
+)
 par(mar=c(4,4,1,1))
 plot(x = size_dummy  ,y = exp(percentiles(.5)), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,100), xlab = " ", ylab = " ")
 points(flow_plot$mean_size,flow_plot$tot,pch=16,cex=flow_plot$N_mod,col= alpha("chartreuse4", 0.4))
@@ -786,7 +661,12 @@ crem_subset <- subset(viability_data, ant_t == "crem")
 liom_subset <- subset(viability_data, ant_t == "liom")
 vac_subset <- subset(viability_data, ant_t == "vacant")
 ## Plot the histograms of the actual data alongside the mean estimates of viability rates by ant state
-png("Figures/viab_hist.png")
+png("Manuscript/Figures/viab_hist.png",
+  width = 7,
+  height = 9,
+  units = "in",
+  res = 600
+)
 par(mar=c(5,6,3,1))
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1)) 
@@ -813,9 +693,14 @@ mean(other_subset$viab)
 mean(vac_subset$viab)
 
 
-viab_out<-rstan::extract(readRDS(paste0(mcmc_dir,"fit_viab.rds")))
+viab_out<-rstan::extract(fit_viab)
 alpha_val<-0.15
-png("Manuscript/Figures/viab.png")
+png("Manuscript/Figures/viab.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="",ylab="",cex.lab=1.4,xlim=c(1,4.25))
 points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
        cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
@@ -848,7 +733,12 @@ box()
 dev.off()
 ## min buds is 1, max is 264
 
-png("Manuscript/Figures/Viab_v2.png")
+png("Manuscript/Figures/Viab_v2.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4,xlim=c(1,4.25))
 points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
        cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
@@ -883,7 +773,12 @@ dev.off()
 ################################################################################
 ## Seed number visuals
 ################################################################################
-png("Manuscript/Figures/Seeds_Per_Fruit.png")
+png("Manuscript/Figures/Seeds_Per_Fruit.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 plot(density(exp(seed.params$beta0[,3])),lwd=3,col=vaccol,
      xlab="Seeds Per ruit",main=" ",xlim=c(50,250))
 lines(density(exp(seed.params$beta0[,2])),lwd=3,col=liomcol)
@@ -958,7 +853,12 @@ percentiles <- function(percent){
 }
 # Create a subset which includes the necessary data
 ## Panel Plot showing the probability of reproducing across sizes with the error
-png("Manuscript/Figures/repro_panel.png")
+png("Manuscript/Figures/repro_panel.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 plot(x = (size_dummy)  ,y = invlogit(percentiles(.5)), type = "l", col = "chartreuse4",ylim = c(0,1),  lwd = 4,xlab = "",ylab = "")
 points(x = stan_data_repro$vol, y =as.numeric(stan_data_repro$y_repro))
 lines(x = (size_dummy)  ,y = invlogit(percentiles(.5)), type = "l", col = "chartreuse4", lwd = 4)
@@ -1005,7 +905,12 @@ subset_vac <- subset(seed_data, seed_data$ant_state == "Vacant")
 crem <- exp(params$seed_beta01)
 liom <- exp(params$seed_beta02)
 vac <- exp(params$seed_beta03)
-png("Manuscript/Figures/num_seeds.png")
+png("Manuscript/Figures/num_seeds.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 boxplot(cbind(crem,liom,vac), col = c(cremcol,liomcol,vaccol), ylab = "", names = c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Vacant"))
 mtext("Ant Partner",side=1,line=-2,outer=TRUE,cex=1.7)
 mtext("Number of Seeds Per Fruit",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
@@ -1038,7 +943,12 @@ dev.off()
 # calculate the viability rates of the real data
 fruit_data$viab <- fruit_data$Fr.on.plant/(fruit_data$Fr.on.grnd + fruit_data$Fr.on.plant)
 ## Plot the histograms of the actual data alongside the mean estimates of viability rates by ant state
-png("Manuscript/Figures/fruit_hist.png")
+png("Manuscript/Figures/fruit_hist.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 hist(fruit_data$viab, xlim = c(0.5,1), prob = TRUE, ylim = c(0,30), col = vaccol, cex.main = 2, xlab = "",ylab = "",main = "")
 lines(density(invlogit(fruit.params$beta0)), lwd = 3, col = vaccol) 
 mtext("Proportion of Surviving Fruit",side=1,line=-1.5,outer=TRUE,cex=2)
@@ -1062,7 +972,12 @@ y_surv = pre.seed.params$beta0
 y_low_surv = quantile(pre.seed.params$beta0,0.05) 
 y_high_surv = quantile(pre.seed.params$beta0,0.95)
 ## Plot the precensus survival estimated by the model with the precensus survival of real data
-png("Manuscript/Figures/seed_surv.png")
+png("Manuscript/Figures/seed_surv.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "", ylab = "",main = "")
 #abline(v = mean(precensus.dat$survive0405), lty = 2)
 legend("topright",legend = c("Predicted Pre-census Survival","Real Pre-census Survival"), col = c("chartreuse4","black"), pch = 16)
@@ -1095,14 +1010,16 @@ y_germ1 <- stan_data_germ$y_germ[stan_data_germ$year==1]/stan_data_germ$trials[s
 y_germ2 <- stan_data_germ$y_germ[stan_data_germ$year==2]/stan_data_germ$trials[stan_data_germ$year==2]
 germ <- cbind(y_germ1,y_germ2)
 colnames(germ) <- c("Year 1","Year 2")
-png("Manuscript/Figures/germination.png")
+png("Manuscript/Figures/germination.png",
+    res = 600)
 boxplot((germ), col = "chartreuse4", names.arg = c("Yr 1","Yr 2"),
         xlab = "", ylab = "", main = "")
 mtext("Year in Seedbank",side=1,line=-1.5,outer=TRUE,cex=2)
 mtext("Probability of Germinating",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
-png("Manuscript/Figures/germination.png")
+png("Manuscript/Figures/germination.png",
+    res = 600)
 plot(density(invlogit(params$germ1_beta0)), col = "blue", lwd = 3,
      xlab = "",ylab = "",main = "",
      xlim = c(0.002,0.009),ylim = c(0,800))
@@ -1125,12 +1042,22 @@ dev.off()
 
 
 ## Plot the Recruit size distribution
-png("Manuscript/Figures/rec_size.png")
+png("Manuscript/Figures/rec_size.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 boxplot(rec.params$beta0, col = "chartreuse4", ylab = "", main = "", xlab = "")
 mtext("Log(Volume)",side=2,line=-2,outer=TRUE,cex=2,las=0)
 dev.off()
 
-png("Manuscript/Figures/rec_size.png")
+png("Manuscript/Figures/rec_size.png",
+    width = 7,
+    height = 4,
+    units = "in",
+    res = 600
+)
 plot(density(rec.params$beta0), col = "chartreuse4",lwd = 3,
      ylab = "",xlab = "",main = "")
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
@@ -1302,11 +1229,11 @@ pred_vac<-cbind(
 sum(pred_vac[1,])
 ## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
 png("Manuscript/Figures/transition.png", width = 550, height = 550)
-par(mar=c(2,2,1,1),oma=c(2,2,0,0))
+par(mar=c(2,2,4,1),oma=c(2,2,2,0))
 layout(matrix(c(1,2,3,4),
               ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
 # Prev Vac
-plot(size_dummy, pred_vac[,4], type = "l", col = vaccol,main = expression(bold(paste("b)", sep = "              ", "Prev. Vacant", "             "))), ylim = c(0,1), xlab = "", ylab = "",
+plot(size_dummy, pred_vac[,4], type = "l", col = vaccol,main = expression(bold(paste("a)", sep = "              ", "Prev. Vacant", "             "))), ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 1.5)
 lines(size_dummy, pred_vac[,3], col = othercol)
 lines(size_dummy, pred_vac[,1], col = cremcol)
@@ -1326,7 +1253,7 @@ points(multi_plot_other$mean_size,multi_plot_other$ant_t1_liom,pch=16,cex=multi_
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_other,pch=16,cex=multi_plot_other$N_mod,col= alpha(othercol, 0.4))
 points(multi_plot_other$mean_size,multi_plot_other$ant_t1_vac,pch=16,cex=multi_plot_other$N_mod,col= alpha(vaccol, 0.4))
 # Prev Crem
-plot(size_dummy, pred_crem[,4], type = "l", col = vaccol,main = expression(bold(paste("b)", sep = "              ", "Prev.","   ",bolditalic("C. opuntiae"), "             "))), ylim = c(0,1), xlab = "", ylab = "",
+plot(size_dummy, pred_crem[,4], type = "l", col = vaccol,main = expression(bold(paste("c)", sep = "              ", "Prev.","   ",bolditalic("C. opuntiae"), "             "))), ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 1.5)
 lines(size_dummy, pred_crem[,3], col = othercol)
 lines(size_dummy, pred_crem[,1], col = cremcol)
@@ -1337,7 +1264,7 @@ points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_other,pch=16,cex=multi_p
 points(multi_plot_crem$mean_size,multi_plot_crem$ant_t1_vac,pch=16,cex=multi_plot_crem$N_mod,col= alpha(vaccol, 0.4))
 legend("topright",c("Vacant","Other",expression(italic("C. opuntiae")),expression(italic("L. apiculatum"))), fill = c(vaccol,othercol,cremcol,liomcol), cex = 1)
 # Prev Liom
-plot(size_dummy, pred_liom[,4], type = "l", col = vaccol,main = expression(bold(paste("b)", sep = "              ", "Prev.   ", bolditalic("L. apiculatum"), "             "))), ylim = c(0,1), xlab = "", ylab = "",
+plot(size_dummy, pred_liom[,4], type = "l", col = vaccol,main = expression(bold(paste("d)", sep = "              ", "Prev.   ", bolditalic("L. apiculatum"), "             "))), ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 1.5)
 lines(size_dummy, pred_liom[,3], col = othercol)
 lines(size_dummy, pred_liom[,1], col = cremcol)

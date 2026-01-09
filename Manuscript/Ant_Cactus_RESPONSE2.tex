@@ -1,0 +1,130 @@
+% ======================================================= %
+% Document: TEMPLATE FOR RESPONSES TO REVIEWERS
+% Author: Andrea Ballatore
+% Date: Jan 7, 2013
+% Source: https://raw.githubusercontent.com/ucd-spatial/Datasets/master/tex_response_to_reviewers_template/responses_to_reviewers.tex
+% Modified by Eduard Szöcs, 10.03.2015
+% ======================================================= %
+\documentclass[12pt]{article}
+
+% packages
+\usepackage{xr-hyper}
+\usepackage{hyperref}
+\externaldocument[ms-]{ant_cactus_SUBMISSION2}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{color}
+\definecolor{mygray}{gray}{0.6}
+\usepackage[utf8]{inputenc}
+\usepackage[onehalfspacing]{setspace}
+\usepackage[
+round,	%(defaultage in the main file and \input ) for round parentheses;
+colon,	% (default) to separate multiple citations with colons;
+authoryear,% (default) for author-year citations;
+sort,		% orders multiple citations into the sequence in which they
+]{natbib}
+\usepackage[%disable
+]{todonotes}
+
+\usepackage{anysize}
+\marginsize{2.5cm}{2.5cm}{1.5cm}{2.5cm}
+
+% macros
+% add a counter
+\newcounter{cN}
+\setcounter{cN}{0}
+
+\newcommand{\comment}[1]{
+	\vspace{2em}
+	\refstepcounter{cN} % incrment counter
+	\noindent \hangindent=0em \textbf{\textcolor{Maroon}{\uline{Comment \thecN}:~}}\emph{``#1''}
+}
+
+\newcommand{\response}[1]{
+	\\[0.25em]
+	\hangindent=2.3em \textbf{\textcolor{NavyBlue}{\uline{Response}:~}}#1
+}
+
+\newcommand{\revise}[1]{{\color{blue}{#1}}}
+\newcommand{\tom}[2]{{\color{red}{#1}}\footnote{\textit{\color{red}{#2}}}} 
+\usepackage[normalem]{ulem}
+\definecolor{darkred}{rgb}{1,.6,.6}
+\DeclareRobustCommand\problemline{\bgroup\markoverwith{\textcolor{darkred}{\rule[-0.9ex]{4pt}{3pt}}}\ULon}
+\DeclareRobustCommand{\problem}[1]{\problemline{#1}} % soul
+\setcounter{secnumdepth}{-1}
+
+
+\begin{document}
+	
+	\title{Manuscript 62524R1 --- Response to Reviewers}
+	\date{}
+	\maketitle
+	
+	\noindent To the Editorial Board of \emph{The American Naturalist},
+	
+	Thank you for the "contingent accept" decision regarding our manuscript, ``Demographic consequences of partner diversity and turnover in a multi-species ant-plant mutualism.'' We are grateful to Dr. Frederickson and the reviewers for their continued support and constructive feedback.
+	
+	In this final revision, we have addressed the remaining minor textual and figure concerns raised by Reviewer 3. Furthermore, we have performed a comprehensive overhaul of our data repository and analysis scripts to meet the high standards of reproducibility required by the journal, as outlined by the Data Editor. 
+	
+	Specifically, we have:
+	\begin{enumerate}
+		\item Consolidated all code and data into a single, streamlined repository.
+		\item Replaced absolute file paths with relative paths to ensure the code runs on any machine.
+		\item Improved the README file with detailed instructions, version requirements, and a roadmap for reproducing all figures and tables.
+		\item Refined Figure 5 and other graphical elements for better resolution and clarity.
+	\end{enumerate}
+	
+	Detailed responses to the specific comments follow below.
+	
+	\vspace{2em}
+	\hfill Sincerely,
+	\hfill The Authors
+	
+	\newpage
+	
+	% ======================================================= %
+	\section{Response to Reviewer 3}
+	
+	\comment{L460: A central question posed by the authors is how vital rates fluctuate across years... It could be helpful for later understanding portfolio effects if the authors explicitly compare the variance of year-specific ant effects on the host in the text of this section...}
+	\response{This is an excellent suggestion. We have added a comparison of the variance in year-specific effects across ant species in the Results section (see line \ref{ms-res:ant_year_correlations}).}
+	
+	\comment{I was very interested in the scenario in which dominant ant species did not competitively exclude the rest under which a sampling effect emerged... I think that it would improve the manuscript to briefly reference this scenario and the intuition behind why a sampling effect emerged...}
+	\response{We agree that this helps clarify the ecological conditions necessary for a sampling effect. We have added a discussion of this scenario and the underlying intuition in the Results (lines \ref{ms-res:sampling_effect}) and added a brief bridging sentence in the Discussion (line \ref{ms-sampling_effect2}) to highlight why the sampling effect was absent in our main model but present in this alternative scenario.}
+	
+	\comment{L95 and L97: Suggestions regarding 'opportunity cost' and 'relative fitness'.}
+	\response{We have adopted both suggestions. We changed ``missed opportunity cost'' to ``opportunity cost'' throughout the manuscript (lines \ref{ms-res:L95-1} and \ref{ms-res:L95-2}) and specified ``relative fitness'' where appropriate to ensure technical accuracy regarding fitness benefits (line \ref{ms-res:lL5-1}).}
+	
+	\comment{L297: It would be helpful to add underbrackets labeling the major components of equation 3.}
+	\response{}
+	
+	\comment{L413, 431 \& ,541: references to specific appendix sections remain missing throughout the manuscript.}
+	\response{We have corrected these  so the references work properly with the appendix.}
+	
+	\comment{L479: Figures 1, 2, and 5 have low resolution.}
+	\response{We have resolved these figure resolution issues (lines \ref{ms-fig:resolution1}, \ref{ms-fig:resolution2}, and \ref{ms-fig:resolution3}).}
+	
+	
+	\comment{Figure 4a: the color legend does not match the palette of the colors in the correlation plot.}
+	\response{We have corrected this error (line \ref{ms-fig:corrplot_colors}).}
+	
+	\comment{Figure 5: the margins of the figure's panels overlap, causing part of the panel label to be lost for each panel. Every panel of this figure is labeled with a b.}
+	\response{We have corrected the margin overlaps (line \ref{ms-fig:resolution3}).}
+	
+	% ======================================================= %
+	\section{Response to the Data Editor}
+	
+	\comment{Consolidate all materials into a single, self-contained archive... Use relative paths... Include all required files.}
+	\response{We have reorganized the code and data. All code and data are now in a single folder. We removed all `setwd()` calls and replaced absolute pathways with relative pathways. We have also eliminated the need for .Rds files and instead suggest that they be generated through the code in file 02\_cholla\_ant\_IPM\_vital\_rates.R.}
+	
+	\comment{Update the README to specify software versions, describe file roles, and map figures/tables to code.}
+	\response{The README has been extensively updated. It now includes:
+		\begin{itemize}
+			\item Software Version information
+			\item A clear ``Order of Operations'' for running scripts
+			\item Clear file and folder organization
+			\item A note about the script in which all manuscript figures are generated
+	\end{itemize}}
+	
+\end{document}

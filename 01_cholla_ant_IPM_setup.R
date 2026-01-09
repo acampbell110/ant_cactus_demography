@@ -7,7 +7,7 @@
 ## finally load in any other data files.
 ################################################################################
 ################################################################################
-## Load All Necessary Packages Here
+## Load All Necessary Packages Here ##############
 # stan models
 library(rstan)
 options(mc.cores = parallel::detectCores())
@@ -45,7 +45,7 @@ library(stats)
 setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
 #setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 
-## Create the necessary functions 
+## Create the necessary functions ###############
 # function for the volume of a cone
 volume <- function(h, w, p){
   (1/3)*pi*h*(((w + p)/2)/2)^2
@@ -62,10 +62,11 @@ Q.kurtosis<-function(q.05,q.25,q.75,q.95){
   return(((q.95-q.05)/(q.75-q.25))/KG - 1)
 }
 
-## import the data -- Cacti (main) 
-cactus <- read.csv("Data/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
+## import the data ##############
+cactus <- read.csv("Data/cholla_demography_20042024.csv", header = TRUE,stringsAsFactors=T)
 # str(cactus) ##<- problem: antcount is a factor
 
+## Fix Plot naming issues ##################
 ## re-assign the seedling plots ("HT1B1" etc) to transects 1-3
 levels(cactus$Plot)<-c(levels(cactus$Plot),"T4")
 cactus$Plot[cactus$Plot=="HT1B1"]<-"T1"
@@ -73,41 +74,12 @@ cactus$Plot[cactus$Plot=="HT2B3"]<-"T2"
 cactus$Plot[cactus$Plot=="HT3B1" | cactus$Plot=="HT3B2" | cactus$Plot=="HT3B3"]<-"T3"
 cactus$Plot[cactus$Plot=="HT4B1" | cactus$Plot=="HT4B2"]<-"T4"
 
-## Format data for easier use
+## Size fixes ################
 # Create volume columns that are log scaled
 cactus$logsize_t <- log(volume(cactus$Height_t,cactus$Width_t, cactus$Perp_t))
 cactus$logsize_t1 <- log(volume(cactus$Height_t1,cactus$Width_t1, cactus$Perp_t1))
 
-## Get the frequencies of ant species
-Ant_sp_t_levels <- levels(cactus$Ant_sp_t)
-# liom
-a <- subset(cactus, cactus$Ant_sp_t == "Liom" | cactus$Ant_sp_t == "LIOM" | cactus$Ant_sp_t == "liom" | cactus$Ant_sp_t == "L" | cactus$Ant_sp_t == "LIOM " |  cactus$Ant_sp_t == "liom ")
-nrow(a)
-# crem
-b <- subset(cactus, cactus$Ant_sp_t == "CREN" | cactus$Ant_sp_t == "LCREM" | cactus$Ant_sp_t == "crem" | cactus$Ant_sp_t == "Crem" | cactus$Ant_sp_t == "C" | cactus$Ant_sp_t == "CREM" | cactus$Ant_sp_t == "VCREM")
-nrow(b)
-# camp
-c <- subset(cactus, cactus$Ant_sp_t == "camp" | cactus$Ant_sp_t == "CAMP" | cactus$Ant_sp_t == "CAMP" | cactus$Ant_sp_t == "large black shiny" | cactus$Ant_sp_t == "LARGE BLACK SHINY" | cactus$Ant_sp_t == "drpoff" | cactus$Ant_sp_t == "dropoff")
-nrow(c)
-# honeypot
-d <- subset(cactus, cactus$Ant_sp_t ==  "HNEYPOT" | cactus$Ant_sp_t ==  "honeypot" | cactus$Ant_sp_t == "HONEYPOT")
-nrow(d)
-# phen
-e <- subset(cactus, cactus$Ant_sp_t == "phen" | cactus$Ant_sp_t == "PHEN" | cactus$Ant_sp_t == "aph" | cactus$Ant_sp_t == "unk (Aphaeno?)")
-nrow(e)
-# tetra
-h <- subset(cactus, cactus$Ant_sp_t == "tetra")
-nrow(h)
-# brachy
-j <- subset(cactus, cactus$Ant_sp_t == "brachy")
-nrow(j)
-# unknown
-k <- subset(cactus, cactus$Ant_sp_t == "unk" | cactus$Ant_sp_t == "lg unk" | cactus$Ant_sp_t == "UNK" | cactus$Ant_sp_t == "unk " | cactus$Ant_sp_t == "other" | cactus$Ant_sp_t == "SMALL RED-BROWN SPINDLY" | cactus$Ant_sp_t == "black shiny red thorax" | cactus$Ant_sp_t == "RED HEAD BLK BUTT" | cactus$Ant_sp_t == "shiny black red thorax" | cactus$Ant_sp_t == "shiny black, red thorax") 
-nrow(k)
-l <- subset(cactus,cactus$Ant_sp_t == "LFOR" | cactus$Ant_sp_t == "for" | cactus$Ant_sp_t == "FOR")
-nrow(l)
-
-## Cactus 2023 data cleaning ---- Ant Species
+## Ant Species Renaming #######################
 # Change ant counts to numeric (some random entries are different types of strings)
 cactus$Antcount_t <- as.numeric(as.character(cactus$Antcount_t))
 cactus$Antcount_t1 <- as.numeric(as.character(cactus$Antcount_t1))
@@ -121,11 +93,11 @@ Ant_sp_t_levels <- levels(cactus$Ant_sp_t)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
 ant_t_levels <- rep("other",times=length(Ant_sp_t_levels))
 # crem levels - elements
-ant_t_levels[c(5,8,9,10,11,22,45)] <- "crem"
+ant_t_levels[c(5,6,7,8,9,10,11,12,13,25,51)] <- "crem"
 # liom levels - elements
-ant_t_levels[c(19,25,26,27,28,29)] <- "liom"
+ant_t_levels[c(22,28,29,30,31,32)] <- "liom"
 # vacant - elements
-ant_t_levels[c(1,42,43,44)] <- "vacant"
+ant_t_levels[c(1,45,46,47,48,49,50)] <- "vacant"
 # create new variable merging levels as above
 cactus$ant_t <- factor(cactus$Ant_sp_t,levels=Ant_sp_t_levels,labels=ant_t_levels)
 # there are still some other problems with this data: first, there are no ant data from 2007:
@@ -149,11 +121,11 @@ Ant_sp_t1_levels <- levels(cactus$Ant_sp_t1)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
 ant_t1_levels <- rep("other",times=length(Ant_sp_t1_levels))
 # crem levels
-ant_t1_levels[c(8,9,10,11,12,23,45)] <- "crem"
+ant_t1_levels[c(8,9,10,11,12,23,48)] <- "crem"
 # liom levels
 ant_t1_levels[c(26,27,28,29,30)] <- "liom"
 # vacant
-ant_t1_levels[c(1,43,44)] <- "vacant"
+ant_t1_levels[c(1,43,44,45,46,48)] <- "vacant"
 # create new variable merging levels as above
 cactus$ant_t1 <- factor(cactus$Ant_sp_t1,levels=Ant_sp_t1_levels,labels=ant_t1_levels)
 # check the spread of these ants
@@ -173,8 +145,9 @@ cactus$ant_t[cactus$Ant_sp_t==""]<-NA
 # Relevel so that vacancy is the reference level
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
+cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 
-## Cactus 2023 data cleaning ---- Flower Count Data
+## Flower Count Data Fixes ################
 # some of the data is not showing up as integers
 #str(cactus)
 cactus$Goodbuds_t1 <- as.integer(as.character(cactus$Goodbuds_t1))
@@ -208,13 +181,14 @@ for(i in 1:nrow(cactus)){
     cactus$TotFlowerbuds_t1[i] <- cactus$ABFlowerbuds_t1[i] + cactus$Goodbuds_t1[i]
   }
 }
+
+
 # Create a variable called Flower Yes No, that determines if there are flowers present
 cactus$flower_YN<-as.integer(cactus$TotFlowerbuds_t > 0)
 summary(cactus$flower_YN)
 # View(cactus)
-cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 
-## Cactus 2023 data cleaning ---- Recruitment
+## Recruitment ################
 # If the plant is a new plant or a recruit, make the survival status NA
 cactus$Survival_t1[cactus$Recruit == 1] <- NA
 cactus$Survival_t1[cactus$Newplant == 1] <- NA
@@ -230,7 +204,32 @@ hist(true_recruits$Height_t)
 cactus$Recruit<-ifelse(cactus$Recruit==1 & cactus$Height_t1>5,0,cactus$Recruit)
 hist(cactus$Height_t1[cactus$Recruit==1])
 
-## Export the data ---- Write a data file which has "cleaned" data with proper column headings
+## Transition Year Fixes ####################
+library(dplyr)
+# break up the 2019-2021 transition year into two incomplete transition years
+cactus %>% dplyr::filter(Year_t==2019) %>% dplyr::select(Year_t1)
+#create the 2019-2020 transition year
+##drop the rows added for 2021 recruits
+cactus_2019temp<-cactus[cactus$Year_t==2019 & cactus$Newplant==0,]
+cactus_2019temp$Year_t1<-2020
+cactus_2019temp[,c("logsize_t1","Survival_t1","ant_t1",
+                   "Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1",
+                   "flower_YN")]<-NA
+## create the 2020-2021 transition year
+cactus_2020temp_notnew<-cactus[cactus$Year_t1==2021 & cactus$Newplant==0,]
+cactus_2020temp_notnew$Year_t<-2020
+cactus_2020temp_notnew[,c("Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t",
+                          "logsize_t","ant_t","Antcount_t")]<-NA
+#note that 2021 survival is still here but we don't know whether mortality occurred in 2019 or 2020 transition year
+cactus_2020temp_new<-cactus[cactus$Year_t1==2021 & cactus$Newplant==1,]
+cactus_2020temp_new$Year_t<-2020
+## put them together
+cactus_2020temp<-rbind(cactus_2020temp_notnew,cactus_2020temp_new)
+## now drop the 2019-2021 transition year and add these two new transition years
+cactus <- rbind(cactus[cactus$Year_t!=2019,],cactus_2019temp,cactus_2020temp)
+
+
+## Export the data ######################
 #head(cactus) # some of the columns are not names properly
 # rename all columns
 colnames(cactus) <- c("Plot" ,            "TagID"     ,       "Transplant"   ,    "Year_t" ,         
@@ -251,93 +250,12 @@ cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t",
                       "TotFlowerbuds_t1","ABFlowerbuds_t1","Antcount_t1",
                       "flower_YN","Newplant","Damage","NP_adult","NP_juv","CV","WVL","MA")]
 
-## break up the 2019-2021 transition year into two incomplete transition years
-cactus %>% filter(Year_t==2019) %>% select(Year_t1)
-#create the 2019-2020 transition year
-##drop the rows added for 2021 recruits
-cactus_2019temp<-cactus[cactus$Year_t==2019 & cactus$Newplant==0,]
-cactus_2019temp$Year_t1<-2020
-cactus_2019temp[,c("logsize_t1","Survival_t1","ant_t1",
-                   "Goodbuds_t1","TotFlowerbuds_t1","ABFlowerbuds_t1",
-                   "flower_YN")]<-NA
-## create the 2020-2021 transition year
-cactus_2020temp_notnew<-cactus[cactus$Year_t1==2021 & cactus$Newplant==0,]
-cactus_2020temp_notnew$Year_t<-2020
-cactus_2020temp_notnew[,c("Goodbuds_t","TotFlowerbuds_t","ABFlowerbuds_t",
-                   "logsize_t","ant_t","Antcount_t")]<-NA
-#note that 2021 survival is still here but we don't know whether mortality occurred in 2019 or 2020 transition year
-cactus_2020temp_new<-cactus[cactus$Year_t1==2021 & cactus$Newplant==1,]
-cactus_2020temp_new$Year_t<-2020
-## put them together
-cactus_2020temp<-rbind(cactus_2020temp_notnew,cactus_2020temp_new)
-## now drop the 2019-2021 transition year and add these two new transition years
-cactus_final <- rbind(cactus[cactus$Year_t!=2019,],cactus_2019temp,cactus_2020temp)
 
 
 # Export cactus to a csv
-write.csv(cactus_final, "Data/cholla_demography_20042023_cleaned.csv")
+write.csv(cactus, "Data/cholla_demography_20042024_cleaned.csv")
 
 
 
-## Further analyses ----
-# How many plants do we survey annually (on average)
-yr <- vector()
-for(i in 1:length(unique(cactus$Year_t))){
-  yr[i] <- nrow(subset(cactus, cactus$Year_t == 2003+i))
-}
-yr
-mean(yr[1:17])
 
 
-## Get numbers on years of data nd number of individual plants
-# create a combined variable of plot and ID and check for unique combos
-cactus$plot_ID <- paste(cactus$Plot, cactus$TagID)
-length(unique(cactus$plot_ID))
-# get the number of years
-length(unique(cactus$Year_t1))
-# get the number of complete transition years
-cactus %>% filter(Year_t1 == Year_t +1) %>% group_by(Year_t1) %>% summarise(n())
-## get total number of transition-year observations, excluding the last, incomplete transition
-cactus %>% filter(Year_t!=2023) %>% summarise(n())
-
-
-
-## Get the proportions of each species
-# how many ant observations are there
-cac <- subset(cactus, cactus$ant_t != "vacant")
-nrow(cac)
-liom_prop <- nrow(a)/nrow(cac)
-crem_prop <- nrow(b)/nrow(cac)
-camp_prop <- nrow(c)/nrow(cac)
-honey_prop <- nrow(d)/nrow(cac)
-phen_prop <- nrow(e)/nrow(cac)
-tetra_prop <- nrow(h)/nrow(cac)
-brach_prop <- nrow(j)/nrow(cac)
-unk_prop <- nrow(k)/nrow(cac)
-for_prop <- nrow(l)/nrow(cac)
-other_prop <- sum(camp_prop,honey_prop,phen_prop,tetra_prop,brach_prop,unk_prop,for_prop)
-
-## calculate the proportion of plants which have experienced at least one ant transition in their lives
-total <- nrow(cactus)
-partial <- nrow(subset(cactus, cactus$ant_t != cactus$ant_t1))
-partial/total
-cactus$antsum <- NA
-for(i in 1:nrow(cactus)){
-  ifelse(cactus$ant_t1[i] == "vacant",cactus$antsum[i] <- 0, cactus$antsum[i] <- 1)
-}
-  cactus %>% 
-  group_by(Plot) %>%
-  group_by(TagID) %>%
-    summarise(ants <- sum(antsum,na.rm=T)) -> sum_data
-nrow(subset(sum_data, sum_data$`ants <- sum(antsum, na.rm = T)`>1))/nrow(sum_data)
-
-# Count the number of plants per plot per year
-plant_counts <- cactus %>%
-  group_by(Plot, Year_t1) %>%
-  summarise(PlantCount = n(), .groups = "drop")
-summary_stats <- plant_counts %>%
-  group_by(Plot) %>%
-  summarise(
-    mean = mean(PlantCount),
-    sd = sd(PlantCount)
-  )

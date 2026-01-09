@@ -9,8 +9,7 @@
 ## Pull in data and set necessary parameters
 ################################################################################
 ## Source the IPM vital rates code 
-#setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-# source("02_cholla_ant_IPM_vital_rates.R")
+source("02_cholla_ant_IPM_vital_rates.R")
 ## Set conditions for the IPM 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
@@ -29,52 +28,30 @@ set.seed(333) # picked random number
 N_draws <- 100
 draws <- sample(3500,N_draws, replace=F)
 years <- unique(cactus$Year_t)
-## -------- read in MCMC output ---------------------- ##
-## Choose your pathway to pull from 
-#Ali
-# mcmc_dir <- "/Users/alicampbell/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
-mcmc_dir <- "/Users/alicampbell/Library/CloudStorage/GoogleDrive-amc49@rice.edu/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
-mcmc_dir <- "/Users/alicampbell/Library/CloudStorage/GoogleDrive-amc49@rice.edu/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
-#Tom
-# mcmc_dir <- "G:/Shared drives/Miller Lab/Sevilleta/Cholla/Model Outputs/"
 
-#Lab
-# mcmc_dir <- "/Users/Labuser/Dropbox/Ali and Tom -- cactus-ant mutualism project/Model Outputs/"
-## These files contain all draws from the posterior distributions of all parameters
+## -------- read in MCMC output ---------------------- ##
 # growth model
-# mcmc_dir <- "/Users/Labuser/Desktop/Model_Reads/"
-fit_grow_skew<-readRDS(paste0(mcmc_dir,"fit_grow_skew.rds"))
-grow.params <- rstan::extract(fit_grow_skew);rm(fit_grow_skew)
+grow.params <- rstan::extract(fit_grow_skew);
 # survival model
-fit_surv<-readRDS(paste0(mcmc_dir,"fit_surv.rds"))
-surv.params <- rstan::extract(fit_surv);rm(fit_surv)
+surv.params <- rstan::extract(fit_surv);
 # flowers produced model
-fit_flow<-readRDS(paste0(mcmc_dir,"fit_flow.rds"))
-flow.params <- rstan::extract(fit_flow);rm(fit_flow)
+flow.params <- rstan::extract(fit_flow);
 # viability of flowers model
-fit_viab<-readRDS(paste0(mcmc_dir,"fit_viab.rds"))
-viab.params <- rstan::extract(fit_viab);rm(fit_viab)
+viab.params <- rstan::extract(fit_viab);
 # reproducing model
-fit_repro<-readRDS(paste0(mcmc_dir,"fit_repro.rds"))
-repro.params <- rstan::extract(fit_repro);rm(fit_repro)
+repro.params <- rstan::extract(fit_repro);
 # seeds per flower model
-fit_seed<-readRDS(paste0(mcmc_dir,"fit_seed.rds"))
-seed.params <- rstan::extract(fit_seed);rm(fit_seed)
+seed.params <- rstan::extract(fit_seed);
 # pre census seed survival model
-fit_seed_surv<-readRDS(paste0(mcmc_dir,"fit_seed_surv.rds"))
-pre.seed.params <- rstan::extract(fit_seed_surv);rm(fit_seed_surv)
+pre.seed.params <- rstan::extract(fit_seed_surv);
 # germination  model
-fit_germ<-readRDS(paste0(mcmc_dir,"fit_germ.rds"))
-germ.params <- rstan::extract(fit_germ);rm(fit_germ)
+germ.params <- rstan::extract(fit_germ);
 # recruit size distribution model
-fit_rec<-readRDS(paste0(mcmc_dir,"fit_rec.rds"))
-rec.params <- rstan::extract(fit_rec);rm(fit_rec)
+rec.params <- rstan::extract(fit_rec);
 # Fruit survival model
-fit_fruit<-readRDS(paste0(mcmc_dir,"fit_fruit.rds"))
-fruit.params <- rstan::extract(fit_fruit);rm(fit_fruit)
+fruit.params <- rstan::extract(fit_fruit);
 # ant transitions model
-fit_multi<-readRDS(paste0(mcmc_dir,"fit_multi.rds"))
-multi.params <- rstan::extract(fit_multi);rm(fit_multi)
+multi.params <- rstan::extract(fit_multi);
 
 ## 'params' is a matrix where rows are vital rate coefficients and columns are posterior draws
 # below, we will loop over columns, sending each set of coefficients into the IPM
@@ -121,6 +98,7 @@ params$surv_beta12<-surv.params$beta1[draws,2]				##surv slope
 params$flow_phi<-flow.params$phi[draws]   	      ## flow phi
 params$flow_beta0<-flow.params$beta0[draws]          ## flow intercept
 params$flow_beta1<-flow.params$beta1[draws]          ## flow slopes
+
 ##-----------------------Reproductive State Parameters-----------------## 
 params$repro_beta0<-repro.params$beta0[draws]      ## repro intercept
 params$repro_beta1<-repro.params$beta1[draws]      ## repro slope
@@ -134,6 +112,7 @@ params$viab_beta03<-viab.params$beta0[draws,3]     	  ## viab intercept
 params$viab_beta01<-viab.params$beta0[draws,1]     	  ## viab intercept
 # Ant 2 (liom)
 params$viab_beta02<-viab.params$beta0[draws,2]     	  ## viab intercept
+
 ##-----------------------Seeds Prod Parameters-----------------## 
 # Ant 1 (Crem)
 params$seed_beta01<-seed.params$beta0[draws,1]      ## seed intercept 
@@ -317,7 +296,7 @@ flow_rfx <- cbind(flow.params$w[draws,1],flow.params$w[draws,2],flow.params$w[dr
 dim(grow_rfx);dim(surv_rfx);dim(viab_rfx);dim(repro_rfx);dim(flow_rfx)
 
 ## remove all the big lists
-rm(multi.params);rm(viab.params);rm(surv.params);rm(repro.params);rm(grow.params);rm(flow.params)
+# rm(multi.params);rm(viab.params);rm(surv.params);rm(repro.params);rm(grow.params);rm(flow.params)
 
 ################################################################################
 ## Growth from size x to y.                                             
@@ -350,25 +329,7 @@ gxy<-function(x,y,i,params,grow_rfx1,grow_rfx2,grow_rfx3,grow_rfx4){
   if(i == "other"){ return(g_other)}
   if(i == "vacant"){ return(g_vac)}
 }
-# 
-# # ##Check that it works properly
-# i = c("vacant","crem","liom","other")
-# x = c(-1,-5,3,4)
-# y = c(-1,-4,3,4)
-# g <- matrix(NA,ncol = length(i), nrow = 10)
-# l <- list()
-# 
-# for(a in 1:10){ ## year
-# for(m in 1:10){ ## iteration
-#   for(n in seq(1:length(i))){ ## input info
-#     xb=pmin(pmax(x,cholla_min),cholla_max) #Transforms all values below/above limits in min/max size (So the params are the minimums and maximums of size?)
-#     g[m,n] <- gxy(x[n],y[n],i[n],params[m,],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-#     }
-# }
-#   l[[a]] <- g
-# }
-# g
-# l
+
 
 ################################################################################
 ## Survival at size x
@@ -393,23 +354,8 @@ sx<-function(x,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4){
   if(i == "vacant"){ return(s_vac)}
 }
 
-# # ##Check that it works properly
-# i = c("liom","vacant","crem","other")
-# x = c(-1,2,4,3)
-# s <- matrix(NA,ncol = length(i), nrow = 10)
-# l <- list()
-# for(a in 1:10){ ## year
-#   for(m in 1:10){ ## iteration
-#     for(n in seq(1:length(i))){ ## input info
-#       s[m,n] <- sx(x[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a])
-# 
-#     }
-#   }
-#   l[[a]] <- s
-# }
-# 
-# s
-# l
+
+
 ################################################################################
 ## Survival and Growth Kernel
 ################################################################################
@@ -421,23 +367,7 @@ pxy<-function(x,y,i,params,surv_rfx1,surv_rfx2,surv_rfx3,surv_rfx4,grow_rfx1,gro
   return(px)
 }
 
-# ##Check that it works properly
-# i = c("liom","vacant","crem","other")
-# x = c(-1,-5,4,3)
-# y = c(-1,-4,4,3)
-# px <- matrix(NA,ncol = length(i), nrow = (10))
-# l <- list()
-# for(a in 1:5){ ## year
-# for(m in 1:10){ ## iteration
-#   for(n in 1:length(i)){ ## input info
-#     px[m,n] <- pxy(x[n],y[n],i[n],params[m,],surv_rfx1[m,a],surv_rfx2[m,a],surv_rfx3[m,a],surv_rfx4[m,a],grow_rfx1[m,a],grow_rfx2[m,a],grow_rfx3[m,a],grow_rfx4[m,a])
-#     }
-# }
-#   l[[a]] <- px
-# }
-# 
-# px
-# l
+
 
 ################################################################################
 ## Fecundity 
@@ -468,19 +398,9 @@ fx<-function(x,i,params,flow_rfx,repro_rfx,viab_rfx1,viab_rfx2,viab_rfx3,viab_rf
   if(i == "other"){ return(f_other)}
   if(i == "vacant"){ return(f_vac)}
 }
-# i <- c("crem","other","liom","vacant")
-# f <- matrix(NA, nrow = 10, ncol = length(i))
-# for(a in 1:17){ ## year
-#   for(m in 1:10){ ## iteration
-#     for(n in 1:length(i)){ ## input info
-#       f[m,n] <- fx(x[n],i[n],params[m,],flow_rfx[m,a],repro_rfx[m,a],viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])
-#     }
-#   }
-#     l[[a]] <- f
-# }
-# 
-# f
-# l
+
+
+
 
 ################################################################################
 ## Recruitment
@@ -490,17 +410,8 @@ recruits<-function(y,params){
   dnorm(yb, (params$rec_beta0),(params$rec_sig))
 }
 
-# # Check if it works
-# i = c("liom","vacant","crem","other")
-# x = c(-1,-5,4,3)
-# y = c(-1,-4,4.5,3.01)
-# r <- matrix(NA,ncol = length(i), nrow = (10))
-# for(m in 1:10){
-#   for(n in 1:length(i)){
-#     r[m,n] <- recruits(y[n],params[m,])
-#   }
-# }
-# r
+
+
 
 ################################################################################
 ## Proportion of ants by size - Competitive Exclusion
@@ -546,6 +457,8 @@ prop.ant <- function(x,scenario,ant_to){
   if(scenario == "othercremvac" & ant_to == "crem"){return(Lcx)}
   if(scenario == "othercremvac" & ant_to == "other"){return(Lox)}
 }
+
+
 ################################################################################
 ## Transition Functions
 ################################################################################
@@ -756,20 +669,8 @@ transition.1 <- function(x,i,j,params,scenario,simulation){
   } # end of sim = freq
 } # end of fnc
 
-# check that the function works ("liomvac","cremvac","othervac")
-# x <- c(1,1,1,1)
-# i <- c("vacant","other","vacant","other")
-# j <- c("other","other","vacant","vacant")
-# scenario <- "othervac"
-# simulation <- c("comp","equal","freq")
-# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
-# for(n in 1:3){ # each simulation
-#   for(m in 1:length(x)){ # each ant combo
-#     t.mat[n,m] <- transition.1(x[m],i[m],j[m],params = params[1,],scenario,simulation[n])
-#   }
-# }
-# t.mat
-# rowSums(t.mat)
+
+
 transition.2 <- function(x,i,j,params,scenario,simulation){
   xb=pmin(pmax(x,cholla_min),cholla_max)
   if(simulation == "comp"){
@@ -1460,19 +1361,7 @@ transition.2 <- function(x,i,j,params,scenario,simulation){
   } # end of sim = equal
 } # end of fnc
 
-# # check that the function works ("liomvacother","liomcremvac","othercremvac")
-# x <- c(1,1,1,1,1,1,1,1,1)
-# i <- c("vacant","other","crem","vacant","other","crem","vacant","other","crem")
-# j <- c("other","other","other","vacant","vacant","vacant","crem","crem","crem")
-# scenario <- "othercremvac"
-# simulation <- c("comp","equal","freq")
-# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
-# for(n in 1:3){ # each simulation
-#   for(m in 1:length(x)){ # each ant combo
-#     t.mat[n,m] <- transition.2(x[m],i[m],j[m],params = params[10,],scenario,simulation[n])
-#   }
-# }
-# t.mat
+
 
 
 transition.3 <- function(x,i,j,params,scenario,simulation){
@@ -1722,19 +1611,7 @@ transition.3 <- function(x,i,j,params,scenario,simulation){
     if(i == "vacant" & j == "vacant"){return(vac_vac)}
   } # end of sim = equal
 } # end of fnc
-# # check that this works
-# x <- c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
-# i <- c("vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem")
-# j <- c("liom","liom","liom","liom","vacant","vacant","vacant","vacant","other","other","other","other","crem","crem","crem","crem")
-# scenario <- "all"
-# simulation <- c("comp","equal","freq")
-# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
-# for(n in 1:3){ # each simulation
-#   for(m in 1:length(x)){ # each ant combo
-#     t.mat[n,m] <- transition.3(x[m],i[m],j[m],params = params[10,],scenario,simulation[n])
-#   }
-# }
-# t.mat
+
 
 
 #PROBABILITY OF BEING TENDED BY ANT J BASED ON PREVIOUS VOLUME AND ANT STATE
@@ -1751,19 +1628,7 @@ transition.x <- function(x,i,j,params,scenario,simulation){
   if(scenario == "all"){return(three)}
 }
 
-# # check that this works
-# x <- c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
-# i <- c("vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem","vacant","liom","other","crem")
-# j <- c("liom","liom","liom","liom","vacant","vacant","vacant","vacant","other","other","other","other","crem","crem","crem","crem")
-# scenario <- "all"
-# simulation <- c("comp","equal","freq")
-# t.mat <- matrix(NA, ncol = length(x), nrow = 3) #each row is a different simulation, each column is a different ant combo
-# for(n in 1:3){ # each simulation
-#   for(m in 1:length(x)){ # each ant combo
-#     t.mat[n,m] <- transition.x(x[m],i[m],j[m],params = params[10,],scenario,simulation[n])
-#   }
-# }
-# t.mat
+
 
 ################################################################################
 ## Vacancy Matrix Construction
@@ -1813,27 +1678,9 @@ bigmatrix.1 <- function(params,lower,upper,floor,ceiling,matsize,
   # 
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, y=y, evict=evict, p=p))
 }
-# x <- c(1,1)
-#  lam <- matrix(rep(NA,120), nrow = 10)
-#  growmat<-c()
-#  l <- list()
-#  for(a in 1:12){ # each column is a year 
-#     for(m in 1:10){ # each row is an iteration
-#         lam[m,a] <- lambda(bigmatrix.1(params=params[m,],
-#                          lower=lower,
-#                          upper=upper,
-#                          floor=25,
-#                          ceiling=4,
-#                          matsize=100,
-#                          grow_rfx1[m,a],grow_rfx2[m,a],
-#                          grow_rfx3[m,a],grow_rfx4[m,a],
-#                          surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
-#                          flow_rfx[m,a],repro_rfx[m,a],
-#                          viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a],x = y)$IPMmat)
-#     }
-#  }
-# lam # each row is different iteration and each column is a year
-# l
+
+
+
 ################################################################################
 ## One Ant and Vacant Matrix Construction
 ################################################################################
@@ -1972,35 +1819,6 @@ bigmatrix.2 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_o = evict_o, p_o = p_o, evict_v = evict_v, p_v = p_v,y = y))
   }
 }
-
-# 
-# x <- c(1,1)
-# scenario = c("othervac","liomvac","cremvac")
-# lam <- matrix(rep(NA,length(scenario)), nrow = 1)
-# growmat<-c()
-# l <- list()
-# for(i in 1:length(scenario)){
-#   for(a in 1:2){
-#     for(m in 1:1){ ## years
-# lam[m,a] <- lambda(bigmatrix.2(params=params[m,],
-#                              lower=lower,
-#                              upper=upper,
-#                              scenario = scenario[i],
-#                              floor=25,
-#                              ceiling=4,
-#                              matsize=500,
-#                                    grow_rfx1[m,a],grow_rfx2[m,a],
-#                                    grow_rfx3[m,a],grow_rfx4[m,a],
-#                                    surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
-#                                    flow_rfx[m,a],repro_rfx[m,a],
-#                                    viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a],simulation = "comp")$IPMmat)
-#     }
-#   }
-#   l[[i]] <- lam[m,a]
-# }
-# lam # each row is different iteration and each column is a year
-# l
-
 
 
 
@@ -2193,32 +2011,7 @@ bigmatrix.3 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
     return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o,y = y))
   }
 }
-# x <- c(1,1)
-# scenario = c("othercremvac","liomvacother","liomcremvac")
-# lam <- matrix(rep(NA,120), nrow = 10)
-# growmat<-c()
-# l <- list()
-# for(i in 1:length(scenario)){
-#   for(a in 1:2){
-#     for(m in 1:3){ ## years
-#       lam[m,a] <- lambda(bigmatrix.3(params=params[m,],
-#                                      lower=lower,
-#                                      upper=upper,
-#                                      scenario = scenario[i],
-#                                      floor=25,
-#                                      ceiling=4,
-#                                      matsize=500,
-#                                      grow_rfx1[m,a],grow_rfx2[m,a],
-#                                      grow_rfx3[m,a],grow_rfx4[m,a],
-#                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
-#                                      flow_rfx[m,a],repro_rfx[m,a],
-#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a],simulation = "comp")$IPMmat)
-#     }
-#   }
-#   l[[i]] <- lam[m,a]
-# }
-# lam # each row is different iteration and each column is a year
-# l
+
 
 
 
@@ -2322,32 +2115,8 @@ bigmatrix.4 <- function(params,scenario,lower,upper,floor,ceiling,matsize,
   return(list(IPMmat = IPMmat, Tmat = Tmat, Fmat = Fmat, evict_c = evict_c, p_c = p_c, evict_v = evict_v, p_v = p_v, p_o = p_o, evict_o = evict_o, p_l = p_l, evict_l = evict_l, y = y))
 }
 
-# x <- c(1,1)
-# lam <- matrix(rep(NA,120), nrow = 10)
-# scenario = c("all")
-# growmat<-c()
-# l <- list()
-# for(i in 1:length(scenario)){
-#   for(a in 1:2){
-#     for(m in 1:2){ ## years
-#       lam[m,a] <- lambda(bigmatrix.4(params=params[m,],
-#                                      lower=lower,
-#                                      upper=upper,
-#                                      scenario = scenario[i],
-#                                      floor=25,
-#                                      ceiling=4,
-#                                      matsize=500,
-#                                      grow_rfx1[m,a],grow_rfx2[m,a],
-#                                      grow_rfx3[m,a],grow_rfx4[m,a],
-#                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
-#                                      flow_rfx[m,a],repro_rfx[m,a],
-#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-#     }
-#   }
-#   l[[i]] <- lam[m,a]
-# }
-# lam # each row is different iteration and each column is a year
-# l
+
+
 
 ################################################################################
 ## Choose Which Matrix Based on Diversity Scenario
@@ -2432,31 +2201,8 @@ bigmatrix<-function(params,scenario,lower,upper,floor,ceiling,matsize,
     return(list)
   }
 }
-# lam <- matrix(rep(NA,2), nrow = 1)
-# scenario = c("none","cremvac","othercremvac")
-# growmat<-c()
-# l <- list()
-# for(i in 1:length(scenario)){
-#   for(a in 1:1){
-#     for(m in 1:1){
-#       lam[m,a] <- lambda(bigmatrix(params=params[m,],
-#                                      lower=lower,
-#                                      upper=upper,
-#                                      scenario = scenario[i],
-#                                      floor=25,
-#                                      ceiling=4,
-#                                      matsize=500,
-#                                      grow_rfx1[m,a],grow_rfx2[m,a],
-#                                      grow_rfx3[m,a],grow_rfx4[m,a],
-#                                      surv_rfx1=0,surv_rfx2=0,surv_rfx3=0,surv_rfx4=0,
-#                                      flow_rfx[m,a],repro_rfx[m,a],
-#                                      viab_rfx1[m,a],viab_rfx2[m,a],viab_rfx3[m,a],viab_rfx4[m,a])$IPMmat)
-#     }
-#   }
-#   l[[i]] <- lam[m,a]
-# }
-# lam # each row is different iteration and each column is a year
-# l
+
+
 
 
 ################################################################################
@@ -2523,14 +2269,4 @@ lambdaSim=function(params,                                  ## parameters
   lambdaS<-exp(mean(rtracker))
   return(lambdaS)
 }
-# lambdaSim(params = params[1,],scenario = "none",upper = upper, lower = lower, floor = floor, ceiling = ceiling, matsize = matsize,
-#           grow_rfx1=colMeans(grow_rfx1),grow_rfx2=colMeans(grow_rfx2),
-#           grow_rfx3=colMeans(grow_rfx3),grow_rfx4=colMeans(grow_rfx4),
-#           surv_rfx1=colMeans(surv_rfx1),surv_rfx2=colMeans(surv_rfx2),
-#           surv_rfx3=colMeans(surv_rfx3),surv_rfx4=colMeans(surv_rfx4),
-#           flow_rfx=colMeans(flow_rfx),
-#           repro_rfx= colMeans(repro_rfx),
-#           viab_rfx1=colMeans(viab_rfx1),viab_rfx2=colMeans(viab_rfx2),
-#           viab_rfx3=colMeans(viab_rfx3),viab_rfx4=colMeans(viab_rfx4),## viability model year rfx
-#           max_yrs = 100   )
 

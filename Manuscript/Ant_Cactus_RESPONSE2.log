@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  9 JAN 2026 13:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  9 JAN 2026 14:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**Ant_Cactus_RESPONSE.tex
-(./Ant_Cactus_RESPONSE.tex
+**Ant_Cactus_RESPONSE2.tex
+(./Ant_Cactus_RESPONSE2.tex
 LaTeX2e <2022-11-01> patch level 1
 L3 programming layer <2023-02-22>
 (/usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
@@ -573,32 +573,32 @@ File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count299
 \l__pdf_internal_box=\box65
 )
-(./Ant_Cactus_RESPONSE.aux)
-\openout1 = `Ant_Cactus_RESPONSE.aux'.
+(./Ant_Cactus_RESPONSE2.aux)
+\openout1 = `Ant_Cactus_RESPONSE2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 58.
-LaTeX Font Info:    ... okay on input line 58.
-Package hyperref Info: Link coloring OFF on input line 58.
- (./Ant_Cactus_RESPONSE.out)
-(./Ant_Cactus_RESPONSE.out)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 59.
+LaTeX Font Info:    ... okay on input line 59.
+Package hyperref Info: Link coloring OFF on input line 59.
+ (./Ant_Cactus_RESPONSE2.out)
+(./Ant_Cactus_RESPONSE2.out)
 \@outlinefile=\write4
-\openout4 = `Ant_Cactus_RESPONSE.out'.
+\openout4 = `Ant_Cactus_RESPONSE2.out'.
 
 
 (/usr/local/texlive/2023/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -635,7 +635,7 @@ e
 Package todonotes Warning: The length marginparwidth is less than 2cm and will 
 most likely cause issues with the appearance of inserted todonotes. The issue c
 an be solved by adding a line like \setlength {\marginparwidth }{2cm} prior to 
-loading the todonotes package. on input line 58.
+loading the todonotes package. on input line 59.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <14.4> on input line 64.
@@ -647,222 +647,70 @@ LaTeX Warning: No \author given.
 [1
 
 {/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 91--93
 
- []
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 101.
+Package hyperref Warning: Suppressing link with empty target on input line 91.
 
 
-
-Package hyperref Warning: Suppressing link with empty target on input line 101.
-
+Package hyperref Warning: Suppressing link with empty target on input line 94.
 
 
-Package hyperref Warning: Suppressing link with empty target on input line 101.
+Package hyperref Warning: Suppressing link with empty target on input line 94.
 
 
-
-Package hyperref Warning: Suppressing link with empty target on input line 108.
-
+LaTeX Warning: Reference `ms-res:L95-1' on page 2 undefined on input line 97.
 
 
-Package hyperref Warning: Suppressing link with empty target on input line 108.
+Package hyperref Warning: Suppressing link with empty target on input line 97.
 
 
-
-Package hyperref Warning: Suppressing link with empty target on input line 108.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 108.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 108.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 108.
-
+Package hyperref Warning: Suppressing link with empty target on input line 97.
 
 [2]
 
-Package hyperref Warning: Suppressing link with empty target on input line 114.
+Package hyperref Warning: Suppressing link with empty target on input line 106.
 
 
 
-Package hyperref Warning: Suppressing link with empty target on input line 114.
+Package hyperref Warning: Suppressing link with empty target on input line 106.
 
 
 
-Package hyperref Warning: Suppressing link with empty target on input line 114.
+Package hyperref Warning: Suppressing link with empty target on input line 106.
 
 
 
-Package hyperref Warning: Suppressing link with empty target on input line 117.
+Package hyperref Warning: Suppressing link with empty target on input line 110.
 
 
-[3]
 
-Package hyperref Warning: Suppressing link with empty target on input line 129.
+Package hyperref Warning: Suppressing link with empty target on input line 113.
 
 
-
-Package hyperref Warning: Suppressing link with empty target on input line 129.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 129.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 129.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 147.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 147.
-
-
-[4]
-
-Package hyperref Warning: Suppressing link with empty target on input line 165.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 165.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 165.
-
-
-[5] [6]
-
-Package hyperref Warning: Suppressing link with empty target on input line 186.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 189.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 197.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 202.
-
-
-[7]
-Underfull \hbox (badness 10000) in paragraph at lines 213--215
-
- []
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 225.
-
-
-
-LaTeX Warning: Reference `ms-res:portfolio' on page 8 undefined on input line 2
-25.
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 225.
-
-
-
-Package hyperref Warning: Suppressing empty link on input line 225.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 221--226
-
- []
-
-[8]
-
-Package hyperref Warning: Suppressing link with empty target on input line 231.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 231.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 243.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 243.
-
-
-[9]
-
-Package hyperref Warning: Suppressing link with empty target on input line 261.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 261.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 261.
-
-
-[10]
-
-Package hyperref Warning: Suppressing link with empty target on input line 264.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 273.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 276.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 282.
-
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 287.
-
-
-[11]
-
-Package hyperref Warning: Suppressing link with empty target on input line 298.
-
-
-[12] (./Ant_Cactus_RESPONSE.aux)
+[3{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
+}] (./Ant_Cactus_RESPONSE2.aux)
 
 LaTeX Warning: There were undefined references.
 
-Package rerunfilecheck Info: File `Ant_Cactus_RESPONSE.out' has not changed.
-(rerunfilecheck)             Checksum: EB99349D0E6A0C578E63C0CD3A74FD2E;570.
+Package rerunfilecheck Info: File `Ant_Cactus_RESPONSE2.out' has not changed.
+(rerunfilecheck)             Checksum: D47FC6C0A1DF326BBDDA7FF43D1E9F4F;354.
  ) 
 Here is how much of TeX's memory you used:
- 20094 strings out of 476025
- 382816 string characters out of 5790017
- 1862388 words of memory out of 5000000
- 40165 multiletter control sequences out of 15000+600000
- 515163 words of font info for 42 fonts, out of 8000000 for 9000
+ 20075 strings out of 476025
+ 382874 string characters out of 5790017
+ 1858388 words of memory out of 5000000
+ 40175 multiletter control sequences out of 15000+600000
+ 515500 words of font info for 43 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,6n,94p,1050b,432s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,6n,94p,1051b,430s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></u
-sr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on Ant_Cactus_RESPONSE.pdf (12 pages, 103731 bytes).
+sr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></us
+r/local/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb>
+Output written on Ant_Cactus_RESPONSE2.pdf (3 pages, 79145 bytes).
 PDF statistics:
- 146 PDF objects out of 1000 (max. 8388607)
- 122 compressed objects within 2 object streams
- 51 named destinations out of 1000 (max. 500000)
- 37 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 77 PDF objects out of 1000 (max. 8388607)
+ 61 compressed objects within 1 object stream
+ 20 named destinations out of 1000 (max. 500000)
+ 29 words of extra memory for PDF output out of 10000 (max. 10000000)
 

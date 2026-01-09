@@ -119,10 +119,6 @@ cactus %>%
   summarise(n=n()) %>%
   mutate(freq = n / sum(n)) -> ant_tally
 
-# ant_tally %>% 
-#   ggplot()+
-#   geom_col(aes(ant_t,freq,fill=ant_t))+facet_wrap("Year_t")
-
 
 ## find how many years until lambdaS stabilizes
 #these are the complete transition years that we want to sample from 2004:2023
