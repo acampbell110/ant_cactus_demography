@@ -46,7 +46,7 @@ All analyses were conducted in R (version 4.3.3)
 
 **04_cholla_ant_IPM_analysis** *(.R)* -- Runs the IPM under all conditions and saves the outputs as *(.csv)* files to the folder *Model Outputs*. *Note* this file is computationally intensive and takes about 30 hours to run.
 
-**05_cholla_ant_IPM_figures_tables** *(.R)* -- Create all visuals of model outputs for publications and related talks and saves them to the subfolder *Figures* in the folder *Manuscript*.
+**05_cholla_ant_IPM_figures_tables** *(.R)* -- Create all visuals of model outputs for publications and related talks and saves them to the subfolder *Figures* in the folder *Manuscript*. All figures included in the manuscript are generated in this code. 
 
 **06_cholla_ant_IPM_portfolio_sim** *(.R)* -- Runs the counterafactual simulations to show that portfolio effect is possible.
 
