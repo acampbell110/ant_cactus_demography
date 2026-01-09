@@ -28,6 +28,8 @@ In addition to these folders, there are a series of numbered R scripts (01-06) i
 
 ## Scripts
 
+These scripts are meant to be run in full and in order in order to generate all outputs considered and referenced in the paper. 
+
 All analyses were conducted in R (version 4.3.3)
 
 **01_cholla_ant_IPM_setup** *(.R)* -- Loads in all needed packages and data from the folder *Data* and cleans up the data so it is ready to be run through our models.
