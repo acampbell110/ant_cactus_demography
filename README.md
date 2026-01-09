@@ -28,13 +28,15 @@ In addition to these folders, there are a series of numbered R scripts (01-06) i
 
 ## Scripts
 
+All analyses were conducted in R (version 4.3.3)
+
 **01_cholla_ant_IPM_setup** *(.R)* -- Loads in all needed packages and data from the folder *Data* and cleans up the data so it is ready to be run through our models.
 
-**02_cholla_ant_IPM_vital_rates** *(.R)* -- Loads in the "cleaned" data, subset it properly, runs the data through the stan models.
+**02_cholla_ant_IPM_vital_rates** *(.R)* -- Loads in the "cleaned" data, subset it properly, runs the data through the stan models, and stores the parameter fits locally. *Note* this file is computationally intensive and takes about 6 hours to run.
 
 **03_cholla_ant_IPM_params_functions** *(.R)* -- Loads all model fits, loads the IPM functions, and loads any values which needed to run the IPM.
 
-**04_cholla_ant_IPM_analysis** *(.R)* -- Runs the IPM under all conditions and saves the outputs as *(.csv)* files to the folder *Model Outputs*.
+**04_cholla_ant_IPM_analysis** *(.R)* -- Runs the IPM under all conditions and saves the outputs as *(.csv)* files to the folder *Model Outputs*. *Note* this file is computationally intensive and takes about 30 hours to run.
 
 **05_cholla_ant_IPM_figures_tables** *(.R)* -- Create all visuals of model outputs for publications and related talks and saves them to the subfolder *Figures* in the folder *Manuscript*.
 
