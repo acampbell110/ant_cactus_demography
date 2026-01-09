@@ -29,6 +29,12 @@ In addition to these folders, there are a series of numbered R scripts (01-06) i
 ## Scripts
 
 These scripts are meant to be run in full and in order in order to generate all outputs considered and referenced in the paper. 
+The first script is needed to run any of the following as it imports the data and prepares it for use as well as loads any needed packages. 
+The second script runs the bayesian models and is therefore needed to run scripts three and on where the model outputs are used.
+The third script creates the functions for further analysis and organizes the model outputs to be useful for these analyses and therefore is needed in order to run the fourth script onwards.
+The fourth script runs the integral projection models under all desired conditions and therefore is needed to fun the fifth script in which the results figures are generated.
+The fifth script generates figures from the data subsets defined in script two, model outputs generated in script two organized in script three as well as the integral projection model outputs generated in script four. 
+The final (sixth script) is dependent on scripts 1-3 only and creates a counterfactual simulation to address a reviewer's comments. 
 
 All analyses were conducted in R (version 4.3.3)
 
