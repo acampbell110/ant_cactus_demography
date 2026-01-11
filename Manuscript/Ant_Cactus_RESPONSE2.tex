@@ -64,7 +64,7 @@ sort,		% orders multiple citations into the sequence in which they
 	
 	\noindent To the Editorial Board of \emph{The American Naturalist},
 	
-	Thank you for the "contingent accept" decision regarding our manuscript, ``Demographic consequences of partner diversity and turnover in a multi-species ant-plant mutualism.'' We are grateful to Dr. Frederickson and the reviewers for their continued support and constructive feedback.
+	Thank you for the``contingent accept'' decision regarding our manuscript, ``Demographic consequences of partner diversity and turnover in a multi-species ant-plant mutualism.'' We are grateful to Dr. Frederickson and the reviewers for their continued support and constructive feedback.
 	
 	In this final revision, we have addressed the remaining minor textual and figure concerns raised by Reviewer 3. Furthermore, we have performed a comprehensive overhaul of our data repository and analysis scripts to meet the high standards of reproducibility required by the journal, as outlined by the Data Editor. 
 	
@@ -88,7 +88,10 @@ sort,		% orders multiple citations into the sequence in which they
 	\section{Response to Reviewer 3}
 	
 	\comment{L460: A central question posed by the authors is how vital rates fluctuate across years... It could be helpful for later understanding portfolio effects if the authors explicitly compare the variance of year-specific ant effects on the host in the text of this section...}
-	\response{This is an excellent suggestion. We have added a comparison of the variance in year-specific effects across ant species in the Results section (see line \ref{ms-res:ant_year_correlations}).}
+	\response{This is a fascinating question! Unfortunately we are not well-equipped to answer it with our current analyses. For statistical efficiency, our models assume that all ant states share the same inter-annual variance (see Equations 4-7 and corresponding text). While we allow year effects to be ant-specific (which facilitated the portfolio effect analysis), the random deviates are assumed to come from the same distribution of inter-annual variability. The alternative -- ant-specific temporal variances -- would be very interesting to explore but also very data-hungry, pushing the limits of what we can learn from even this unusually large data set. Hence our decision to make a simplifying assumption that improves model efficiency by ``borrowing information'' across ant states to estimate an aggregate temporal variance. 
+	\\
+	\\
+	To clarify this issue for other readers, we now make this assumption more explicit in our presentation of the statistical models (see line \ref{ms-res:ant_year_correlations}).}
 	
 	\comment{I was very interested in the scenario in which dominant ant species did not competitively exclude the rest under which a sampling effect emerged... I think that it would improve the manuscript to briefly reference this scenario and the intuition behind why a sampling effect emerged...}
 	\response{We agree that this helps clarify the ecological conditions necessary for a sampling effect. We have added a discussion of this scenario and the underlying intuition in the Results (lines \ref{ms-res:sampling_effect}) and added a brief bridging sentence in the Discussion (line \ref{ms-sampling_effect2}) to highlight why the sampling effect was absent in our main model but present in this alternative scenario.}
@@ -116,7 +119,7 @@ sort,		% orders multiple citations into the sequence in which they
 	\section{Response to the Data Editor}
 	
 	\comment{Consolidate all materials into a single, self-contained archive... Use relative paths... Include all required files.}
-	\response{We have reorganized the code and data. All code and data are now in a single folder. We removed all `setwd()` calls and replaced absolute pathways with relative pathways. We have also eliminated the need for .Rds files and instead suggest that they be generated through the code in file 02\_cholla\_ant\_IPM\_vital\_rates.R.}
+	\response{We have reorganized the code and data. All code and data are now in a single directory. We removed all `setwd()` calls and replaced absolute pathways with relative pathways. We have also eliminated the need for .Rds files and instead suggest that all outputs be generated through the code in file 02\_cholla\_ant\_IPM\_vital\_rates.R.}
 	
 	\comment{Update the README to specify software versions, describe file roles, and map figures/tables to code.}
 	\response{The README has been extensively updated. It now includes:

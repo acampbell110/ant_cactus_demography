@@ -299,7 +299,7 @@ The skew-normal has three parameters corresponding to location ($\hat{G}$), shap
 \end{linenomath*}
 Here, the location parameter for the $i$th observation $\hat{G_i}$ is defined as a second-order polynomial with ant-size interactions because preliminary analysis found this was an improvement over a linear relationship.
 The location parameter of the skew-normal is not the mean, but the mean can be derived as $\hat{G} + \frac{\sigma\alpha}{\sqrt{1+\alpha^2}} \sqrt{\frac{2}{\pi}}$. 
-The year- and ant-specific random effect $u$ (which parameterizes the $\pmb{\tau}^G_{a}$ vectors) and plot-specific random effect $w$ are normally distributed with variances $\sigma^2_{year}$ and $\sigma^2_{plot}$, respectively. 
+\linelabel{res:ant_year_correlations} The year- and ant-specific random effect $u$ (which parameterizes the $\pmb{\tau}^G_{a}$ vectors) and plot-specific random effect $w$ are normally distributed with variances $\sigma^2_{year}$ and $\sigma^2_{plot}$, respectively \revise{(note that all ant states are assumed to share the same inter-annual variance $\sigma^2_{year}$, even as they are allowed to fluctuate independently)}. 
 Parameters $\sigma_i$ and $\alpha_i$  control residual variance and skewness, respectively, and were defined as linear functions of initial size $x_i$ ($\sigma_i$ is strictly positive and was modeled with a log link function). 
 Due to data constraints, we modeled growth variance and skewness as size-dependent but not dependent on ant occupancy state. 
 
@@ -444,10 +444,6 @@ Inter-annual fluctuations in demographic rates (estimated as statistical random 
 However, the degree of correlation depended on the vital rate and pair of ant partners. 
 Across vital rates, random effects for cactus growth were the most strongly correlated between ant states (mean pairwise correlation: 0.63) and random effects for survival were the least correlated (mean pairwise correlation: 0.36).  
 Certain partner pair / vital rate combinations were effectively independent in their yearly fluctuations (such as survival of \textit{C. opuntiae} and Other-tended plants; mean pairwise correlation: -0.0016) while others were almost completely synchronous (such as growth of Other and \textit{L. apiculatum}-tended plants; mean pairwise correlation: 0.93.
-\revise{The ant partner with the lowest overall variance between years across all vital rates was the category other. 
-This is likely due to different ant species which are grouped together responding contrastingly to interannual fluctuations, resulting in a lower fluctuation variance.
-On the other hand, the vacant cacti experienced the highest variance of performance across vital rates and interannual fluctuations, indicating that ant presence may be an important buffer.} \linelabel{res:ant_year_correlations}
-
 
 \begin{figure}[H]
 	\includegraphics[width=\textwidth]{Figures/corr_RFX.png}
@@ -500,18 +496,18 @@ While a hypothetical \textit{L. apiculatum}-only population had the highest mean
 Furthermore, the fitness of \textit{L. apiculatum}-only was consistent with all 2-partner scenarios ($Pr(\Delta\lambda_{S}>0)$ ranged from 0.37 to 0.83).
 However, as above, there was evidence for an opportunity cost of diversity wherein fitness of the three-partner scenario was lower than any of the 2-partner scenarios ($Pr(\Delta\lambda_{S}>0)>0.95$). 
 The lack of diversity benefits are not driven by the high overall frequency of \textit{L. apiculatum}. 
-
 \revise{Using simulations in which all ant species were artificially forced to be equally frequent (further explained in Appendix \ref{appendix:C}), we found the same fitness patterns as described above. \linelabel{res:appendixc}}
+
 We found no evidence that the portfolio effect generated positive effects of partner diversity, as effects of partner richness and composition were highly consistent between the baseline, non-synchronous model and the model version that synchronized all ant states (Figure \ref{fig:LambdaMeans}).
 The effect of all ant partners can be measured as $\lambda^{3}_{S} - \lambda^{0}_{S}$.
 We have high confidence that this contrast is positive and equally so for the synchronous and non-synchronous scenarios (Figure S\ref{fig:Portfolio}), indicating that the full suite of partners is similarly beneficial with and without the portfolio effect operating. 
 \revise{\linelabel{res:portfolio_results}In Appendix \ref{appendix:D}, we show that contributions from the portfolio effect were constrained by positively correlated fluctuations between ant states (Figure \ref{fig:Annual_Ant}). 
 In scenarios in which partner fluctuations were uncorrelated or, especially, negatively correlated, the non-synchronous model exhibited a stronger benefit of diversity than the synchronous model (Figure \ref{app:portfolio}), as expected under the portfolio effect hypothesis.}
 
-\revise{This absence of a sampling effect in our primary model likely stems from the strong competitive dominance and high frequency of \textit{L. apiculatum}, which restricts the realized niche of alternative partners. 
+\revise{This lack of evidence for a sampling effect likely stems from the strong competitive dominance and high frequency of \textit{L. apiculatum}, which restricts the population-level impacts of alternative partners. 
 To explore the conditions under which a sampling effect might emerge, we conducted an alternative simulation in which ant species did not competitively exclude one another (Appendix \ref{appendix:D}).
 In this counterfactual scenario, we found that a sampling effect can indeed emerge when partner transitions are governed by random colonization rather than competitive hierarchies. 
-This suggests that the benefits of partner diversity are highly sensitive to the rules of partner turnover; in systems like the cholla-ant mutualism, where a single high-quality partner is numerically and competitively dominant, the potential for diversity to increase fitness via sampling is ecologically constrained.} \linelabel{res:sampling_effect}
+This suggests that the benefits of partner diversity are highly sensitive to the rules of partner turnover; in systems like the cholla-ant mutualism, where a single high-quality partner is numerically and competitively dominant, the potential for diversity to increase fitness via sampling is constrained.} \linelabel{res:sampling_effect}
 
 \section*{Discussion}
 % mini abstract paragraph
@@ -534,9 +530,9 @@ Our results broaden the literature on multi-species mutualisms, a majority of wh
 For example, working in another sequentially-partnered ant protective mutualism of long-lived plants (\textit{Acacia drepanolobium}), Palmer et al. \citeyear{Palmer2010} showed that synergies between alternative partners elevate plant fitness above what could be expected from the single best partner. 
 However, the \textit{Acacia} partner guild includes a ``castrating'' parasite that is uniquely able to boost plant growth by suppressing reproduction. 
 We speculate that partners that differ in degree but not type, such as those in our system, may be less likely to synergize. 
-\revise{Furthermore, our simulations exploring the absence of competitive dominance (Appendix \ref{appendix:C}) suggest that the dynamics of the partner guild dictate which diversity mechanisms can manifest. 
-Specifically, a sampling effect emerged only when we removed the competitive hierarchy that otherwise allows \textit{L. apiculatum} to dominate the host population. 
-This provides evidence that when a high-quality partner is also high-frequency due to competitive exclusion, the benefit of adding more species is essentially nonexistent, as the host is already likely to be occupied by the best available partner.} \linelabel{sampling_effect2}
+\revise{Furthermore, our simulations exploring the absence of competitive dominance (Appendix \ref{appendix:C}) suggest that the turnover dynamics of the partner guild dictate which diversity mechanisms can manifest. 
+Specifically, a sampling effect emerged only when we removed the competitive hierarchy that biases transitions toward \textit{L. apiculatum}, allowing this species to dominate the cactus population. 
+This suggests that when a high-quality partner is also high-frequency due to competitive dominance, there may be little benefit of adding more species, as the host is already likely to be occupied by the best available partner.} \linelabel{sampling_effect2}
 Fewer studies have shown costs of mutualist diversity. 
 Bruna et al. \citeyear{Bruna2014} showed that ant diversity can depress fitness of the sequentially-partnered ant-plant \textit{Maieta guianensis} due to reduced interactions with the better defender. 
 Costs of diversity have also been documented in systems in which multiple partners interact simultaneously with a shared mutualist, likely due to interference via the host resource budget \citep{Keller2018} or negative higher-order interactions \citep{Barrett2015}. 
@@ -584,10 +580,10 @@ As studies accumulate across different types of multi-partner mutualisms, partic
 
 
 \section*{Acknowledgments}
-Financial support for this work came from the Sevilleta Long-Term Ecological Research Program (NSF DEB awards 1655499 and 1748133).
+Financial support for this work came from the Sevilleta Long-Term Ecological Research Program (NSF DEB awards 1655499, 1748133, and 2425290).
 We acknowledge the many students and technicians who have helped collect annual census data for this project, including M. Donald, J. Fowler, M. Saucedo, K. Dickens, T. Jordan-Millet, J. Moutouama, C. Oxley, K. Schraeder, B. Scherick, A. Sears, M. Tucker, and J. Xiong. 
 J. Moutouama, A. Bradley, B. Scherick, A. Gough, J. Martin, and V. Rudolf provided helpful feedback on the manuscript. 
-We also thank two reviewers for taking the time to provide thoughtful comments and suggestions on earlier versions of this manuscript.
+We also thank three reviewers for thoughtful comments and suggestions on earlier versions of this manuscript.
 
 
 %%%%%%%%%%%%%%%%%%%%%
