@@ -33,9 +33,9 @@ The second script runs the statistical models in Stan and is therefore needed to
 The third script creates the functions for further analysis and organizes the model outputs, and therefore is needed in order to run the fourth script onwards.
 The fourth script runs the integral projection models under all desired conditions and therefore is needed to fun the fifth script in which the results figures are generated.
 The fifth script generates figures from the data subsets defined in script two, model outputs generated in script two organized in script three as well as the integral projection model outputs generated in script four. 
-The final (sixth script) is dependent on scripts 1-3 only and creates a counterfactual simulation to address a reviewer's comments. 
+The sixth script is dependent on scripts 1-3 only and creates a counterfactual simulation to show that portfolio effect could be possible in a similar system if the ant partners were more different (asynchronous) from each other. 
 
-All analyses were conducted in R (version 4.3.3)
+All analyses were conducted in R (version 4.3.3) and STAN using the package rstan (version 2.32.5).
 
 **01_cholla_ant_IPM_setup** *(.R)* -- Loads in all needed packages and data from the folder *Data* and cleans up the data so it is ready to be run through our models.
 
