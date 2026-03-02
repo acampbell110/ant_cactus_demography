@@ -100,7 +100,7 @@ sort,		% orders multiple citations into the sequence in which they
 	\response{We have adopted both suggestions. We changed ``missed opportunity cost'' to ``opportunity cost'' throughout the manuscript (lines \ref{ms-res:L95-1} and \ref{ms-res:L95-2}) and specified ``relative fitness'' where appropriate to ensure technical accuracy regarding fitness benefits (line \ref{ms-res:lL5-1}).}
 	
 	\comment{L297: It would be helpful to add underbrackets labeling the major components of equation 3.}
-	\response{}
+	\response{We agree that this would improve the clarity of the equation for the readers and have added in underbrackets with descriptive labels for this equation (eqn 3).}
 	
 	\comment{L413, 431 \& ,541: references to specific appendix sections remain missing throughout the manuscript.}
 	\response{We have corrected these  so the references work properly with the appendix.}
@@ -116,18 +116,21 @@ sort,		% orders multiple citations into the sequence in which they
 	\response{We have corrected the margin overlaps (line \ref{ms-fig:resolution3}).}
 	
 	% ======================================================= %
-	\section{Response to the Data Editor}
-	
-	\comment{Consolidate all materials into a single, self-contained archive... Use relative paths... Include all required files.}
-	\response{We have reorganized the code and data. All code and data are now in a single directory. We removed all `setwd()` calls and replaced absolute pathways with relative pathways. We have also eliminated the need for .Rds files and instead suggest that all outputs be generated through the code in file 02\_cholla\_ant\_IPM\_vital\_rates.R.}
-	
-	\comment{Update the README to specify software versions, describe file roles, and map figures/tables to code.}
-	\response{The README has been extensively updated. It now includes:
-		\begin{itemize}
-			\item Software Version information
-			\item A clear ``Order of Operations'' for running scripts
-			\item Clear file and folder organization
-			\item A note about the script in which all manuscript figures are generated
-	\end{itemize}}
+\section{Response to the Data Editor}
+
+\comment{Several scripts include absolute file paths (e.g., setwd("/Users/alicampbell/Documents/GitHub/ant\_cactus\_demography") which will not work on other systems.}
+\response{We have removed all `setwd()` calls and replaced absolute pathways with relative pathways. This should fix any issues with absolute pathways on other machines.}
+
+\comment{Many scripts reference `.Rds` files that were not included in the materials, making reproduction difficult or impossible.}
+\response{We have also eliminated the need for .Rds files and instead suggest that the model outputs previously stored in these files be generated through the code in file 02\_cholla\_ant\_IPM\_vital\_rates.R}
+
+\comment{The README is currently insufficient for guiding users through the workflow. It lacks detailed instructions, file descriptions, and information about software versions and script dependencies.}
+\response{The README has been extensively updated. It now includes much more detail about the workflow, files, software versions, and script dependencies.}
+
+\comment{**Consolidate all materials** into a single, self-contained archive or repository.}
+\response{We have done this. The respository has been reorganized and now includes all necessary materials for running this code. }
+
+\comment{**Test your code** on a clean R session or a different machine to ensure it runs as expected. This will help ensure that all no analyses rely on the paths set by the code.}
+\response{The code was tested on a clean R session to ensure the workflow is as expected and nothing is unloaded or sourced from a different location.}
 	
 \end{document}

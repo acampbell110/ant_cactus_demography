@@ -26,7 +26,7 @@ floor <- 25
 
 set.seed(333) # picked random number
 N_draws <- 100
-draws <- sample(3500,N_draws, replace=F)
+draws <- sample(7500,N_draws, replace=F)
 years <- unique(cactus$Year_t)
 
 ## -------- read in MCMC output ---------------------- ##

@@ -522,12 +522,8 @@ surv_plot_vac <- y_vac_subset_surv %>%
             N = length(logsize_t))
 surv_plot_vac$N_mod <- log(surv_plot_vac$N)
 ## Plot the survival rates of cacti across size with different ant partners
-png("Manuscript/Figures/surv_post.png",
-  width = 7,
-  height = 4,
-  units = "in",
-  res = 600
-)
+pdf("Manuscript/Figures/surv_plot.pdf",
+    width = 7, height = 4, useDingbats = FALSE)
 par(mar=c(3,3,3,1),oma=c(2,2,0,0))
 layout(matrix(c(1,2,3,4,5,5),ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
 # Crem
@@ -1010,12 +1006,31 @@ y_germ1 <- stan_data_germ$y_germ[stan_data_germ$year==1]/stan_data_germ$trials[s
 y_germ2 <- stan_data_germ$y_germ[stan_data_germ$year==2]/stan_data_germ$trials[stan_data_germ$year==2]
 germ <- cbind(y_germ1,y_germ2)
 colnames(germ) <- c("Year 1","Year 2")
-png("Manuscript/Figures/germination.png",
-    res = 600)
-boxplot((germ), col = "chartreuse4", names.arg = c("Yr 1","Yr 2"),
-        xlab = "", ylab = "", main = "")
-mtext("Year in Seedbank",side=1,line=-1.5,outer=TRUE,cex=2)
-mtext("Probability of Germinating",side=2,line=-2,outer=TRUE,cex=2,las=0)
+png(
+  filename = "Manuscript/Figures/germination.png",
+  width = 7, height = 7, units = "in", res = 600
+)
+
+# Set margins
+par(
+  mar = c(4, 4, 1, 1),   # inner margins
+  oma = c(2, 2, 0, 0)    # outer margins
+)
+
+# Plot
+boxplot(
+  germ,
+  col = "chartreuse4",
+  names = c("Yr 1", "Yr 2"),
+  xlab = "",
+  ylab = "",
+  main = ""
+)
+
+# Axis labels using outer margins
+mtext("Year in Seedbank", side = 1, outer = TRUE, line = 0.5, cex = 1.8)
+mtext("Probability of Germinating", side = 2, outer = TRUE, line = 0.5, cex = 1.8)
+
 dev.off()
 
 png("Manuscript/Figures/germination.png",
@@ -1228,7 +1243,11 @@ pred_vac<-cbind(
   exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))/Denominator_vac)
 sum(pred_vac[1,])
 ## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
-png("Manuscript/Figures/transition.png", width = 550, height = 550)
+png("Manuscript/Figures/transition.png",
+    width = 7.5,     # inches (2-column figure)
+    height = 6.5,    # inches
+    units = "in",
+    res = 600)
 par(mar=c(2,2,4,1),oma=c(2,2,2,0))
 layout(matrix(c(1,2,3,4),
               ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
@@ -1266,9 +1285,9 @@ legend("topright",c("Vacant","Other",expression(italic("C. opuntiae")),expressio
 # Prev Liom
 plot(size_dummy, pred_liom[,4], type = "l", col = vaccol,main = expression(bold(paste("d)", sep = "              ", "Prev.   ", bolditalic("L. apiculatum"), "             "))), ylim = c(0,1), xlab = "", ylab = "",
      cex.main = 1.5)
+lines(size_dummy, pred_liom[,2], col = liomcol)
 lines(size_dummy, pred_liom[,3], col = othercol)
 lines(size_dummy, pred_liom[,1], col = cremcol)
-lines(size_dummy, pred_liom[,2], col = liomcol)
 points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_crem,pch=16,cex=multi_plot_liom$N_mod,col= alpha(cremcol, 0.4))
 points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_liom,pch=16,cex=multi_plot_liom$N_mod,col= alpha(liomcol, 0.4))
 points(multi_plot_liom$mean_size,multi_plot_liom$ant_t1_other,pch=16,cex=multi_plot_liom$N_mod,col= alpha(othercol, 0.4))
