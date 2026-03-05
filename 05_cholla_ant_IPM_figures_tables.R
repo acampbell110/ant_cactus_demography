@@ -2,7 +2,7 @@
 ##  This file creates all visuals for the manuscript
 ################################################################################
 bayesplot::color_scheme_set(scheme = "pink")
-
+source("03_cholla_ant_IPM_params_functions.R")
 ## Color Codes
 ## Retro bright
 cremcol <- "#9239F6"
@@ -18,8 +18,6 @@ locol <- "#cf3545"
 cocol <- "#ab59c8"
 acol <- "#5d906b"
 cols <- c(vcol, ccol, lcol, ocol, lccol, locol, cocol, acol)
-                        
-str(cactus)
 ##### Size variable used in most visualizations
 size_dummy <- seq(min(cactus$logsize_t, na.rm = T), max(cactus$logsize_t, na.rm = TRUE), by = 0.1)
 scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother","othercremvac","all")
@@ -29,8 +27,6 @@ scenario = c("none","cremvac","liomvac","othervac","liomcremvac","liomvacother",
 #### VITAL RATE MODEL VISUALS 
 ####
 ################################################################################
-################################################################################
-
 ################################################################################
 ## Growth Model Visuals
 ################################################################################
@@ -61,23 +57,23 @@ omega_other <- exp(mean(params$grow_sig0) + size_other*mean(params$grow_sig1))
 omega_crem <- exp(mean(params$grow_sig0) + size_crem*mean(params$grow_sig1))
 omega_liom <- exp(mean(params$grow_sig0) + size_liom*mean(params$grow_sig1))
 omega_vac <- exp(mean(params$grow_sig0) + size_vac*mean(params$grow_sig1))
-alpha <- exp(mean(params$grow_alp0) + size_dummy*mean(params$grow_alp1))
-alpha_other <- exp(mean(params$grow_alp0) + size_other*mean(params$grow_alp1))
-alpha_crem <- exp(mean(params$grow_alp0) + size_crem*mean(params$grow_alp1))
-alpha_liom <- exp(mean(params$grow_alp0) + size_liom*mean(params$grow_alp1))
-alpha_vac <- exp(mean(params$grow_alp0) + size_vac*mean(params$grow_alp1))
+alpha <- (mean(params$grow_alp0) + size_dummy*mean(params$grow_alp1))
+alpha_other <- (mean(params$grow_alp0) + size_other*mean(params$grow_alp1))
+alpha_crem <- (mean(params$grow_alp0) + size_crem*mean(params$grow_alp1))
+alpha_liom <- (mean(params$grow_alp0) + size_liom*mean(params$grow_alp1))
+alpha_vac <- (mean(params$grow_alp0) + size_vac*mean(params$grow_alp1))
 # Other
 y_other_mean_grow <- mean(params$grow_beta03) + (size_dummy) * mean(params$grow_beta13 ) + (size_dummy)^2 * mean(params$grow_beta23)
 y_other_mean_grow_sub <- mean(params$grow_beta03) + (size_other) * mean(params$grow_beta13 ) + (size_other)^2 * mean(params$grow_beta23)
 # Crem
-y_crem_mean_grow <- mean(params$grow_beta01) + (size_dummy) * mean(params$grow_beta11) + (size_dummy)^2 * mean(params$grow_beta21)
-y_crem_mean_grow_sub <- mean(params$grow_beta01) + (size_crem) * mean(params$grow_beta11) + (size_crem)^2 * mean(params$grow_beta21)
+y_crem_mean_grow <- mean(params$grow_beta04) + (size_dummy) * mean(params$grow_beta14) + (size_dummy)^2 * mean(params$grow_beta24)
+y_crem_mean_grow_sub <- mean(params$grow_beta04) + (size_crem) * mean(params$grow_beta14) + (size_crem)^2 * mean(params$grow_beta24)
 # Liom
 y_liom_mean_grow <- mean(params$grow_beta02) + (size_dummy) * mean(params$grow_beta12) + (size_dummy)^2 * mean(params$grow_beta22)
 y_liom_mean_grow_sub <- mean(params$grow_beta02) + (size_liom) * mean(params$grow_beta12) + (size_liom)^2 * mean(params$grow_beta22)
 # Vac
-y_vac_mean_grow <-  mean(params$grow_beta04) + (size_dummy) * mean(params$grow_beta14) + (size_dummy)^2 * mean(params$grow_beta24)
-y_vac_mean_grow_sub <-  mean(params$grow_beta04) + (size_vac) * mean(params$grow_beta14) + (size_vac)^2 * mean(params$grow_beta24)
+y_vac_mean_grow <-  mean(params$grow_beta01) + (size_dummy) * mean(params$grow_beta11) + (size_dummy)^2 * mean(params$grow_beta21)
+y_vac_mean_grow_sub <-  mean(params$grow_beta01) + (size_vac) * mean(params$grow_beta11) + (size_vac)^2 * mean(params$grow_beta21)
 
 other_mean <- y_other_mean_grow + omega * (alpha/(sqrt(1 + alpha^2)) * (sqrt(2/pi)))
 other_mean_sub <- y_other_mean_grow_sub + omega_other * (alpha_other/(sqrt(1 + alpha_other^2)) * (sqrt(2/pi)))
@@ -104,7 +100,7 @@ other <- outer (
 vacant <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*x + mean(params$grow_beta24)*x^2,
+  function (x, y)   dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*x + mean(params$grow_beta21)*x^2,
                         omega = exp(mean(params$grow_sig0) + x * mean(params$grow_sig1)),
                         alpha = (mean(params$grow_alp0) + x * mean(params$grow_alp1)))
 );
@@ -118,7 +114,7 @@ liom <- outer (
 crem <- outer (
   y,     # First dimension:  the columns (y)
   x,     # Second dimension: the rows    (x)
-  function (x, y)   dsn(y,xi=mean(params$grow_beta01) + mean(params$grow_beta11)*x + mean(params$grow_beta21)*x^2,
+  function (x, y)   dsn(y,xi=mean(params$grow_beta04) + mean(params$grow_beta14)*x + mean(params$grow_beta24)*x^2,
                         omega = exp(mean(params$grow_sig0) + x * mean(params$grow_sig1)),
                         alpha = (mean(params$grow_alp0) + x * mean(params$grow_alp1)))
 );
@@ -691,44 +687,6 @@ mean(vac_subset$viab)
 
 viab_out<-rstan::extract(fit_viab)
 alpha_val<-0.15
-png("Manuscript/Figures/viab.png",
-    width = 7,
-    height = 4,
-    units = "in",
-    res = 600
-)
-plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="",ylab="",cex.lab=1.4,xlim=c(1,4.25))
-points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
-       cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
-       col=alpha(cremcol,alpha_val),pch=16)
-lines(rep(1.25,2),quantile(invlogit(viab_out$beta0[,1]),probs=c(0.025,.975)),
-      lwd=3,col=cremcol)
-points(1.25,mean(invlogit(viab_out$beta0[,1])),col=cremcol,pch=15,cex=1.5)
-points(jitter(rep(2,nrow(liom_subset))),jitter(liom_subset$viab),
-       cex=0.5+(liom_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
-       col=alpha(liomcol,alpha_val),pch=16)
-lines(rep(2.25,2),quantile(invlogit(viab_out$beta0[,2]),probs=c(0.025,.975)),
-      lwd=3,col=liomcol)
-points(2.25,mean(invlogit(viab_out$beta0[,2])),col=liomcol,pch=15,cex=1.5)
-points(jitter(rep(3,nrow(other_subset))),jitter(other_subset$viab),
-       cex=0.5+(other_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
-       col=alpha(othercol,alpha_val),pch=16)
-lines(rep(3.25,2),quantile(invlogit(viab_out$beta0[,3]),probs=c(0.025,.975)),
-      lwd=3,col=othercol)
-points(3.25,mean(invlogit(viab_out$beta0[,3])),col=othercol,pch=15,cex=1.5)
-points(jitter(rep(4,nrow(vac_subset))),jitter(vac_subset$viab),
-       cex=0.5+(vac_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
-       col=alpha(vaccol,alpha_val),pch=16)
-lines(rep(4.25,2),quantile(invlogit(viab_out$beta0[,4]),probs=c(0.025,.975)),
-      lwd=3,col=vaccol)
-points(4.25,mean(invlogit(viab_out$beta0[,4])),col=vaccol,pch=15,cex=1.5)
-axis(1,at=1:4,labels=c(expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Other","Vacant"))
-mtext("Log(Volume)",side=1,line=-1.5,outer=TRUE,cex=1.7)
-mtext("Flowerbud Viability",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
-box()
-dev.off()
-## min buds is 1, max is 264
-
 png("Manuscript/Figures/Viab_v2.png",
     width = 7,
     height = 4,
@@ -791,8 +749,6 @@ vac_seed <- mean(exp(seed.params$beta0[,3]))
 crem_seed <- mean(exp(seed.params$beta0[,1]))
 liom_seed <- mean(exp(seed.params$beta0[,2]))
 
-# Confidence in vacant producing most
-
 # Compare the stochastic posterior distributions 
 vac_liom <- exp(seed.params$beta0[,3]) - exp(seed.params$beta0[,2])
 vac_crem <- exp(seed.params$beta0[,3]) - exp(seed.params$beta0[,1])
@@ -805,17 +761,6 @@ proportions[2] <- length(subset(vac_crem,vac_crem>0))/length(vac_crem)
 proportions[3] <- length(subset(liom_crem,liom_crem>0))/length(liom_crem)
 proportions
 
-## Compare the stochastic posterior distributions to scenarios with liom
-none_l <- lams_comp_stoch$liomvac - lams_comp_stoch$none
-crem_l <- lams_comp_stoch$liomvac - lams_comp_stoch$cremvac
-other_l <- lams_comp_stoch$liomvac - lams_comp_stoch$othervac
-co_l <- lams_comp_stoch$liomvac - lams_comp_stoch$othercremvac
-proportions <- vector()
-proportions[1] <- length(subset(none_l, none_l>=0))/100
-proportions[2] <- length(subset(crem_l, crem_l>=0))/100
-proportions[3] <- length(subset(other_l, other_l>=0))/100
-proportions
-((exp(seed.params$beta0[,3]) - exp(seed.params$beta0[,2]))/3750)>0
 
 ################################################################################
 ## Probability of Reproducing Model Visuals
@@ -975,7 +920,7 @@ png("Manuscript/Figures/seed_surv.png",
     res = 600
 )
 plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "", ylab = "",main = "")
-#abline(v = mean(precensus.dat$survive0405), lty = 2)
+abline(v = mean(precensus.dat$survive0405), lty = 2)
 legend("topright",legend = c("Predicted Pre-census Survival","Real Pre-census Survival"), col = c("chartreuse4","black"), pch = 16)
 mtext("Pre-census Survival Probability",side=1,line=-1.5,outer=TRUE,cex=2)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
@@ -997,10 +942,6 @@ bayesplot::color_scheme_set(scheme = "pink")
 bayesplot::mcmc_trace(As.mcmc.list(fit_germ, pars=c("beta0[2]")))+labs(x = "iterations", y = "estimated value", title = "b)")
 dev.off()
 y <- germ.dat$seedlings
-## Overlay Plots
-png(file = "germ1_post.png")
-bayesplot::ppc_dens_overlay(y, invlogit(params$germ1_beta0))+labs(title = "b)")
-dev.off()
 ## Format the original data
 y_germ1 <- stan_data_germ$y_germ[stan_data_germ$year==1]/stan_data_germ$trials[stan_data_germ$year==1]
 y_germ2 <- stan_data_germ$y_germ[stan_data_germ$year==2]/stan_data_germ$trials[stan_data_germ$year==2]
@@ -1297,119 +1238,6 @@ mtext("Probability of Next Ant Partner",side=2,line=0.5,outer=TRUE,cex=1.5,las=0
 dev.off()
 
 
-## Two states 
-# 
-# png("Figures/Comp_Excl_1.png")
-# # Liom Vac
-# plot(size_dummy, transition.1.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
-# dev.off()
-# png("Figures/Comp_Excl_2.png")
-# # Liom Vac
-# plot(size_dummy, transition.1.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.comp(size_dummy,"crem","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
-# legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
-# dev.off()
-# png("Figures/Two_State_Comp_Excl_Transitions.png")
-# par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-# layout(matrix(c(1,2),
-#               ncol = 2, nrow = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9,3.9))
-# # Liom Vac
-# plot(size_dummy, transition.1.comp(size_dummy,"liom","vacant",params = params_mean,scenario = "liomvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.comp(size_dummy,"liom","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
-# legend("topright",legend = c("Vac.","Liom."), fill = c(vaccol,liomcol))
-# plot(size_dummy, transition.1.comp(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.comp(size_dummy,"vacant","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
-# dev.off()
-# 
-# ## Three states 
-# png("Figures/Three_State_Comp_Excl_Transitions.png")
-# par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-# layout(matrix(c(1,2,3),
-#               ncol = 3, nrow = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9,3.9,3.9))
-# # Liom Vac
-# plot(size_dummy, transition.2.comp(size_dummy,"liom","vacant",params = params_mean,scenario = "liomcremvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.2.comp(size_dummy,"liom","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
-# lines(size_dummy,transition.2.comp(size_dummy,"liom","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
-# legend("topright",legend = c("Vac.","Liom.","Crem."), fill = c(vaccol,liomcol,cremcol))
-# plot(size_dummy, transition.2.comp(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.2.comp(size_dummy,"vacant","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
-# lines(size_dummy,transition.2.comp(size_dummy,"vacant","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
-# plot(size_dummy, transition.2.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.2.comp(size_dummy,"crem","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
-# lines(size_dummy,transition.2.comp(size_dummy,"crem","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
-# dev.off()
-# 
-# 
-# ##### Frequency Based
-# png("Figures/Comp_Excl_1.png")
-# # Liom Vac
-# plot(size_dummy, transition.1.comp(size_dummy,"vacant","crem",params = params_mean,scenario = "cremvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
-# dev.off()
-# png("Figures/Comp_Excl_2.png")
-# # Liom Vac
-# plot(size_dummy, transition.1.comp(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.comp(size_dummy,"crem","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
-# legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
-# dev.off()
-# png("Figures/Two_State_Freq_Excl_Transitions.png")
-# par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-# layout(matrix(c(1,2,3,4,5,6),
-#               ncol = 2, nrow = 3, byrow = TRUE), heights = c(1.4,1.4,1.4), widths = c(3.9,3.9))
-# # Liom Vac
-# plot(size_dummy, transition.1.freq(size_dummy,"liom","vacant",params = params_mean,scenario = "liomvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.freq(size_dummy,"liom","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
-# legend("topright",legend = c("Vac.","Liom."), fill = c(vaccol,liomcol))
-# plot(size_dummy, transition.1.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.freq(size_dummy,"vacant","liom",params = params_mean,scenario = "liomvac"), col = liomcol, lwd = 2)
-# 
-# # Crem Vac
-# plot(size_dummy, transition.1.freq(size_dummy,"crem","vacant",params = params_mean,scenario = "cremvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.freq(size_dummy,"crem","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
-# legend("topright",legend = c("Vac.","Crem."), fill = c(vaccol,cremcol))
-# plot(size_dummy, transition.1.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "cremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.freq(size_dummy,"vacant","crem",params = params_mean,scenario = "cremvac"), col = cremcol, lwd = 2)
-# 
-# # Other Vac
-# plot(size_dummy, transition.1.freq(size_dummy,"other","vacant",params = params_mean,scenario = "othervac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Other", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.freq(size_dummy,"other","other",params = params_mean,scenario = "othervac"), col = othercol, lwd = 2)
-# legend("topright",legend = c("Vac.","Other"), fill = c(vaccol,othercol))
-# plot(size_dummy, transition.1.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "othervac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.1.freq(size_dummy,"vacant","other",params = params_mean,scenario = "othervac"), col = othercol, lwd = 2)
-# dev.off()
-# 
-# ## Three states 
-# png("Figures/Three_State_Freq_Excl_Transitions.png")
-# par(mar=c(2,2,1,1),oma=c(2,2,0,0))
-# layout(matrix(c(1,2,3),
-#               ncol = 3, nrow = 1, byrow = TRUE), heights = c(1.4), widths = c(3.9,3.9,3.9))
-# # Liom Vac
-# plot(size_dummy, transition.2.freq(size_dummy,"liom","vacant",params = params_mean,scenario = "liomcremvac"), 
-#      col = vaccol, type = "l", lwd = 2, main = "Prev. Liom.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.2.freq(size_dummy,"liom","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
-# lines(size_dummy,transition.2.freq(size_dummy,"liom","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
-# legend("topright",legend = c("Vac.","Liom.","Crem."), fill = c(vaccol,liomcol,cremcol))
-# plot(size_dummy, transition.2.freq(size_dummy,"vacant","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Vac.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.2.freq(size_dummy,"vacant","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
-# lines(size_dummy,transition.2.freq(size_dummy,"vacant","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
-# plot(size_dummy, transition.2.freq(size_dummy,"crem","vacant",params = params_mean,scenario = "liomcremvac"), col = vaccol, type = "l", lwd = 2, main = "Prev. Crem.", ylab = "Probability of Next Partner", xlab = "Log(Volume)", ylim = c(0,1))
-# lines(size_dummy,transition.2.freq(size_dummy,"crem","liom",params = params_mean,scenario = "liomcremvac"), col = liomcol, lwd = 2)
-# lines(size_dummy,transition.2.freq(size_dummy,"crem","crem",params = params_mean,scenario = "liomcremvac"), col = cremcol, lwd = 2)
-# dev.off()
-# 
-
-
-
 ################################################################################
 ################################################################################
 ####
@@ -1418,7 +1246,6 @@ dev.off()
 ####
 ################################################################################
 ################################################################################
-
 ################################################################################
 ## Herbivory Visuals
 ################################################################################
@@ -1517,8 +1344,6 @@ dev.off()
 ################################################################################
 ## Hypotheses 
 ################################################################################
-barplot(c(0.1014,0.06296,0.1265,0.09043), col = c(othercol, cremcol, liomcol, vaccol), names.arg = c("Other","Crem.","Liom.","Vacant"),
-        ylab = "Herbivory Prob.", main = "Proportion of Plants with Evidence of Herbivory")
 #### Sampling Effect
 heights <- c(0.9,1.2,1.2)
 png("Sampling_Effect.png")
@@ -1570,7 +1395,6 @@ dev.off()
 
 
 ################################################################################
-
 ################################################################################
 ####
 #### IPM RESULTS
@@ -1578,7 +1402,6 @@ dev.off()
 ####
 ################################################################################
 ################################################################################
-
 ################################################################################
 ## Pull in ipm outputs
 ################################################################################
@@ -2373,6 +2196,7 @@ mean(proportions[c(1,2,6)])
 ################################################################################
 ## Compare Posterior Distributions Equal Likelihood Model
 ################################################################################
+colnames(lams_equal_stoch) <- scenario
 # Compare the stochastic posterior distributions to vacancy
 # Calculate the difference in the between the posterior distributions of lambda
 all_vac <- lams_equal_stoch$all - lams_equal_stoch$none
@@ -2438,6 +2262,7 @@ proportions
 ################################################################################
 ## Compare Posterior Distributions Frequency Based Model
 ################################################################################
+colnames(lams_freq_stoch) <- scenario
 # Compare the stochastic posterior distributions to vacancy
 # Calculate the difference in the between the posterior distributions of lambda
 all_vac <- lams_freq_stoch$all - lams_freq_stoch$none

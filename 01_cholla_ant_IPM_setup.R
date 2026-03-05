@@ -40,10 +40,6 @@ library(reshape)
 library(reshape2)
 library(stats)
 # knitr::oknitr::oknitr::opts_chunk$set(echo = TRUE)
-# check the workign directory and make sure it is set to the right location
-#getwd()
-setwd("/Users/alicampbell/Documents/GitHub/ant_cactus_demography")
-#setwd("C:/Users/tm9/Dropbox/github/ant_cactus_demography")
 
 ## Create the necessary functions ###############
 # function for the volume of a cone
@@ -63,9 +59,7 @@ Q.kurtosis<-function(q.05,q.25,q.75,q.95){
 }
 
 ## import the data ##############
-cactus <- read.csv("Data/cholla_demography_20042024.csv", header = TRUE,stringsAsFactors=T)
-# str(cactus) ##<- problem: antcount is a factor
-
+cactus <- read.csv("Data/cholla_demography_20042023.csv", header = TRUE,stringsAsFactors=T)
 ## Fix Plot naming issues ##################
 ## re-assign the seedling plots ("HT1B1" etc) to transects 1-3
 levels(cactus$Plot)<-c(levels(cactus$Plot),"T4")
@@ -91,16 +85,19 @@ cactus$Ant_sp_t[cactus$Antcount_t==0] <- "vacant"
 # here are the ordered levels of the current variable
 Ant_sp_t_levels <- levels(cactus$Ant_sp_t)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
-ant_t_levels <- rep("other",times=length(Ant_sp_t_levels))
-# crem levels - elements
-ant_t_levels[c(5,6,7,8,9,10,11,12,13,25,51)] <- "crem"
-# liom levels - elements
-ant_t_levels[c(22,28,29,30,31,32)] <- "liom"
-# vacant - elements
-ant_t_levels[c(1,45,46,47,48,49,50)] <- "vacant"
-# create new variable merging levels as above
-cactus$ant_t <- factor(cactus$Ant_sp_t,levels=Ant_sp_t_levels,labels=ant_t_levels)
-# there are still some other problems with this data: first, there are no ant data from 2007:
+# Start with all "other"
+ant_t_levels <- rep("other", times = length(Ant_sp_t_levels))  # 52 elements
+# Assign "vacant" to correct positions
+ant_t_levels[c(1,42,43,44)] <- "vacant"
+# Assign "crem" to correct positions
+ant_t_levels[c(5,8,9,10,11,22,45)] <- "crem"
+# Assign "liom" to correct positions
+ant_t_levels[c(19,25,26,27,28,29)] <- "liom"
+# Now create the new factor using the mapping
+cactus$ant_t <- factor(cactus$Ant_sp_t,
+                       levels = Ant_sp_t_levels,
+                       labels = ant_t_levels) 
+# with this data: first, there are no ant data from 2007:
 #cactus$Antcount_t[cactus$Year_t==2007]
 #so give these observations NA for ant status: should be 118 values of NA now
 cactus$ant_t[cactus$Year_t==2007] <- NA
@@ -121,11 +118,11 @@ Ant_sp_t1_levels <- levels(cactus$Ant_sp_t1)
 # here is how I would like to collapse these into fewer bins -- most will be "other"
 ant_t1_levels <- rep("other",times=length(Ant_sp_t1_levels))
 # crem levels
-ant_t1_levels[c(8,9,10,11,12,23,48)] <- "crem"
+ant_t1_levels[c(7,8,9,10,20,42)] <- "crem"
 # liom levels
-ant_t1_levels[c(26,27,28,29,30)] <- "liom"
+ant_t1_levels[c(23,24,25,26,27)] <- "liom"
 # vacant
-ant_t1_levels[c(1,43,44,45,46,48)] <- "vacant"
+ant_t1_levels[c(1,40,41)] <- "vacant"
 # create new variable merging levels as above
 cactus$ant_t1 <- factor(cactus$Ant_sp_t1,levels=Ant_sp_t1_levels,labels=ant_t1_levels)
 # check the spread of these ants
@@ -258,4 +255,186 @@ write.csv(cactus, "Data/cholla_demography_20042024_cleaned.csv")
 
 
 
+
+
+## Set up all subsets of data needed ###############
+## Growth model
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+growth_data_orig <- cactus[,c("Plot","Year_t","logsize_t","logsize_t1","ant_t")]
+growth_data <- na.omit(growth_data_orig) # Lose 2032 rows (due to plant death & recruit status)
+
+## Make a list of all necessary variables so they are properly formatted to feed into the stan model
+stan_data_grow_skew <- list(N = nrow(growth_data),                                     ## number of observations
+                            vol = (growth_data$logsize_t),                             ## predictor volume year t
+                            vol2 = (growth_data$logsize_t)^2,                          ## non linear volume year t predictor
+                            y = (growth_data$logsize_t1),                              ## response volume next year
+                            ant = as.integer(as.factor(growth_data$ant_t)),            ## predictor ant state
+                            K = 4,                                                     ## number of ant states
+                            N_Year = max(as.integer(as.factor(growth_data$Year_t))),   ## number of years
+                            N_Plot = max(as.integer(growth_data$Plot)),                ## number of plots
+                            plot = as.integer(growth_data$Plot),                       ## predictor plots
+                            year = as.integer(as.factor(growth_data$Year_t))           ## predictor years
+)
+## Survival model
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+#survival_data_orig <- subset(cactus, is.na(Survival_t1) == FALSE,c("Plot","Year_t","Survival_t1","ant_t","logsize_t"))
+survival_data_orig <- cactus[,c("Plot","Year_t","Survival_t1","ant_t","logsize_t")]
+survival_data <- na.omit(survival_data_orig)
+
+## Create Stan Data
+stan_data_surv <- list(N = nrow(survival_data),                                    ## number of observations
+                       vol = (survival_data$logsize_t),                            ## predictors volume
+                       y_surv = (survival_data$Survival_t1),                       ## response survival next year
+                       ant = as.integer(as.factor(survival_data$ant_t)),           ## predictors ants
+                       K = 4,                                                      ## number of ant states
+                       N_Year = max(as.integer(as.factor(survival_data$Year_t))),  ## number of years
+                       N_Plot = max(as.integer(as.factor(survival_data$Plot))),    ## number of plots
+                       plot = as.integer(as.factor(survival_data$Plot)),           ## predictor plots
+                       year = as.integer(as.factor(survival_data$Year_t))          ## predictor years
+) 
+## Repro model 
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+reproductive_data_orig <- cactus[ , c("TotFlowerbuds_t","logsize_t","Year_t","Plot")]
+reproductive_data_orig$flower_YN<-reproductive_data_orig$TotFlowerbuds_t>0
+reproductive_data <- na.omit(reproductive_data_orig)
+
+## Create Stan Data
+stan_data_repro <- list(N = nrow(reproductive_data),                                   ## number of observations
+                        vol = reproductive_data$logsize_t,                            ## predictors volume
+                        y_repro = reproductive_data$flower_YN,                        ## response volume next year
+                        N_Year = max(as.integer(as.factor(reproductive_data$Year_t))), ## number of years
+                        N_Plot = max(as.integer(as.factor(reproductive_data$Plot))),   ## number of plots
+                        plot = as.integer(as.factor(reproductive_data$Plot)),          ## predictor plots
+                        year = as.integer(as.factor(reproductive_data$Year_t))         ## predictor years
+) 
+## Viab model
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+viability_data_orig <- cactus[ , c("TotFlowerbuds_t","Goodbuds_t","ABFlowerbuds_t","ant_t", "logsize_t","Year_t","Plot")]
+viability_data_orig <- subset(viability_data_orig, TotFlowerbuds_t > 0)
+viability_data <- na.omit(viability_data_orig)
+
+## Create stan data subset
+stan_data_viab <- list(N = nrow(viability_data),                                   ## number of observations
+                       good = viability_data$Goodbuds_t,                          ## number of good flowerbuds 
+                       abort = viability_data$ABFlowerbuds_t,                     ## aborted buds data
+                       tot = viability_data$TotFlowerbuds_t,                      ## number of trials
+                       ant = as.integer(as.factor(viability_data$ant)),            ## predictors ants
+                       K = 4,                                                      ## number of ant states
+                       N_Year = max(as.integer(as.factor(viability_data$Year_t))), ## number of years
+                       N_Plot = max(as.integer(as.factor(viability_data$Plot))),   ## number of plots
+                       plot = as.integer(as.factor(viability_data$Plot)),          ## predictor plots
+                       year = as.integer(as.factor(viability_data$Year_t))         ## predictor years
+) 
+
+## Flowers model
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+flower_data_orig <- cactus[ , c("TotFlowerbuds_t", "logsize_t","Year_t","Plot")]
+flower_data_orig <- subset(flower_data_orig, TotFlowerbuds_t > 0)
+flower_data <- na.omit(flower_data_orig)
+
+## Create Stan Data
+stan_data_flow_trunc <- list(N = nrow(flower_data),                                   ## number of observations
+                             lower_limit = 1,                                         ## we want the 0s to be removed
+                             vol = (flower_data$logsize_t),                           ## predictors volume
+                             y_flow = flower_data$TotFlowerbuds_t,                    ## response flowers next year
+                             N_Year = max(as.integer(as.factor(flower_data$Year_t))), ## number of years
+                             N_Plot = max(as.integer(as.factor(flower_data$Plot))),   ## number of plots
+                             plot = as.integer(as.factor(flower_data$Plot)),          ## predictor plots
+                             year = as.integer(as.factor(flower_data$Year_t))         ## predictor years
+)
+## Germ model 
+germ.dat_orig<-read.csv("Data/Germination.csv") 
+germ.dat_orig$input04<-germ.dat_orig$Input
+germ.dat_orig$input05<-germ.dat_orig$Input-germ.dat_orig$Seedlings04
+germ.dat04<-germ.dat_orig[,c("input04","Seedlings04")];names(germ.dat04)<-c("seeds","seedlings")
+germ.dat04$year<-1
+germ.dat05<-germ.dat_orig[,c("input05","Seedlings05")];names(germ.dat05)<-c("seeds","seedlings")
+germ.dat05$year<-2
+germ.dat<-rbind(germ.dat04,germ.dat05)
+
+## Create Stan Data
+stan_data_germ <- list(N = nrow(germ.dat),
+                       y_germ = germ.dat$seedlings,
+                       trials = germ.dat$seeds,
+                       year=germ.dat$year)
+
+## Seeds model
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+seed_uncleaned <- read.csv("Data/JO_fruit_data_final_dropplant0.csv", header = TRUE,stringsAsFactors=T)
+seed <- subset(seed_uncleaned, treatment == "PAAA" | treatment == "PAAE" | treatment == "PA")
+seed$ant_state <- NA
+seed$ant_state[seed$ant.access=="n"]<-"Vacant"
+seed$ant_state[seed$ant.access=="y" & seed$species=="c"]<-"Crem"
+seed$ant_state[seed$ant.access=="y" & seed$species=="l"]<-"Liom"
+seed_data <- seed[,c("plant","ant_state","seed_count")]
+seed_data <- drop_na(seed_data)
+
+## Create Stan Data
+stan_data_seed <- list(N = nrow(seed_data),                            ## number of observations
+                       N_plants = length(unique(seed_data$plant)),
+                       K = 3,                                          ## number of ant states
+                       plant = as.integer(as.factor(seed_data$plant)),     ## ant partners data
+                       ant = as.integer(as.factor(seed_data$ant_state)),     ## ant partners data
+                       seed = seed_data$seed_count)                    ## number of seeds data
+## Seedling surv model
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+precensus.dat.orig<-read.csv("Data/PrecensusSurvival.csv") 
+precensus.dat <- precensus.dat.orig[ , c("Transect","Seed","Log.size","survive0405")]
+precensus.dat <- na.omit(precensus.dat)
+#
+## Create Stan Data
+stan_data_seed_surv <- list(N = nrow(precensus.dat),                                  ## number of observations
+                            y = precensus.dat$survive0405)                            ## survival data
+
+## Fruit surv model
+## Pull all necessary variables together, remove NAs, and put them into a list so they are ready to feed into the stan model
+fruit_data_orig <- read.csv("Data/FruitSurvival.csv", header = TRUE,stringsAsFactors=T)
+fruit_data <- na.omit(fruit_data_orig)
+
+## Create stan data subset
+stan_data_fruit <- list(N = nrow(fruit_data),                                   ## number of observations
+                        good = fruit_data$Fr.on.grnd.not.chewed,                 ## number of good flowerbuds 
+                        tot = fruit_data$Fr.on.plant                             ## number of trials
+) 
+
+## Recruits model
+## pull out the seedlings from the seed addition plots
+# there is seedling size info in two places:
+#1. the seed addition plots, where seedling size appears in year t
+# these tag IDs are the only ones that start with H
+seed_add<-cactus %>% filter(substr(TagID,1,1)=="H") %>% drop_na()
+#2. the main census, where new plants get called recruits or not by observers
+recruits <- cactus[,c("Recruit","logsize_t1")]
+recruits <- subset(recruits,recruits$Recruit == 1)
+recruits <- drop_na(recruits)
+seedling.dat <- c(recruits$logsize_t1,seed_add$logsize_t)
+
+## Create Stan Data
+stan_data_rec <- list(N = length(seedling.dat),
+                      y_rec = (seedling.dat)
+)
+
+## Ant transition model 
+cactus_real <- cactus[,c("ant_t","ant_t1","logsize_t","Year_t","Plot")]
+cactus_real <- na.omit(cactus_real)
+cactus_real$ant_t1 <- relevel(cactus_real$ant_t1,ref = "vacant")
+cactus_real$ant_t <- relevel(cactus_real$ant_t, ref = "vacant")
+cactus_real <- cactus_real[,c("logsize_t", "ant_t", "ant_t1","Year_t","Plot")]
+
+unique(cactus_real$Year_t)
+cactus_real$ant_t1 <- factor(cactus_real$ant_t1, levels = c("crem","liom","other","vacant"))
+cactus_real$ant_t <- factor(cactus_real$ant_t, levels = c("crem","liom","other","vacant"))
+cactus_real <- subset(cactus_real, cactus_real$Year_t != 2022 & cactus_real$Year_t != 2021)
+
+
+## make stan data set
+stan_data_multi <- list(K = length(unique(cactus_real$ant_t1)), #number of possible ant species
+                        N = dim(cactus_real)[1], #number of observations
+                        D = 5, #number of predictors
+                        P = 13, #number of random effect predictors
+                        y = as.integer(as.factor(cactus_real$ant_t1)), #observations
+                        x = model.matrix(~ 0 + (as.factor(ant_t)) + logsize_t, cactus_real), #design matrix
+                        z = model.matrix(~0 + as.factor(Year_t), cactus_real),
+                        N_Year = as.integer(length(unique(cactus_real$Year_t)))
+)
 

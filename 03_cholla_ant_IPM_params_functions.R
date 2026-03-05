@@ -9,7 +9,7 @@
 ## Pull in data and set necessary parameters
 ################################################################################
 ## Source the IPM vital rates code 
-source("02_cholla_ant_IPM_vital_rates.R")
+source("01_cholla_ant_IPM_setup.R")
 ## Set conditions for the IPM 
 cholla_min<- min((cactus$logsize_t), na.rm = TRUE)  ## minsize 
 cholla_max<- max((cactus$logsize_t), na.rm = TRUE)  ## maxsize 
@@ -18,6 +18,8 @@ Nyears <- length(unique(cactus$Year_t))
 iter <- 100
 lower<- cholla_min
 upper<- cholla_max
+lower.extension<-4
+upper.extension<-0.5
 ## these values were tested and found to work well in all scenarios
 matsize<-500
 ceiling <- 4
