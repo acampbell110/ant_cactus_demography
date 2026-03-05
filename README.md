@@ -47,7 +47,7 @@ All analyses were conducted in R (version 4.3.3) and STAN using the package rsta
 
 **05_cholla_ant_IPM_figures_tables** *(.R)* -- Create all visuals of model outputs for publications and related talks and saves them to the subfolder *Figures* in the folder *Manuscript*. All figures included in the manuscript are generated in this code. 
 
-**06_cholla_ant_IPM_portfolio_sim** *(.R)* -- Runs the counterafactual simulations to show that portfolio effect is possible.
+**06_cholla_ant_IPM_portfolio_sim** *(.R)* -- Runs the counterfactual simulations to show that portfolio effect is possible.
 
 
 ## Data *(folder)*
