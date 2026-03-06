@@ -142,7 +142,6 @@ cactus$ant_t[cactus$Ant_sp_t==""]<-NA
 # Relevel so that vacancy is the reference level
 cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 cactus$ant_t <- relevel(cactus$ant_t, ref = "vacant")
-cactus$ant_t1 <- relevel(cactus$ant_t1,ref = "vacant")
 
 ## Flower Count Data Fixes ################
 # some of the data is not showing up as integers
@@ -250,7 +249,7 @@ cactus <- cactus[ , c("Plot","TagID","Year_t","Goodbuds_t","TotFlowerbuds_t",
 
 
 # Export cactus to a csv
-write.csv(cactus, "Data/cholla_demography_20042024_cleaned.csv")
+write.csv(cactus, "Data/cholla_demography_20042023_cleaned.csv")
 
 
 

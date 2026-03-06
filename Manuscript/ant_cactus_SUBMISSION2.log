@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  16 JAN 2026 19:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  5 MAR 2026 13:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -365,24 +365,24 @@ File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
 (./ant_cactus_SUBMISSION2.aux)
 \openout1 = `ant_cactus_SUBMISSION2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 51.
-LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
 
 (/usr/local/texlive/2023/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -406,153 +406,149 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 51.
+Package hyperref Info: Link coloring OFF on input line 36.
 
 (./ant_cactus_SUBMISSION2.out) (./ant_cactus_SUBMISSION2.out)
 \@outlinefile=\write3
 \openout3 = `ant_cactus_SUBMISSION2.out'.
 
+ [1
 
+{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
 
-LaTeX Warning: No \author given.
-
-[1
-
-{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2] [3]
-Overfull \hbox (6.35469pt too wide) in paragraph at lines 122--123
+Overfull \hbox (6.35469pt too wide) in paragraph at lines 102--107
 []\OT1/cmr/m/n/10.95 For ex-clu-sive, se-quen-tial as-so-ci-a-tions, the tim-in
 g, fre-quency, and di-rec-tion-al-ity of part-ner turnover
  []
 
 [4] [5] [6] [7] [8] [9] [10]
 LaTeX Font Info:    Trying to load font information for OML+cmr on input line 2
-27.
+10.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 2022/07/10 v2.5l Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 227.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 210.
  [11] [12]
 [13] [14] [15] [16] [17] [18] [19] [20]
-<Figures/grow_contour_v2.png, id=443, 4516.875pt x 3914.625pt>
+<Figures/grow_contour_v2.png, id=444, 4516.875pt x 3914.625pt>
 File: Figures/grow_contour_v2.png Graphic file (type png)
 <use Figures/grow_contour_v2.png>
-Package pdftex.def Info: Figures/grow_contour_v2.png  used on input line 416.
+Package pdftex.def Info: Figures/grow_contour_v2.png  used on input line 399.
 (pdftex.def)             Requested size: 469.75502pt x 407.07556pt.
  [21]
-<Figures/surv_plot.png, id=450, 4215.75pt x 2409.0pt>
+<Figures/surv_plot.png, id=451, 4215.75pt x 2409.0pt>
 File: Figures/surv_plot.png Graphic file (type png)
 <use Figures/surv_plot.png>
-Package pdftex.def Info: Figures/surv_plot.png  used on input line 424.
+Package pdftex.def Info: Figures/surv_plot.png  used on input line 407.
 (pdftex.def)             Requested size: 469.75502pt x 268.40935pt.
  [22 <./Figures/grow_contour_v2.png>]
-<Figures/Viab_v2.png, id=461, 4215.75pt x 2409.0pt>
+<Figures/Viab_v2.png, id=462, 4215.75pt x 2409.0pt>
 File: Figures/Viab_v2.png Graphic file (type png)
 <use Figures/Viab_v2.png>
-Package pdftex.def Info: Figures/Viab_v2.png  used on input line 436.
+Package pdftex.def Info: Figures/Viab_v2.png  used on input line 419.
 (pdftex.def)             Requested size: 469.75502pt x 268.40935pt.
  [23 <./Figures/surv_plot.png>]
-<Figures/corr_RFX.png, id=469, 1806.75pt x 1204.5pt>
+<Figures/corr_RFX.png, id=470, 1806.75pt x 1204.5pt>
 File: Figures/corr_RFX.png Graphic file (type png)
 <use Figures/corr_RFX.png>
-Package pdftex.def Info: Figures/corr_RFX.png  used on input line 449.
+Package pdftex.def Info: Figures/corr_RFX.png  used on input line 432.
 (pdftex.def)             Requested size: 469.75502pt x 313.16261pt.
  [24 <./Figures/Viab_v2.png>] [25 <./Figures/corr_RFX.png>]
-<Figures/transition.png, id=485, 4516.875pt x 3914.625pt>
+<Figures/transition.png, id=486, 4516.875pt x 3914.625pt>
 File: Figures/transition.png Graphic file (type png)
 <use Figures/transition.png>
-Package pdftex.def Info: Figures/transition.png  used on input line 470.
+Package pdftex.def Info: Figures/transition.png  used on input line 453.
 (pdftex.def)             Requested size: 469.75502pt x 407.07556pt.
  [26] [27 <./Figures/transition.png>]
-<Figures/Lambdas_Comp_lines.png, id=499, 1606.0pt x 803.0pt>
+<Figures/Lambdas_Comp_lines.png, id=500, 1606.0pt x 803.0pt>
 File: Figures/Lambdas_Comp_lines.png Graphic file (type png)
 <use Figures/Lambdas_Comp_lines.png>
-Package pdftex.def Info: Figures/Lambdas_Comp_lines.png  used on input line 488
+Package pdftex.def Info: Figures/Lambdas_Comp_lines.png  used on input line 471
 .
 (pdftex.def)             Requested size: 469.75502pt x 234.87349pt.
  [28] [29 <./Figures/Lambdas_Comp_lines.png>] [30] [31] [32] [33] [34] (./ant_c
 actus_SUBMISSION2.bbl
 [35] [36] [37] [38] [39] [40] [41] [42] [43]) [44]
-<Figures/Seeds_Per_Fruit.png, id=693, 4215.75pt x 2409.0pt>
+<Figures/Seeds_Per_Fruit.png, id=699, 4215.75pt x 2409.0pt>
 File: Figures/Seeds_Per_Fruit.png Graphic file (type png)
 <use Figures/Seeds_Per_Fruit.png>
-Package pdftex.def Info: Figures/Seeds_Per_Fruit.png  used on input line 648.
+Package pdftex.def Info: Figures/Seeds_Per_Fruit.png  used on input line 631.
 (pdftex.def)             Requested size: 427.47878pt x 244.25912pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.651 		 }
+l.634 		 }
           
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.651 		 }
+l.634 		 }
            [45] [46 <./Figures/Seeds_Per_Fruit.png>]
-<Figures/repro_panel.png, id=711, 4215.75pt x 2409.0pt>
+<Figures/repro_panel.png, id=717, 4215.75pt x 2409.0pt>
 File: Figures/repro_panel.png Graphic file (type png)
 <use Figures/repro_panel.png>
-Package pdftex.def Info: Figures/repro_panel.png  used on input line 694.
+Package pdftex.def Info: Figures/repro_panel.png  used on input line 677.
 (pdftex.def)             Requested size: 427.47878pt x 244.25912pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.695 ... the black points show the actual data. }
+l.678 ... the black points show the actual data. }
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.695 ... the black points show the actual data. }
+l.678 ... the black points show the actual data. }
                                                   
-<Figures/flow.png, id=712, 481.8pt x 481.8pt>
+<Figures/flow.png, id=718, 481.8pt x 481.8pt>
 File: Figures/flow.png Graphic file (type png)
 <use Figures/flow.png>
-Package pdftex.def Info: Figures/flow.png  used on input line 701.
+Package pdftex.def Info: Figures/flow.png  used on input line 684.
 (pdftex.def)             Requested size: 427.47878pt x 427.49205pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.702 ... the green points show the binned data. }
+l.685 ... the green points show the binned data. }
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.702 ... the green points show the binned data. }
+l.685 ... the green points show the binned data. }
                                                    [47] [48 <./Figures/repro_pa
 nel.png>] [49 <./Figures/flow.png>] [50]
-<Figures/herb_all.png, id=743, 481.8pt x 481.8pt>
+<Figures/herb_all.png, id=749, 481.8pt x 481.8pt>
 File: Figures/herb_all.png Graphic file (type png)
 <use Figures/herb_all.png>
-Package pdftex.def Info: Figures/herb_all.png  used on input line 751.
+Package pdftex.def Info: Figures/herb_all.png  used on input line 734.
 (pdftex.def)             Requested size: 328.82707pt x 328.83269pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.753 ...each ant state with observed herbivores.}
+l.736 ...each ant state with observed herbivores.}
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.753 ...each ant state with observed herbivores.}
+l.736 ...each ant state with observed herbivores.}
                                                    [51] [52 <./Figures/herb_all
 .png>]
-<Figures/Lambdas_Freq_lines.png, id=755, 1606.0pt x 803.0pt>
+<Figures/Lambdas_Freq_lines.png, id=761, 1606.0pt x 803.0pt>
 File: Figures/Lambdas_Freq_lines.png Graphic file (type png)
 <use Figures/Lambdas_Freq_lines.png>
-Package pdftex.def Info: Figures/Lambdas_Freq_lines.png  used on input line 778
+Package pdftex.def Info: Figures/Lambdas_Freq_lines.png  used on input line 761
 .
 (pdftex.def)             Requested size: 427.47878pt x 213.73744pt.
 
@@ -560,45 +556,45 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.779 ... L = \textit{L. apiculatum}, O = other).}
+l.762 ... L = \textit{L. apiculatum}, O = other).}
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.779 ... L = \textit{L. apiculatum}, O = other).}
+l.762 ... L = \textit{L. apiculatum}, O = other).}
                                                   
-<Figures/Lambdas_equal_lines.png, id=758, 1606.0pt x 803.0pt>
+<Figures/Lambdas_equal_lines.png, id=764, 1606.0pt x 803.0pt>
 File: Figures/Lambdas_equal_lines.png Graphic file (type png)
 <use Figures/Lambdas_equal_lines.png>
-Package pdftex.def Info: Figures/Lambdas_equal_lines.png  used on input line 79
-2.
+Package pdftex.def Info: Figures/Lambdas_equal_lines.png  used on input line 77
+5.
 (pdftex.def)             Requested size: 427.47878pt x 213.73744pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.793 ... L = \textit{L. apiculatum}, O = other).}
+l.776 ... L = \textit{L. apiculatum}, O = other).}
                                                   
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.793 ... L = \textit{L. apiculatum}, O = other).}
+l.776 ... L = \textit{L. apiculatum}, O = other).}
                                                    [53] [54 <./Figures/Lambdas_
 Freq_lines.png>] [55 <./Figures/Lambdas_equal_lines.png>]
-<Figures/portfolio_effect.png, id=777, 481.8pt x 481.8pt>
+<Figures/portfolio_effect.png, id=783, 481.8pt x 481.8pt>
 File: Figures/portfolio_effect.png Graphic file (type png)
 <use Figures/portfolio_effect.png>
-Package pdftex.def Info: Figures/portfolio_effect.png  used on input line 811.
+Package pdftex.def Info: Figures/portfolio_effect.png  used on input line 794.
 (pdftex.def)             Requested size: 469.75502pt x 469.77148pt.
  [56] [57 <./Figures/portfolio_effect.png>]
-<Figures/cor0_Portfolio_Effect.png, id=787, 1806.75pt x 803.0pt>
+<Figures/cor0_Portfolio_Effect.png, id=793, 1806.75pt x 803.0pt>
 File: Figures/cor0_Portfolio_Effect.png Graphic file (type png)
 <use Figures/cor0_Portfolio_Effect.png>
 Package pdftex.def Info: Figures/cor0_Portfolio_Effect.png  used on input line 
-832.
+815.
 (pdftex.def)             Requested size: 427.47878pt x 189.99156pt.
  [58] [59 <./Figures/cor0_Portfolio_Effect.png>]
 (./ant_cactus_SUBMISSION2.aux)
@@ -607,32 +603,34 @@ Package rerunfilecheck Info: File `ant_cactus_SUBMISSION2.out' has not changed.
 (rerunfilecheck)             Checksum: F78AF47A0D02FF8F5E13AA2B39A8057E;776.
  ) 
 Here is how much of TeX's memory you used:
- 11432 strings out of 476025
- 178436 string characters out of 5790017
+ 11433 strings out of 476025
+ 178454 string characters out of 5790017
  1864388 words of memory out of 5000000
  31541 multiletter control sequences out of 15000+600000
- 520790 words of font info for 61 fonts, out of 8000000 for 9000
+ 520958 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,76p,1074b,723s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,76p,1074b,719s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb>
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></u
 sr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr
-/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/l
-ocal/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loca
-l/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/t
-exlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texl
-ive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texliv
-e/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive
-/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2
-023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/20
-23/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/202
-3/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb>
-Output written on ant_cactus_SUBMISSION2.pdf (59 pages, 4638230 bytes).
+/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/l
+ocal/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/loc
+al/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/
+texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/tex
+live/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texliv
+e/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/
+2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
+023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/202
+3/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2023
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2023/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2023/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on ant_cactus_SUBMISSION2.pdf (59 pages, 4664615 bytes).
 PDF statistics:
- 901 PDF objects out of 1000 (max. 8388607)
- 773 compressed objects within 8 object streams
+ 915 PDF objects out of 1000 (max. 8388607)
+ 783 compressed objects within 8 object streams
  178 named destinations out of 1000 (max. 500000)
  103 words of extra memory for PDF output out of 10000 (max. 10000000)
 
