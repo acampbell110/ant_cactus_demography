@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  4 MAY 2026 15:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.15)  7 MAY 2026 18:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -495,7 +495,7 @@ LaTeX Warning: Reference `app:seeds' on page 27 undefined on input line 520.
 LaTeX Warning: Reference `app:herb' on page 28 undefined on input line 529.
 
 [28] [29] (./ant_cactus_SUBMISSION2.bbl [30] [31] [32] [33] [34] [35] [36]
-[37]) [38] [39] [40] [41] (./ant_cactus_SUBMISSION2.aux)
+[37]) [38] [39] [40] [41] [42] (./ant_cactus_SUBMISSION2.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -504,8 +504,8 @@ Package rerunfilecheck Info: File `ant_cactus_SUBMISSION2.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 11388 strings out of 476025
- 178133 string characters out of 5790017
+ 11389 strings out of 476025
+ 178140 string characters out of 5790017
  1860388 words of memory out of 5000000
  31544 multiletter control sequences out of 15000+600000
  519257 words of font info for 56 fonts, out of 8000000 for 9000
@@ -525,10 +525,10 @@ xlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texl
 ive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texli
 ve/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texliv
 e/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on ant_cactus_SUBMISSION2.pdf (41 pages, 563406 bytes).
+Output written on ant_cactus_SUBMISSION2.pdf (42 pages, 567517 bytes).
 PDF statistics:
- 715 PDF objects out of 1000 (max. 8388607)
- 635 compressed objects within 7 object streams
- 142 named destinations out of 1000 (max. 500000)
+ 719 PDF objects out of 1000 (max. 8388607)
+ 638 compressed objects within 7 object streams
+ 143 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

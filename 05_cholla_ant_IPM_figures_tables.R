@@ -127,42 +127,43 @@ initlarge<-quantile(cactus$logsize_t[cactus$ant_t!="vacant"],probs=0.99,na.rm=T)
 
 
 
-png("Manuscript/Figures/grow_contour_v2.png",
-  width = 7.5,     # inches (2-column figure)
-  height = 6.5,    # inches
-  units = "in",
-  res = 600
-)
-par(mar=c(3,3,3,1),oma=c(2,2,0,0))
+pdf("Manuscript/Figures/grow_contour_v2.pdf",
+    width = 7.5,
+    height = 6.5)
+par(mar=c(3,2.5,3,1),oma=c(4.5,2.5,0,0),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 layout(matrix(c(1,2,3,4,5,5),
               ncol = 3, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9,3.9))
 # Crem
 contour(x,y,crem, nlevels = 20,  xlim = c(-5,15), ylim = c(-2,15),
-        main = "a)                           ", cex.main = 2,lwd=1.5,col="black")
+        main = "a)                                 ", #cex.main = 2,
+        lwd=1.5,col="black")
 points(y_crem_subset_grow$logsize_t, y_crem_subset_grow$logsize_t1,col=alpha(cremcol,0.5),pch=16,cex=0.75)
 lines(size_dummy, crem_mean, col = cremcol, lwd = 4, lty = 2)
 lines(size_crem,crem_mean_sub, col = cremcol, lwd = 4)
 # Liom
 contour(x,y,liom, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-        main = "b)                          ", cex.main = 2, lwd = 1.5)
+        main = "b)                                 ", cex.main = 2, lwd = 1.5)
 points(y_liom_subset_grow$logsize_t, y_liom_subset_grow$logsize_t1,col=alpha(liomcol,0.5),pch=16,cex=0.75)
 lines(size_dummy, liom_mean, col = liomcol, lwd = 4, lty = 2)
 lines(size_liom,liom_mean_sub, col = liomcol, lwd = 4)
 # Other
 contour(x,y,other, nlevels = 30, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-        main = "c)                            ", cex.main = 2, lwd = 1.5)
+        main = "c)                                 ", cex.main = 2, lwd = 1.5)
 points(y_other_subset_grow$logsize_t, y_other_subset_grow$logsize_t1,col=alpha(othercol,0.5),pch=16,cex=0.75)
 lines(size_dummy, other_mean, col = othercol, lwd = 4, lty = 2)
 lines(size_other,other_mean_sub, col = othercol, lwd = 4)
 # Vacant
 contour(x,y,vacant, nlevels = 20, col = "black", xlim = c(-5,15), ylim = c(-2,15),
-        main = "d)                            ", cex.main = 2, lwd = 1.5)
+        main = "d)                                 ", cex.main = 2, lwd = 1.5)
 points(y_vac_subset_grow$logsize_t, y_vac_subset_grow$logsize_t1,col=alpha(vaccol,0.5),pch=16,cex=0.75)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 4, lty = 2)
 lines(size_vac,vac_mean_sub, col = vaccol, lwd = 4)
 # All together
 plot(size_dummy, crem_mean, type = "l", col = cremcol, lwd = 3, xlim = c(-5,15), ylim = c(-4,15),
-     main = "e)                      All Ants                           ", cex.main = 2, lty = 2)
+     main = "e)                        All Ants                             ", cex.main = 2, lty = 2)
 lines(size_crem, crem_mean_sub, col = cremcol, lwd = 3)
 lines(size_dummy, liom_mean, col = liomcol, lwd = 3, lty = 2)
 lines(size_liom, liom_mean_sub, col = liomcol, lwd = 3)
@@ -170,7 +171,7 @@ lines(size_dummy, other_mean, col = othercol, lwd = 3, lty = 2)
 lines(size_other, other_mean_sub, col = othercol, lwd = 3)
 lines(size_dummy, vac_mean, col = vaccol, lwd = 3)
 lines(size_dummy, size_dummy, col = "grey", lty = 2)
-legend("topleft", legend = c(expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Other","Vacant"), col = c(cremcol,liomcol,othercol,vaccol), lwd = 2, cex=1)
+legend("topleft", legend = c(expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Other","Vacant"), col = c(cremcol,liomcol,othercol,vaccol), lwd = 2, cex=1.5)
 mtext("Log(Volume Year t)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Log(Volume Year t+1)",side=2,line=0,outer=TRUE,cex=2)
 dev.off()
@@ -342,33 +343,39 @@ colMeans(b)
 colMeans(c)
 
 
-png("Manuscript/Figures/corr_RFX.png", width=1800, height=1200, res=200)
+pdf("Manuscript/Figures/corr_RFX.pdf", width=10, height=6.5)
 
 # define breaks and color ramp for correlation legend
 breaks <- seq(-1, 1, length.out = 101)
 my_colors <- colorRampPalette(c("blue", "white", "red"))(length(breaks)-1)
 
-layout(matrix(c(1,2,3,4,5,6,7,8), nrow=2, byrow=TRUE), widths=c(1,1,1,1))
-par(mar=c(1,3,4,1.5), oma=c(1,5,5,0))
+layout(matrix(c(1,2,3,4,5,6,7,8), nrow=2, byrow=TRUE), widths=c(1,1,1,0.8))
+par(mar=c(1,3,4,1.5), oma=c(1,5,5,0),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 
 ############## Corrplots
 corrplot(a, method="shade", col=my_colors, type="upper", diag=FALSE,
-         pch.cex=3, tl.cex=1.5, tl.col="black", tl.srt=360, tl.offset=0.5,
+         pch.cex=3, tl.cex=1.85, tl.col="black", tl.srt=360, tl.offset=0.5,
          addCoef.col=NULL, cl.pos="n")
-mtext("a)", side=3, adj=0, line=0.5, cex=1.5)
+mtext("a) ", side=3, adj=0, line=0.5, cex=2)
 
 corrplot(b, method="shade", col=my_colors, type="upper", diag=FALSE,
-         pch.cex=3, tl.cex=1.5, tl.col="black", tl.srt=360, tl.offset=0.5,
+         pch.cex=3, tl.cex=1.85, tl.col="black", tl.srt=360, tl.offset=0.5,
          addCoef.col=NULL, cl.pos="n")
-mtext("b)", side=3, adj=0, line=0.5, cex=1.5)
+mtext("b) ", side=3, adj=0, line=0.5, cex=2)
 
 corrplot(c, method="shade", col=my_colors, type="upper", diag=FALSE,
-         pch.cex=3, tl.cex=1.5, tl.col="black", tl.srt=360, tl.offset=0.5,
+         pch.cex=3, tl.cex=1.85, tl.col="black", tl.srt=360, tl.offset=0.5,
          addCoef.col=NULL, cl.pos="n")
-mtext("c)", side=3, adj=0, line=0.5, cex=1.5)
+mtext("c) ", side=3, adj=0, line=0.5, cex=2)
 
 # color ramp legend
-par(mar=c(2,2,2,8))
+par(mar=c(2,2,2,8),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 x <- seq(0, 1, length = 2)
 y <- breaks
 z <- matrix(breaks[-length(breaks)], nrow = 1)
@@ -381,41 +388,47 @@ mtext("   Growth          Survival           Viability                  ",
       side=3, line=1, outer=TRUE, cex=2)
 
 ############### Timeseries
-par(mar=c(3,3,1,.5))
+par(mar=c(5,3,1,.5),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(years_seq, g_liom, col=liomcol, cex.main=2, type="b", lwd=4, pch=16, cex=2,
-     xlab=" ", ylab=" ", cex.lab=2,
+     xlab=" ", ylab=" ", cex.lab=2, cex.axis = 2,
      ylim = c(-0.42,0.42))
 lines(years_seq, g_crem, type="b", col=cremcol, lwd=4, pch=16, cex=2)
 lines(years_seq, g_vac, type="b", col=vaccol, lwd=4, pch=16, cex=2)
 lines(years_seq, g_other, type="b", col=othercol, lwd=4, pch=16, cex=2)
 mtext("d)", side=3, adj=-0.25, line=01, cex=1.8, padj = 0.15)
 
-par(mar=c(3,3,1,.5))
+par(mar=c(5,3,1,.5))
 plot(years_seq, s_liom, col=liomcol, cex.main=2, type="b", lwd=4, pch=16, cex=2,
-     xlab="", ylab=" ", cex.lab=1.5,
+     xlab="", ylab=" ", cex.lab=1.5,cex.axis = 2,
      ylim = c(-1.1,1.1))
 lines(years_seq, s_crem, type="b", col=cremcol, lwd=4, pch=16, cex=2)
 lines(years_seq, s_other, type="b", col=othercol, lwd=4, pch=16, cex=2)
 lines(years_seq, s_vac, type="b", col=vaccol, lwd=4, pch=16, cex=2)
 mtext("e)", side=3, adj=-0.2, line=1, cex=1.8, padj = 0.2)
 
-par(mar=c(3,3,1,.5))
+par(mar=c(5,3,1,.5))
 plot(years_seq, v_liom, col=liomcol, cex.main=2, type="b", lwd=4, pch=16, cex=2,
-     xlab=" ", ylab=" ", cex.lab=1.5,
+     xlab=" ", ylab=" ", cex.lab=1.5,cex.axis = 2,
      ylim = c(-2.3,1.52))
 lines(years_seq, v_crem, type="b", col=cremcol, lwd=4, pch=16, cex=2)
 lines(years_seq, v_other, type="b", col=othercol, lwd=4, pch=16, cex=2)
 lines(years_seq, v_vac, type="b", col=vaccol, lwd=4, pch=16, cex=2)
 mtext("f)", side=3, adj=-0.15, line=1, cex=1.8, padj = 0.125)
 
-mtext("Year", side=1, line=0, outer=TRUE, cex=1.4)
-mtext("Year-specific\n Ant Effects", side=2, line=0, outer=TRUE, cex=1.4, las=0, adj=.1)
+mtext("Year", side=1, line=-1, outer=TRUE, cex=1.4)
+mtext("Year-specific\n Ant Effects", side=2, line=0, outer=TRUE, cex=1.5, las=0, adj=.17)
 
-par(mar=c(.5,.5,1,.5))
+par(mar=c(.5,.5,1,.5),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot.new()
 legend(x=0, y=.85, legend=c(expression(italic("C. opuntiae")),
                             expression(italic("L. apiculatum")), "Other", "Vacant"),
-       fill=c(cremcol, liomcol, othercol, vaccol), cex=1.4)
+       fill=c(cremcol, liomcol, othercol, vaccol), cex=1.8)
 
 dev.off()
 
@@ -517,10 +530,16 @@ surv_plot_vac <- y_vac_subset_surv %>%
             surv = mean(Survival_t1,na.rm=T),
             N = length(logsize_t))
 surv_plot_vac$N_mod <- log(surv_plot_vac$N)
+
+
+
 ## Plot the survival rates of cacti across size with different ant partners
 pdf("Manuscript/Figures/surv_plot.pdf",
     width = 7, height = 4, useDingbats = FALSE)
-par(mar=c(3,3,3,1),oma=c(2,2,0,0))
+par(mar=c(3,3,3,1),oma=c(2,4,0,0),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 layout(matrix(c(1,2,3,4,5,5),ncol = 3, byrow = TRUE), heights = c(1.5,1.5), widths = c(3.9,3.9,3.9))
 # Crem
 plot(x = size_crem, y = invlogit(quantile(surv.params$beta0[,1],.5) + size_crem * quantile(surv.params$beta1[,1],.5)),lty = 1, type = "l", col = cremcol, lwd = 4, ylim = c(0,1), xlim = c(-5,15),cex.main = 2, main = "a)                        ")
@@ -552,7 +571,7 @@ lines(x = size_crem, y = invlogit(quantile(surv.params$beta0[,1],.5) + size_crem
 lines(x = size_liom, y = invlogit(quantile(surv.params$beta0[,2],.5) + size_liom * quantile(surv.params$beta1[,2],.5)), col = liomcol, lwd = 3)
 lines(x = size_vac, y = invlogit(quantile(surv.params$beta0[,4],.5) + size_vac * quantile(surv.params$beta1[,4],.5)), col = vaccol, lwd = 3)
 legend("bottomright", legend = c("Other",expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Vacant"), col = c(othercol,cremcol,liomcol,vaccol),
-       cex = 1, lwd = 2)
+       cex = 1.3, lwd = 2)
 mtext("Log(Volume)",side=1,line=0,outer=TRUE,cex=2)
 mtext("Probability of Survival",side=2,line=0,outer=TRUE,cex=2,las=0)
 dev.off()
@@ -599,14 +618,18 @@ flow_plot <- flower_data %>%
             tot = mean(TotFlowerbuds_t,na.rm=T),
             N = length(logsize_t),
             N_mod = log(N))
+
+
+
 ## Plot the mean estimate of how many flowers are produced based on the size of the plant alongside the real data and teh estimation errors
-png("Manuscript/Figures/flow_post.png",
+pdf("Manuscript/Figures/flow_post.pdf",
   width = 7,
-  height = 4,
-  units = "in",
-  res = 600
+  height = 4
 )
-par(mar=c(4,4,1,1))
+par(mar=c(4,7,1,1),
+    cex.axis = 1.3,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(x = size_dummy  ,y = exp(percentiles(.5)), type = "l", col = "chartreuse4", lwd = 4, ylim = c(0,100), xlab = " ", ylab = " ")
 points(flow_plot$mean_size,flow_plot$tot,pch=16,cex=flow_plot$N_mod,col= alpha("chartreuse4", 0.4))
 lines(x = size_dummy, y = exp(percentiles(.05)), type = "l", col = "darkgrey", lty = 2, lwd = 2)
@@ -614,7 +637,7 @@ lines(x = size_dummy, y = exp(percentiles(.95)), type = "l", col = "darkgrey", l
 polygon(c(size_dummy,rev(size_dummy)),c(exp(percentiles(.95)), rev(exp(percentiles(.05)))),
         col = rgb(red = 0.2, blue = 0.2, green = 0.2,alpha = 0.1), border = NA)
 mtext("Log(Volume)",side=1,line=-1.5,outer=TRUE,cex=1.7)
-mtext("Total Number of Flowers Produced",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
+mtext("Total Number of \nFlowers Produced",side=2,line=-3.5,outer=TRUE,cex=1.7,las=0)
 dev.off()
 
 
@@ -653,13 +676,14 @@ crem_subset <- subset(viability_data, ant_t == "crem")
 liom_subset <- subset(viability_data, ant_t == "liom")
 vac_subset <- subset(viability_data, ant_t == "vacant")
 ## Plot the histograms of the actual data alongside the mean estimates of viability rates by ant state
-png("Manuscript/Figures/viab_hist.png",
+pdf("Manuscript/Figures/viab_hist.pdf",
   width = 7,
-  height = 9,
-  units = "in",
-  res = 600
+  height = 9
 )
-par(mar=c(5,6,3,1))
+par(mar=c(5,6,3,1),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 layout(matrix(c(1,2,3,4),
               ncol = 1, nrow = 4), heights = c(1,1,1,1)) 
 # crem
@@ -687,12 +711,14 @@ mean(vac_subset$viab)
 
 viab_out<-rstan::extract(fit_viab)
 alpha_val<-0.15
-png("Manuscript/Figures/Viab_v2.png",
+pdf("Manuscript/Figures/Viab_v2.pdf",
     width = 7,
-    height = 4,
-    units = "in",
-    res = 600
+    height = 4
 )
+par(oma = c(0,1,0,0),
+    cex.axis = 1.2,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(1:4,c(1,1,1,1),ylim=c(0,1),type="n",axes=F,xlab="Ant state",ylab="",cex.lab=1.4,xlim=c(1,4.25))
 points(jitter(rep(1,nrow(crem_subset))),jitter(crem_subset$viab),
        cex=0.5+(crem_subset$TotFlowerbuds_t1/max(viability_data$TotFlowerbuds_t1))*4,
@@ -719,7 +745,7 @@ lines(rep(4.25,2),quantile(invlogit(viab_out$beta0[,4]),probs=c(0.025,.975)),
       lwd=3,col=vaccol)
 points(4.25,mean(invlogit(viab_out$beta0[,4])),col=vaccol,pch=15,cex=1.5)
 axis(1,at=1:4,labels=c(expression(italic("C. opuntiae")),expression(italic("L. apiculatum")),"Other","Vacant"))
-mtext("Flowerbud viability", side = 2, line = 2.2, cex=1.7)
+mtext("Flowerbud viability", side = 2, line = 3.5, cex=1.7)
 box()
 axis(2, at = seq(0, 1, by = 0.1), las=2)
 dev.off()
@@ -727,14 +753,16 @@ dev.off()
 ################################################################################
 ## Seed number visuals
 ################################################################################
-png("Manuscript/Figures/Seeds_Per_Fruit.png",
+pdf("Manuscript/Figures/Seeds_Per_Fruit.pdf",
     width = 7,
-    height = 4,
-    units = "in",
-    res = 600
+    height = 4
 )
+par(oma = c(0,1.2,0,0), 
+    cex.axis = 1.2,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(density(exp(seed.params$beta0[,3])),lwd=3,col=vaccol,
-     xlab="Seeds Per ruit",main=" ",xlim=c(50,250))
+     xlab="Seeds Per Fruit",main=" ",xlim=c(50,250))
 lines(density(exp(seed.params$beta0[,2])),lwd=3,col=liomcol)
 lines(density(exp(seed.params$beta0[,1])),lwd=3,col=cremcol)
 legend("topright",legend = c("Vacant",expression(italic("C. opuntiae")),expression(italic("L. apiculatum"))), fill = c(vaccol, cremcol, liomcol))
@@ -794,12 +822,13 @@ percentiles <- function(percent){
 }
 # Create a subset which includes the necessary data
 ## Panel Plot showing the probability of reproducing across sizes with the error
-png("Manuscript/Figures/repro_panel.png",
+pdf("Manuscript/Figures/repro_panel.pdf",
     width = 7,
-    height = 4,
-    units = "in",
-    res = 600
+    height = 4
 )
+par(cex.axis = 1.2,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(x = (size_dummy)  ,y = invlogit(percentiles(.5)), type = "l", col = "chartreuse4",ylim = c(0,1),  lwd = 4,xlab = "",ylab = "")
 points(x = stan_data_repro$vol, y =as.numeric(stan_data_repro$y_repro))
 lines(x = (size_dummy)  ,y = invlogit(percentiles(.5)), type = "l", col = "chartreuse4", lwd = 4)
@@ -846,12 +875,13 @@ subset_vac <- subset(seed_data, seed_data$ant_state == "Vacant")
 crem <- exp(params$seed_beta01)
 liom <- exp(params$seed_beta02)
 vac <- exp(params$seed_beta03)
-png("Manuscript/Figures/num_seeds.png",
+pdf("Manuscript/Figures/num_seeds.pdf",
     width = 7,
-    height = 4,
-    units = "in",
-    res = 600
+    height = 4
 )
+par(cex.axis = 1.2,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 boxplot(cbind(crem,liom,vac), col = c(cremcol,liomcol,vaccol), ylab = "", names = c(expression(italic("C.opuntiae")),expression(italic("L.apiculatum")),"Vacant"))
 mtext("Ant Partner",side=1,line=-2,outer=TRUE,cex=1.7)
 mtext("Number of Seeds Per Fruit",side=2,line=-1.5,outer=TRUE,cex=1.7,las=0)
@@ -884,12 +914,13 @@ dev.off()
 # calculate the viability rates of the real data
 fruit_data$viab <- fruit_data$Fr.on.plant/(fruit_data$Fr.on.grnd + fruit_data$Fr.on.plant)
 ## Plot the histograms of the actual data alongside the mean estimates of viability rates by ant state
-png("Manuscript/Figures/fruit_hist.png",
+pdf("Manuscript/Figures/fruit_hist.pdf",
     width = 7,
-    height = 4,
-    units = "in",
-    res = 600
+    height = 4
 )
+par(cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 hist(fruit_data$viab, xlim = c(0.5,1), prob = TRUE, ylim = c(0,30), col = vaccol, cex.main = 2, xlab = "",ylab = "",main = "")
 lines(density(invlogit(fruit.params$beta0)), lwd = 3, col = vaccol) 
 mtext("Proportion of Surviving Fruit",side=1,line=-1.5,outer=TRUE,cex=2)
@@ -913,17 +944,19 @@ y_surv = pre.seed.params$beta0
 y_low_surv = quantile(pre.seed.params$beta0,0.05) 
 y_high_surv = quantile(pre.seed.params$beta0,0.95)
 ## Plot the precensus survival estimated by the model with the precensus survival of real data
-png("Manuscript/Figures/seed_surv.png",
+pdf("Manuscript/Figures/seed_surv.pdf",
     width = 7,
-    height = 4,
-    units = "in",
-    res = 600
+    height = 4
 )
+par(oma = c(0,1,0,0),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(density(invlogit(y_surv)), col = "chartreuse4",lwd = 2, xlab = "", ylab = "",main = "")
 abline(v = mean(precensus.dat$survive0405), lty = 2)
-legend("topright",legend = c("Predicted Pre-census Survival","Real Pre-census Survival"), col = c("chartreuse4","black"), pch = 16)
+legend("topright",legend = c("Predicted Pre-census Survival","Real Pre-census Survival"), col = c("chartreuse4","black"), pch = 16, cex = 1.2)
 mtext("Pre-census Survival Probability",side=1,line=-1.5,outer=TRUE,cex=2)
-mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
+mtext("Density",side=2,line=-1,outer=TRUE,cex=2,las=0)
 dev.off()
 
 
@@ -947,15 +980,16 @@ y_germ1 <- stan_data_germ$y_germ[stan_data_germ$year==1]/stan_data_germ$trials[s
 y_germ2 <- stan_data_germ$y_germ[stan_data_germ$year==2]/stan_data_germ$trials[stan_data_germ$year==2]
 germ <- cbind(y_germ1,y_germ2)
 colnames(germ) <- c("Year 1","Year 2")
-png(
-  filename = "Manuscript/Figures/germination.png",
-  width = 7, height = 7, units = "in", res = 600
-)
+pdf("Manuscript/Figures/germination.pdf",
+  width = 7, height = 7)
 
 # Set margins
 par(
   mar = c(4, 4, 1, 1),   # inner margins
-  oma = c(2, 2, 0, 0)    # outer margins
+  oma = c(2.5, 2.5, 0, 0) ,
+  cex.axis = 1.3,
+  cex.lab = 1.7,
+  cex.main = 1.8
 )
 
 # Plot
@@ -974,8 +1008,10 @@ mtext("Probability of Germinating", side = 2, outer = TRUE, line = 0.5, cex = 1.
 
 dev.off()
 
-png("Manuscript/Figures/germination.png",
-    res = 600)
+pdf("Manuscript/Figures/germination.pdf")
+par(cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(density(invlogit(params$germ1_beta0)), col = "blue", lwd = 3,
      xlab = "",ylab = "",main = "",
      xlim = c(0.002,0.009),ylim = c(0,800))
@@ -997,23 +1033,15 @@ bayesplot::mcmc_trace(As.mcmc.list(fit_rec, pars=c("beta0")))+labs(x = "iteratio
 dev.off()
 
 
-## Plot the Recruit size distribution
-png("Manuscript/Figures/rec_size.png",
-    width = 7,
-    height = 4,
-    units = "in",
-    res = 600
-)
-boxplot(rec.params$beta0, col = "chartreuse4", ylab = "", main = "", xlab = "")
-mtext("Log(Volume)",side=2,line=-2,outer=TRUE,cex=2,las=0)
-dev.off()
 
-png("Manuscript/Figures/rec_size.png",
+
+pdf("Manuscript/Figures/rec_size.pdf",
     width = 7,
-    height = 4,
-    units = "in",
-    res = 600
+    height = 4
 )
+par(cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(density(rec.params$beta0), col = "chartreuse4",lwd = 3,
      ylab = "",xlab = "",main = "")
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2,las=0)
@@ -1184,12 +1212,13 @@ pred_vac<-cbind(
   exp(mean(params$multi_betavv) + size_dummy*mean(params$multi_betav))/Denominator_vac)
 sum(pred_vac[1,])
 ## Plot the probabilities of your next ant partner based on previous partner and size -- includes model estimates and real data
-png("Manuscript/Figures/transition.png",
-    width = 7.5,     # inches (2-column figure)
-    height = 6.5,    # inches
-    units = "in",
-    res = 600)
-par(mar=c(2,2,4,1),oma=c(2,2,2,0))
+pdf("Manuscript/Figures/transition.pdf",
+    width = 7.5,    
+    height = 6.5)
+par(mar=c(2,2,4,1),oma=c(2,2,2,0),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 layout(matrix(c(1,2,3,4),
               ncol = 2, nrow = 2, byrow = TRUE), heights = c(1.4,1.4), widths = c(3.9,3.9))
 # Prev Vac
@@ -1331,6 +1360,9 @@ vac_freq <- ant_herb_freq$h[ant_herb_freq$ant_t1 == "vacant"]
 vac_total <- ant_herb_freq$tot[ant_herb_freq$ant_t1 == "vacant"]
 
 png("Manuscript/Figures/herb_time_series.png")
+par(cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(crem_yr, crem_freq/crem_total, type = "b",pch = 20, cex = 3,col = cremcol, ylim =c(0,1),
      xlab = "", ylab = "")
 lines(liom_yr, liom_freq/liom_total, type = "b",pch = 20, cex = 3,col = liomcol)
@@ -1428,25 +1460,28 @@ scenario_abv <- c("V","C","L","O","LC","LO","OC","LOC")
 ################################################################################
 ## Visualize Competitive Exclusion Model
 ################################################################################
-## Make plot for poster & other things -- research statement
-png("Manuscript/Figures/Lambdas_C_Simple.png")
-par(mar = c(5,5,1,1))
-plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
-     xlim = c(0,31), ylim = c(0.93,1.015),xaxt = "n",cex.lab = 2,
-     xlab = "Number of Partners", ylab = "Estimated Lambda",
-     main = "Non-Synchronous")
-arrows(x0 = c(1,10,11,9,20,21,19,30), 
-       y0 = c(min(lams_comp_stoch[,1]),min(lams_comp_stoch[,2]),min(lams_comp_stoch[,3]),min(lams_comp_stoch[,4]),min(lams_comp_stoch[,5]),min(lams_comp_stoch[,6]),min(lams_comp_stoch[,7]),min(lams_comp_stoch[,8])),
-       x1 = c(1,10,11,9,20,21,19,30), 
-       y1 = c(max(lams_comp_stoch[,1]),max(lams_comp_stoch[,2]),max(lams_comp_stoch[,3]),max(lams_comp_stoch[,4]),max(lams_comp_stoch[,5]),max(lams_comp_stoch[,6]),max(lams_comp_stoch[,7]),max(lams_comp_stoch[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
-points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols)
-axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
-legend("bottomright", legend = scenario_abv, fill = cols)
-dev.off()
+# ## Make plot for poster & other things -- research statement
+# png("Manuscript/Figures/Lambdas_C_Simple.png")
+# par(mar = c(5,5,1,1))
+# plot(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
+#      xlim = c(0,31), ylim = c(0.93,1.015),xaxt = "n",cex.lab = 2,
+#      xlab = "Number of Partners", ylab = "Estimated Lambda",
+#      main = "Non-Synchronous")
+# arrows(x0 = c(1,10,11,9,20,21,19,30), 
+#        y0 = c(min(lams_comp_stoch[,1]),min(lams_comp_stoch[,2]),min(lams_comp_stoch[,3]),min(lams_comp_stoch[,4]),min(lams_comp_stoch[,5]),min(lams_comp_stoch[,6]),min(lams_comp_stoch[,7]),min(lams_comp_stoch[,8])),
+#        x1 = c(1,10,11,9,20,21,19,30), 
+#        y1 = c(max(lams_comp_stoch[,1]),max(lams_comp_stoch[,2]),max(lams_comp_stoch[,3]),max(lams_comp_stoch[,4]),max(lams_comp_stoch[,5]),max(lams_comp_stoch[,6]),max(lams_comp_stoch[,7]),max(lams_comp_stoch[,8])),
+#        angle = 90, code = 3, length = 0.05, col = cols, lwd = 5)
+# points(x  = c(1,10,11,9,20,21,19,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols)
+# axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
+# legend("bottomright", legend = scenario_abv, fill = cols)
+# dev.off()
 
-png("Manuscript/Figures/Lambdas_Comp_lines.png", height = 340, width = 880)
-par(mar=c(5,5,1,1))
+pdf("Manuscript/Figures/Lambdas_Comp_lines.pdf", height = 5, width = 8)
+par(mar=c(2,5,2.5,1),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
 # number of partners vs fitness
@@ -1475,7 +1510,7 @@ three_part_sync <- colMeans(lams_comp_stoch_null)[8]
 three_part_low_sync <- min(lams_comp_stoch_null[,8])
 three_part_high_sync <- max(lams_comp_stoch_null[,8])
 plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
+     xlim = c(0,5), ylim = c(0.87, 1.03), xaxt = "n", cex.lab = 2, 
      xlab = "", ylab = "", main = "a)                                  ", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
 points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
@@ -1489,7 +1524,7 @@ arrows(x0 = c(1.2,2.2,3.2,4.2),
        x1 = c(1.2,2.2,3.2,4.2),
        y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
        angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
-legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
+legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"), cex = 1.5)
 mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch), pch = 19, cex = 3,col = cols,
@@ -1508,7 +1543,7 @@ axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols,
      xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
-     main = "c) Synchronous         ")
+     main = " c) Synchronous         ")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
        y0 = c(min(lams_comp_stoch_null[,1]),min(lams_comp_stoch_null[,2]),min(lams_comp_stoch_null[,3]),min(lams_comp_stoch_null[,4]),min(lams_comp_stoch_null[,5]),min(lams_comp_stoch_null[,6]),min(lams_comp_stoch_null[,7]),min(lams_comp_stoch_null[,8])),
        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1516,14 +1551,17 @@ arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30),
        angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
 points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_comp_stoch_null), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
-legend("bottomright", legend = scenario_abv, fill = cols)
+legend("bottomright", legend = scenario_abv, fill = cols, cex = 1.5)
 mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = -50)
 dev.off()
 
 
-png("Manuscript/Figures/Lambdas_Comp_lines.png", height = 800, width = 1600, res = 200)
+pdf("Manuscript/Figures/Lambdas_Comp_lines.pdf", height = 800, width = 1600)
 
-par(mar = c(5, 5, 4, 1), oma = c(0, 3, 0, 0))  
+par(mar = c(5, 5, 4, 1), oma = c(0, 3, 0, 0),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)  
 layout(matrix(c(1,2,3), ncol = 3, nrow = 1), heights = c(1, 1, 1))
 
 # Panel a
@@ -1582,66 +1620,66 @@ axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
 legend("bottomright", legend = scenario_abv, fill = cols)
 
 dev.off()
-
-## Plot the distributions of the stochastic lambdas competitive exclusion
-png("Manuscript/Figures/comp_conv_NS.png")
-par(mar=c(5,4,1,1))
-layout(matrix(c(1,2,3,4),
-              ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_comp_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch[,1]),col = vcol, lty = 2, lwd =3)
-legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_comp_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_comp_stoch[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_comp_stoch[,4]),col = ocol, lty = 2, lwd =3)
-legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_comp_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch[,6]), col = locol, lwd =3)
-abline(v = mean(lams_comp_stoch[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_comp_stoch[,7]),col = cocol, lty = 2, lwd =3)
-legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_comp_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch[,8]),col = acol, lty = 2, lwd =3)
-mtext("Non-Synchronous Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
-mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
-legend("topright",legend = c("All Ants"),fill = c(acol),
-       cex = 1.5)
-dev.off()
-
-## Plot the distributions of the stochastic null lambdas competitive exclusion
-png("Manuscript/Figures/comp_conv_S.png")
-par(mar=c(5,4,1,1))
-layout(matrix(c(1,2,3,4),
-              ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_comp_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
-legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_comp_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch_null[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_comp_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch_null[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_comp_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
-legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_comp_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch_null[,6]), col = locol, lwd =3)
-abline(v = mean(lams_comp_stoch_null[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_comp_stoch_null[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_comp_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
-legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_comp_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
-abline(v = mean(lams_comp_stoch_null[,8]),col = acol, lty = 2, lwd =3)
-mtext("Synchronous Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
-mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
-legend("topright",legend = c("All Ants"),fill = c(acol),
-       cex = 1.5)
-dev.off()
+# 
+# ## Plot the distributions of the stochastic lambdas competitive exclusion
+# png("Manuscript/Figures/comp_conv_NS.png")
+# par(mar=c(5,4,1,1))
+# layout(matrix(c(1,2,3,4),
+#               ncol = 1, nrow = 4), heights = c(1,1,1,1))
+# plot(density(lams_comp_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch[,1]),col = vcol, lty = 2, lwd =3)
+# legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+# plot(density(lams_comp_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch[,2]),col = ccol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch[,3]), col = lcol, lwd =3)
+# abline(v = mean(lams_comp_stoch[,3]),col = lcol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch[,4]), col = ocol, lwd =3)
+# abline(v = mean(lams_comp_stoch[,4]),col = ocol, lty = 2, lwd =3)
+# legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+# plot(density(lams_comp_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch[,5]),col = lccol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch[,6]), col = locol, lwd =3)
+# abline(v = mean(lams_comp_stoch[,6]),col = locol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch[,7]), col = cocol, lwd =3)
+# abline(v = mean(lams_comp_stoch[,7]),col = cocol, lty = 2, lwd =3)
+# legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+# plot(density(lams_comp_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch[,8]),col = acol, lty = 2, lwd =3)
+# mtext("Non-Synchronous Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+# mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+# legend("topright",legend = c("All Ants"),fill = c(acol),
+#        cex = 1.5)
+# dev.off()
+# 
+# ## Plot the distributions of the stochastic null lambdas competitive exclusion
+# png("Manuscript/Figures/comp_conv_S.png")
+# par(mar=c(5,4,1,1))
+# layout(matrix(c(1,2,3,4),
+#               ncol = 1, nrow = 4), heights = c(1,1,1,1))
+# plot(density(lams_comp_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
+# legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+# plot(density(lams_comp_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch_null[,3]), col = lcol, lwd =3)
+# abline(v = mean(lams_comp_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch_null[,4]), col = ocol, lwd =3)
+# abline(v = mean(lams_comp_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
+# legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+# plot(density(lams_comp_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch_null[,6]), col = locol, lwd =3)
+# abline(v = mean(lams_comp_stoch_null[,6]),col = locol, lty = 2, lwd =3)
+# lines(density(lams_comp_stoch_null[,7]), col = cocol, lwd =3)
+# abline(v = mean(lams_comp_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
+# legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+# plot(density(lams_comp_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.05))
+# abline(v = mean(lams_comp_stoch_null[,8]),col = acol, lty = 2, lwd =3)
+# mtext("Synchronous Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+# mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+# legend("topright",legend = c("All Ants"),fill = c(acol),
+#        cex = 1.5)
+# dev.off()
 
 ################################################################################
 ## Visualize Equal Likelihood Model
@@ -1673,16 +1711,19 @@ three_part_low_sync <- min(lams_equal_stoch_null[,8])
 three_part_high_sync <- max(lams_equal_stoch_null[,8])
 
 
-png("Manuscript/Figures/Lambdas_Equal_lines.png", height = 800, width = 1600, res = 200)
+pdf("Manuscript/Figures/Lambdas_Equal_lines.pdf", height = 4, width = 8)
 
-par(mar = c(5, 5, 4, 1), oma = c(0, 3, 0, 0))  
+par(mar = c(5, 3, 4, 1), oma = c(0, 3, 0, 0),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)  
 layout(matrix(c(1,2,3), ncol = 3, nrow = 1), heights = c(1, 1, 1))
 
 # Panel a
 plot(c(0.9,1.9,2.9,3.9), c(no_part, one_part, two_part, three_part),
-     pch = 16, cex = 3, xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n",
+     pch = 16, cex = 3, xlim = c(0,5), ylim = c(0.87, 1.03), xaxt = "n",
      cex.lab = 2, xlab = "", ylab = "", col = "red")
-mtext("a) ", side = 3, line = 2, cex = 1.5, adj = -.4)
+mtext("      a) ", side = 3, line = 2, cex = 1.5, adj = -.4)
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
 points(c(1.2,2.2,3.2,4.2), c(no_part_sync, one_part_sync, two_part_sync, three_part_sync),
        pch = 18, cex = 3, col = "black")
@@ -1696,12 +1737,12 @@ arrows(x0 = c(1.2,2.2,3.2,4.2),
        x1 = c(1.2,2.2,3.2,4.2),
        y1 = c(no_part_high_sync, one_part_high_sync, two_part_high_sync, three_part_high_sync),
        angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
-legend("bottomright", legend = c("synchronous","non-synchronous"), fill = c("black","red"))
-mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 4)
+legend("bottomright", legend = c("synchronous","non-synchronous"), fill = c("black","red"), cex = 1.3)
+mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 3)
 
 # Panel b
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch),
-     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
+     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.87,1.025), xaxt = "n",
      cex.lab = 2, xlab = "", ylab = "")
 mtext("b) Non-Synchronous", side = 3, line = 2, cex = 1.5, adj = .5)
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1718,7 +1759,7 @@ mtext("Number of Partners", side = 1, cex = 2.2, line = 3.5)
 
 # Panel c
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null),
-     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
+     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.87,1.025), xaxt = "n",
      cex.lab = 2, xlab = "", ylab = "")
 mtext("c) Synchronous", side = 3, line = 2, cex = 1.5, adj = 0)
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1731,75 +1772,78 @@ arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30),
 points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_equal_stoch_null),
        pch = 19, cex = 3, col = cols)
 axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
-legend("bottomright", legend = scenario_abv, fill = cols)
+legend("bottomright", legend = scenario_abv, fill = cols, cex = 1.3)
 
 dev.off()
-
-## Plot the distributions of the stochastic lambdas equal likelihood
-png("Manuscript/Figures/equal_conv_NS.png")
-par(mar=c(4,4,1,1))
-layout(matrix(c(1,2,3,4),
-              ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_equal_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch[,1]),col = vcol, lty = 2, lwd =3)
-legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_equal_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_equal_stoch[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_equal_stoch[,4]),col = ocol, lty = 2, lwd =3)
-legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_equal_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch[,6]), col = locol, lwd =3)
-abline(v = mean(lams_equal_stoch[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_equal_stoch[,7]),col = cocol, lty = 2, lwd =3)
-legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_equal_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch[,8]),col = acol, lty = 2, lwd =3)
-mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
-mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
-legend("topright",legend = c("All Ants"),fill = c(acol),
-       cex = 1.5)
-dev.off()
-
-## Plot the distributions of the stochastic null lambdas equal likelihood
-png("Manuscript/Figures/equal_conv_S.png")
-par(mar=c(4,4,1,1))
-layout(matrix(c(1,2,3,4),
-              ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_equal_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
-legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_equal_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch_null[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_equal_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch_null[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_equal_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
-legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_equal_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch_null[,6]), col = locol, lwd =3)
-abline(v = mean(lams_equal_stoch_null[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_equal_stoch_null[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_equal_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
-legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_equal_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_equal_stoch_null[,8]),col = acol, lty = 2, lwd =3)
-mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
-mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
-legend("topright",legend = c("All Ants"),fill = c(acol),
-       cex = 1.5)
-dev.off()
+# 
+# ## Plot the distributions of the stochastic lambdas equal likelihood
+# png("Manuscript/Figures/equal_conv_NS.png")
+# par(mar=c(4,4,1,1))
+# layout(matrix(c(1,2,3,4),
+#               ncol = 1, nrow = 4), heights = c(1,1,1,1))
+# plot(density(lams_equal_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch[,1]),col = vcol, lty = 2, lwd =3)
+# legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+# plot(density(lams_equal_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch[,2]),col = ccol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch[,3]), col = lcol, lwd =3)
+# abline(v = mean(lams_equal_stoch[,3]),col = lcol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch[,4]), col = ocol, lwd =3)
+# abline(v = mean(lams_equal_stoch[,4]),col = ocol, lty = 2, lwd =3)
+# legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+# plot(density(lams_equal_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch[,5]),col = lccol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch[,6]), col = locol, lwd =3)
+# abline(v = mean(lams_equal_stoch[,6]),col = locol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch[,7]), col = cocol, lwd =3)
+# abline(v = mean(lams_equal_stoch[,7]),col = cocol, lty = 2, lwd =3)
+# legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+# plot(density(lams_equal_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch[,8]),col = acol, lty = 2, lwd =3)
+# mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+# mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+# legend("topright",legend = c("All Ants"),fill = c(acol),
+#        cex = 1.5)
+# dev.off()
+# 
+# ## Plot the distributions of the stochastic null lambdas equal likelihood
+# png("Manuscript/Figures/equal_conv_S.png")
+# par(mar=c(4,4,1,1))
+# layout(matrix(c(1,2,3,4),
+#               ncol = 1, nrow = 4), heights = c(1,1,1,1))
+# plot(density(lams_equal_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
+# legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+# plot(density(lams_equal_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch_null[,3]), col = lcol, lwd =3)
+# abline(v = mean(lams_equal_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch_null[,4]), col = ocol, lwd =3)
+# abline(v = mean(lams_equal_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
+# legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+# plot(density(lams_equal_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch_null[,6]), col = locol, lwd =3)
+# abline(v = mean(lams_equal_stoch_null[,6]),col = locol, lty = 2, lwd =3)
+# lines(density(lams_equal_stoch_null[,7]), col = cocol, lwd =3)
+# abline(v = mean(lams_equal_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
+# legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+# plot(density(lams_equal_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_equal_stoch_null[,8]),col = acol, lty = 2, lwd =3)
+# mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+# mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+# legend("topright",legend = c("All Ants"),fill = c(acol),
+#        cex = 1.5)
+# dev.off()
 
 ################################################################################
 ## Visualize Frequency Based Model
 ################################################################################
-png("Manuscript/Figures/Lambdas_Freq_lines.png", height = 340, width = 880)
-par(mar=c(5,5,1,1))
+pdf("Manuscript/Figures/Lambdas_Freq_lines.pdf", height = 4, width = 8)
+par(mar=c(3,5,3,1),
+    cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 layout(matrix(c(1,2,3),
               ncol = 3, nrow = 1), heights = c(1,1,1))
 # number of partners vs fitness
@@ -1828,7 +1872,7 @@ three_part_sync <- colMeans(lams_freq_stoch_null)[8]
 three_part_low_sync <- min(lams_freq_stoch_null[,8])
 three_part_high_sync <- max(lams_freq_stoch_null[,8])
 plot(c(0.9,1.9,2.9,3.9),c(no_part, one_part, two_part, three_part), pch = 16, cex = 3, 
-     xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n", cex.lab = 2, 
+     xlim = c(0,5), ylim = c(0.87, 1.03), xaxt = "n", cex.lab = 2, 
      xlab = "", ylab = "", main = "a)                                  ", col = "red")
 axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
 points(c(1.2,2.2,3.2,4.2),c(no_part_sync,one_part_sync,two_part_sync,three_part_sync),pch = 18, cex = 3, col = "black")
@@ -1842,11 +1886,11 @@ arrows(x0 = c(1.2,2.2,3.2,4.2),
        x1 = c(1.2,2.2,3.2,4.2),
        y1 = c(no_part_high_sync,one_part_high_sync,two_part_high_sync,three_part_high_sync),
        angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
-legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"))
+legend("bottomright",legend = c("synchronous","non-synchronous"), fill = c("black","red"), cex = 1.3)
 mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- non-synchronous
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch), pch = 19, cex = 3,col = cols,
-     xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
+     xlim = c(0,31), ylim = c(0.87,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
      main = "b) Non-Synchronous")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1859,7 +1903,7 @@ axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
 #mtext("Mean Lambda Value", side = 2, cex = 2.2, line = 2)
 # diversity scenarios vs fitness -- synchronous
 plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols,
-     xlim = c(0,31), ylim = c(0.9005,1.025),xaxt = "n",cex.lab = 2,
+     xlim = c(0,31), ylim = c(0.87,1.025),xaxt = "n",cex.lab = 2,
      xlab = " ", ylab = " ",
      main = "c) Synchronous        ")
 arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
@@ -1869,132 +1913,132 @@ arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30),
        angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
 points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null), pch = 19, cex = 3,col = cols)
 axis(side=1,at=c(1,10,20,31),labels=c("0","1","2","3"))
-legend("bottomright", legend = scenario_abv, fill = cols)
+legend("bottomright", legend = scenario_abv, fill = cols, cex = 1.3)
 mtext("Number of Partners",side = 1, cex = 2.2, line = 3.5, adj = -50)
 dev.off()
 
-
-png("Manuscript/Figures/Lambdas_Freq_lines.png", height = 800, width = 1600, res = 200)
-
-par(mar = c(5, 5, 4, 1), oma = c(0, 3, 0, 0))  
-layout(matrix(c(1,2,3), ncol = 3, nrow = 1), heights = c(1, 1, 1))
-
-# Panel a
-plot(c(0.9,1.9,2.9,3.9), c(no_part, one_part, two_part, three_part),
-     pch = 16, cex = 3, xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n",
-     cex.lab = 2, xlab = "", ylab = "", col = "red")
-mtext("a) ", side = 3, line = 2, cex = 1.5, adj = -.4)
-axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
-points(c(1.2,2.2,3.2,4.2), c(no_part_sync, one_part_sync, two_part_sync, three_part_sync),
-       pch = 18, cex = 3, col = "black")
-arrows(x0 = c(0.9,1.9,2.9,3.9),
-       y0 = c(no_part_low, one_part_low, two_part_low, three_part_low),
-       x1 = c(0.9,1.9,2.9,3.9),
-       y1 = c(no_part_high, one_part_high, two_part_high, three_part_high),
-       angle = 90, code = 3, length = 0.05, col = "red", lwd = 3)
-arrows(x0 = c(1.2,2.2,3.2,4.2),
-       y0 = c(no_part_low_sync, one_part_low_sync, two_part_low_sync, three_part_low_sync),
-       x1 = c(1.2,2.2,3.2,4.2),
-       y1 = c(no_part_high_sync, one_part_high_sync, two_part_high_sync, three_part_high_sync),
-       angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
-legend("bottomright", legend = c("synchronous","non-synchronous"), fill = c("black","red"))
-mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 4)
-
-# Panel b
-plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch),
-     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
-     cex.lab = 2, xlab = "", ylab = "")
-mtext("b) Non-Synchronous", side = 3, line = 2, cex = 1.5, adj = .5)
-arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y0 = c(min(lams_freq_stoch[,1]), min(lams_freq_stoch[,2]), min(lams_freq_stoch[,3]), min(lams_freq_stoch[,4]),
-              min(lams_freq_stoch[,5]), min(lams_freq_stoch[,6]), min(lams_freq_stoch[,7]), min(lams_freq_stoch[,8])),
-       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y1 = c(max(lams_freq_stoch[,1]), max(lams_freq_stoch[,2]), max(lams_freq_stoch[,3]), max(lams_freq_stoch[,4]),
-              max(lams_freq_stoch[,5]), max(lams_freq_stoch[,6]), max(lams_freq_stoch[,7]), max(lams_freq_stoch[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
-points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch),
-       pch = 19, cex = 3, col = cols)
-axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
-mtext("Number of Partners", side = 1, cex = 2.2, line = 3.5)
-
-# Panel c
-plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null),
-     pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
-     cex.lab = 2, xlab = "", ylab = "")
-mtext("c) Synchronous", side = 3, line = 2, cex = 1.5, adj = 0)
-arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y0 = c(min(lams_freq_stoch_null[,1]), min(lams_freq_stoch_null[,2]), min(lams_freq_stoch_null[,3]), min(lams_freq_stoch_null[,4]),
-              min(lams_freq_stoch_null[,5]), min(lams_freq_stoch_null[,6]), min(lams_freq_stoch_null[,7]), min(lams_freq_stoch_null[,8])),
-       x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
-       y1 = c(max(lams_freq_stoch_null[,1]), max(lams_freq_stoch_null[,2]), max(lams_freq_stoch_null[,3]), max(lams_freq_stoch_null[,4]),
-              max(lams_freq_stoch_null[,5]), max(lams_freq_stoch_null[,6]), max(lams_freq_stoch_null[,7]), max(lams_freq_stoch_null[,8])),
-       angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
-points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null),
-       pch = 19, cex = 3, col = cols)
-axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
-legend("bottomright", legend = scenario_abv, fill = cols)
-
-dev.off()
-
-## Plot the distributions of the stochastic lambdas frequency based
-png("Manuscript/Figures/freq_conv_NS.png")
-par(mar=c(4,4,1,1))
-layout(matrix(c(1,2,3,4),
-              ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_freq_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch[,1]),col = vcol, lty = 2, lwd =3)
-legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_freq_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_freq_stoch[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_freq_stoch[,4]),col = ocol, lty = 2, lwd =3)
-legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_freq_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch[,6]), col = locol, lwd =3)
-abline(v = mean(lams_freq_stoch[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_freq_stoch[,7]),col = cocol, lty = 2, lwd =3)
-legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_freq_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch[,8]),col = acol, lty = 2, lwd =3)
-mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
-mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
-legend("topright",legend = c("All Ants"),fill = c(acol),
-       cex = 1.5)
-dev.off()
-
-## Plot the distributions of the stochastic null lambdas frequency based
-png("Manuscript/Figures/freq_conv_S.png")
-par(mar=c(4,4,1,1))
-layout(matrix(c(1,2,3,4),
-              ncol = 1, nrow = 4), heights = c(1,1,1,1))
-plot(density(lams_freq_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
-legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
-plot(density(lams_freq_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch_null[,3]), col = lcol, lwd =3)
-abline(v = mean(lams_freq_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch_null[,4]), col = ocol, lwd =3)
-abline(v = mean(lams_freq_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
-legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
-plot(density(lams_freq_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch_null[,6]), col = locol, lwd =3)
-abline(v = mean(lams_freq_stoch_null[,6]),col = locol, lty = 2, lwd =3)
-lines(density(lams_freq_stoch_null[,7]), col = cocol, lwd =3)
-abline(v = mean(lams_freq_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
-legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
-plot(density(lams_freq_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
-abline(v = mean(lams_freq_stoch_null[,8]),col = acol, lty = 2, lwd =3)
-mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
-mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
-legend("topright",legend = c("All Ants"),fill = c(acol),
-       cex = 1.5)
-dev.off()
+# 
+# png("Manuscript/Figures/Lambdas_Freq_lines.png", height = 800, width = 1600, res = 200)
+# 
+# par(mar = c(5, 5, 4, 1), oma = c(0, 3, 0, 0))  
+# layout(matrix(c(1,2,3), ncol = 3, nrow = 1), heights = c(1, 1, 1))
+# 
+# # Panel a
+# plot(c(0.9,1.9,2.9,3.9), c(no_part, one_part, two_part, three_part),
+#      pch = 16, cex = 3, xlim = c(0,5), ylim = c(0.89, 1.03), xaxt = "n",
+#      cex.lab = 2, xlab = "", ylab = "", col = "red")
+# mtext("a) ", side = 3, line = 2, cex = 1.5, adj = -.4)
+# axis(1, at = c(1,2,3,4), labels = c("0","1","2","3"))
+# points(c(1.2,2.2,3.2,4.2), c(no_part_sync, one_part_sync, two_part_sync, three_part_sync),
+#        pch = 18, cex = 3, col = "black")
+# arrows(x0 = c(0.9,1.9,2.9,3.9),
+#        y0 = c(no_part_low, one_part_low, two_part_low, three_part_low),
+#        x1 = c(0.9,1.9,2.9,3.9),
+#        y1 = c(no_part_high, one_part_high, two_part_high, three_part_high),
+#        angle = 90, code = 3, length = 0.05, col = "red", lwd = 3)
+# arrows(x0 = c(1.2,2.2,3.2,4.2),
+#        y0 = c(no_part_low_sync, one_part_low_sync, two_part_low_sync, three_part_low_sync),
+#        x1 = c(1.2,2.2,3.2,4.2),
+#        y1 = c(no_part_high_sync, one_part_high_sync, two_part_high_sync, three_part_high_sync),
+#        angle = 90, code = 3, length = 0.05, col = "black", lwd = 3)
+# legend("bottomright", legend = c("synchronous","non-synchronous"), fill = c("black","red"))
+# mtext(expression(paste(lambda[S])), side = 2, cex = 2.2, line = 4)
+# 
+# # Panel b
+# plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch),
+#      pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
+#      cex.lab = 2, xlab = "", ylab = "")
+# mtext("b) Non-Synchronous", side = 3, line = 2, cex = 1.5, adj = .5)
+# arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
+#        y0 = c(min(lams_freq_stoch[,1]), min(lams_freq_stoch[,2]), min(lams_freq_stoch[,3]), min(lams_freq_stoch[,4]),
+#               min(lams_freq_stoch[,5]), min(lams_freq_stoch[,6]), min(lams_freq_stoch[,7]), min(lams_freq_stoch[,8])),
+#        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
+#        y1 = c(max(lams_freq_stoch[,1]), max(lams_freq_stoch[,2]), max(lams_freq_stoch[,3]), max(lams_freq_stoch[,4]),
+#               max(lams_freq_stoch[,5]), max(lams_freq_stoch[,6]), max(lams_freq_stoch[,7]), max(lams_freq_stoch[,8])),
+#        angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+# points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch),
+#        pch = 19, cex = 3, col = cols)
+# axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
+# mtext("Number of Partners", side = 1, cex = 2.2, line = 3.5)
+# 
+# # Panel c
+# plot(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null),
+#      pch = 19, cex = 3, col = cols, xlim = c(0,31), ylim = c(0.9005,1.025), xaxt = "n",
+#      cex.lab = 2, xlab = "", ylab = "")
+# mtext("c) Synchronous", side = 3, line = 2, cex = 1.5, adj = 0)
+# arrows(x0 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
+#        y0 = c(min(lams_freq_stoch_null[,1]), min(lams_freq_stoch_null[,2]), min(lams_freq_stoch_null[,3]), min(lams_freq_stoch_null[,4]),
+#               min(lams_freq_stoch_null[,5]), min(lams_freq_stoch_null[,6]), min(lams_freq_stoch_null[,7]), min(lams_freq_stoch_null[,8])),
+#        x1 = c(1,10,11.75,8.25,20,21.75,18.25,30), 
+#        y1 = c(max(lams_freq_stoch_null[,1]), max(lams_freq_stoch_null[,2]), max(lams_freq_stoch_null[,3]), max(lams_freq_stoch_null[,4]),
+#               max(lams_freq_stoch_null[,5]), max(lams_freq_stoch_null[,6]), max(lams_freq_stoch_null[,7]), max(lams_freq_stoch_null[,8])),
+#        angle = 90, code = 3, length = 0.05, col = cols, lwd = 3)
+# points(x  = c(1,10,11.75,8.25,20,21.75,18.25,30), y = colMeans(lams_freq_stoch_null),
+#        pch = 19, cex = 3, col = cols)
+# axis(side=1, at=c(1,10,20,31), labels=c("0","1","2","3"))
+# legend("bottomright", legend = scenario_abv, fill = cols)
+# 
+# dev.off()
+# # 
+# ## Plot the distributions of the stochastic lambdas frequency based
+# png("Manuscript/Figures/freq_conv_NS.png")
+# par(mar=c(4,4,1,1))
+# layout(matrix(c(1,2,3,4),
+#               ncol = 1, nrow = 4), heights = c(1,1,1,1))
+# plot(density(lams_freq_stoch[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch[,1]),col = vcol, lty = 2, lwd =3)
+# legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+# plot(density(lams_freq_stoch[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch[,2]),col = ccol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch[,3]), col = lcol, lwd =3)
+# abline(v = mean(lams_freq_stoch[,3]),col = lcol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch[,4]), col = ocol, lwd =3)
+# abline(v = mean(lams_freq_stoch[,4]),col = ocol, lty = 2, lwd =3)
+# legend("topright", legend = c("C. opun","L. apic", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+# plot(density(lams_freq_stoch[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch[,5]),col = lccol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch[,6]), col = locol, lwd =3)
+# abline(v = mean(lams_freq_stoch[,6]),col = locol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch[,7]), col = cocol, lwd =3)
+# abline(v = mean(lams_freq_stoch[,7]),col = cocol, lty = 2, lwd =3)
+# legend("topright", legend = c("C. opun and L. apic","L. apic and Other", "C. opun and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+# plot(density(lams_freq_stoch[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,140), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch[,8]),col = acol, lty = 2, lwd =3)
+# mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+# mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+# legend("topright",legend = c("All Ants"),fill = c(acol),
+#        cex = 1.5)
+# dev.off()
+# 
+# ## Plot the distributions of the stochastic null lambdas frequency based
+# png("Manuscript/Figures/freq_conv_S.png")
+# par(mar=c(4,4,1,1))
+# layout(matrix(c(1,2,3,4),
+#               ncol = 1, nrow = 4), heights = c(1,1,1,1))
+# plot(density(lams_freq_stoch_null[,1]), col = vcol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "a)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch_null[,1]),col = vcol, lty = 2, lwd =3)
+# legend("topright", legend = c("Vacant"), fill = c(vcol), cex = 1.5)
+# plot(density(lams_freq_stoch_null[,2]), col = ccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "b)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch_null[,2]),col = ccol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch_null[,3]), col = lcol, lwd =3)
+# abline(v = mean(lams_freq_stoch_null[,3]),col = lcol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch_null[,4]), col = ocol, lwd =3)
+# abline(v = mean(lams_freq_stoch_null[,4]),col = ocol, lty = 2, lwd =3)
+# legend("topright", legend = c("Crematogaster","Liometopum", "Other"), fill = c(ccol,lcol,ocol), cex = 1.5)
+# plot(density(lams_freq_stoch_null[,5]), col = lccol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "c)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch_null[,5]),col = lccol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch_null[,6]), col = locol, lwd =3)
+# abline(v = mean(lams_freq_stoch_null[,6]),col = locol, lty = 2, lwd =3)
+# lines(density(lams_freq_stoch_null[,7]), col = cocol, lwd =3)
+# abline(v = mean(lams_freq_stoch_null[,7]),col = cocol, lty = 2, lwd =3)
+# legend("topright", legend = c("Crematogaster and Liometopum","Liometopum and Other", "Crematogaster and Other"), fill = c(lccol,locol,cocol), cex = 1.5)
+# plot(density(lams_freq_stoch_null[,8]), col = acol, xlab = "",ylab = "", lwd =3,cex.main = 2, main = "d)                                                                                                       ",ylim = c(0,100), xlim = c(0.92,1.01))
+# abline(v = mean(lams_freq_stoch_null[,8]),col = acol, lty = 2, lwd =3)
+# mtext("Lambda",side=1,line=-2,outer=TRUE,cex=1.3)
+# mtext("Density",side=2,line=-2,outer=TRUE,cex=1.3,las=0)
+# legend("topright",legend = c("All Ants"),fill = c(acol),
+#        cex = 1.5)
+# dev.off()
 ################################################################################
 ## Visualize Portfolio Effect
 ################################################################################
@@ -2004,7 +2048,10 @@ colnames(lams_comp_stoch) <- scenario
 all_vac_stoch_null <- lams_comp_stoch$all - lams_comp_stoch_null$none
 all_vac_stoch <- lams_comp_stoch$all - lams_comp_stoch$none
 # Plot the boost offered by the real ant scenario based on stochastic and deterministic lambda estimates
-png("Manuscript/Figures/portfolio_effect.png")
+pdf("Manuscript/Figures/portfolio_effect.pdf")
+par(cex.axis = 1.5,
+    cex.lab = 1.7,
+    cex.main = 1.8)
 plot(density(all_vac_stoch_null), lwd = 3, 
      col = "chartreuse4", ylim = c(0,70), 
      xlab = "Effect of Partner Presence on Fitness", ylab = "",
@@ -2012,7 +2059,7 @@ plot(density(all_vac_stoch_null), lwd = 3,
 lines(density(all_vac_stoch), lwd = 3, col = "violet")
 abline(v = 0, lty = 2, lwd = 3)
 legend("topright",legend = c("Synchronicity Possible","Synchronicity Excluded"), 
-       fill = c("violet","chartreuse4"))
+       fill = c("violet","chartreuse4"), cex = 1.3)
 mtext("Density",side=2,line=-2,outer=TRUE,cex=2)
 dev.off()
 # check the mean density 
